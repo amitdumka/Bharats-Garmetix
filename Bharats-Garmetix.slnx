@@ -1,3 +1,6 @@
 <Solution>
+  <Folder Name="/Modules/">
+    <Project Path="PointOfSale/PointOfSale.csproj" Id="798c7f88-7a3d-4c0d-9a59-05b535ab1770" />
+  </Folder>
   <Project Path="Garmetix/Garmetix.csproj" />
 </Solution>
