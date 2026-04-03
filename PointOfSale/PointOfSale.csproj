@@ -27,12 +27,12 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Folder Include="Data\" />
 	  <Folder Include="DataModels\" />
-	  <Folder Include="Pages\" />
 	  <Folder Include="Views\" />
 	  <Folder Include="PageModels\" />
 	</ItemGroup>
