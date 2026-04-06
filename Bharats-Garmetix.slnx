@@ -1,5 +1,9 @@
 <Solution>
+  <Folder Name="/Data/">
+    <Project Path="Data/Garmetix.Models/Garmetix.Models.csproj" Id="d5afbbc6-c3c3-433a-83ce-42757ce80498" />
+  </Folder>
   <Folder Name="/Modules/">
+    <Project Path="Garmetix.Billing/Garmetix.Billing.csproj" Id="66e5697d-048c-4263-8e1e-30cd634b55a6" />
     <Project Path="PointOfSale/PointOfSale.csproj" Id="798c7f88-7a3d-4c0d-9a59-05b535ab1770" />
   </Folder>
   <Project Path="Garmetix/Garmetix.csproj" />
