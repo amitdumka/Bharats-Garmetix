@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class=" Garmetix.Core.Views.Customs.Listing.BaseListViewPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:pager="clr-namespace:Syncfusion.Maui.DataGrid.DataPager;assembly=Syncfusion.Maui.DataGrid"
+    xmlns:syncfusion="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:Name="CPage"
+    Title="{Binding Title}">
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+            BindingContext="{Binding Path=BindingContext, Source={x:Reference CPage}}"
+            Command="{Binding NavigatedToCommand}"
+            EventName="NavigatedTo" />
+
+        <toolkit:EventToCommandBehavior
+            BindingContext="{Binding Path=BindingContext, Source={x:Reference CPage}}"
+            Command="{Binding NavigatedFromCommand}"
+            EventName="NavigatedFrom" />
+
+        <toolkit:EventToCommandBehavior
+            BindingContext="{Binding Path=BindingContext, Source={x:Reference CPage}}"
+            Command="{Binding AppearingCommand}"
+            EventName="Appearing" />
+    </ContentPage.Behaviors>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Order="Primary" Text="Export">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource
+                    FontFamily="MaterialDesignIcons"
+                    Glyph="&#xF0453;"
+                    Size="24"
+                    Color="Black" />
+                <!--  Export icon (e.g., 'Download')  -->
+            </ToolbarItem.IconImageSource>
+            <ToolbarItem.Command>
+                <Binding Path="ExportToExcelCommand" />
+            </ToolbarItem.Command>
+        </ToolbarItem>
+        <ToolbarItem Order="Primary" Text="Import">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource
+                    FontFamily="MaterialDesignIcons"
+                    Glyph="&#xF044D;"
+                    Size="24"
+                    Color="Black" />
+                <!--  Import icon (e.g., 'Upload')  -->
+            </ToolbarItem.IconImageSource>
+            <ToolbarItem.Command>
+                <Binding Path="ImportFromExcelCommand" />
+            </ToolbarItem.Command>
+        </ToolbarItem>
+
+        <!--  Json  -->
+        <ToolbarItem Order="Secondary" Text="Export JSON">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource
+                    FontFamily="MaterialDesignIcons"
+                    Glyph="&#xF039C;"
+                    Size="24"
+                    Color="Black" />
+
+            </ToolbarItem.IconImageSource>
+            <ToolbarItem.Command>
+                <Binding Path="ExportJsonCommand" />
+            </ToolbarItem.Command>
+        </ToolbarItem>
+        <ToolbarItem Order="Secondary" Text="Import JSON">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource
+                    FontFamily="MaterialDesignIcons"
+                    Glyph="&#xF039B;"
+                    Size="24"
+                    Color="Black" />
+
+            </ToolbarItem.IconImageSource>
+            <ToolbarItem.Command>
+                <Binding Path="ImportJsonCommand" />
+            </ToolbarItem.Command>
+        </ToolbarItem>
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+
+        <AbsoluteLayout>
+
+            <Grid
+                AbsoluteLayout.LayoutBounds="0,0,1,1"
+                AbsoluteLayout.LayoutFlags="All"
+                ColumnDefinitions="Auto,*"
+                RowDefinitions="Auto,*,Auto"
+                RowSpacing="0">
+
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Padding="16,12"
+                    FontAttributes="Bold"
+                    FontAutoScalingEnabled="True"
+                    FontSize="Title"
+                    Text="{Binding Title}"
+                    TextColor="{AppThemeBinding Light={StaticResource Gray900},
+                                                Dark={StaticResource White}}" />
+
+                <RefreshView
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="{OnPlatform Android=2,
+                                                 iOS=2,
+                                                 Default=1}"
+                    Command="{Binding LoadInitialDataCommand}"
+                    IsRefreshing="{Binding IsBusy}">
+                    <Border
+                        Margin="15,0,5,5"
+                        BackgroundColor="White"
+                        StrokeShape="RoundRectangle 8">
+                        <Border.Shadow>
+                            <Shadow
+                                Brush="Black"
+                                Opacity="0.3"
+                                Radius="10"
+                                Offset="0,4" />
+                        </Border.Shadow>
+
+                        <CollectionView
+                            x:Name="ColView"
+                            Margin="15,0,5,5"
+                            EmptyView="No data found."
+                            ItemsSource="{Binding Entities}"
+                            RemainingItemsThreshold="5"
+                            RemainingItemsThresholdReachedCommand="{Binding LoadMoreDataCommand}"
+                            SelectionMode="Single">
+
+                            <CollectionView.Footer>
+                                <ActivityIndicator
+                                    Margin="20"
+                                    HorizontalOptions="Center"
+                                    IsRunning="{Binding IsDataLoading}"
+                                    IsVisible="{Binding IsDataLoading}"
+                                    Color="{StaticResource Primary}" />
+                            </CollectionView.Footer>
+                        </CollectionView>
+                    </Border>
+                </RefreshView>
+                <Label
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Padding="16,12"
+                    FontAttributes="Bold"
+                    FontAutoScalingEnabled="True"
+                    FontSize="Caption"
+                    Text="{Binding RecordCount, StringFormat='No of Record: {0}'}"
+                    TextColor="{AppThemeBinding Light={StaticResource Gray900},
+                                                Dark={StaticResource White}}" />
+                <ActivityIndicator
+                    Grid.RowSpan="2"
+                    Grid.ColumnSpan="{OnPlatform Android=1,
+                                                 iOS=1,
+                                                 Default=2}"
+                    HorizontalOptions="Center"
+                    IsRunning="{Binding IsBusy}"
+                    IsVisible="{Binding IsBusy}"
+                    VerticalOptions="Center"
+                    Color="{StaticResource Primary}" />
+            </Grid>
+
+            <Button
+                Margin="10"
+                AbsoluteLayout.LayoutBounds="1,1,AutoSize,AutoSize"
+                AbsoluteLayout.LayoutFlags="PositionProportional"
+                BackgroundColor="Green"
+                Command="{Binding AddButtonCommand}"
+                CornerRadius="50"
+                FontSize="Large"
+                HeightRequest="60"
+                IsEnabled="{Binding EnableAdd}"
+                IsVisible="{Binding EnableAdd}"
+                Text="+"
+                TextColor="White"
+                WidthRequest="60" />
+        </AbsoluteLayout>
+
+    </ContentPage.Content>
+</ContentPage>

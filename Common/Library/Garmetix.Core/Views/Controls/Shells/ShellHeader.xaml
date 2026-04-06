@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="Garmetix.Views.Controls.ShellHeader"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    HeightRequest="200">
+
+    <Grid BackgroundColor="{AppThemeBinding Dark={DynamicResource BackgroundColorDark}, Light={DynamicResource BackgroundColorLight}}">
+
+        <!--  TODO: Make Source as Biniding to vairable to change based on Company Name and Theme  -->
+        <Image
+            Aspect="AspectFill"
+            Opacity="0.9"
+            Source="af010.jpg" />
+
+        <Label
+            Margin="20"
+            FontAttributes="Bold"
+            FontAutoScalingEnabled="True"
+            HorizontalTextAlignment="End"
+            Text="Garmetix"
+            TextColor="DarkRed"
+            TextDecorations="Underline"
+            TextType="Html"
+            VerticalTextAlignment="End" />
+    </Grid>
+</ContentView>
