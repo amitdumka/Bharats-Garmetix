@@ -6,6 +6,7 @@
     <Project Path="Data/Garmetix.Models/Garmetix.Models.csproj" Id="d5afbbc6-c3c3-433a-83ce-42757ce80498" />
   </Folder>
   <Folder Name="/Library/">
+    <Project Path="Common/Library/Bharat.Themes/Bharat.Themes.csproj" Id="04630eb6-eb9e-4eae-80dc-92479b3ecb75" />
     <Project Path="Common/Library/Bharat.ToolKits.Notifications/Bharat.ToolKits.Notifications.csproj" Id="41202466-10c5-4a29-b4b4-473f415c0f03" />
     <Project Path="Common/Library/Bharat.Toolkits/Bharat.ToolKits.csproj" Id="59af07a0-3205-4065-96c2-91324fc1a4a9" />
   </Folder>
