@@ -11,6 +11,7 @@
     <Project Path="Common/Library/Bharat.Toolkits/Bharat.ToolKits.csproj" Id="59af07a0-3205-4065-96c2-91324fc1a4a9" />
   </Folder>
   <Folder Name="/Modules/">
+    <Project Path="Common/Modules/Garmetix.Authentication/Garmetix.Authentication.csproj" Id="268a81dc-e1b1-4c62-bdcc-bced87f06680" />
     <Project Path="Garmetix.Billing/Garmetix.Billing.csproj" Id="66e5697d-048c-4263-8e1e-30cd634b55a6" />
     <Project Path="PointOfSale/PointOfSale.csproj" Id="798c7f88-7a3d-4c0d-9a59-05b535ab1770" />
   </Folder>
