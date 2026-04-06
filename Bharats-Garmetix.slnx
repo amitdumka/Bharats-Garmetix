@@ -1,5 +1,8 @@
 <Solution>
   <Folder Name="/Data/">
+    <Project Path="Common/Data/Garmetix.Databases/Garmetix.Databases.csproj" Id="ad1a45ef-8260-4c15-a8cb-d0fc3e5e37e3" />
+    <Project Path="Common/Data/Garmetix.DataServices/Garmetix.DataServices.csproj" Id="4f43e5c4-1107-43d2-a19a-eac15623ac4e" />
+    <Project Path="Common/Data/Garmetix.Enums/Garmetix.Enums.csproj" Id="d0ccb33e-b0bc-4556-9266-7689fa85d050" />
     <Project Path="Data/Garmetix.Models/Garmetix.Models.csproj" Id="d5afbbc6-c3c3-433a-83ce-42757ce80498" />
   </Folder>
   <Folder Name="/Modules/">
