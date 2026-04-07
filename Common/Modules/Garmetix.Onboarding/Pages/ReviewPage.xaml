@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Garmetix.Onboarding.Pages.ReviewPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:Garmetix.Onboarding.ViewModels"
+    xmlns:models="clr-namespace:Garmetix.Onboarding.Models"
+    Title="{Binding Title}"
+    x:DataType="local:ReviewViewModel">
+
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+            <Label
+                FontAttributes="Bold"
+                FontSize="Large"
+                HorizontalOptions="Center"
+                Text="Please Review Your Details" />
+
+            <Frame
+                Padding="10"
+                BorderColor="LightGray"
+                CornerRadius="5">
+                <VerticalStackLayout Spacing="5">
+                    <HorizontalStackLayout Spacing="5">
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="Medium"
+                            Text="Basic &amp; Personal Info" />
+                        <Button
+                            Padding="5,0"
+                            Command="{Binding EditSectionCommand}"
+                            CommandParameter="Step1BasicInfoPage"
+                            FontSize="Small"
+                            HeightRequest="30"
+                            Text="Edit"
+                            VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                    <Label Text="{Binding DataToReview.ClientDetails.FirstName, StringFormat='First Name: {0}'}" />
+                    <Label Text="{Binding DataToReview.ClientDetails.LastName, StringFormat='Last Name: {0}'}" />
+                    <Label Text="{Binding DataToReview.ClientDetails.Email, StringFormat='Email: {0}'}" />
+                    <Label Text="{Binding DataToReview.ClientDetails.DateOfBirth, StringFormat='Date of Birth: {0:d}'}" />
+                    <Label Text="{Binding DataToReview.ClientDetails.PhoneNumber, StringFormat='Phone: {0}'}" />
+                    <Label Text="{Binding DataToReview.ClientDetails.Gender, StringFormat='Gender: {0}'}" />
+
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame
+                Padding="10"
+                BorderColor="LightGray"
+                CornerRadius="5">
+                <VerticalStackLayout Spacing="5">
+                    <HorizontalStackLayout Spacing="5">
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="Medium"
+                            Text="Address Info" />
+                        <Button
+                            Padding="5,0"
+                            Command="{Binding EditSectionCommand}"
+                            CommandParameter="Step3AddressPage"
+                            FontSize="Small"
+                            HeightRequest="30"
+                            Text="Edit"
+                            VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                    <Label Text="{Binding DataToReview.AddressDetails.StreetAddress, StringFormat='Street: {0}'}" />
+                    <Label Text="{Binding DataToReview.AddressDetails.City, StringFormat='City: {0}'}" />
+                    <Label Text="{Binding DataToReview.AddressDetails.StateOrProvince, StringFormat='State/Province: {0}'}" />
+                    <Label Text="{Binding DataToReview.AddressDetails.PostalCode, StringFormat='Postal Code: {0}'}" />
+                    <Label Text="{Binding DataToReview.AddressDetails.Country, StringFormat='Country: {0}'}" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame
+                Padding="10"
+                BorderColor="LightGray"
+                CornerRadius="5">
+                <VerticalStackLayout Spacing="5">
+                    <HorizontalStackLayout Spacing="5">
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="Medium"
+                            Text="Company Info" />
+                        <Button
+                            Padding="5,0"
+                            Command="{Binding EditSectionCommand}"
+                            CommandParameter="Step2CompanyInfoPage"
+                            FontSize="Small"
+                            HeightRequest="30"
+                            Text="Edit"
+                            VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                    <Label Text="{Binding DataToReview.CompanyDetails.CompanyName, StringFormat='Name: {0}'}" />
+                    <Label Text="{Binding DataToReview.CompanyDetails.CompanyEmail, StringFormat='Email: {0}'}" />
+                    <Label Text="{Binding DataToReview.CompanyDetails.CompanyPhoneNumber, StringFormat='Phone: {0}'}" />
+                    <Label Text="{Binding DataToReview.CompanyDetails.GSTIN, StringFormat='GSTIN: {0}'}" />
+                    <Label Text="{Binding DataToReview.CompanyDetails.PAN, StringFormat='PAN: {0}'}" />
+
+                    <Label Text="{Binding DataToReview.CompanyDetails.DateOfIncorporation, StringFormat='Starting Date: {0}'}" />
+                    <Label Text="{Binding DataToReview.CompanyDetails.CompanyType, StringFormat='Type: {0}'}" />
+                    <Label Text="{Binding DataToReview.CompanyDetails.StoreCategory, StringFormat='Category: {0}'}" />
+
+
+
+                </VerticalStackLayout>
+            </Frame>
+            <Frame
+                Padding="10"
+                BorderColor="LightGray"
+                CornerRadius="5">
+                <VerticalStackLayout Spacing="5">
+                    <HorizontalStackLayout Spacing="5">
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="Medium"
+                            Text="Key Personal Info" />
+                        <Button
+                            Padding="5,0"
+                            Command="{Binding EditSectionCommand}"
+                            CommandParameter="Step5keyPersonalDetailsPage"
+                            FontSize="Small"
+                            HeightRequest="30"
+                            Text="Edit"
+                            VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                    <Label Text="Store Manager" />
+                    <Label Text="{Binding DataToReview.KeyPersonalDetails.StoreManagerName, StringFormat='Name: {0}'}" />
+                    <Label Text="{Binding DataToReview.KeyPersonalDetails.StoreManagerEmail, StringFormat='Email: {0}'}" />
+                    <Label Text="{Binding DataToReview.KeyPersonalDetails.StoreManagerPhoneNumber, StringFormat='Phone: {0}'}" />
+                    <Label Text="Accountant" />
+                    <Label Text="{Binding DataToReview.KeyPersonalDetails.AccountantName, StringFormat='Name: {0}'}" />
+                    <Label Text="{Binding DataToReview.KeyPersonalDetails.AccountantEmail, StringFormat='Email: {0}'}" />
+                    <Label Text="{Binding DataToReview.KeyPersonalDetails.AccountantPhoneNumber, StringFormat='Phone: {0}'}" />
+
+
+
+
+                </VerticalStackLayout>
+            </Frame>
+            <Grid
+                Margin="0,20,0,0"
+                ColumnDefinitions="*,*"
+                ColumnSpacing="10">
+                <Button
+                    Grid.Column="0"
+                    Command="{Binding GoBackCommand}"
+                    HorizontalOptions="FillAndExpand"
+                    IsEnabled="{Binding IsNotBusy}"
+                    Text="Back" />
+                <Button
+                    Grid.Column="1"
+                    BackgroundColor="ForestGreen"
+                    Command="{Binding SubmitCommand}"
+                    HorizontalOptions="FillAndExpand"
+                    IsEnabled="{Binding IsNotBusy}"
+                    Text="Submit"
+                    TextColor="White" />
+            </Grid>
+            <ActivityIndicator
+                HorizontalOptions="Center"
+                IsRunning="{Binding IsBusy}"
+                IsVisible="{Binding IsBusy}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

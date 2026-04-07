@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Garmetix.Onboarding.Pages.Step3AddressPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:Garmetix.Onboarding.ViewModels"
+    Title="{Binding Title}"
+    x:DataType="local:Step3AddressViewModel">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15" />
+        <Label
+            FontAttributes="Bold"
+            FontSize="Large"
+            HorizontalOptions="Center"
+            Text="Address Information" />
+
+        <Label Text="Street Address" />
+        <Entry Placeholder="Enter street address" Text="{Binding StreetAddress}" />
+        <Label
+            FontSize="Small"
+            IsVisible="{Binding Errors[StreetAddress], Converter={StaticResource IsNotNullOrEmptyConverter}}"
+            Text="{Binding Errors[StreetAddress]}"
+            TextColor="Red" />
+
+        <Label Text="City" />
+        <Entry Placeholder="Enter city" Text="{Binding City}" />
+        <Label
+            FontSize="Small"
+            IsVisible="{Binding Errors[City], Converter={StaticResource IsNotNullOrEmptyConverter}}"
+            Text="{Binding Errors[City]}"
+            TextColor="Red" />
+
+        <Label Text="State/Province" />
+        <Entry Placeholder="Enter state or province" Text="{Binding StateOrProvince}" />
+        <Label Text="Postal Code" />
+        <Entry Placeholder="Enter postal code" Text="{Binding PostalCode}" />
+        <Label
+            FontSize="Small"
+            IsVisible="{Binding Errors[PostalCode], Converter={StaticResource IsNotNullOrEmptyConverter}}"
+            Text="{Binding Errors[PostalCode]}"
+            TextColor="Red" />
+
+        <Label Text="Country" />
+        <Entry Placeholder="Enter country" Text="{Binding Country}" />
+        <Label
+            FontSize="Small"
+            IsVisible="{Binding Errors[Country], Converter={StaticResource IsNotNullOrEmptyConverter}}"
+            Text="{Binding Errors[Country]}"
+            TextColor="Red" />
+
+
+        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+            <Button
+                Grid.Column="0"
+                Command="{Binding GoBackCommand}"
+                HorizontalOptions="FillAndExpand"
+                IsEnabled="{Binding IsNotBusy}"
+                Text="Back" />
+            <Button
+                Grid.Column="1"
+                Command="{Binding NextStepCommand}"
+                HorizontalOptions="FillAndExpand"
+                IsEnabled="{Binding IsNotBusy}"
+                Text="Review" />
+        </Grid>
+        <ActivityIndicator
+            HorizontalOptions="Center"
+            IsRunning="{Binding IsBusy}"
+            IsVisible="{Binding IsBusy}" />
+
+    </ScrollView>
+</ContentPage>

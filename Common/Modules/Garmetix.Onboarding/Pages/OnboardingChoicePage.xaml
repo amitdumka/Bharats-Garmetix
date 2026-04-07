@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Garmetix.Onboarding.Pages.OnboardingChoicePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Welcome">
+    <VerticalStackLayout Padding="30" Spacing="20">
+        <Label
+            FontSize="Medium"
+            HorizontalOptions="Center"
+            Text="Welcome! Please choose how to get started:" />
+        <Button Clicked="OnStartOnboardingClicked" Text="Start Onboarding new Company" />
+        <Button Clicked="OnSeedDatabaseClicked" Text="Seed Database from  existing list" />
+    </VerticalStackLayout>
+</ContentPage>

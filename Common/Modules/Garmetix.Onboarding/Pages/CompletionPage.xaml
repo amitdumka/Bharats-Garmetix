@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Garmetix.Onboarding.Pages.CompletionPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Garmetix.Onboarding.ViewModels"
+    Title="{Binding Title}"
+    x:DataType="vm:CompletionViewModel"
+    Shell.NavBarIsVisible="False">
+    <VerticalStackLayout
+        Padding="30"
+        Spacing="20"
+        VerticalOptions="Center">
+        <Label
+            FontAttributes="Bold"
+            FontSize="Header"
+            HorizontalOptions="Center"
+            Text="Registration Successful!" />
+        <Label
+            FontSize="Medium"
+            HorizontalOptions="Center"
+            HorizontalTextAlignment="Center"
+            Text="Thank you for completing the onboarding process. Your account has been created." />
+        <Button
+            Margin="0,20,0,0"
+            Command="{Binding FinishCommand}"
+            HorizontalOptions="Center"
+            Text="Done"
+            WidthRequest="200" />
+    </VerticalStackLayout>
+</ContentPage>

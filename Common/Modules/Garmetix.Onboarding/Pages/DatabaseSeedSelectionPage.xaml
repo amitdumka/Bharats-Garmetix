@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Garmetix.Onboarding.Pages.DatabaseSeedSelectionPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Seed Database">
+    <VerticalStackLayout Padding="30" Spacing="20">
+        <Label
+            FontAttributes="Bold"
+            FontSize="Header"
+            HorizontalOptions="Center"
+            Text="Seed Database" />
+        <Label
+            FontSize="Medium"
+            HorizontalOptions="Center"
+            Text="Aadwika Fashion Group"
+            TextColor="Gray" />
+        <Label FontSize="Medium" Text="Select a Company:" />
+        <Picker x:Name="SeedPicker" SelectedIndex="0">
+            <Picker.ItemsSource>
+                <x:Array Type="{x:Type x:String}">
+                    <x:String>Aadwika Fashion By Amit Kumar</x:String>
+                    <x:String>Aadwika Fashion By Shalini Kumari</x:String>
+                </x:Array>
+            </Picker.ItemsSource>
+        </Picker>
+        <Button Clicked="OnSeedClicked" Text="Seed Database" />
+    </VerticalStackLayout>
+</ContentPage>
