@@ -28,15 +28,16 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.51" />
 		<PackageReference Include="Sentry" Version="6.3.0" />
-		<PackageReference Include="Syncfusion.Maui.DataGrid" Version="30.1.40" />
-		<PackageReference Include="Syncfusion.Maui.DataForm" Version="30.1.40" />
-		<PackageReference Include="Syncfusion.Maui.ListView" Version="30.1.40" />
-		<PackageReference Include="Syncfusion.Maui.Toolkit" Version="1.0.5" />
+		<PackageReference Include="Syncfusion.Maui.DataGrid" Version="33.1.47" />
+		<PackageReference Include="Syncfusion.Maui.DataForm" Version="33.1.47" />
+		<PackageReference Include="Syncfusion.Maui.ListView" Version="33.1.47" />
+		<PackageReference Include="Syncfusion.Maui.Toolkit" Version="1.0.9" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\Data\Garmetix.Models\Garmetix.Models.csproj" />
 	  <ProjectReference Include="..\..\Data\Garmetix.Databases\Garmetix.Databases.csproj" />
+	  <ProjectReference Include="..\..\Data\Garmetix.DataServices\Garmetix.DataServices.csproj" />
 	  <ProjectReference Include="..\Bharat.ToolKits.Notifications\Bharat.ToolKits.Notifications.csproj" />
 	</ItemGroup>
 

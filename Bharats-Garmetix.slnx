@@ -17,8 +17,11 @@
     <Project Path="PointOfSale/PointOfSale.csproj" Id="798c7f88-7a3d-4c0d-9a59-05b535ab1770" />
   </Folder>
   <Folder Name="/Services/">
+    <Project Path="Common/Services/Bharat.GoogleService/Bharat.GoogleService.csproj" Id="c2dc83c1-688a-4e15-8929-d58b7eeab11a" />
     <Project Path="Common/Services/Garmetix.CoreServices/Garmetix.CoreServices.csproj" Id="be67dead-b7d2-4a6e-b8b6-d71f211e230d" />
     <Project Path="Common/Services/Garmetix.PdfServices/Garmetix.PdfServices.csproj" Id="b8ae3424-1507-4f8e-afb5-3632f3dab0ea" />
   </Folder>
-  <Project Path="Garmetix/Garmetix.csproj" />
+  <Project Path="Garmetix/Garmetix.csproj">
+    <Deploy Solution="Debug|*" />
+  </Project>
 </Solution>

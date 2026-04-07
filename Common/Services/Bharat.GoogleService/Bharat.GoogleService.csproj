@@ -26,14 +26,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.5" />
+		<PackageReference Include="Google.Apis.Core" Version="1.73.0" />
+		<PackageReference Include="Google.Apis.Drive.v3" Version="1.73.0.4098" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.51" />
-		<!--<PackageReference Include="Syncfusion.XlsIO.Net.Core" Version="33.1.47" />-->
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\..\..\Data\Garmetix.Models\Garmetix.Models.csproj" />
-	  <ProjectReference Include="..\..\Library\Garmetix.Core\Garmetix.Core.csproj" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 	</ItemGroup>
 
 </Project>
