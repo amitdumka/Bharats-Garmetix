@@ -16,5 +16,9 @@
     <Project Path="Garmetix.Billing/Garmetix.Billing.csproj" Id="66e5697d-048c-4263-8e1e-30cd634b55a6" />
     <Project Path="PointOfSale/PointOfSale.csproj" Id="798c7f88-7a3d-4c0d-9a59-05b535ab1770" />
   </Folder>
+  <Folder Name="/Services/">
+    <Project Path="Common/Services/Garmetix.CoreServices/Garmetix.CoreServices.csproj" Id="be67dead-b7d2-4a6e-b8b6-d71f211e230d" />
+    <Project Path="Common/Services/Garmetix.PdfServices/Garmetix.PdfServices.csproj" Id="b8ae3424-1507-4f8e-afb5-3632f3dab0ea" />
+  </Folder>
   <Project Path="Garmetix/Garmetix.csproj" />
 </Solution>

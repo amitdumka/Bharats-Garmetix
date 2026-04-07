@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFrameworks>net10.0-android</TargetFrameworks>
@@ -27,10 +27,11 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.51" />
+		<PackageReference Include="Syncfusion.Pdf.Net.Core" Version="33.1.47" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Garmetix.Databases\Garmetix.Databases.csproj" />
+	  <ProjectReference Include="..\..\Data\Garmetix.Databases\Garmetix.Databases.csproj" />
 	</ItemGroup>
 
 </Project>

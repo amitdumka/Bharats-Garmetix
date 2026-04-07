@@ -18,7 +18,7 @@ namespace Bharat.ToolKits.Extensions
         /// <param name="easing">The easing function to use to transition in, out, or in and out of the animation.</param>
         /// <typeparam name="TElement">The 1st type parameter.</typeparam>
         public static Task<bool> ColorTo<TElement>(this TElement element, Expression<Func<TElement, Color>> start,
-            Color end, uint rate = 16, uint length = 250, Easing easing = null)
+            Color end, uint rate = 16, uint length = 250, Easing? easing = null)
             where TElement : IAnimatable
         {
             if (element is null)
@@ -232,7 +232,7 @@ namespace Bharat.ToolKits.Extensions
 
         public static Task<bool> TransitionTo<TElement>(this TElement element, string animationName,
             Action<double> callback, Func<double> start, double end, uint rate = 16, uint length = 250,
-            Easing easing=null )
+            Easing? easing=null )
             where TElement : IAnimatable
         {
             if (element is null)
@@ -289,7 +289,7 @@ namespace Bharat.ToolKits.Extensions
         }
 
         public static Task<bool> TransitionTo<TElement>(this TElement element, string animationName,
-            Action<double> callback, double start, double end, uint rate = 16, uint length = 250, Easing easing = null)
+            Action<double> callback, double start, double end, uint rate = 16, uint length = 250, Easing? easing = null)
             where TElement : IAnimatable
         {
             if (element is null)
