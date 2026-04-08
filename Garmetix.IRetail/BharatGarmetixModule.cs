@@ -1,6 +1,4 @@
-﻿using CommunityToolkit.Maui;
-using CommunityToolkit.Maui.Converters;
-using Fonts;
+﻿using Fonts;
 using Microsoft.Maui.LifecycleEvents;
 using Syncfusion.Maui.Core.Hosting;
 using Syncfusion.Maui.Toolkit.Hosting;
@@ -13,17 +11,15 @@ using Garmetix.PDFServices;
 using Garmetix.CoreBase;
 using Garmetix.DataServices;
 using Garmetix.CoreServices;
-using Garmetix.Databases;
 using Garmetix.Authentication;
 using Garmetix.Reports;
-using Garmetix.Models.Stores;
 
 #if WINDOWS
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 #endif
 
-namespace Garmetix
+namespace Garmetix.IRetail
 {
     internal static class BharatGarmetixModules
     {

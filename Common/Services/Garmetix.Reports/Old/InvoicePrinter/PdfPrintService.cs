@@ -1,8 +1,7 @@
 // Services/PdfPrintService.cs 
 using Bharat.ToolKits.Helpers;
 using Bharat.ToolKits.Notifications;
-using Garmetix.Reports.InvoicePrinter.Models;
-using Garmetix.Services.Notifications;
+using Garmetix.Reports.InvoicePrinter.Models; 
 using Syncfusion.Pdf;
 using Syncfusion.Pdf.Graphics;
 using Syncfusion.Pdf.Grid;

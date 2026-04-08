@@ -5,25 +5,27 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Garmetix.IRetail"
     xmlns:controls="clr-namespace:Garmetix.Views.Controls;assembly=Garmetix.Core"
-xmlns:coreBase="clr-namespace:Garmetix.CoreBase.View;assembly=Garmetix.CoreBase"
-xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"
-    
-     FlyoutBackgroundColor="{AppThemeBinding Dark={DynamicResource BackgroundColorDark},
+    xmlns:coreBase="clr-namespace:Garmetix.CoreBase.View;assembly=Garmetix.CoreBase"
+    xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"    
+    FlyoutBackgroundColor="{AppThemeBinding Dark={DynamicResource BackgroundColorDark},
                                          Light={DynamicResource BackgroundColorLight}}"
- FlyoutBackgroundImage="thearvindstore005.jpg"
- FlyoutBackgroundImageAspect="Fill"
- FlyoutHeaderBehavior="CollapseOnScroll"
- Shell.FlyoutBehavior="Flyout"
+    x:Name="shell"
+    FlyoutBackgroundImage="thearvindstore005.jpg"
+    FlyoutBackgroundImageAspect="Fill"
+    FlyoutHeaderBehavior="CollapseOnScroll"
+    Shell.FlyoutBehavior="Flyout"
     Title="IRetail">
 
 
     <Shell.FlyoutHeader>
         <controls:ShellHeader />
     </Shell.FlyoutHeader>
+    
     <ShellContent
         Title="Home"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
+    
     <coreBase:AccountingMenu />
     <coreBase:AccountsMenu />
     <coreBase:LedgerMenu />

@@ -1,6 +1,9 @@
 ﻿using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
-using Plugin.LocalNotification;
+//using Plugin.LocalNotification;
+
+using Garmetix.Databases;
+
 
 namespace Garmetix.IRetail
 {
@@ -10,17 +13,22 @@ namespace Garmetix.IRetail
         {
             var builder = MauiApp.CreateBuilder();
             builder
-                .UseMauiApp<App>().UseLocalNotification().UseMauiCommunityToolkit()
-                .ConfigureFonts(fonts =>
-                {
-                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                });
-
-#if DEBUG
-    		builder.Logging.AddDebug();
+                .UseMauiApp<App>().EnableBharatGarmetixModules()
+                    .ConfigureMauiHandlers(handlers =>
+                    {
+#if IOS || MACCATALYST
+                     handlers.AddHandler<CollectionView, Microsoft.Maui.Controls.Handlers.Items2.CollectionViewHandler2>();
 #endif
-
+                    })
+                .UseGarmetixDatabases()
+                .UseMauiCommunityToolkit(options =>
+                {
+                    options.SetShouldEnableSnackbarOnWindows(true);
+                });
+#if DEBUG
+            builder.Logging.AddDebug();
+            builder.Services.AddLogging(configure => configure.AddDebug());
+#endif
             return builder.Build();
         }
     }

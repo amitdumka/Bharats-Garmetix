@@ -41,4 +41,39 @@
     <SolidColorBrush x:Key="Gray600Brush" Color="{StaticResource Gray600}"/>
     <SolidColorBrush x:Key="Gray900Brush" Color="{StaticResource Gray900}"/>
     <SolidColorBrush x:Key="Gray950Brush" Color="{StaticResource Gray950}"/>
+
+    <!--Handle to use the theme colors in the application-->
+
+    <!--  Backgrounds  -->
+    <Color x:Key="DarkBackground">#17171a</Color>
+    <Color x:Key="LightOnDarkBackground">#C3C3C3</Color>
+    <Color x:Key="LightBackground">#F2F2F2</Color>
+    <Color x:Key="DarkOnLightBackground">#0D0D0D</Color>
+    <Color x:Key="LightSecondaryBackground">#E0E0E0</Color>
+    <Color x:Key="DarkSecondaryBackground">#222228</Color>
+
+    <Color x:Key="LightTertiaryBackground">#E0E0E0</Color>
+    <Color x:Key="DarkTertiaryBackground">#222228</Color>
+
+    <Color x:Key="LightPrimaryBackground">#E0E0E0</Color>
+    <Color x:Key="DarkPrimaryBackground">#222228</Color>
+
+    <!--  Text  -->
+    <Color x:Key="LightSecondaryText">#0D0D0D</Color>
+    <Color x:Key="DarkSecondaryText">#C3C3C3</Color>
+
+    <Color x:Key="LightTertiaryText">#0D0D0D</Color>
+    <Color x:Key="DarkTertiaryText">#C3C3C3</Color>
+
+    <Color x:Key="LightPrimaryText">#0D0D0D</Color>
+    <Color x:Key="DarkPrimaryText">#C3C3C3</Color>
+    <!--  Border  -->
+    <Color x:Key="LightSecondaryBorder">#E0E0E0</Color>
+    <Color x:Key="DarkSecondaryBorder">#222228</Color>
+
+    <Color x:Key="LightTertiaryBorder">#E0E0E0</Color>
+    <Color x:Key="DarkTertiaryBorder">#222228</Color>
+
+    <Color x:Key="LightPrimaryBorder">#E0E0E0</Color>
+    <Color x:Key="DarkPrimaryBorder">#222228</Color>
 </ResourceDictionary>

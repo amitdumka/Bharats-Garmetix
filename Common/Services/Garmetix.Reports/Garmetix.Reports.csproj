@@ -26,7 +26,17 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.51" />
+		<PackageReference Include="Syncfusion.Maui.Inputs" Version="33.1.47" />
+		<PackageReference Include="Syncfusion.Pdf.Net.Core" Version="33.1.47" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\Data\Garmetix.Models\Garmetix.Models.csproj" />
+	  <ProjectReference Include="..\..\Data\Garmetix.Databases\Garmetix.Databases.csproj" />
+	  <ProjectReference Include="..\..\Library\Bharat.ToolKits.Notifications\Bharat.ToolKits.Notifications.csproj" />
+	  <ProjectReference Include="..\Garmetix.CoreServices\Garmetix.CoreServices.csproj" />
+	  <ProjectReference Include="..\Garmetix.PdfServices\Garmetix.PdfServices.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

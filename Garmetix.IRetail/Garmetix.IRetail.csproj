@@ -89,4 +89,10 @@
 	  <ProjectReference Include="..\Common\Services\Garmetix.Reports\Garmetix.Reports.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <MauiXaml Update="Resources\Styles\AppStyle.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
 </Project>
