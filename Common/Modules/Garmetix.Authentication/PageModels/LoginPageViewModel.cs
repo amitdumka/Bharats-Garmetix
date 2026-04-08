@@ -13,7 +13,7 @@ namespace Garmetix.Authentication.PageModels
         {
             LoginInfo = new LoginInfo
             {
-                Email = "storemanager@aadwikafashion.in"
+                Email = "storemanager@aadwikafashion.com"
             ,
                 Password = "StoreManager@1234",
                 RememberMe = true
