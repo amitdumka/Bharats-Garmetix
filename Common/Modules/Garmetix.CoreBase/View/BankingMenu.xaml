@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<FlyoutItem
+    x:Class="Garmetix.CoreBase.View.BankingMenu"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:acc="clr-namespace:Garmetix.CoreBase.Accounting.Pages"
+    xmlns:mobile="clr-namespace:Garmetix.CoreBase.Accounting.Pages.Mobile"
+    xmlns:services="clr-namespace:Garmetix.Core.Sessions;assembly=Garmetix.Core"
+    Title="Banking">
+    <Tab Title="Bank Accounts" Icon="rain_icon.png">
+        <ShellContent
+            Title="Bank Accounts"
+            ContentTemplate="{DataTemplate mobile:BankAccountPage}"
+            Route="BankAccounts" />
+    </Tab>
+    <Tab Title="Banks" Icon="rain_icon.png">
+        <ShellContent
+            Title="Banks"
+            ContentTemplate="{DataTemplate mobile:BankPage}"
+            Route="Banks" />
+    </Tab>
+    <Tab Title="Account Details" Icon="rain_icon.png">
+        <ShellContent
+            Title="Account Details"
+            ContentTemplate="{DataTemplate acc:BankAccountDetailPage}"
+            IsVisible="{x:Static services:SessionService.IsAdminUser}"
+            Route="BankAccountDetails" />
+    </Tab>
+    <Tab Title="Account List" Icon="rain_icon.png">
+        <ShellContent
+            Title="Account List"
+            ContentTemplate="{DataTemplate mobile:BankAccountListPage}"
+            Route="AccountList" />
+    </Tab>
+
+
+    <Tab Title="Vendor Accounts" Icon="rain_icon.png">
+        <ShellContent
+            Title="Vendoor Accounts"
+            ContentTemplate="{DataTemplate mobile:VendorBankAccountPage}"
+            Route="VendorAccounts" />
+    </Tab>
+    <Tab Title="Transactions" Icon="rain_icon.png">
+        <ShellContent
+            Title="Transactions"
+            ContentTemplate="{DataTemplate acc:BankTransactionPage}"
+            Route="BankTransactions" />
+    </Tab>
+    <Tab Title="Cheque Logs" Icon="rain_icon.png">
+        <ShellContent
+            Title="Cheque Logs"
+            ContentTemplate="{DataTemplate acc:ChequeLogPage}"
+            Route="ChequeLogs" />
+    </Tab>
+</FlyoutItem>

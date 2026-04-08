@@ -3,8 +3,8 @@ using Bharat.ToolKits.Notifications;
 using Garmetix.Databases;
 using Garmetix.Databases.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Plugin.LocalNotification;
+using Plugin.LocalNotification.Core.Models;
 //using Plugin.LocalNotification;
 
 

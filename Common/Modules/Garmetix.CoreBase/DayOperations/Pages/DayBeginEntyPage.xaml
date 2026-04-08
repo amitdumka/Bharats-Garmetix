@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Garmetix.CoreBase.DayOperations.Pages.DayBeginEntyPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:Garmetix.Models.DayOperations;assembly=Garmetix.Models"
+    xmlns:pagemodels="clr-namespace:Garmetix.CoreBase.DayOperations.PageModels"
+    xmlns:syncfusion="clr-namespace:Syncfusion.Maui.DataForm;assembly=Syncfusion.Maui.DataForm"
+    xmlns:vmmodels="clr-namespace:Garmetix.CoreBase.DayOperations.Models"
+    x:Name="DayBeginEntryPage"
+    Title="Day Begins"
+    x:DataType="pagemodels:DayOperationPageModel">
+    <ScrollView>
+        <Grid RowDefinitions="Auto,Auto">
+            <Label
+                Grid.Row="0"
+                FontSize="20"
+                HorizontalOptions="Center"
+                Text="Day Begins"
+                TextColor="{AppThemeBinding Light={DynamicResource PrimaryColorLight},
+                                            Dark={DynamicResource PrimaryColorDark}}"
+                VerticalOptions="Center" />
+            <Grid
+                Grid.Row="1"
+                Margin="10,10,10,10"
+                ColumnDefinitions="Auto,*"
+                ColumnSpacing="10"
+                HorizontalOptions="Center">
+                <Border Grid.Column="0" Background="{DynamicResource DarkBackground}">
+                    <Image
+                        x:Name="DayBeginImage"
+                        Grid.Column="0"
+                        Source="af011.jpg" />
+                </Border>
+                <Border Grid.Column="{OnPlatform Android='0', iOS='0', Default='1'}" Grid.ColumnSpan="{OnPlatform Android='2', iOS='2', Default='1'}">
+                    <VerticalStackLayout>
+
+                        <Grid RowDefinitions="Auto,Auto" RowSpacing="20">
+                            <syncfusion:SfDataForm
+                                x:Name="dayBeginForm"
+                                Margin="{OnPlatform iOS='-5,1,-10,5',
+                                                    Android='5,1,5,5',
+                                                    Default='10,10,10,5'}"
+                                AutoGenerateItems="True"
+                                ColumnCount="2"
+                                CommitMode="PropertyChanged"
+                                DataObject="{Binding DayBeginEntry}"
+                                LayoutType="TextInputLayout"
+                                MinimumHeightRequest="400"
+                                ValidationMode="PropertyChanged">
+
+
+                                <syncfusion:SfDataForm.TextInputLayoutSettings>
+                                    <syncfusion:TextInputLayoutSettings OutlineCornerRadius="5" ShowHelperText="True">
+                                        <syncfusion:TextInputLayoutSettings.HelperTextStyle>
+                                            <syncfusion:DataFormTextStyle FontFamily="Roboto-Regular" />
+                                        </syncfusion:TextInputLayoutSettings.HelperTextStyle>
+                                    </syncfusion:TextInputLayoutSettings>
+                                </syncfusion:SfDataForm.TextInputLayoutSettings>
+
+                                <syncfusion:SfDataForm.EditorTextStyle>
+                                    <syncfusion:DataFormTextStyle
+                                        FontAttributes="Bold"
+                                        FontFamily="Roboto-Regular"
+                                        FontSize="14"
+                                        TextColor="{AppThemeBinding Light={DynamicResource PrimaryTextColorLight},
+                                                                    Dark={DynamicResource PrimaryTextColorDark}}" />
+                                </syncfusion:SfDataForm.EditorTextStyle>
+
+
+                                <syncfusion:SfDataForm.LabelTextStyle>
+                                    <syncfusion:DataFormTextStyle
+                                        FontAttributes="Bold"
+                                        FontFamily="Roboto-Regular"
+                                        FontSize="16"
+                                        TextColor="{AppThemeBinding Light={DynamicResource PlaceholderTextColorLight},
+                                                                    Dark={DynamicResource PlaceholderTextColorDark}}" />
+                                </syncfusion:SfDataForm.LabelTextStyle>
+
+                                <syncfusion:SfDataForm.ErrorLabelTextStyle>
+                                    <syncfusion:DataFormTextStyle FontFamily="Roboto-Regular" TextColor="{AppThemeBinding Light={DynamicResource SuccessLight}, Dark={DynamicResource SuccessLight}}" />
+                                </syncfusion:SfDataForm.ErrorLabelTextStyle>
+
+                                <syncfusion:SfDataForm.ValidMessageLabelTextStyle>
+                                    <syncfusion:DataFormTextStyle FontFamily="Roboto-Regular" />
+                                </syncfusion:SfDataForm.ValidMessageLabelTextStyle>
+
+
+                            </syncfusion:SfDataForm>
+                            <HorizontalStackLayout
+                                Grid.Row="1"
+                                Margin="10"
+                                Background="{DynamicResource DarkBackground}"
+                                HorizontalOptions="Center"
+                                Spacing="10">
+                                <Button Command="{Binding SaveDayBeginEntryCommand}" Text="Day Begin" />
+                                <Button Command="{Binding CancelCommand}" Text="Cancel" />
+                                <Button Command="{Binding RefreshCommand}" Text="Refresh" />
+                                <Button Command="{Binding ShareCommand}" Text="Share" />
+                            </HorizontalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+        </Grid>
+    </ScrollView>
+</ContentPage>

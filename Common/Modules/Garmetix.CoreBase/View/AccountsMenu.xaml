@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<FlyoutItem
+    x:Class="Garmetix.CoreBase.View.AccountsMenu"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:accview="clr-namespace:Garmetix.CoreBase.Accounting.Pages.Mobile"
+    xmlns:days="clr-namespace:Garmetix.CoreBase.DayOperations.Pages"
+    Title="Accounts">
+    <Tab Title="Customer Due" Icon="rain_icon.png">
+        <ShellContent
+            Title="Customer Due"
+            ContentTemplate="{DataTemplate accview:CustomerDuePage}"
+            Route="CustomerDues" />
+    </Tab>
+    <Tab Title=" Due Recovery" Icon="rain_icon.png">
+        <ShellContent
+            Title=" Due Recovery"
+            ContentTemplate="{DataTemplate accview:DueRecoveryPage}"
+            Route="DuesRecovery" />
+    </Tab>
+
+
+    <Tab Title="Transcation" Icon="rain_icon.png">
+        <ShellContent
+            Title="Transcations"
+            ContentTemplate="{DataTemplate accview:TransactionPage}"
+            Route="Transcations" />
+    </Tab>
+    <Tab Title="Petty Cash Sheet" Icon="rain_icon.png">
+        <ShellContent
+            Title="Petty Cash Sheet"
+            ContentTemplate="{DataTemplate days:CashDetailPage}"
+            Route="PettyCashSheets" />
+    </Tab>
+    <Tab Title="Cash Details" Icon="rain_icon.png">
+        <ShellContent
+            Title="Cash Details"
+            ContentTemplate="{DataTemplate days:CashDetailPage}"
+            Route="cashdetails" />
+    </Tab>
+</FlyoutItem>

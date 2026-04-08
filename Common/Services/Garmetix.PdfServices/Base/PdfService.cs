@@ -3,7 +3,8 @@
 using Bharat.ToolKits.Helpers;
 using Garmetix.Databases;
 using Garmetix.Databases.Services;
-using Garmetix.PdfServices.Interfaces; 
+using Garmetix.PdfServices.Interfaces;
+using Sentry;
 using Syncfusion.Drawing;
 using Syncfusion.Pdf;
 using Syncfusion.Pdf.Barcode;

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<FlyoutItem
+    x:Class="Garmetix.CoreBase.View.HRMMenu"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:hrm="clr-namespace:Garmetix.CoreBase.HRM.Pages"
+    xmlns:mobile="clr-namespace:Garmetix.CoreBase.HRM.Pages.Mobile"
+    Title="HRM">
+    <Tab Title="Attendance" Icon="rain_icon.png">
+        <ShellContent
+            Title="Attendace"
+            ContentTemplate="{OnPlatform Android={DataTemplate mobile:AttendancePage},
+                                         iOS={DataTemplate mobile:AttendancePage},
+                                         Default={DataTemplate hrm:AttendancePage}}"
+            Route="Attendance" />
+    </Tab>
+    <Tab
+        Title="Time Sheet"
+        Icon="rain_icon.png"
+        IsVisible="False">
+        <ShellContent
+            Title="Time Sheet"
+            ContentTemplate="{OnPlatform Android={DataTemplate mobile:TimeSheetPage},
+                                         iOS={DataTemplate mobile:TimeSheetPage},
+                                         Default={DataTemplate hrm:TimeSheetPage}}"
+            Route="TimeSheets" />
+    </Tab>
+    <Tab Title="Salary" Icon="rain_icon.png">
+        <ShellContent
+            Title="Salary Payment"
+            ContentTemplate="{OnPlatform Android={DataTemplate mobile:SalaryPaymentPage},
+                                         iOS={DataTemplate mobile:SalaryPaymentPage},
+                                         Default={DataTemplate hrm:SalaryPaymentPage}}"
+            Route="Salarys" />
+    </Tab>
+
+
+    <Tab Title="Employees" Icon="rain_icon.png">
+        <ShellContent
+            Title="Employee"
+            ContentTemplate="{DataTemplate hrm:EmployeesPage}"
+            Route="Employees" />
+    </Tab>
+
+    <Tab
+        Title="PaySlip"
+        Icon="rain_icon.png"
+        IsVisible="False">
+        <ShellContent
+            Title="PaySlip"
+            ContentTemplate="{DataTemplate hrm:SalaryPaySlipPage}"
+            Route="SalaryPaySlipPage" />
+    </Tab>
+    <Tab
+        Title="Salary Structures"
+        Icon="rain_icon.png"
+        IsVisible="False">
+        <ShellContent
+            Title="Salary Structures"
+            ContentTemplate="{DataTemplate hrm:SalaryStructurePage}"
+            Route="SalaryStructurePage" />
+    </Tab>
+    <Tab Title="Monthly Attendance" Icon="rain_icon.png">
+        <ShellContent
+            Title="Monthly Attendance"
+            ContentTemplate="{OnPlatform Android={DataTemplate mobile:MonthlyAttendancePage},
+                                         iOS={DataTemplate mobile:MonthlyAttendancePage},
+                                         Default={DataTemplate hrm:MonthlyAttendancePage}}"
+            Route="MonthlyAttendancePage" />
+    </Tab>
+</FlyoutItem>

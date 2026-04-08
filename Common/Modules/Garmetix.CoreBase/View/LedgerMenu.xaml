@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<FlyoutItem
+    x:Class="Garmetix.CoreBase.View.LedgerMenu"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:accview="clr-namespace:Garmetix.CoreBase.Accounting.Pages.Mobile"
+    Title="Ledgers">
+
+    <Tab Title="Parties" Icon="rain_icon.png">
+        <ShellContent
+            Title="Party"
+            ContentTemplate="{DataTemplate accview:PartyPage}"
+            Route="Partys" />
+    </Tab>
+    <Tab Title="Ledger" Icon="rain_icon.png">
+        <ShellContent
+            Title="Ledgers"
+            ContentTemplate="{DataTemplate accview:LedgerPage}"
+            Route="Ledgers" />
+    </Tab>
+    <Tab Title="Ledger Groups" Icon="rain_icon.png">
+        <ShellContent
+            Title="Ledger Groups"
+            ContentTemplate="{DataTemplate accview:LedgerGroupPage}"
+            Route="LedgerGroups" />
+    </Tab>
+
+
+</FlyoutItem>

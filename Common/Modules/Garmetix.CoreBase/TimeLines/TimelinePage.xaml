@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Garmetix.CoreBase.TimeLines.TimelinePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:Garmetix.Models;assembly=Garmetix.Models"
+    xmlns:vm="clr-namespace:Garmetix.CoreBase.TimeLines"
+    Title="Weekly Timeline"
+    x:DataType="vm:TimelinePageModel">
+
+    <!--<ContentPage.BindingContext>
+        <vm:TimelinePageModel />
+    </ContentPage.BindingContext>-->
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem
+            Command="{Binding AddNewEntryCommand}"
+            IconImageSource="plus.png"
+            Text="Add Entry" />
+        <!--
+            You would need to implement AddNewEntryCommand in your ViewModel
+            and navigate to an Add/Edit page.
+        -->
+    </ContentPage.ToolbarItems>
+
+    <Grid RowDefinitions="Auto, *">
+        <!--  Loading Indicator  -->
+        <ActivityIndicator
+            Grid.RowSpan="2"
+            HorizontalOptions="Center"
+            IsRunning="{Binding IsBusy}"
+            VerticalOptions="Center"
+            Color="{AppThemeBinding Light=Blue,
+                                    Dark=LightBlue}" />
+
+        <Label
+            Grid.Row="0"
+            Margin="10"
+            FontAttributes="Bold"
+            FontSize="Subtitle"
+            HorizontalOptions="Center"
+            Text="Weekly Timeline" />
+
+        <!--  Use a CollectionView to display the grouped data  -->
+        <CollectionView
+            Grid.Row="1"
+            ItemsSource="{Binding TimelineEntries}"
+            SelectionMode="None"
+            WidthRequest="500">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout ItemSpacing="10" Orientation="Vertical" />
+            </CollectionView.ItemsLayout>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="vm:TimelineGroup">
+                    <Frame
+                        Margin="10,5"
+                        Padding="15"
+                        BackgroundColor="{AppThemeBinding Light=White,
+                                                          Dark=#333333}"
+                        CornerRadius="10"
+                        HasShadow="True">
+                        <VerticalStackLayout Spacing="15">
+                            <!--  Display the date for the group  -->
+                            <Label
+                                FontAttributes="Bold"
+                                FontSize="Medium"
+                                Text="{Binding FormattedDate}"
+                                TextColor="{AppThemeBinding Light=DarkBlue,
+                                                            Dark=LightBlue}" />
+                            <BoxView
+                                Margin="0,5"
+                                HeightRequest="1"
+                                Color="{AppThemeBinding Light=LightGray,
+                                                        Dark=#555555}" />
+                            <VerticalStackLayout Spacing="5">
+
+
+
+                                <!--  Display individual entries within the group  -->
+                                <BindableLayout.ItemsSource>
+                                    <!--  Corrected: Bind to the current TimelineGroup instance itself  -->
+                                    <Binding Path="." />
+                                </BindableLayout.ItemsSource>
+                                <!--  This specifies the type for the inner items  -->
+
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="models:TimelineEntry">
+                                        <Frame
+                                            Margin="0,5"
+                                            Padding="10"
+                                            BackgroundColor="{AppThemeBinding Light=#F0F0F0,
+                                                                              Dark=#444444}"
+                                            CornerRadius="8"
+                                            HasShadow="False"
+                                            WidthRequest="450">
+                                            <VerticalStackLayout>
+                                                <Label
+                                                    FontAttributes="Bold"
+                                                    FontSize="Small"
+                                                    Text="{Binding Title}"
+                                                    TextColor="{AppThemeBinding Light=Black,
+                                                                                Dark=White}" />
+                                                <Label
+                                                    FontSize="Micro"
+                                                    Text="{Binding Description}"
+                                                    TextColor="{AppThemeBinding Light=Gray,
+                                                                                Dark=LightGray}" />
+                                                <Label
+                                                    FontSize="Micro"
+                                                    HorizontalOptions="End"
+                                                    Text="{Binding EntryDate, StringFormat='{0:h:mm tt}'}"
+                                                    TextColor="{AppThemeBinding Light=DarkGray,
+                                                                                Dark=Gray}" />
+                                                <!--  You could add context actions here for Edit/Delete  -->
+                                            </VerticalStackLayout>
+                                        </Frame>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                                <BindableLayout.EmptyView>
+                                    <Label
+                                        Margin="0,10"
+                                        HorizontalOptions="Center"
+                                        Text="No entries for this day."
+                                        TextColor="{AppThemeBinding Light=Gray,
+                                                                    Dark=LightGray}"
+                                        VerticalOptions="Center" />
+                                </BindableLayout.EmptyView>
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <VerticalStackLayout
+                    Margin="20"
+                    HorizontalOptions="Center"
+                    Spacing="10"
+                    VerticalOptions="Center">
+                    <Label
+                        FontSize="Medium"
+                        HorizontalOptions="Center"
+                        Text="No timeline entries found for the last week."
+                        TextColor="{AppThemeBinding Light=Gray,
+                                                    Dark=LightGray}" />
+                    <Button
+                        Command="{Binding AddNewEntryCommand}"
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        Text="Add Your First Entry" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+        </CollectionView>
+    </Grid>
+</ContentPage>

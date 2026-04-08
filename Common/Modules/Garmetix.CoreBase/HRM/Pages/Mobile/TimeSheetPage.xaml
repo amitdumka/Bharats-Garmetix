@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<listing:BaseListViewPage
+    x:Class="Garmetix.CoreBase.HRM.Pages.Mobile.TimeSheetPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:listing="clr-namespace:Garmetix.Core.Views.Customs.Listing;assembly=Garmetix.Core"
+    xmlns:models="clr-namespace:Garmetix.Models.HRM;assembly=Garmetix.Models">
+    <listing:BaseListViewPage.ListItemTemplate>
+        <DataTemplate x:DataType="models:TimeSheet">
+            <Border
+                Margin="12,6"
+                Padding="0"
+                Stroke="{AppThemeBinding Light={StaticResource Gray300},
+                                         Dark={StaticResource Gray700}}"
+                StrokeShape="RoundRectangle 10"
+                StrokeThickness="1">
+                <Grid
+                    Padding="12"
+                    ColumnDefinitions="*, Auto"
+                    ColumnSpacing="12">
+
+                    <VerticalStackLayout
+                        Grid.Column="0"
+                        Spacing="2"
+                        VerticalOptions="Center">
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="Medium"
+                            Text="{Binding EmployeeId}" />
+                        <VerticalStackLayout>
+                            <Label
+                                FontSize="Small"
+                                Text="{Binding InTime, StringFormat='IN: {0}'}"
+                                TextColor="{StaticResource Dull-Red}" />
+                            <Label
+                                FontSize="Small"
+                                Text="{Binding OutTime, StringFormat='OUT: {0}'}"
+                                TextColor="{StaticResource SecondaryDarkText}" />
+                        </VerticalStackLayout>
+                        <Label FontSize="Small" Text="{Binding Duration, StringFormat='Duration: {0}'}" />
+                    </VerticalStackLayout>
+                    <Image
+                        Grid.Column="1"
+                        HeightRequest="16"
+                        Source="righticon.png"
+                        VerticalOptions="Center" />
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </listing:BaseListViewPage.ListItemTemplate>
+</listing:BaseListViewPage>

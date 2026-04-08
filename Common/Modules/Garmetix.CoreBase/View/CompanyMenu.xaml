@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<FlyoutItem
+    x:Class="Garmetix.CoreBase.View.CompanyMenu"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:days="clr-namespace:Garmetix.CoreBase.DayOperations.Pages"
+    xmlns:desktop="clr-namespace:Garmetix.CoreBase.Stores.Pages.Desktop"
+    xmlns:mobile="clr-namespace:Garmetix.CoreBase.Stores.Pages.Mobile"
+    Title="Stores">
+    <Tab Title="Store" Icon="rain_icon.png">
+        <ShellContent
+            Title="Stores"
+            ContentTemplate="{OnPlatform Android={DataTemplate mobile:StorePage},
+                                         iOS={DataTemplate mobile:StorePage},
+                                         Default={DataTemplate desktop:StoresPage}}"
+            Route="Stores" />
+    </Tab>
+    <Tab Title="Store Group" Icon="rain_icon.png">
+        <ShellContent
+            Title="Group"
+            ContentTemplate="{OnPlatform Android={DataTemplate mobile:StoreGroupPage},
+                                         iOS={DataTemplate mobile:StoreGroupPage},
+                                         Default={DataTemplate desktop:StoreGroupsPage}}"
+            Route="Group" />
+    </Tab>
+    <Tab Title="Company" Icon="rain_icon.png">
+        <ShellContent
+            Title="Client"
+            ContentTemplate="{OnPlatform Android={DataTemplate mobile:CompanyPage},
+                                         iOS={DataTemplate mobile:CompanyPage},
+                                         Default={DataTemplate desktop:CompaniesPage}}"
+            Route="Client" />
+    </Tab>
+    <Tab Title="Day Begin" Icon="rain_icon.png">
+        <ShellContent
+            Title="Day Begin"
+            ContentTemplate="{DataTemplate days:DayBeginEntyPage}"
+            Route="daybegib" />
+    </Tab>
+    <Tab Title="Day Closing" Icon="rain_icon.png">
+        <ShellContent
+            Title="Day Closing"
+            ContentTemplate="{DataTemplate days:DayEndEntryPage}"
+            Route="dayend" />
+    </Tab>
+    <Tab Title="Petty Cash Sheet" Icon="rain_icon.png">
+        <ShellContent
+            Title="Petty Cash Sheet"
+            ContentTemplate="{DataTemplate days:PettyCashSheetEntryPage}"
+            Route="cashsheet" />
+    </Tab>
+
+</FlyoutItem>

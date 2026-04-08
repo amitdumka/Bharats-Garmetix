@@ -13,6 +13,7 @@
   </Folder>
   <Folder Name="/Modules/">
     <Project Path="Common/Modules/Garmetix.Authentication/Garmetix.Authentication.csproj" Id="268a81dc-e1b1-4c62-bdcc-bced87f06680" />
+    <Project Path="Common/Modules/Garmetix.CoreBase/Garmetix.CoreBase.csproj" Id="f622f35c-fd88-4d11-9bf3-a72d46b998d9" />
     <Project Path="Common/Modules/Garmetix.Onboarding/Garmetix.Onboarding.csproj" Id="7ab219d4-ba70-466a-8af1-b0da92ae2121" />
     <Project Path="Garmetix.Billing/Garmetix.Billing.csproj" Id="66e5697d-048c-4263-8e1e-30cd634b55a6" />
     <Project Path="PointOfSale/PointOfSale.csproj" Id="798c7f88-7a3d-4c0d-9a59-05b535ab1770" />
