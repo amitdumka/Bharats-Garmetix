@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="Garmetix.IRetail.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:Garmetix.IRetail"
+    xmlns:controls="clr-namespace:Garmetix.Views.Controls;assembly=Garmetix.Core"
+xmlns:coreBase="clr-namespace:Garmetix.CoreBase.View;assembly=Garmetix.CoreBase"
+xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"
+    
+     FlyoutBackgroundColor="{AppThemeBinding Dark={DynamicResource BackgroundColorDark},
+                                         Light={DynamicResource BackgroundColorLight}}"
+ FlyoutBackgroundImage="thearvindstore005.jpg"
+ FlyoutBackgroundImageAspect="Fill"
+ FlyoutHeaderBehavior="CollapseOnScroll"
+ Shell.FlyoutBehavior="Flyout"
+    Title="IRetail">
+
+
+    <Shell.FlyoutHeader>
+        <controls:ShellHeader />
+    </Shell.FlyoutHeader>
+    <ShellContent
+        Title="Home"
+        ContentTemplate="{DataTemplate local:MainPage}"
+        Route="MainPage" />
+    <coreBase:AccountingMenu />
+    <coreBase:AccountsMenu />
+    <coreBase:LedgerMenu />
+    <coreBase:HRMMenu />
+    <coreBase:BankingMenu />
+    <coreBase:CompanyMenu />
+
+
+    <MenuItem
+        Clicked="Logout"
+        StyleClass="MenuItemLayoutStyle"
+        Text="Logout" />
+    <MenuItem
+        Clicked="Quit"
+        StyleClass="MenuItemLayoutStyle"
+        Text="Quit" />
+
+
+    <Shell.FlyoutFooter>
+
+        <Grid Padding="15" BackgroundColor="{AppThemeBinding Dark={DynamicResource BackgroundColorDark}, Light={DynamicResource BackgroundColorLight}}">
+
+            <controls:ShellFooter BindingContext="{Binding Source={x:Reference shell}}" />
+
+            <sf:SfSegmentedControl
+                x:Name="ThemeSegmentedControl"
+                HorizontalOptions="End"
+                SegmentHeight="30"
+                SegmentWidth="30"
+                SelectionChanged="SfSegmentedControl_SelectionChanged"
+                VerticalOptions="End">
+                <sf:SfSegmentedControl.ItemsSource>
+                    <x:Array Type="{x:Type sf:SfSegmentItem}">
+                        <sf:SfSegmentItem ImageSource="{StaticResource IconLight}" />
+                        <sf:SfSegmentItem ImageSource="{StaticResource IconDark}" />
+                    </x:Array>
+                </sf:SfSegmentedControl.ItemsSource>
+            </sf:SfSegmentedControl>
+        </Grid>
+    </Shell.FlyoutFooter>
+
+</Shell>

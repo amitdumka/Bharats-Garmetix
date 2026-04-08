@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Garmetix.Reports.InvoicePrinter.V2.InvoicePrintV2Page"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:Garmetix.Reports.InvoicePrinter.V2"
+    Title="GST Invoice Printer">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="30,0" Spacing="25">
+
+            <Label
+                FontAttributes="Bold"
+                FontSize="32"
+                HorizontalOptions="Center"
+                Text="GST Invoice Generator" />
+
+            <Frame
+                Padding="20"
+                CornerRadius="10"
+                HasShadow="True">
+                <VerticalStackLayout Spacing="10">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="18"
+                        Text="Sample Invoice Details (For Demo)" />
+                    <Label FontSize="14" Text="Invoice No: 1" />
+                    <Label FontSize="14" Text="Date: 30/06/2025" />
+                    <Label FontSize="14" Text="Seller: Aadwika Sweets" />
+                    <Label FontSize="14" Text="Buyer: AMit kumar" />
+                    <Label FontSize="14" Text="Place of Supply: 20-Jharkhand" />
+
+                    <Label
+                        Margin="0,10,0,0"
+                        FontAttributes="Bold"
+                        FontSize="16"
+                        Text="Invoice Items:" />
+                    <CollectionView ItemsSource="{Binding InvoiceItems}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Frame
+                                    Margin="0,5,0,0"
+                                    Padding="10"
+                                    BorderColor="LightGray"
+                                    CornerRadius="5"
+                                    HasShadow="False">
+                                    <Grid ColumnDefinitions="*,*,*,*,*,*">
+                                        <Label
+                                            Grid.Column="0"
+                                            FontAttributes="Bold"
+                                            Text="{Binding SNo}" />
+                                        <Label Grid.Column="1" Text="{Binding ItemName}" />
+                                        <Label Grid.Column="2" Text="{Binding HSNCode}" />
+                                        <Label Grid.Column="3" Text="{Binding Quantity}" />
+                                        <Label Grid.Column="4" Text="{Binding Rate, StringFormat='₹{0:F2}'}" />
+                                        <Label
+                                            Grid.Column="5"
+                                            HorizontalTextAlignment="End"
+                                            Text="{Binding LineTotal, StringFormat='Line Total: ₹{0:F2}'}" />
+                                    </Grid>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Button
+                Padding="20,15"
+                BackgroundColor="#4CAF50"
+                Clicked="OnPrintInvoiceClicked"
+                CornerRadius="25"
+                FontSize="18"
+                HorizontalOptions="Center"
+                Text="Generate  Print Invoice PDF"
+                TextColor="White">
+                <Button.Shadow>
+                    <Shadow
+                        Brush="Black"
+                        Opacity="0.5"
+                        Radius="10"
+                        Offset="5,5" />
+                </Button.Shadow>
+            </Button>
+
+            <Label
+                FontSize="12"
+                HorizontalOptions="Center"
+                Text="Note: This is a sample. Implement full data input and validation in a production app."
+                TextColor="Gray" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

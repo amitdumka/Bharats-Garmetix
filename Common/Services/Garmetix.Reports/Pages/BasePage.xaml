@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class=" Garmetix.Reports.Pages.BasePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:Name="CPage"
+    Title="{Binding Title}">
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+            BindingContext="{Binding Path=BindingContext, Source={x:Reference CPage}}"
+            Command="{Binding NavigatedToCommand}"
+            EventName="NavigatedTo" />
+
+        <toolkit:EventToCommandBehavior
+            BindingContext="{Binding Path=BindingContext, Source={x:Reference CPage}}"
+            Command="{Binding NavigatedFromCommand}"
+            EventName="NavigatedFrom" />
+
+        <toolkit:EventToCommandBehavior
+            BindingContext="{Binding Path=BindingContext, Source={x:Reference CPage}}"
+            Command="{Binding AppearingCommand}"
+            EventName="Appearing" />
+    </ContentPage.Behaviors>
+
+    <ContentPage.Content>
+        <AbsoluteLayout>
+
+            <RefreshView
+                AbsoluteLayout.LayoutBounds="0,0,1,1"
+                AbsoluteLayout.LayoutFlags="All"
+                Command="{Binding LoadInitialDataCommand}"
+                IsRefreshing="{Binding IsBusy}">
+
+                <Grid AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Label
+                        Margin="0,0,-10,-10"
+                        FontAttributes="Bold"
+                        FontSize="Title"
+                        HorizontalOptions="Center"
+                        Text="{Binding Title, Converter={StaticResource PascalCaseToWordsConverter}}"
+                        TextColor="{AppThemeBinding Dark={DynamicResource ContentTextColorDark},
+                                                    Light={DynamicResource ContentTextColorLight}}" />
+                    <Border
+                        Grid.Row="1"
+                        Margin="10,-10"
+                        Padding="10"
+                        HeightRequest="500"
+                        StrokeShape="RoundRectangle 8"
+                        Style="{StaticResource CardStyle}">
+                        <Border.Shadow>
+                            <Shadow
+                                Brush="Black"
+                                Opacity="0.3"
+                                Radius="10"
+                                Offset="0,4" />
+                        </Border.Shadow>
+
+                    </Border>
+                    <!--  A full-page loading indicator for the initial load  -->
+                </Grid>
+                <!--</VerticalStackLayout>-->
+            </RefreshView>
+
+            <Button
+                Margin="0,0,2,2"
+                AbsoluteLayout.LayoutBounds="1,1,AutoSize,AutoSize"
+                AbsoluteLayout.LayoutFlags="PositionProportional"
+                BackgroundColor="Green"
+                Command="{Binding AddButtonCommand}"
+                CornerRadius="50"
+                FontSize="Large"
+                HeightRequest="60"
+                IsEnabled="{Binding EnableAdd}"
+                IsVisible="{Binding EnableAdd}"
+                Text="+"
+                TextColor="White"
+                WidthRequest="60" />
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>

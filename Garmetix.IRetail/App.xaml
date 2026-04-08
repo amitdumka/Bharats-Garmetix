@@ -1,0 +1,24 @@
+﻿<?xml version = "1.0" encoding = "UTF-8" ?>
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Garmetix.IRetail"
+             xmlns:converters="clr-namespace:Bharat.ToolKits.Converters;assembly=Bharat.ToolKits"
+
+xmlns:themes="clr-namespace:Bharat.Themes;assembly=Bharat.Themes"
+             x:Class="Garmetix.IRetail.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
+                <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+                <ResourceDictionary Source="Resources/Styles/AppStyle.xaml" />
+                <themes:Colors />
+                <themes:Dark />
+                <themes:Light />
+            </ResourceDictionary.MergedDictionaries>
+            <converters:IsNotNullOrEmptyConverter x:Key="IsNotNullOrEmptyConverter" />
+            <converters:PascalCaseToWordsConverter x:Key="PascalCaseToWordsConverter" />
+            <converters:StringContainsConverter x:Key="StringContainsConverter" />
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

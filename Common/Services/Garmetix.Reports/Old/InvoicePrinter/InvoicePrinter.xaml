@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Garmetix.Reports.InvoicePrinter.Pages.InvoicePrinterPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodels="clr-namespace:Garmetix.Reports.InvoicePrinter.ViewModels"
+    x:DataType="viewmodels:InvoicePageModel">
+
+    <ScrollView>
+        <VerticalStackLayout
+            Padding="30,0"
+            Spacing="25"
+            VerticalOptions="Center">
+
+            <Label
+                FontSize="32"
+                HorizontalOptions="Center"
+                Text="Invoice Generator" />
+
+            <Label
+                FontSize="16"
+                HorizontalOptions="Center"
+                HorizontalTextAlignment="Center"
+                SemanticProperties.HeadingLevel="Level2"
+                Text="Click the button below to generate a sample GST invoice PDF and open the print/share dialog." />
+
+            <Button
+                Command="{Binding GenerateInvoiceCommand}"
+                CornerRadius="25"
+                HeightRequest="50"
+                HorizontalOptions="Center"
+                Text="Generate &amp; Print Invoice"
+                WidthRequest="300" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

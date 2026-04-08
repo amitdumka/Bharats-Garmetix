@@ -1,0 +1,14 @@
+﻿Module Name: Reports
+Thing to be done 
+1) Create PDF Service Single to handle all reports. or make one for each modules, 
+2) Ledger printer, check the way debit and credit is correct for accounting system  especly for party
+3) make it standard format to print.
+4) Add Logo for Company Name , an Imgae of Certain size to be included. and handle the name 
+5) Add Signture which can be loaded, and for Mobile Devices they can sign it 
+6) Add Digital Signture to secure the pdf to validate the pdf for orignal one  and make it password protected.
+7) Add QR Scanner to find the reported stored in local devices, which was lastly printed or created. 
+8) create log for printed file or voucher, 
+9) make some serive which detect the file is actuly printed or not, 
+10) make it like orignal one get printed once , for next time only duplicate can be printed, 
+11) Print count for voucher and invoice need to increamented for each print. 
+12) Share Print Voucher Slip from one company to another company for which is issued and both are memeber of garmetix

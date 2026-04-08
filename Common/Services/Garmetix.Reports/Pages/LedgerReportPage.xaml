@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Garmetix.Reports.Pages.LedgerReportPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:Garmetix.Reports.Pages"
+    xmlns:pagemodel="clr-namespace:Garmetix.Reports.PageModels"
+    xmlns:syncfusionInputs="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
+    xmlns:toolkit="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
+    x:Name="LRPage"
+    Title="Ledger Report"
+    x:DataType="pagemodel:LedgerReportPageModel">
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+            x:DataType="pagemodel:LedgerReportPageModel"
+            BindingContext="{Binding BindingContext, x:DataType=ContentPage, Source={Reference LRPage}}"
+            Command="{Binding AppearingCommand}"
+            EventName="Appearing" />
+    </ContentPage.Behaviors>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style TargetType="Label">
+                <Setter Property="TextColor" Value="{DynamicResource TwitterBlue}" />
+                <Setter Property="FontSize" Value="Small" />
+                <Setter Property="FontAttributes" Value="Italic" />
+
+                <Setter Property="Margin" Value="0,0,10,0" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+                <Setter Property="FontFamily" Value="RobotoMedium" />
+            </Style>
+            <Style TargetType="syncfusionInputs:SfComboBox">
+                <Setter Property="Margin" Value="10,0,10,0" />
+                <Setter Property="HeightRequest" Value="30" />
+                <Setter Property="MinimumWidthRequest" Value="100" />
+                <Setter Property="ShowBorder" Value="True" />
+                <Setter Property="TextColor" Value="{DynamicResource SecondaryTextColor}" />
+                <Setter Property="PlaceholderColor" Value="Indigo" />
+                <Setter Property="BackgroundColor" Value="LightSkyBlue" />
+                <Setter Property="DropDownBackground" Value="LightGrey" />
+
+            </Style>
+            <Style TargetType="Button">
+                <Setter Property="Margin" Value="10,-5,10,0" />
+                <Setter Property="HeightRequest" Value="40" />
+                <Setter Property="CornerRadius" Value="15" />
+                <Setter Property="BackgroundColor" Value="#007ACC" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="FontSize" Value="Subtitle" />
+                <Setter Property="FontAttributes" Value="Bold" />
+            </Style>
+            <Style TargetType="VerticalStackLayout">
+                <Setter Property="Padding" Value="10,0" />
+                <Setter Property="Spacing" Value="15" />
+
+
+                <Setter Property="VerticalOptions" Value="Start" />
+                <Setter Property="HorizontalOptions" Value="Start" />
+            </Style>
+            <Style TargetType="HorizontalStackLayout">
+                <Setter Property="Padding" Value="10,0" />
+                <Setter Property="Spacing" Value="5" />
+
+                <Setter Property="VerticalOptions" Value="Start" />
+                <Setter Property="HorizontalOptions" Value="Start" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Border Margin="15" Padding="10">
+        <Grid
+            ColumnDefinitions="Auto,Auto,Auto"
+            ColumnSpacing="10"
+            RowDefinitions="Auto,Auto,Auto"
+            RowSpacing="25">
+
+            <Label
+                Grid.Row="0"
+                Grid.Column="0"
+                Grid.ColumnSpan="3"
+                FontAttributes="Bold"
+                FontFamily="RobotoMedium"
+                FontSize="Title"
+                HorizontalOptions="Center"
+                Text="Ledger Report" />
+
+            <HorizontalStackLayout
+                Grid.Row="1"
+                Grid.Column="0"
+                Grid.ColumnSpan="2">
+                <Label Margin="0,0,10,0" Text="Select Ledger" />
+                <syncfusionInputs:SfComboBox
+                    DisplayMemberPath="Name"
+                    ItemsSource="{Binding LedgersList}"
+                    Placeholder="Select a ledger"
+                    SelectedValue="{Binding SelectedLedger}"
+                    SelectedValuePath="Id" />
+            </HorizontalStackLayout>
+            <HorizontalStackLayout Grid.Row="1" Grid.Column="2">
+                <Label Text="Full" />
+                <CheckBox
+                    x:Name="cbFull"
+                    Margin="0,-10,0,0"
+                    IsChecked="{Binding Full}" />
+                <Label Text="Period" />
+                <CheckBox
+                    x:Name="cbPeriod"
+                    Margin="0,-10,0,0"
+                    IsChecked="{Binding Period}" />
+            </HorizontalStackLayout>
+            <HorizontalStackLayout
+                Grid.Row="2"
+                Grid.Column="0"
+                Grid.ColumnSpan="2">
+                <Label Margin="0,0,10,0" Text="Select Period" />
+                <syncfusionInputs:SfComboBox
+                    Margin="0,0,10,0"
+                    ItemsSource="{Binding Months}"
+                    Placeholder="Select a month"
+                    SelectedItem="{Binding SelectedMonth}"
+                    SelectedValue="{Binding SelectedMonth, Mode=TwoWay, FallbackValue=DateTime.Now.Month}" />
+                <syncfusionInputs:SfComboBox
+                    Margin="0,0,10,0"
+                    ItemsSource="{Binding Years, Mode=TwoWay, FallbackValue=DateTime.Now.Year}"
+                    Placeholder="Select a year"
+                    SelectedItem="{Binding SelectedYear}"
+                    SelectedValue="{Binding SelectedYear}" />
+            </HorizontalStackLayout>
+            <Button
+                Grid.Row="2"
+                Grid.Column="2"
+                BackgroundColor="{DynamicResource TwitterBlue}"
+                Command="{Binding PrintLedgerCommand}"
+                CornerRadius="15"
+                FontSize="Small"
+                Text="Get Pdf" />
+
+        </Grid>
+    </Border>
+</ContentPage>

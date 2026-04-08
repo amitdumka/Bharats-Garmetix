@@ -1,0 +1,804 @@
+You're looking to create a .NET MAUI app with a print service for sale invoices, specifically tailored for the Indian GST tax system, using an A5 landscape page size. You want to include item details like name, barcode, style code, HSN code, rate, quantity, discount, and line total, and prefer Syncfusion or another fast PDF generation library, with a standard and beautiful layout.
+
+This is a comprehensive request that involves UI (MAUI), PDF generation, and handling specific tax calculations. I'll provide you with a detailed solution using Syncfusion for PDF generation, as it's a robust and popular choice for .NET applications.
+
+Here's a breakdown of the solution:
+
+MAUI Project Setup: Basic structure for a MAUI app.
+
+Model Classes: Define classes for Invoice, InvoiceItem, and Party to hold your data.
+
+PDF Generation Service: A service that uses Syncfusion to create the PDF.
+
+Printing Service: Code to trigger the print functionality in MAUI.
+
+Sample Invoice Data: Example data to demonstrate the PDF generation.
+
+UI for Invoice Input (Simplified): A basic UI to input invoice details (you'll likely expand this in your actual app).
+
+Button to Generate and Print: A button to initiate the process.
+
+Let's start by outlining the Syncfusion setup and then the code.
+
+Prerequisites:
+
+Syncfusion PDF NuGet Package: You'll need to add the Syncfusion.Pdf.Maui NuGet package to your .NET MAUI project.
+
+XML
+
+<ItemGroup>
+    <PackageReference Include="Syncfusion.Pdf.Maui" Version="25.2.3" /> <!-- Use the latest stable version -->
+</ItemGroup>
+Here's the code for your .NET MAUI application:
+.NET MAUI GST Invoice Printer
+30 Jun, 16:09
+
+ Try again without Canvas 
+
+Explanation and Key Considerations:
+Project Structure:
+
+Models folder: Contains Party, InvoiceItem, and Invoice classes to structure your data.
+
+Services folder: Contains PdfService for PDF generation and PrintService for platform-specific printing logic.
+
+MainPage.xaml and MainPage.xaml.cs: The UI and its code-behind.
+
+MauiProgram.cs: Where you register your services for Dependency Injection.
+
+Models.cs:
+
+These classes are designed to hold all the necessary information for an invoice, including seller/buyer details, item-wise data (name, barcode, HSN, rate, quantity, discount, line total), and GST specific fields (CGST/SGST percentage and amount).
+
+PdfService.cs:
+
+GenerateInvoicePdf(Invoice invoice): This is the core method.
+
+Syncfusion.Pdf: It uses the PdfDocument to create a new PDF.
+
+Page Settings: document.PageSettings.Size = PdfPageSize.A5; and document.PageSettings.Orientation = PdfPageOrientation.Landscape; ensure the A5 landscape format.
+
+Drawing Content: PdfGraphics is used to draw text, lines, and shapes onto the PDF page.
+
+Fonts: PdfStandardFont is used. If you want specific fonts like "Inter", you'd need to embed them as resources in your MAUI project and load them using PdfTrueTypeFont (commented out example provided).
+
+Layout: The code carefully positions elements using PointF and RectangleF to create a structured invoice. It includes sections for company details, invoice info, billing details, and the item table.
+
+Item Table:
+
+It iterates through invoice.Items to draw each row.
+
+Calculations for LineTotal, TaxableAmount, CGSTAmt, SGSTAmt, and TotalTax are performed when the InvoiceItem is created (in LoadSampleInvoiceData). In a real app, these would be calculated dynamically as items are added.
+
+Barcode: PdfCode128Barcode is used to draw barcodes for each item.
+
+GST Columns: Separate columns are added for Taxable Amount, CGST (with percentage), and SGST (with percentage) to adhere to Indian GST invoice format.
+
+Totals: The total section summarizes the sub-total, total tax, round-off amount, and the grand total.
+
+Amount in Words: A helper function ConvertNumberToWords is included (simplified) to convert the total amount to words. For production, you might want a more robust library for this.
+
+Saving to Stream: The PDF is saved to a MemoryStream and then converted to a byte[], which is easier to pass to the printing service.
+
+PrintService.cs:
+
+This service abstracts the platform-specific printing logic.
+
+Dependency Injection: IPdfService and IPrintService interfaces are used, and their implementations are registered in MauiProgram.cs, allowing for easy testability and maintainability.
+
+Platform-Specific Implementation:
+
+#if WINDOWS: On Windows, it saves the PDF to a temporary file and then uses Windows.System.Launcher.LaunchFileAsync to open it, which typically presents the user with print options.
+
+#elif ANDROID: On Android, it uses Android.Print.PrintManager and a custom PdfPrintDocumentAdapter to handle the print job.
+
+#elif IOS || MACCATALYST: On iOS/Mac Catalyst, it uses UIPrintInteractionController to present the print dialog. Note the distinction for iPad vs. iPhone for presenting the controller.
+
+Error Handling: Basic try-catch blocks are included for demonstration. In a real application, you'd want more robust error logging and user feedback.
+
+MainPage.xaml.cs:
+
+MainPage Constructor: Initializes the PDF and Print services using dependency injection.
+
+LoadSampleInvoiceData(): This method populates a sample Invoice object with data, including the necessary calculations for GST (CGST/SGST based on a 5% example).
+
+OnPrintInvoiceClicked: This event handler is triggered when the button is pressed. It calls the PdfService to generate the PDF bytes and then passes them to the PrintService.
+
+ConvertNumberToWords: A basic implementation to convert numbers to Indian number system words (Lakh, Crore).
+
+MainPage.xaml:
+
+A simple UI with a Label for the title and a Button to trigger the printing.
+
+A Frame is used to nicely display the sample invoice details for demonstration purposes.
+
+CollectionView is used to display the InvoiceItems in a simple list format, demonstrating data binding.
+
+MauiProgram.cs:
+
+This is where you register PdfService and PrintService as singletons, making them available throughout your application via dependency injection.
+
+To Get This Running:
+Create a New .NET MAUI App: Open Visual Studio and create a new ".NET MAUI App" project.
+
+Install Syncfusion NuGet Package:
+
+Right-click on your project in Solution Explorer -> "Manage NuGet Packages...".
+
+Search for Syncfusion.Pdf.Maui and install the latest stable version.
+
+Replace Code:
+
+Replace the content of Models.cs, Services/PdfService.cs, Services/PrintService.cs, MainPage.xaml, MainPage.xaml.cs, MauiProgram.cs, App.xaml.cs, and AppShell.xaml with the provided code. Create the Services folder if it doesn't exist.
+
+Add Font (Optional but Recommended for Beauty):
+
+If you want to use a custom font (like "Inter" or "OpenSans"), download its .ttf file.
+
+Add the .ttf file to your Resources/Fonts folder in the MAUI project.
+
+In MauiProgram.cs, ensure the font is registered: fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular"); (adjust filename).
+
+In PdfService.cs, uncomment and adjust the GetFontData and PdfTrueTypeFont lines to use your embedded font.
+
+Build and Run: Build the project and run it on your desired platform (Windows, Android, iOS, Mac Catalyst).
+
+This comprehensive solution provides a strong foundation for your .NET MAUI GST invoice printing application, covering PDF generation, platform-specific printing, and essential invoice data handling. Remember to enhance the UI and add robust data input, validation, and persistence for a production-ready application.
+
+
+
+// Models.cs
+using System;
+using System.Collections.Generic;
+
+namespace GSTInvoiceApp.Models
+{
+    public class Party
+    {
+        public string Name { get; set; }
+        public string Address { get; set; }
+        public string ContactNo { get; set; }
+        public string GSTIN { get; set; }
+        public string State { get; set; }
+    }
+
+    public class InvoiceItem
+    {
+        public int SNo { get; set; }
+        public string ItemName { get; set; }
+        public string Barcode { get; set; }
+        public string StyleCode { get; set; }
+        public string HSNCode { get; set; }
+        public decimal Rate { get; set; }
+        public decimal Quantity { get; set; }
+        public decimal Discount { get; set; } // Per unit discount
+        public decimal LineTotal { get; set; } // Rate * Quantity - Discount
+        public decimal TaxableAmount { get; set; }
+        public decimal CGSTPercentage { get; set; }
+        public decimal CGSTAmt { get; set; }
+        public decimal SGSTPercentage { get; set; }
+        public decimal SGSTAmt { get; set; }
+        public decimal TotalTax { get; set; }
+    }
+
+    public class Invoice
+    {
+        public string InvoiceNo { get; set; }
+        public DateTime InvoiceDate { get; set; }
+        public Party Seller { get; set; }
+        public Party Buyer { get; set; }
+        public string PlaceOfSupply { get; set; }
+        public List<InvoiceItem> Items { get; set; }
+        public decimal SubTotal { get; set; }
+        public decimal TotalTaxAmount { get; set; }
+        public decimal GrandTotal { get; set; }
+        public decimal RoundOff { get; set; }
+        public string AmountInWords { get; set; }
+    }
+}
+
+// Services/PdfService.cs
+using Syncfusion.Pdf;
+using Syncfusion.Pdf.Graphics;
+using Syncfusion.Pdf.Barcode;
+using Syncfusion.Drawing;
+using GSTInvoiceApp.Models;
+using System.IO;
+using System.Reflection; // Required for font embedding
+using System.Linq;
+
+namespace GSTInvoiceApp.Services
+{
+    public interface IPdfService
+    {
+        Task<byte[]> GenerateInvoicePdf(Invoice invoice);
+    }
+
+    public class PdfService : IPdfService
+    {
+        public async Task<byte[]> GenerateInvoicePdf(Invoice invoice)
+        {
+            // Create a new PDF document
+            using (PdfDocument document = new PdfDocument())
+            {
+                // Set page size to A5 Landscape
+                document.PageSettings.Size = PdfPageSize.A5;
+                document.PageSettings.Orientation = PdfPageOrientation.Landscape;
+                document.PageSettings.Margins.All = 20; // Set margins
+
+                // Add a page to the document
+                PdfPage page = document.Pages.Add();
+                PdfGraphics graphics = page.Graphics;
+
+                // Load a font (Inter is not directly available, using a standard font or embedding custom)
+                // For a "beautiful layout", consider embedding a custom font if needed.
+                // Example for embedding a font:
+                // byte[] fontData = GetFontData("GSTInvoiceApp.Resources.Fonts.OpenSans-Regular.ttf"); // Adjust path
+                // PdfFont font = new PdfTrueTypeFont(fontData, 10);
+                PdfFont headerFont = new PdfStandardFont(PdfFontFamily.Helvetica, 14, PdfFontStyle.Bold);
+                PdfFont normalFont = new PdfStandardFont(PdfFontFamily.Helvetica, 8);
+                PdfFont boldFont = new PdfStandardFont(PdfFontFamily.Helvetica, 8, PdfFontStyle.Bold);
+
+                PdfTextBrush blackBrush = new PdfSolidBrush(Color.Black);
+                PdfPen borderPen = new PdfPen(Color.Black, 0.5f);
+
+                float currentY = 20; // Initial Y position for content
+
+                // --- Invoice Header ---
+                graphics.DrawString("TAX INVOICE", headerFont, blackBrush, new PointF(page.Graphics.ClientSize.Width / 2 - graphics.MeasureString("TAX INVOICE", headerFont).Width / 2, currentY));
+                currentY += 25;
+
+                // Company Details (Seller)
+                graphics.DrawString(invoice.Seller.Name, headerFont, blackBrush, new PointF(20, currentY));
+                currentY += 15;
+                graphics.DrawString($"Address: {invoice.Seller.Address}", normalFont, blackBrush, new PointF(20, currentY));
+                currentY += 10;
+                graphics.DrawString($"Phone: {invoice.Seller.ContactNo}", normalFont, blackBrush, new PointF(20, currentY));
+                currentY += 10;
+                graphics.DrawString($"Email: {invoice.Seller.Email}", normalFont, blackBrush, new PointF(20, currentY));
+                currentY += 10;
+                graphics.DrawString($"GSTIN: {invoice.Seller.GSTIN}", normalFont, blackBrush, new PointF(20, currentY));
+                currentY += 10;
+                graphics.DrawString($"State: {invoice.Seller.State}", normalFont, blackBrush, new PointF(20, currentY));
+                currentY += 20;
+
+
+                // Invoice Info (Right side)
+                float invoiceInfoX = page.Graphics.ClientSize.Width - 150; // Adjust as needed
+                graphics.DrawString($"Invoice No: {invoice.InvoiceNo}", normalFont, blackBrush, new PointF(invoiceInfoX, 65));
+                graphics.DrawString($"Date: {invoice.InvoiceDate.ToString("dd/MM/yyyy")}", normalFont, blackBrush, new PointF(invoiceInfoX, 80));
+                graphics.DrawString($"Place of Supply: {invoice.PlaceOfSupply}", normalFont, blackBrush, new PointF(invoiceInfoX, 95));
+
+
+                // Billing Details (Buyer)
+                graphics.DrawString("Bill To:", boldFont, blackBrush, new PointF(20, currentY));
+                currentY += 15;
+                graphics.DrawString(invoice.Buyer.Name, normalFont, blackBrush, new PointF(20, currentY));
+                currentY += 10;
+                graphics.DrawString(invoice.Buyer.Address, normalFont, blackBrush, new PointF(20, currentY));
+                currentY += 10;
+                graphics.DrawString($"Contact No: {invoice.Buyer.ContactNo}", normalFont, blackBrush, new PointF(20, currentY));
+                currentY += 10;
+                graphics.DrawString($"GSTIN: {invoice.Buyer.GSTIN}", normalFont, blackBrush, new PointF(20, currentY));
+                currentY += 20;
+
+                // --- Item Table Header ---
+                PdfGraphicsState state = graphics.Save();
+                graphics.SetTransparency(0.9f); // Slightly transparent background for header
+                graphics.DrawRectangle(new PdfSolidBrush(new PdfColor(220, 220, 220)), new RectangleF(15, currentY, page.Graphics.ClientSize.Width - 30, 20));
+                graphics.Restore(state);
+
+                // Table headers
+                float[] columnWidths = { 25, 80, 50, 40, 40, 40, 40, 45, 50, 50 }; // Adjust widths as needed
+                string[] headers = { "S.No", "Item Name", "HSN", "Rate", "Qty", "Disc.", "Line Total", "Taxable Amt.", "CGST", "SGST" };
+                float currentX = 20;
+
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    graphics.DrawString(headers[i], boldFont, blackBrush, currentX, currentY + 5);
+                    currentX += columnWidths[i];
+                }
+                currentY += 25;
+
+                // --- Item Table Rows ---
+                foreach (var item in invoice.Items)
+                {
+                    currentX = 20;
+                    graphics.DrawString(item.SNo.ToString(), normalFont, blackBrush, currentX, currentY);
+                    currentX += columnWidths[0];
+                    graphics.DrawString(item.ItemName, normalFont, blackBrush, currentX, currentY);
+                    currentX += columnWidths[1];
+                    graphics.DrawString(item.HSNCode, normalFont, blackBrush, currentX, currentY);
+                    currentX += columnWidths[2];
+                    graphics.DrawString(item.Rate.ToString("F2"), normalFont, blackBrush, currentX, currentY);
+                    currentX += columnWidths[3];
+                    graphics.DrawString(item.Quantity.ToString(), normalFont, blackBrush, currentX, currentY);
+                    currentX += columnWidths[4];
+                    graphics.DrawString(item.Discount.ToString("F2"), normalFont, blackBrush, currentX, currentY);
+                    currentX += columnWidths[5];
+                    graphics.DrawString(item.LineTotal.ToString("F2"), normalFont, blackBrush, currentX, currentY);
+                    currentX += columnWidths[6];
+                    graphics.DrawString(item.TaxableAmount.ToString("F2"), normalFont, blackBrush, currentX, currentY);
+                    currentX += columnWidths[7];
+                    graphics.DrawString($"{item.CGSTAmt.ToString("F2")} ({item.CGSTPercentage}%)", normalFont, blackBrush, currentX, currentY);
+                    currentX += columnWidths[8];
+                    graphics.DrawString($"{item.SGSTAmt.ToString("F2")} ({item.SGSTPercentage}%)", normalFont, blackBrush, currentX, currentY);
+                    currentY += 15;
+
+                    // Add barcode if available
+                    if (!string.IsNullOrEmpty(item.Barcode))
+                    {
+                        PdfCode128Barcode barcode = new PdfCode128Barcode();
+                        barcode.Text = item.Barcode;
+                        barcode.BarHeight = 15;
+                        barcode.TextDisplayLocation = TextDisplayLocation.None; // Hide text below barcode
+                        barcode.Draw(graphics, new PointF(currentX, currentY - 10)); // Adjust position
+                    }
+                     // Add style code if available (e.g., as a small note below item name)
+                    if (!string.IsNullOrEmpty(item.StyleCode))
+                    {
+                        graphics.DrawString($"Style: {item.StyleCode}", new PdfStandardFont(PdfFontFamily.Helvetica, 7), blackBrush, 20 + columnWidths[0] + 5, currentY - 5);
+                    }
+                }
+
+                currentY += 10;
+                graphics.DrawLine(borderPen, 15, currentY, page.Graphics.ClientSize.Width - 15, currentY); // Line after items
+                currentY += 5;
+
+                // --- Totals Section ---
+                float totalsX = page.Graphics.ClientSize.Width - 150; // Align totals to right
+
+                graphics.DrawString("Sub Total:", boldFont, blackBrush, new PointF(totalsX - 60, currentY));
+                graphics.DrawString(invoice.SubTotal.ToString("F2"), normalFont, blackBrush, new PointF(totalsX, currentY));
+                currentY += 15;
+
+                graphics.DrawString("Total Tax:", boldFont, blackBrush, new PointF(totalsX - 60, currentY));
+                graphics.DrawString(invoice.TotalTaxAmount.ToString("F2"), normalFont, blackBrush, new PointF(totalsX, currentY));
+                currentY += 15;
+
+                graphics.DrawString("Round Off:", boldFont, blackBrush, new PointF(totalsX - 60, currentY));
+                graphics.DrawString(invoice.RoundOff.ToString("F2"), normalFont, blackBrush, new PointF(totalsX, currentY));
+                currentY += 15;
+
+                graphics.DrawString("GRAND TOTAL:", headerFont, blackBrush, new PointF(totalsX - 100, currentY));
+                graphics.DrawString(invoice.GrandTotal.ToString("F2"), headerFont, blackBrush, new PointF(totalsX, currentY));
+                currentY += 25;
+
+                // Amount in words
+                graphics.DrawString($"Amount in Words: {invoice.AmountInWords}", normalFont, blackBrush, new PointF(20, currentY));
+                currentY += 20;
+
+                // Terms and Conditions
+                graphics.DrawString("Terms & Conditions:", boldFont, blackBrush, new PointF(20, currentY));
+                currentY += 15;
+                graphics.DrawString("Thanks for doing business with us!", normalFont, blackBrush, new PointF(20, currentY));
+                currentY += 30;
+
+                // Authorized Signatory
+                graphics.DrawString("For " + invoice.Seller.Name + ":", boldFont, blackBrush, new PointF(page.Graphics.ClientSize.Width - 150, currentY));
+                currentY += 40;
+                graphics.DrawLine(borderPen, page.Graphics.ClientSize.Width - 150, currentY, page.Graphics.ClientSize.Width - 50, currentY);
+                graphics.DrawString("Authorized Signatory", normalFont, blackBrush, new PointF(page.Graphics.ClientSize.Width - 150, currentY + 5));
+
+                // Save the document to a MemoryStream
+                MemoryStream stream = new MemoryStream();
+                document.Save(stream);
+                document.Close(true);
+
+                return stream.ToArray();
+            }
+        }
+
+        // Helper to embed fonts - place your .ttf files in Resources/Fonts and set Build Action to EmbeddedResource
+        // private byte[] GetFontData(string fontResourceName)
+        // {
+        //     Assembly assembly = typeof(PdfService).GetTypeInfo().Assembly;
+        //     using (Stream stream = assembly.GetManifestResourceStream(fontResourceName))
+        //     {
+        //         if (stream == null)
+        //         {
+        //             throw new FileNotFoundException($"Font resource '{fontResourceName}' not found.");
+        //         }
+        //         byte[] fontData = new byte[stream.Length];
+        //         stream.Read(fontData, 0, (int)stream.Length);
+        //         return fontData;
+        //     }
+        // }
+    }
+}
+
+
+// Services/PrintService.cs
+using Microsoft.Maui.ApplicationModel; // Common for all platforms for FileSystem.CacheDirectory and Platform.CurrentActivity
+using System.IO;
+using System.Linq; // For LINQ operations like FirstOrDefault
+
+namespace GSTInvoiceApp.Services
+{
+    public interface IPrintService
+    {
+        Task PrintPdf(byte[] pdfBytes, string documentName);
+    }
+
+    public class PrintService : IPrintService
+    {
+        public async Task PrintPdf(byte[] pdfBytes, string documentName)
+        {
+#if WINDOWS
+            using Windows.Storage; // For StorageFile
+            using Windows.System; // For Launcher
+
+            // On Windows, we'll save to a temp file and use Launcher to open it for printing
+            var tempFilePath = Path.Combine(FileSystem.CacheDirectory, $"{documentName}.pdf");
+            File.WriteAllBytes(tempFilePath, pdfBytes);
+
+            var file = await StorageFile.GetFileFromPathAsync(tempFilePath);
+            if (file != null)
+            {
+                await Launcher.LaunchFileAsync(file, new LauncherOptions { DisplayApplicationPicker = true });
+            }
+            else
+            {
+                // Handle error: Could not get file from path
+                Console.WriteLine("Error: Could not get file from path for printing on Windows.");
+                await Application.Current.MainPage.DisplayAlert("Error", "Failed to prepare PDF for printing.", "OK");
+            }
+
+#elif ANDROID
+            using Android.Graphics.Pdf;
+            using Android.OS;
+            using Android.Print;
+            using Android.Content;
+            using Android.Runtime;
+            using Java.IO;
+            using Java.Nio;
+
+            var printManager = Platform.CurrentActivity.GetSystemService(Context.PrintService).JavaCast<PrintManager>();
+            var jobName = $"{documentName} Document";
+
+            printManager.Print(jobName, new PdfPrintDocumentAdapter(pdfBytes, documentName), null);
+
+#elif IOS || MACCATALYST
+            using UIKit;
+            using Foundation;
+            using CoreGraphics; // For CGRect
+            using System.Drawing; // For RectangleF (if used, though CoreGraphics.CGRect is preferred)
+
+            var printInfo = UIPrintInfo.PrintInfo;
+            printInfo.OutputType = UIPrintInfoOutputType.General;
+            printInfo.JobName = documentName;
+
+            var printController = UIPrintInteractionController.SharedPrintController;
+            printController.PrintInfo = printInfo;
+            printController.PrintingItem = NSData.FromArray(pdfBytes);
+
+            // Present the print controller
+            if (UIDevice.Current.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
+            {
+                // On iPad, you need to present from a source view or rect
+                var window = UIApplication.SharedApplication.Windows.FirstOrDefault(w => w.IsKeyWindow);
+                var view = window?.RootViewController?.View;
+                if (view != null)
+                {
+                    printController.PresentFromRectInView(new CoreGraphics.CGRect(0,0,1,1), view, true, (controller, completed, error) => {
+                        if (error != null)
+                        {
+                            Console.WriteLine($"Print Error: {error.LocalizedDescription}");
+                        }
+                    });
+                } else {
+                    Console.WriteLine("Error: Could not find a view to present print controller on iPad.");
+                    await Application.Current.MainPage.DisplayAlert("Error", "Failed to present print dialog.", "OK");
+                }
+            }
+            else
+            {
+                // On iPhone, present modally
+                printController.Present(true, (controller, completed, error) => {
+                    if (error != null)
+                    {
+                        Console.WriteLine($"Print Error: {error.LocalizedDescription}");
+                    }
+                });
+            }
+#else
+            await Application.Current.MainPage.DisplayAlert("Not Supported", "Printing is not supported on this platform.", "OK");
+#endif
+        }
+    }
+
+#if ANDROID
+    // Custom PrintDocumentAdapter for Android
+    public class PdfPrintDocumentAdapter : PrintDocumentAdapter
+    {
+        private byte[] _pdfBytes;
+        private string _documentName;
+
+        public PdfPrintDocumentAdapter(byte[] pdfBytes, string documentName)
+        {
+            _pdfBytes = pdfBytes;
+            _documentName = documentName;
+        }
+
+        public override void OnLayout(PrintAttributes oldAttributes, PrintAttributes newAttributes, CancellationSignal cancellationSignal, LayoutResultCallback callback, Bundle extras)
+        {
+            if (cancellationSignal.IsCancellationRequested)
+            {
+                callback.OnLayoutCancelled();
+                return;
+            }
+
+            // Create a PrintDocumentInfo with the total page count
+            var info = new PrintDocumentInfo.Builder(_documentName)
+                .SetContentType(PrintContentType.Document)
+                .SetPageCount(1) // Assuming one page for simplicity, you might need to parse PDF for actual page count
+                .Build();
+
+            callback.OnLayoutFinished(info, oldAttributes != newAttributes);
+        }
+
+        public override void OnWrite(PageRange[] pages, ParcelFileDescriptor destination, CancellationSignal cancellationSignal, WriteResultCallback callback)
+        {
+            if (cancellationSignal.IsCancellationRequested)
+            {
+                callback.OnWriteCancelled();
+                return;
+            }
+
+            using (var output = new FileOutputStream(destination.FileDescriptor))
+            {
+                try
+                {
+                    output.Write(_pdfBytes);
+                    callback.OnWriteFinished(pages);
+                }
+                catch (Java.IO.IOException e)
+                {
+                    callback.OnWriteFailed(e.ToString());
+                }
+            }
+        }
+    }
+#endif
+}
+
+// MainPage.xaml.cs (Code-behind)
+using GSTInvoiceApp.Models;
+using GSTInvoiceApp.Services;
+using System.Collections.ObjectModel; // Required for ObservableCollection
+
+namespace GSTInvoiceApp;
+
+public partial class MainPage : ContentPage
+{
+    private readonly IPdfService _pdfService;
+    private readonly IPrintService _printService;
+
+    // Use ObservableCollection for item list to enable easy UI binding and updates
+    public ObservableCollection<InvoiceItem> InvoiceItems { get; set; }
+
+    public MainPage()
+    {
+        InitializeComponent();
+
+        _pdfService = new PdfService();
+        _printService = new PrintService();
+
+        // Initialize with some sample data for demonstration
+        InvoiceItems = new ObservableCollection<InvoiceItem>();
+        LoadSampleInvoiceData();
+
+        BindingContext = this; // Set the BindingContext for data binding
+    }
+
+    private void LoadSampleInvoiceData()
+    {
+        // Sample Seller (Aadwika Sweets from your PDF)
+        var seller = new Party
+        {
+            Name = "Aadwika Sweets",
+            Address = "Your Company Address, City, State, Pin", // Placeholder
+            ContactNo = "9334799099",
+            Email = "amit.dumka@gmail.com",
+            GSTIN = "20AJHPA7396P1ZV",
+            State = "20-Jharkhand"
+        };
+
+        // Sample Buyer (AMit kumar from your PDF)
+        var buyer = new Party
+        {
+            Name = "AMit kumar",
+            Address = "NEAR TATA SHOWROOM BHAGALPUR ROAD DUMKA DUMKA",
+            ContactNo = "9334799099",
+            GSTIN = "20AJHPA7396P1ZV", // Assuming same GSTIN for simplicity, or modify if different
+            State = "20-Jharkhand"
+        };
+
+        // Sample Invoice Items
+        var item1 = new InvoiceItem
+        {
+            SNo = 1,
+            ItemName = "Shirting",
+            Barcode = "SHIRT12345",
+            StyleCode = "M-XL-001",
+            HSNCode = "11", // As per your PDF, but typically 4 or 6 digits
+            Rate = 1999.00m,
+            Quantity = 11,
+            Discount = 0.00m, // No discount for now
+            CGSTPercentage = 2.5m, // 5% total GST, so 2.5% CGST
+            SGSTPercentage = 2.5m // 2.5% SGST
+        };
+
+        // Calculate LineTotal, TaxableAmount, CGSTAmt, SGSTAmt, TotalTax for item1
+        item1.LineTotal = (item1.Rate * item1.Quantity) - item1.Discount;
+        item1.TaxableAmount = item1.LineTotal; // Assuming no other charges for taxable amount calculation
+        item1.CGSTAmt = item1.TaxableAmount * (item1.CGSTPercentage / 100);
+        item1.SGSTAmt = item1.TaxableAmount * (item1.SGSTPercentage / 100);
+        item1.TotalTax = item1.CGSTAmt + item1.SGSTAmt;
+
+        InvoiceItems.Add(item1);
+
+        // Create the Invoice object
+        var sampleInvoice = new Invoice
+        {
+            InvoiceNo = "1",
+            InvoiceDate = DateTime.Parse("2025-06-30"),
+            Seller = seller,
+            Buyer = buyer,
+            PlaceOfSupply = "20-Jharkhand",
+            Items = InvoiceItems.ToList() // Convert ObservableCollection to List for the Invoice model
+        };
+
+        // Calculate overall totals
+        sampleInvoice.SubTotal = sampleInvoice.Items.Sum(item => item.LineTotal);
+        sampleInvoice.TotalTaxAmount = sampleInvoice.Items.Sum(item => item.TotalTax);
+        sampleInvoice.GrandTotal = sampleInvoice.SubTotal + sampleInvoice.TotalTaxAmount;
+
+        // Round off logic (as per your PDF, -0.45 for 23088.45 to 23088.00)
+        sampleInvoice.RoundOff = Math.Round(sampleInvoice.GrandTotal) - sampleInvoice.GrandTotal;
+        sampleInvoice.GrandTotal = Math.Round(sampleInvoice.GrandTotal); // Final grand total after rounding
+
+        sampleInvoice.AmountInWords = ConvertNumberToWords(sampleInvoice.GrandTotal);
+
+        // Set the invoice data to a property accessible by the UI
+        currentInvoice = sampleInvoice; // Store the invoice for printing
+    }
+
+    // A simple property to hold the current invoice for printing
+    private Invoice currentInvoice;
+
+    private async void OnPrintInvoiceClicked(object sender, EventArgs e)
+    {
+        if (currentInvoice == null)
+        {
+            await DisplayAlert("Error", "No invoice data to print. Please ensure data is loaded.", "OK");
+            return;
+        }
+
+        try
+        {
+            // Generate PDF bytes
+            byte[] pdfBytes = await _pdfService.GenerateInvoicePdf(currentInvoice);
+
+            // Trigger printing
+            await _printService.PrintPdf(pdfBytes, $"Invoice_{currentInvoice.InvoiceNo}");
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"Failed to generate or print invoice: {ex.Message}", "OK");
+        }
+    }
+
+    // Helper function to convert number to words (Simplified for example)
+    // For a robust solution, consider a dedicated NuGet package or more complete implementation
+    private string ConvertNumberToWords(decimal number)
+    {
+        if (number == 0) return "Zero Rupees Only";
+
+        long wholePart = (long)Math.Floor(number);
+        long fractionalPart = (long)((number - wholePart) * 100);
+
+        string words = NumToWords(wholePart) + " Rupees";
+        if (fractionalPart > 0)
+        {
+            words += " and " + NumToWords(fractionalPart) + " Paisa";
+        }
+        return words + " Only";
+    }
+
+    private string NumToWords(long n)
+    {
+        if (n < 0) return "Minus " + NumToWords(-n);
+        if (n == 0) return ""; // Handled by calling function for main zero
+
+        string[] units = { "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen" };
+        string[] tens = { "", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
+
+        if (n < 20) return units[n];
+        if (n < 100) return tens[n / 10] + ((n % 10 != 0) ? " " + units[n % 10] : "");
+        if (n < 1000) return units[n / 100] + " Hundred" + ((n % 100 != 0) ? " " + NumToWords(n % 100) : "");
+        if (n < 100000) return NumToWords(n / 1000) + " Thousand" + ((n % 100000 != 0) ? " " + NumToWords(n % 1000) : "");
+        if (n < 10000000) return NumToWords(n / 100000) + " Lakh" + ((n % 100000 != 0) ? " " + NumToWords(n % 100000) : "");
+        return NumToWords(n / 10000000) + " Crore" + ((n % 10000000 != 0) ? " " + NumToWords(n % 10000000) : "");
+    }
+}
+
+// MainPage.xaml (XAML for UI)
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:GSTInvoiceApp"
+             x:Class="GSTInvoiceApp.MainPage"
+             Title="GST Invoice Printer">
+
+    <ScrollView>
+        <VerticalStackLayout
+            Padding="30,0"
+            Spacing="25">
+
+            <Label
+                Text="GST Invoice Generator"
+                FontSize="32"
+                FontAttributes="Bold"
+                HorizontalOptions="Center" />
+
+            <Frame
+                CornerRadius="10"
+                Padding="20"
+                HasShadow="True">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Sample Invoice Details (For Demo)" FontSize="18" FontAttributes="Bold" />
+                    <Label Text="Invoice No: 1" FontSize="14" />
+                    <Label Text="Date: 30/06/2025" FontSize="14" />
+                    <Label Text="Seller: Aadwika Sweets" FontSize="14" />
+                    <Label Text="Buyer: AMit kumar" FontSize="14" />
+                    <Label Text="Place of Supply: 20-Jharkhand" FontSize="14" />
+
+                    <Label Text="Invoice Items:" FontSize="16" FontAttributes="Bold" Margin="0,10,0,0"/>
+                    <CollectionView ItemsSource="{Binding InvoiceItems}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Frame Margin="0,5,0,0" Padding="10" CornerRadius="5" BorderColor="LightGray" HasShadow="False">
+                                    <Grid ColumnDefinitions="*,*,*,*,*,*">
+                                        <Label Grid.Column="0" Text="{Binding SNo}" FontAttributes="Bold"/>
+                                        <Label Grid.Column="1" Text="{Binding ItemName}" />
+                                        <Label Grid.Column="2" Text="{Binding HSNCode}" />
+                                        <Label Grid.Column="3" Text="{Binding Quantity}" />
+                                        <Label Grid.Column="4" Text="{Binding Rate, StringFormat='?{0:F2}'}" />
+                                        <Label Grid.Column="5" Text="{Binding LineTotal, StringFormat='Line Total: ?{0:F2}'}" HorizontalTextAlignment="End"/>
+                                    </Grid>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Button
+                Text="Generate & Print Invoice PDF"
+                Clicked="OnPrintInvoiceClicked"
+                HorizontalOptions="Center"
+                BackgroundColor="#4CAF50"
+                TextColor="White"
+                CornerRadius="25"
+                Padding="20,15"
+                FontSize="18">
+                <Button.Shadow>
+                    <Shadow Brush="Black" Offset="5,5" Radius="10" Opacity="0.5" />
+                </Button.Shadow>
+            </Button>
+
+            <Label
+                Text="Note: This is a sample. Implement full data input and validation in a production app."
+                FontSize="12"
+                TextColor="Gray"
+                HorizontalOptions="Center" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
+
+
+ 
+

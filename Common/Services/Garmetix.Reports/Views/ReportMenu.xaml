@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<FlyoutItem
+    x:Class="Garmetix.Reports.Views.ReportMenu"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:invoice="clr-namespace:Garmetix.Reports.InvoicePrinter.Pages"
+    xmlns:page="clr-namespace:Garmetix.Reports.Pages"
+    Title="Reports">
+
+    <Tab Title="Ledger" Icon="rain_icon.png">
+        <ShellContent
+            Title="Ledger"
+            ContentTemplate="{DataTemplate page:LedgerReportPage}"
+            Route="LedgerReports" />
+    </Tab>
+    <Tab Title="Employee" Icon="rain_icon.png">
+        <ShellContent
+            Title="Employee"
+            ContentTemplate="{DataTemplate page:EmployeeReportPage}"
+            Route="EmployeeReprots" />
+    </Tab>
+    <Tab Title="Vouchers" Icon="rain_icon.png">
+        <ShellContent
+            Title="Vouchers"
+            ContentTemplate="{DataTemplate page:VoucherReportPage}"
+            Route="VoucherReportPage" />
+    </Tab>
+    <Tab Title="Accounting" Icon="rain_icon.png">
+        <ShellContent
+            Title="Accounting"
+            ContentTemplate="{DataTemplate page:AccountingReportPage}"
+            Route="Accountingreports" />
+    </Tab>
+    <Tab Title="Reprint" Icon="rain_icon.png">
+        <ShellContent
+            Title="Reprint"
+            ContentTemplate="{DataTemplate page:ReprintReportPage}"
+            Route="ReprintReports" />
+    </Tab>
+
+
+</FlyoutItem>

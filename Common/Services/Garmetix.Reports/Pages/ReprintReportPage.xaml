@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Garmetix.Reports.Pages.ReprintReportPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:pagemodel="clr-namespace:Garmetix.Reports.PageModels"
+    xmlns:syncfusionInputs="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
+    Title="Reprint Report"
+    x:DataType="pagemodel:ReprintPageModel">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style TargetType="Label">
+                <Setter Property="TextColor" Value="{DynamicResource TwitterBlue}" />
+                <Setter Property="FontSize" Value="Small" />
+                <Setter Property="FontAttributes" Value="Italic" />
+
+                <Setter Property="Margin" Value="0,0,10,0" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+                <Setter Property="FontFamily" Value="RobotoMedium" />
+            </Style>
+            <Style TargetType="syncfusionInputs:SfComboBox">
+                <Setter Property="Margin" Value="10,0,10,0" />
+                <Setter Property="HeightRequest" Value="30" />
+                <Setter Property="MinimumWidthRequest" Value="100" />
+                <Setter Property="ShowBorder" Value="True" />
+                <Setter Property="TextColor" Value="{DynamicResource SecondaryTextColor}" />
+                <Setter Property="PlaceholderColor" Value="Indigo" />
+                <Setter Property="BackgroundColor" Value="LightSkyBlue" />
+                <Setter Property="DropDownBackground" Value="LightGrey" />
+
+            </Style>
+            <Style TargetType="Button">
+                <Setter Property="Margin" Value="10,-5,10,0" />
+                <Setter Property="HeightRequest" Value="40" />
+                <Setter Property="CornerRadius" Value="15" />
+                <Setter Property="BackgroundColor" Value="#007ACC" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="FontSize" Value="Default" />
+                <Setter Property="FontAttributes" Value="Bold" />
+            </Style>
+            <Style TargetType="VerticalStackLayout">
+                <Setter Property="Padding" Value="10,0" />
+                <Setter Property="Spacing" Value="15" />
+
+
+                <Setter Property="VerticalOptions" Value="Start" />
+                <Setter Property="HorizontalOptions" Value="Start" />
+            </Style>
+            <Style TargetType="HorizontalStackLayout">
+                <Setter Property="Padding" Value="10,0" />
+                <Setter Property="Spacing" Value="5" />
+
+                <Setter Property="VerticalOptions" Value="Start" />
+                <Setter Property="HorizontalOptions" Value="Start" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Border Margin="20" Padding="10">
+        <Grid
+            Padding="25"
+            ColumnDefinitions="Auto,Auto"
+            RowDefinitions="Auto,Auto,Auto"
+            RowSpacing="20">
+
+            <VerticalStackLayout
+                Grid.Row="0"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                HorizontalOptions="Center">
+                <Label
+                    Margin="0,10,10,0"
+                    FontSize="Title"
+                    HorizontalOptions="Center"
+                    Text="Re-Print"
+                    TextColor="Violet"
+                    VerticalOptions="Center" />
+                <Label
+                    Margin="0,10,10,0"
+                    FontSize="Subtitle"
+                    HorizontalOptions="Center"
+                    Text="Reprint all Pdf Files"
+                    TextColor="{DynamicResource SuccessGreen}"
+                    VerticalOptions="Center" />
+            </VerticalStackLayout>
+            <Border
+                Grid.Row="1"
+                Grid.Column="0"
+                Background="{DynamicResource Gray950}">
+                <HorizontalStackLayout>
+                    <Label
+                        Margin="0,0,40,0"
+                        Style="{StaticResource TitleLabelStyle}"
+                        Text="Report"
+                        TextColor="IndianRed"
+                        VerticalOptions="Center" />
+
+                    <syncfusionInputs:SfComboBox
+                        DropDownStroke="MediumVioletRed"
+                        ItemsSource="{Binding ReportOptions}"
+                        Placeholder="Select a report type"
+                        SelectedValue="{Binding SelectedOption}"
+                        VerticalOptions="Center" />
+
+                    <Button
+                        Margin="20,0,0,0"
+                        Command="{Binding LoadPdfFilesCommand}"
+                        HorizontalOptions="Fill"
+                        Text="Get PDF List" />
+                </HorizontalStackLayout>
+            </Border>
+            <HorizontalStackLayout Grid.Row="2" Grid.Column="0">
+
+                <Label
+                    Margin="0,0,40,0"
+                    Style="{StaticResource TitleLabelStyle}"
+                    Text="Select a File"
+                    TextColor="IndianRed"
+                    VerticalOptions="Center" />
+                <syncfusionInputs:SfComboBox
+                    x:Name="fileListComboBox"
+                    DisplayMemberPath="FileName"
+                    DropDownStroke="MediumVioletRed"
+                    ItemsSource="{Binding ReportPdfFiles}"
+                    Placeholder="Select a Pdf File"
+                    SelectedItem="{Binding SelectedItem}"
+                    SelectedValue="{Binding SelectedItem}"
+                    SelectedValuePath="FilePath"
+                    VerticalOptions="Center" />
+
+                <Button
+                    Margin="20,0,0,0"
+                    Command="{Binding PrintFileCommand}"
+                    Text="Print File" />
+            </HorizontalStackLayout>
+
+
+        </Grid>
+    </Border>
+</ContentPage>

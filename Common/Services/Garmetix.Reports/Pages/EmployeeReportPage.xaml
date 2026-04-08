@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Garmetix.Reports.Pages.EmployeeReportPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:pageModel="clr-namespace:Garmetix.Reports.PageModels"
+    xmlns:syncfusionInputs="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
+    Title="Employee Report">
+    <ContentPage.BindingContext>
+        <pageModel:PayrollPageModel x:Name="viewModel" />
+    </ContentPage.BindingContext>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style TargetType="Label">
+                <Setter Property="TextColor" Value="{DynamicResource TwitterBlue}" />
+                <Setter Property="FontSize" Value="Small" />
+                <Setter Property="FontAttributes" Value="Italic" />
+
+                <Setter Property="Margin" Value="0,0,10,0" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+                <Setter Property="FontFamily" Value="RobotoMedium" />
+            </Style>
+            <Style TargetType="syncfusionInputs:SfComboBox">
+                <Setter Property="Margin" Value="10,0,10,0" />
+                <Setter Property="HeightRequest" Value="30" />
+                <Setter Property="MinimumWidthRequest" Value="100" />
+                <Setter Property="ShowBorder" Value="True" />
+                <Setter Property="TextColor" Value="{DynamicResource Dull-Red}" />
+                <Setter Property="PlaceholderColor" Value="Indigo" />
+                <Setter Property="BackgroundColor" Value="LightSkyBlue" />
+                <Setter Property="DropDownBackground" Value="LightGrey" />
+
+            </Style>
+            <Style TargetType="Button">
+                <Setter Property="Margin" Value="10,-5,10,0" />
+                <Setter Property="HeightRequest" Value="40" />
+                <Setter Property="CornerRadius" Value="20" />
+                <Setter Property="BackgroundColor" Value="#007ACC" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="FontSize" Value="Default" />
+                <Setter Property="FontAttributes" Value="Bold" />
+            </Style>
+            <Style TargetType="VerticalStackLayout">
+                <Setter Property="Padding" Value="10,0" />
+                <Setter Property="Spacing" Value="15" />
+
+
+                <Setter Property="VerticalOptions" Value="Start" />
+                <Setter Property="HorizontalOptions" Value="Start" />
+            </Style>
+            <Style TargetType="HorizontalStackLayout">
+                <Setter Property="Padding" Value="10,0" />
+                <Setter Property="Spacing" Value="5" />
+
+                <Setter Property="VerticalOptions" Value="Start" />
+                <Setter Property="HorizontalOptions" Value="Start" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Border Margin="15" Padding="10">
+        <Grid
+            ColumnSpacing="10"
+            RowDefinitions="Auto,Auto,Auto,Auto"
+            RowSpacing="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <HorizontalStackLayout
+                Grid.Row="0"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Margin="0,0,0,10"
+                HorizontalOptions="Center">
+                <Label
+                    HorizontalOptions="Center"
+                    Style="{StaticResource Title2}"
+                    Text="Employees Report"
+                    VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout
+                Grid.Row="1"
+                Grid.Column="0"
+                VerticalOptions="Start">
+                <Label
+                    Margin="0,0,40,0"
+                    Style="{StaticResource TitleLabelStyle}"
+                    Text="Employee"
+                    TextColor="IndianRed"
+                    VerticalOptions="Center" />
+                <syncfusionInputs:SfComboBox
+                    DisplayMemberPath="Name"
+                    ItemsSource="{Binding Employees}"
+                    Placeholder="Select a Enployee"
+                    SelectedItem="{Binding SelectedEmployee}"
+                    SelectedValue="{Binding SelectedEmployee}"
+                    SelectedValuePath="Id"
+                    VerticalOptions="Center" />
+            </HorizontalStackLayout>
+            <Border
+                Grid.Row="2"
+                Grid.Column="0"
+                Background="{DynamicResource DarkBackground}">
+                <HorizontalStackLayout>
+
+
+                    <Label
+                        Margin="0,0,40,0"
+                        Style="{StaticResource TitleLabelStyle}"
+                        Text="Select Month and Year"
+                        TextColor="IndianRed"
+                        VerticalOptions="Center" />
+
+                    <syncfusionInputs:SfComboBox
+                        DropDownStroke="MediumVioletRed"
+                        ItemsSource="{Binding Months}"
+                        Placeholder="Select a Month"
+                        SelectedItem="{Binding SelectedMonth}"
+                        SelectedValue="{Binding SelectedMonth}"
+                        VerticalOptions="Center" />
+                    <syncfusionInputs:SfComboBox
+                        DropDownStroke="MediumVioletRed"
+                        ItemsSource="{Binding Years}"
+                        Placeholder="Select a Year"
+                        SelectedItem="{Binding SelectedYear}"
+                        SelectedValue="{Binding SelectedYear}"
+                        VerticalOptions="Center" />
+
+                </HorizontalStackLayout>
+            </Border>
+            <Border
+                Grid.Row="3"
+                Grid.Column="0"
+                Background="{DynamicResource Gray950}"
+                StrokeLineJoin="Bevel">
+
+
+                <VerticalStackLayout Padding="10">
+                    <HorizontalStackLayout VerticalOptions="Start">
+                        <Button Command="{Binding PrintSalaryLedgerCommand}" Text="Salary Ledger" />
+                        <Button Command="{Binding PrintPayslipCommand}" Text="PaySlip" />
+                        <Button Command="{Binding PrintEmployeeReportCommand}" Text="Employee Report" />
+                    </HorizontalStackLayout>
+
+                    <HorizontalStackLayout VerticalOptions="Start">
+
+                        <Button Command="{Binding PrintAttanceReportCommand}" Text="Attendance" />
+
+                        <Button Command="{Binding PrintMontlyReportCommand}" Text="Monthly" />
+                        <Button Command="{Binding PrintYearlyReportCommand}" Text="Yearly " />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+    </Border>
+</ContentPage>
