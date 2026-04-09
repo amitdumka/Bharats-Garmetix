@@ -2,9 +2,29 @@ using System;
 using SQLite;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace  Garmetix.AI.Billing.Models
+namespace Garmetix.AI.Billing.Models
 {
     public enum GarmentCategory { Fabric, ReadyMade, Accessories }
+
+    // --- NEW: Customer Model for Database lookups ---
+    public class Customer
+    {
+        [PrimaryKey, AutoIncrement]
+        public int Id { get; set; }
+        public string MobileNo { get; set; }
+        public string Name { get; set; }
+        public string Gstin { get; set; }
+    }
+
+    // --- NEW: Payment Detail Model for Split Payments ---
+    public class PaymentDetail
+    {
+        [PrimaryKey, AutoIncrement]
+        public int Id { get; set; }
+        public Guid InvoiceId { get; set; } // Foreign key to link to Invoice
+        public string Mode { get; set; }    // Cash, UPI, Card, etc.
+        public decimal Amount { get; set; }
+    }
 
     public class Product
     {
@@ -19,7 +39,7 @@ namespace  Garmetix.AI.Billing.Models
         public string Color { get; set; }
     }
 
-    public class Invoice : ObservableObject
+    public partial class Invoice : ObservableObject
     {
         [PrimaryKey]
         public Guid Id { get; set; } = Guid.NewGuid();
@@ -32,14 +52,32 @@ namespace  Garmetix.AI.Billing.Models
         public string Gstin { get; set; }
         public bool IsInterStateSale { get; set; }
 
-        public decimal SubTotal { get; set; }
-        public decimal TotalDiscount { get; set; }
-        public decimal TotalTax { get; set; }
-        public decimal GrandTotal { get; set; }
+        // Converted to ObservableProperties so UI updates automatically upon calculation
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(BalanceAmount))]
+        private decimal subTotal;
 
-        public decimal PaidAmount { get; set; }
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(BalanceAmount))]
+        private decimal totalDiscount;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(BalanceAmount))]
+        private decimal totalTax;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(BalanceAmount))]
+        private decimal grandTotal;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(BalanceAmount))]
+        private decimal paidAmount;
+
+        // ADD THIS NEW PROPERTY
+        [ObservableProperty]
+        private decimal roundOffAmount;
+        [Ignore] // Tells SQLite not to attempt to save this calculated property to the DB
         public decimal BalanceAmount => GrandTotal - PaidAmount;
-        public string PaymentMode { get; set; }
     }
 
     public partial class InvoiceItem : ObservableObject
@@ -54,21 +92,27 @@ namespace  Garmetix.AI.Billing.Models
         [ObservableProperty] private decimal rate;
         [ObservableProperty] private int quantity = 1;
         [ObservableProperty] private decimal discountAmount;
-        
-        public decimal GstPercentage 
+
+        [Ignore]
+        public decimal GstPercentage
         {
-            get 
+            get
             {
                 if (Category == GarmentCategory.Fabric) return 5m;
-                
+
                 decimal unitDiscount = Quantity > 0 ? DiscountAmount / Quantity : 0;
                 decimal unitTaxableValue = Rate - unitDiscount;
                 return unitTaxableValue > 2499 ? 18m : 5m;
             }
         }
 
+        [Ignore]
         public decimal TaxableValue => (Rate * Quantity) - DiscountAmount;
+
+        [Ignore]
         public decimal TaxAmount => TaxableValue * (GstPercentage / 100m);
+
+        [Ignore]
         public decimal TotalAmount => TaxableValue + TaxAmount;
 
         partial void OnRateChanged(decimal value) => Refresh();

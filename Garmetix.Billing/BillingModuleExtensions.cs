@@ -1,13 +1,5 @@
 ﻿using Garmetix.AI.Billing.ViewModels;
 using Garmetix.AI.Billing.Views;
-
-<<<<<<< TODO: Unmerged change from project 'Garmetix.Billing (net10.0-android)', Before:
-#if ANDROID
-=======
-using Garmetix.Billing.AIBased.Services;
-
-#if ANDROID
->>>>>>> After
 using Garmetix.Billing.AIBased.Services;
 #if ANDROID
 using Garmetix.AI.Billing.Platforms.Android;
