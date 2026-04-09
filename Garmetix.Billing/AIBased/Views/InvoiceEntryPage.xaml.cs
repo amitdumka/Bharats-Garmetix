@@ -1,6 +1,6 @@
-using Garmetix.AI.Billing.ViewModels;
+using Microsoft.Maui.Controls;
 
-namespace  Garmetix.AI.Billing.Views
+namespace Garmetix.AI.Billing.Views
 {
     public partial class InvoiceEntryPage : ContentPage
     {
@@ -10,7 +10,6 @@ namespace  Garmetix.AI.Billing.Views
             BindingContext = viewModel;
         }
 
-        // Add this method to handle the Unfocused event
         private void MobileNoEntry_Unfocused(object sender, FocusEventArgs e)
         {
             var vm = BindingContext as ViewModels.InvoiceEntryViewModel;

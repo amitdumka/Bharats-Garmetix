@@ -6,7 +6,6 @@ namespace Garmetix.AI.Billing.Models
 {
     public enum GarmentCategory { Fabric, ReadyMade, Accessories }
 
-    // --- NEW: Customer Model for Database lookups ---
     public class Customer
     {
         [PrimaryKey, AutoIncrement]
@@ -16,13 +15,12 @@ namespace Garmetix.AI.Billing.Models
         public string Gstin { get; set; }
     }
 
-    // --- NEW: Payment Detail Model for Split Payments ---
     public class PaymentDetail
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
-        public Guid InvoiceId { get; set; } // Foreign key to link to Invoice
-        public string Mode { get; set; }    // Cash, UPI, Card, etc.
+        public Guid InvoiceId { get; set; }
+        public string Mode { get; set; }
         public decimal Amount { get; set; }
     }
 
@@ -52,7 +50,6 @@ namespace Garmetix.AI.Billing.Models
         public string Gstin { get; set; }
         public bool IsInterStateSale { get; set; }
 
-        // Converted to ObservableProperties so UI updates automatically upon calculation
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(BalanceAmount))]
         private decimal subTotal;
@@ -67,18 +64,20 @@ namespace Garmetix.AI.Billing.Models
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(BalanceAmount))]
+        private decimal globalDiscountAmount;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(BalanceAmount))]
         private decimal grandTotal;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(BalanceAmount))]
         private decimal paidAmount;
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(BalanceAmount))]
-        private decimal globalDiscountAmount;
-        // ADD THIS NEW PROPERTY
+
         [ObservableProperty]
         private decimal roundOffAmount;
-        [Ignore] // Tells SQLite not to attempt to save this calculated property to the DB
+
+        [Ignore]
         public decimal BalanceAmount => GrandTotal - PaidAmount;
     }
 
@@ -101,7 +100,6 @@ namespace Garmetix.AI.Billing.Models
             get
             {
                 if (Category == GarmentCategory.Fabric) return 5m;
-
                 decimal unitDiscount = Quantity > 0 ? DiscountAmount / Quantity : 0;
                 decimal unitTaxableValue = Rate - unitDiscount;
                 return unitTaxableValue > 2499 ? 18m : 5m;

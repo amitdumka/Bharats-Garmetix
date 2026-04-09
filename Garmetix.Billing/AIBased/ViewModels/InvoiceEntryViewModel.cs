@@ -1,11 +1,12 @@
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using Garmetix.AI.Billing.Models;
-using Garmetix.Billing.AIBased.Helpers;
-using Garmetix.Billing.AIBased.Services;
-using SQLite;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using SQLite;
+using Garmetix.AI.Billing.Models;
+using Microsoft.Maui.Controls;
+using Garmetix.Billing.AIBased.Services;
+using Garmetix.Billing.AIBased.Helpers;
 
 namespace Garmetix.AI.Billing.ViewModels
 {
@@ -14,7 +15,6 @@ namespace Garmetix.AI.Billing.ViewModels
         private SQLiteAsyncConnection _database;
         private readonly IPrintService _printService;
 
-        // --- STATE MANAGEMENT ---
         // --- STATE MANAGEMENT ---
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsNotBusy))]
@@ -40,6 +40,10 @@ namespace Garmetix.AI.Billing.ViewModels
 
         [ObservableProperty]
         private decimal paymentAmountInput;
+
+        [ObservableProperty]
+        private bool isNewCustomer = false;
+
         // --- GLOBAL DISCOUNT INPUTS ---
         [ObservableProperty]
         private decimal globalDiscountInput;
@@ -50,9 +54,6 @@ namespace Garmetix.AI.Billing.ViewModels
         private string globalDiscountTypeInput = "Amount";
 
         partial void OnGlobalDiscountTypeInputChanged(string value) => CalculateInvoiceTotals();
-
-        [ObservableProperty]
-        private bool isNewCustomer = false;
 
         public InvoiceEntryViewModel(IPrintService printService)
         {
@@ -74,7 +75,6 @@ namespace Garmetix.AI.Billing.ViewModels
                 await _database.CreateTableAsync<Product>();
                 await _database.CreateTableAsync<Customer>();
 
-                // Load Dummy Data if empty
                 if (await _database.Table<Product>().CountAsync() == 0)
                 {
                     AvailableProducts.Add(new Product { Name = "Cotton Kurta", Barcode = "1001", BaseRate = 1500, Category = GarmentCategory.ReadyMade });
@@ -83,7 +83,7 @@ namespace Garmetix.AI.Billing.ViewModels
             }
             catch (Exception ex)
             {
-                await ShowErrorAsync("Database Initialization Failed", ex);
+                await ShowErrorAsync("Database Error", ex);
             }
             finally
             {
@@ -128,7 +128,7 @@ namespace Garmetix.AI.Billing.ViewModels
             if (IsBusy) return;
             if (string.IsNullOrWhiteSpace(CurrentInvoice.MobileNo) || string.IsNullOrWhiteSpace(CurrentInvoice.CustomerName))
             {
-                await Application.Current.MainPage.DisplayAlert("Validation", "Please enter a valid Mobile No and Name.", "OK");
+                await Application.Current.MainPage.DisplayAlert("Validation", "Please enter Mobile No and Name.", "OK");
                 return;
             }
 
@@ -145,7 +145,7 @@ namespace Garmetix.AI.Billing.ViewModels
                         Gstin = CurrentInvoice.Gstin
                     });
                     IsNewCustomer = false;
-                    await Application.Current.MainPage.DisplayAlert("Success", "Customer details saved successfully.", "OK");
+                    await Application.Current.MainPage.DisplayAlert("Success", "Customer saved.", "OK");
                 }
             }
             catch (Exception ex)
@@ -181,7 +181,7 @@ namespace Garmetix.AI.Billing.ViewModels
             }
             catch (Exception ex)
             {
-                _ = ShowErrorAsync("Failed to add product", ex);
+                _ = ShowErrorAsync("Add Product Error", ex);
             }
         }
 
@@ -192,8 +192,7 @@ namespace Garmetix.AI.Billing.ViewModels
 
             item.PropertyChanged -= InvoiceItem_PropertyChanged;
 
-            if (SelectedInvoiceItem == item)
-                SelectedInvoiceItem = null;
+            if (SelectedInvoiceItem == item) SelectedInvoiceItem = null;
 
             Application.Current.Dispatcher.Dispatch(() =>
             {
@@ -204,50 +203,11 @@ namespace Garmetix.AI.Billing.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    _ = ShowErrorAsync("Failed to remove item", ex);
+                    _ = ShowErrorAsync("Remove Item Error", ex);
                 }
             });
         }
-        public void CalculateInvoiceTotals()
-        {
-            try
-            {
-                // 1. Calculate Item-Level Totals
-                CurrentInvoice.SubTotal = InvoiceItems.Sum(i => (i.Rate * i.Quantity));
-                CurrentInvoice.TotalDiscount = InvoiceItems.Sum(i => i.DiscountAmount); // Item discounts
-                CurrentInvoice.TotalTax = InvoiceItems.Sum(i => i.TaxAmount);
 
-                // 2. Pre-Global Discount Total
-                decimal preDiscountTotal = (CurrentInvoice.SubTotal - CurrentInvoice.TotalDiscount) + CurrentInvoice.TotalTax;
-
-                // 3. Apply Global Bill Discount (Amount or Percentage)
-                if (GlobalDiscountTypeInput == "%")
-                {
-                    CurrentInvoice.GlobalDiscountAmount = preDiscountTotal * (GlobalDiscountInput / 100m);
-                }
-                else // "Amount"
-                {
-                    CurrentInvoice.GlobalDiscountAmount = GlobalDiscountInput;
-                }
-
-                // 4. Exact Grand Total after Global Discount
-                decimal exactGrandTotal = preDiscountTotal - CurrentInvoice.GlobalDiscountAmount;
-
-                // Prevent negative totals if the user enters a discount larger than the bill
-                if (exactGrandTotal < 0) exactGrandTotal = 0;
-
-                // 5. Apply Round Off
-                CurrentInvoice.GrandTotal = Math.Round(exactGrandTotal, 0, MidpointRounding.AwayFromZero);
-                CurrentInvoice.RoundOffAmount = CurrentInvoice.GrandTotal - exactGrandTotal;
-
-                // 6. Calculate Balances
-                CurrentInvoice.PaidAmount = Payments.Sum(p => p.Amount);
-            }
-            catch (Exception ex)
-            {
-                _ = ShowErrorAsync("Calculation Error", ex);
-            }
-        }
         private void InvoiceItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName is nameof(InvoiceItem.Rate) or nameof(InvoiceItem.Quantity) or nameof(InvoiceItem.DiscountAmount))
@@ -284,9 +244,23 @@ namespace Garmetix.AI.Billing.ViewModels
                 CurrentInvoice.TotalDiscount = InvoiceItems.Sum(i => i.DiscountAmount);
                 CurrentInvoice.TotalTax = InvoiceItems.Sum(i => i.TaxAmount);
 
-                decimal exactGrandTotal = (CurrentInvoice.SubTotal - CurrentInvoice.TotalDiscount) + CurrentInvoice.TotalTax;
+                decimal preDiscountTotal = (CurrentInvoice.SubTotal - CurrentInvoice.TotalDiscount) + CurrentInvoice.TotalTax;
+
+                if (GlobalDiscountTypeInput == "%")
+                {
+                    CurrentInvoice.GlobalDiscountAmount = preDiscountTotal * (GlobalDiscountInput / 100m);
+                }
+                else
+                {
+                    CurrentInvoice.GlobalDiscountAmount = GlobalDiscountInput;
+                }
+
+                decimal exactGrandTotal = preDiscountTotal - CurrentInvoice.GlobalDiscountAmount;
+                if (exactGrandTotal < 0) exactGrandTotal = 0;
+
                 CurrentInvoice.GrandTotal = Math.Round(exactGrandTotal, 0, MidpointRounding.AwayFromZero);
                 CurrentInvoice.RoundOffAmount = CurrentInvoice.GrandTotal - exactGrandTotal;
+
                 CurrentInvoice.PaidAmount = Payments.Sum(p => p.Amount);
             }
             catch (Exception ex)
@@ -294,13 +268,57 @@ namespace Garmetix.AI.Billing.ViewModels
                 _ = ShowErrorAsync("Calculation Error", ex);
             }
         }
+        // --- NAVIGATION & UTILITY COMMANDS ---
 
+        [RelayCommand]
+        public async Task GoBackAsync()
+        {
+            if (IsBusy) return;
+
+            // This is the standard MAUI way to navigate to the previous page
+            await Shell.Current.GoToAsync("..");
+        }
+
+        [RelayCommand]
+        public async Task ClearInvoiceAsync()
+        {
+            if (IsBusy) return;
+
+            // Safety check before wiping the screen
+            bool confirm = await Application.Current.MainPage.DisplayAlert(
+                "Clear Form",
+                "Are you sure you want to clear the entire invoice?",
+                "Yes, Clear It", "Cancel");
+
+            if (!confirm) return;
+
+            // Safely unsubscribe from events to prevent memory leaks
+            foreach (var item in InvoiceItems)
+            {
+                item.PropertyChanged -= InvoiceItem_PropertyChanged;
+            }
+
+            // Wipe all collections and reset inputs
+            InvoiceItems.Clear();
+            Payments.Clear();
+            GlobalDiscountInput = 0;
+            GlobalDiscountTypeInput = "Amount";
+            PaymentAmountInput = 0;
+            PaymentModeInput = "Cash";
+            IsNewCustomer = false;
+            SelectedProduct = null;
+            SelectedInvoiceItem = null;
+
+            // Generate a fresh invoice object
+            CurrentInvoice = new Invoice();
+            OnPropertyChanged(nameof(CurrentInvoice));
+        }
         [RelayCommand]
         public async Task SaveInvoiceAsync()
         {
             if (InvoiceItems.Count == 0)
             {
-                await Application.Current.MainPage.DisplayAlert("Validation", "Cannot save an empty invoice. Please add items.", "OK");
+                await Application.Current.MainPage.DisplayAlert("Validation", "Cannot save empty invoice.", "OK");
                 return;
             }
             if (IsBusy) return;
@@ -315,13 +333,12 @@ namespace Garmetix.AI.Billing.ViewModels
                 {
                     bool proceed = await Application.Current.MainPage.DisplayAlert(
                         "Part Payment",
-                        $"Balance of Rs. {CurrentInvoice.BalanceAmount} is unpaid. Proceed with saving?",
+                        $"Balance of Rs. {CurrentInvoice.BalanceAmount} is unpaid. Proceed?",
                         "Yes", "No");
 
                     if (!proceed) return;
                 }
 
-                // Database Transaction
                 await _database.RunInTransactionAsync(tran =>
                 {
                     tran.Insert(CurrentInvoice);
@@ -332,22 +349,21 @@ namespace Garmetix.AI.Billing.ViewModels
                     }
                 });
 
-                // Generate and Print
                 byte[] rawReceiptBytes = ReceiptBuilder.GenerateInvoiceBytes(CurrentInvoice, InvoiceItems);
                 await _printService.PrintReceiptAsync(rawReceiptBytes);
 
-                // Reset Form
                 foreach (var item in InvoiceItems) item.PropertyChanged -= InvoiceItem_PropertyChanged;
                 InvoiceItems.Clear();
                 Payments.Clear();
+                GlobalDiscountInput = 0;
                 CurrentInvoice = new Invoice();
                 OnPropertyChanged(nameof(CurrentInvoice));
 
-                await Application.Current.MainPage.DisplayAlert("Success", "Invoice saved and printed successfully.", "OK");
+                await Application.Current.MainPage.DisplayAlert("Success", "Invoice saved successfully.", "OK");
             }
             catch (Exception ex)
             {
-                await ShowErrorAsync("Failed to Save Invoice", ex);
+                await ShowErrorAsync("Save Invoice Error", ex);
             }
             finally
             {
@@ -355,11 +371,9 @@ namespace Garmetix.AI.Billing.ViewModels
             }
         }
 
-        // Standardized Error Helper
         private async Task ShowErrorAsync(string title, Exception ex)
         {
-            // In a production app, log 'ex.Message' to AppCenter or Crashlytics here.
-            await Application.Current.MainPage.DisplayAlert(title, $"An unexpected error occurred: {ex.Message}", "OK");
+            await Application.Current.MainPage.DisplayAlert(title, $"Error: {ex.Message}", "OK");
         }
     }
 }
