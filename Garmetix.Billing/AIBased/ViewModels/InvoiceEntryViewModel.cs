@@ -1,14 +1,11 @@
-using System;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SQLite;
-using  Garmetix.AI.Billing.Models;
-using  Garmetix.AI.Billing.Services;
-using  Garmetix.AI.Billing.Helpers;
+using Garmetix.AI.Billing.Models;
+using Garmetix.AI.Billing.Services;
+using Garmetix.AI.Billing.Helpers;
+using Microsoft.Maui.Controls;
 
 namespace  Garmetix.AI.Billing.ViewModels
 {
@@ -78,10 +75,24 @@ namespace  Garmetix.AI.Billing.ViewModels
             CurrentInvoice.InvoiceNo = "INV-" + DateTime.Now.Ticks.ToString();
             CalculateInvoiceTotals();
 
-            // Check for part payment logic (simplified alert check)
+            // Check for part payment logic
             if (CurrentInvoice.PaidAmount < CurrentInvoice.GrandTotal)
             {
-                bool proceed = await App.Current.MainPage.DisplayAlert("Part Payment", $"Balance of Rs. {CurrentInvoice.BalanceAmount} remaining. Proceed?", "Yes", "No");
+                var app = Application.Current;
+                Page page = null;
+                if (app?.Windows != null && app.Windows.Count > 0)
+                    page = app.Windows[0].Page;
+
+                // If we cannot find a Page to show the prompt, cancel the save.
+                if (page == null)
+                    return;
+
+                bool proceed = await page.DisplayAlertAsync(
+                    "Part Payment",
+                    $"Balance of Rs. {CurrentInvoice.BalanceAmount} remaining. Proceed?",
+                    "Yes",
+                    "No");
+
                 if (!proceed) return;
             }
 

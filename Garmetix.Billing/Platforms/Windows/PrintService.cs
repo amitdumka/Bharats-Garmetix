@@ -1,21 +1,28 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading.Tasks;
-using  Garmetix.AI.Billing.Services;
-using System.Drawing.Printing;
-using System.Drawing;
+using Garmetix.AI.Billing.Services;
 
-namespace  Garmetix.AI.Billing.Platforms.Windows
+namespace Garmetix.AI.Billing.Platforms.Windows
 {
     public class PrintService : IPrintService
     {
         public async Task PrintReceiptAsync(byte[] receiptData)
         {
-            await Task.Run(() => 
+            await Task.Run(() =>
             {
-                System.Drawing.Printing.PrinterSettings settings = new System.Drawing.Printing.PrinterSettings();
-                string printerName = settings.PrinterName;
-                RawPrinterHelper.SendBytesToPrinter(printerName, receiptData);
+                // Use the native method instead of System.Drawing.Printing
+                string printerName = RawPrinterHelper.GetDefaultPrinterName();
+
+                if (!string.IsNullOrEmpty(printerName))
+                {
+                    RawPrinterHelper.SendBytesToPrinter(printerName, receiptData);
+                }
+                else
+                {
+                    Console.WriteLine("No default printer found.");
+                }
             });
         }
     }
@@ -50,6 +57,29 @@ namespace  Garmetix.AI.Billing.Platforms.Windows
 
         [DllImport("winspool.Drv", EntryPoint = "WritePrinter", SetLastError = true, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
         public static extern bool WritePrinter(IntPtr hPrinter, IntPtr pBytes, Int32 dwCount, out Int32 dwWritten);
+
+        // --- NEW NATIVE METHOD TO GET DEFAULT PRINTER ---
+        [DllImport("winspool.drv", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern bool GetDefaultPrinter(StringBuilder pszBuffer, ref int pcchBuffer);
+
+        public static string GetDefaultPrinterName()
+        {
+            int pcchBuffer = 0;
+
+            // First call gets the required buffer size
+            GetDefaultPrinter(null, ref pcchBuffer);
+
+            int lastWin32Error = Marshal.GetLastWin32Error();
+            if (lastWin32Error == 122) // ERROR_INSUFFICIENT_BUFFER (Expected)
+            {
+                StringBuilder pszBuffer = new StringBuilder(pcchBuffer);
+                if (GetDefaultPrinter(pszBuffer, ref pcchBuffer))
+                {
+                    return pszBuffer.ToString();
+                }
+            }
+            return string.Empty;
+        }
 
         public static bool SendBytesToPrinter(string szPrinterName, byte[] bytes)
         {

@@ -2,10 +2,12 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Android.Bluetooth;
+using Android.Content;
 using Java.Util;
+using Microsoft.Maui.ApplicationModel; // Required for MAUI Permissions
 using Garmetix.AI.Billing.Services;
 
-namespace  Garmetix.Billing.Platforms.Android
+namespace Garmetix.AI.Billing.Platforms.Android
 {
     public class PrintService : IPrintService
     {
@@ -15,8 +17,23 @@ namespace  Garmetix.Billing.Platforms.Android
         {
             try
             {
-                BluetoothAdapter adapter = BluetoothAdapter.DefaultAdapter;
-                if (adapter == null || !adapter.IsEnabled) return;
+                // 1. CRITICAL: Check and Request Bluetooth Permissions first
+                var permissionStatus = await CheckBluetoothPermissionsAsync();
+                if (permissionStatus != PermissionStatus.Granted)
+                {
+                    System.Diagnostics.Debug.WriteLine("Bluetooth permission denied by user.");
+                    return;
+                }
+
+                // 2. Modern way to get the Bluetooth Adapter (DefaultAdapter is deprecated)
+                var bluetoothManager = (BluetoothManager)global::Android.App.Application.Context.GetSystemService(Context.BluetoothService);
+                BluetoothAdapter? adapter = bluetoothManager?.Adapter;
+
+                if (adapter == null || !adapter.IsEnabled)
+                {
+                    System.Diagnostics.Debug.WriteLine("Bluetooth is turned off or not supported.");
+                    return;
+                }
 
                 var bonded = adapter.BondedDevices;
                 if (bonded == null || bonded.Count == 0)
@@ -57,6 +74,19 @@ namespace  Garmetix.Billing.Platforms.Android
             {
                 System.Diagnostics.Debug.WriteLine($"Android Print Error: {ex.Message}");
             }
+        }
+
+        // Helper method to handle MAUI Runtime Permissions
+        private async Task<PermissionStatus> CheckBluetoothPermissionsAsync()
+        {
+            PermissionStatus status = await Permissions.CheckStatusAsync<Permissions.Bluetooth>();
+
+            if (status != PermissionStatus.Granted)
+            {
+                status = await Permissions.RequestAsync<Permissions.Bluetooth>();
+            }
+
+            return status;
         }
     }
 }

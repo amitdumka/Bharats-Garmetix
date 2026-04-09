@@ -1,29 +1,33 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:editors="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
+             xmlns:inputs="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
+             xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
              xmlns:datagrid="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
-             x:Class=" Garmetix.AI.Billing.Views.InvoiceEntryPage"
+             x:Class="Garmetix.AI.Billing.Views.InvoiceEntryPage"
              Title="Point of Sale">
 
     <ScrollView>
         <VerticalStackLayout Padding="15" Spacing="15">
-            <Frame Padding="10" CornerRadius="8">
+
+            <Border Padding="10" StrokeShape="RoundRectangle 8">
                 <VerticalStackLayout Spacing="10">
                     <Label Text="Customer Details" FontAttributes="Bold" />
                     <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto" ColumnSpacing="10" RowSpacing="10">
-                        <editors:SfTextInputLayout Hint="Mobile Number" Grid.Row="0" Grid.Column="0">
+
+                        <core:SfTextInputLayout Hint="Mobile Number" Grid.Row="0" Grid.Column="0">
                             <Entry Text="{Binding CurrentInvoice.MobileNo}" Keyboard="Numeric"/>
-                        </editors:SfTextInputLayout>
-                        <editors:SfTextInputLayout Hint="Customer Name" Grid.Row="0" Grid.Column="1">
+                        </core:SfTextInputLayout>
+
+                        <core:SfTextInputLayout Hint="Customer Name" Grid.Row="0" Grid.Column="1">
                             <Entry Text="{Binding CurrentInvoice.CustomerName}" />
-                        </editors:SfTextInputLayout>
+                        </core:SfTextInputLayout>
                     </Grid>
                 </VerticalStackLayout>
-            </Frame>
+            </Border>
 
             <HorizontalStackLayout Spacing="10">
-                <editors:SfAutocomplete 
+                <inputs:SfAutocomplete 
                     WidthRequest="300" ToolTipProperties.Text="Scan Barcode or Type Name..." Placeholder="Scan Barcode or Type Name..."
                     ItemsSource="{Binding AvailableProducts}" DisplayMemberPath="Name" TextMemberPath="Barcode"
                     SelectedItem="{Binding SelectedProduct}"/>
@@ -41,21 +45,24 @@
                 </datagrid:SfDataGrid.Columns>
             </datagrid:SfDataGrid>
 
-            <Frame Padding="15" CornerRadius="8" BackgroundColor="#F8F9FA">
+            <Border Padding="15" StrokeShape="RoundRectangle 8" Background="#F8F9FA">
                 <Grid ColumnDefinitions="*, *" ColumnSpacing="20">
                     <VerticalStackLayout Grid.Column="0" Spacing="10">
-                        <editors:SfComboBox ToolTipProperties.Text="Payment Mode" SelectedItem="{Binding CurrentInvoice.PaymentMode}">
-                            <editors:SfComboBox.ItemsSource>
+
+                        <inputs:SfComboBox ToolTipProperties.Text="Payment Mode" SelectedItem="{Binding CurrentInvoice.PaymentMode}">
+                            <inputs:SfComboBox.ItemsSource>
                                 <x:Array Type="{x:Type x:String}">
                                     <x:String>Cash</x:String>
                                     <x:String>UPI</x:String>
                                     <x:String>Card</x:String>
                                 </x:Array>
-                            </editors:SfComboBox.ItemsSource>
-                        </editors:SfComboBox>
-                        <editors:SfTextInputLayout >
-                            <editors:SfNumericEntry Placeholder="Amount Paid" Value="{Binding CurrentInvoice.PaidAmount}" />
-                        </editors:SfTextInputLayout>
+                            </inputs:SfComboBox.ItemsSource>
+                        </inputs:SfComboBox>
+
+                        <core:SfTextInputLayout Hint="Amount Paid">
+                            <inputs:SfNumericEntry Value="{Binding CurrentInvoice.PaidAmount}" />
+                        </core:SfTextInputLayout>
+
                         <Label Text="{Binding CurrentInvoice.BalanceAmount, StringFormat='Balance Due: Rs. {0:F2}'}" TextColor="Red" FontAttributes="Bold"/>
                     </VerticalStackLayout>
                     <VerticalStackLayout Grid.Column="1" Spacing="5" HorizontalOptions="End">
@@ -65,7 +72,7 @@
                         <Label Text="{Binding CurrentInvoice.GrandTotal, StringFormat='Grand Total: Rs. {0:F2}'}" FontSize="18" FontAttributes="Bold" TextColor="Green"/>
                     </VerticalStackLayout>
                 </Grid>
-            </Frame>
+            </Border>
 
             <Button Text="Save &amp; Print Receipt" BackgroundColor="#0052cc" TextColor="White" HeightRequest="50" Command="{Binding SaveInvoiceCommand}"/>
         </VerticalStackLayout>

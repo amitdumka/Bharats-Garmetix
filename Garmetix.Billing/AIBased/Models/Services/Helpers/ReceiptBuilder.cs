@@ -17,6 +17,11 @@ namespace  Garmetix.AI.Billing.Helpers
     {
         public static byte[] GenerateInvoiceBytes(Invoice invoice, IEnumerable<InvoiceItem> items)
         {
+            if(StoreInfo.StoreName == null || StoreInfo.StoreAddress == null || StoreInfo.ContactInfo == null || StoreInfo.GSTIN == null)
+            {
+                throw new InvalidOperationException("Store information is not set. Please set StoreName, StoreAddress, ContactInfo, and GSTIN before generating the receipt.");
+            }
+
             List<byte> bytes = new List<byte>();
 
             byte[] initPrinter = new byte[] { 27, 64 };

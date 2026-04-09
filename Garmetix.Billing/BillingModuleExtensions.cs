@@ -1,8 +1,9 @@
 ﻿using Garmetix.AI.Billing.Services;
 using Garmetix.AI.Billing.ViewModels;
 using Garmetix.AI.Billing.Views;
-using Garmetix.Billing.Platforms.Android;
-
+#if ANDROID
+using Garmetix.AI.Billing.Platforms.Android;
+#endif
 namespace Garmetix.Billing
 {
     // All the code in this file is included in all platforms.

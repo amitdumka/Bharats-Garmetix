@@ -6,6 +6,7 @@
     xmlns:local="clr-namespace:Garmetix.IRetail"
     xmlns:controls="clr-namespace:Garmetix.Views.Controls;assembly=Garmetix.Core"
     xmlns:coreBase="clr-namespace:Garmetix.CoreBase.View;assembly=Garmetix.CoreBase"
+    xmlns:billing="clr-namespace:Garmetix.Billing.AIBased.Views;assembly=Garmetix.Billing"
     xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"    
     FlyoutBackgroundColor="{AppThemeBinding Dark={DynamicResource BackgroundColorDark},
                                          Light={DynamicResource BackgroundColorLight}}"
@@ -25,7 +26,7 @@
         Title="Home"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
-    
+    <billing:BillingMenu/>
     <coreBase:AccountingMenu />
     <coreBase:AccountsMenu />
     <coreBase:LedgerMenu />

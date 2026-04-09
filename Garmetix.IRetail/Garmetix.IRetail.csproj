@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFrameworks>net10.0-android</TargetFrameworks>
@@ -87,6 +87,7 @@
 	  <ProjectReference Include="..\Common\Modules\Garmetix.CoreBase\Garmetix.CoreBase.csproj" />
 	  <ProjectReference Include="..\Common\Modules\Garmetix.Onboarding\Garmetix.Onboarding.csproj" />
 	  <ProjectReference Include="..\Common\Services\Garmetix.Reports\Garmetix.Reports.csproj" />
+	  <ProjectReference Include="..\Garmetix.Billing\Garmetix.Billing.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

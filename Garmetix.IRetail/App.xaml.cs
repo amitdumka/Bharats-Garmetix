@@ -26,10 +26,10 @@ namespace Garmetix.IRetail
     {
         // private readonly string Lic29x = "Ngo9BigBOggjHTQxAR8/V1NNaF5cWWJCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXpfcXRSQ2hZV0xwWkNWYUA=";
         private readonly string Lic = "Mzk1MTMzN0AzMzMwMmUzMDJlMzAzYjMzMzAzYlNlK0JXeWU0YmtIZy80aWhmMkNBRXZoZ3lodHdFSE9vU1JobWJGZGRSMWs9";
-
+        private readonly string tempLIc = "Ngo9BigBOggjHTQxAR8/V1JHaF5cWWdCekx3Q3xbf1x2ZFREallUTndbUj0eQnxTdENjXX9XcXZQQ2FYVEBwWEleYA==";
         public App(IDatabaseService ds)
         {
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(Lic);
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(tempLIc);
             CultureInfo.CurrentUICulture = new CultureInfo("en-IN");
             InitializeComponent();
             // Register services and view models here if using dependency injection
