@@ -72,7 +72,9 @@ namespace Garmetix.AI.Billing.Models
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(BalanceAmount))]
         private decimal paidAmount;
-
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(BalanceAmount))]
+        private decimal globalDiscountAmount;
         // ADD THIS NEW PROPERTY
         [ObservableProperty]
         private decimal roundOffAmount;

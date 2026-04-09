@@ -1,25 +1,26 @@
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using SQLite;
 using Garmetix.AI.Billing.Models;
-using Microsoft.Maui.Controls;
-using Garmetix.Billing.AIBased.Services;
 using Garmetix.Billing.AIBased.Helpers;
+using Garmetix.Billing.AIBased.Services;
+using SQLite;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace Garmetix.AI.Billing.ViewModels
 {
     public partial class InvoiceEntryViewModel : ObservableObject
     {
-        [ObservableProperty]
-        private InvoiceItem selectedInvoiceItem;
-        // ADD THIS PROPERTY at the top of your ViewModel with your other properties:
-        [ObservableProperty]
-        private bool isNewCustomer = false;
-
         private SQLiteAsyncConnection _database;
         private readonly IPrintService _printService;
+
+        // --- STATE MANAGEMENT ---
+        // --- STATE MANAGEMENT ---
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsNotBusy))]
+        private bool isBusy;
+
+        public bool IsNotBusy => !IsBusy;
 
         [ObservableProperty]
         private Invoice currentInvoice;
@@ -31,136 +32,237 @@ namespace Garmetix.AI.Billing.ViewModels
         [ObservableProperty]
         private Product selectedProduct;
 
-        // Payment Sub-form properties
+        [ObservableProperty]
+        private InvoiceItem selectedInvoiceItem;
+
         [ObservableProperty]
         private string paymentModeInput = "Cash";
 
         [ObservableProperty]
         private decimal paymentAmountInput;
+        // --- GLOBAL DISCOUNT INPUTS ---
+        [ObservableProperty]
+        private decimal globalDiscountInput;
+
+        partial void OnGlobalDiscountInputChanged(decimal value) => CalculateInvoiceTotals();
+
+        [ObservableProperty]
+        private string globalDiscountTypeInput = "Amount";
+
+        partial void OnGlobalDiscountTypeInputChanged(string value) => CalculateInvoiceTotals();
+
+        [ObservableProperty]
+        private bool isNewCustomer = false;
 
         public InvoiceEntryViewModel(IPrintService printService)
         {
             _printService = printService;
             CurrentInvoice = new Invoice();
-
-            string dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "aadwika_billing.db3");
-            _database = new SQLiteAsyncConnection(dbPath);
-            _database.CreateTableAsync<Invoice>().Wait();
-            _database.CreateTableAsync<InvoiceItem>().Wait();
-            _database.CreateTableAsync<Product>().Wait();
-            _database.CreateTableAsync<Customer>().Wait(); // Added Customer Table
-
-            // Load Dummy Data for testing
-            AvailableProducts.Add(new Product { Name = "Cotton Kurta", Barcode = "1001", BaseRate = 1500, Category = GarmentCategory.ReadyMade });
-            AvailableProducts.Add(new Product { Name = "Silk Saree Fabric", Barcode = "1002", BaseRate = 3000, Category = GarmentCategory.Fabric });
+            InitializeDatabaseAsync();
         }
 
-        // --- FEATURE: Customer Lookup & Save ---
-        // UPDATE your SearchCustomerAsync method:
+        private async void InitializeDatabaseAsync()
+        {
+            try
+            {
+                IsBusy = true;
+                string dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "aadwika_billing.db3");
+                _database = new SQLiteAsyncConnection(dbPath);
+
+                await _database.CreateTableAsync<Invoice>();
+                await _database.CreateTableAsync<InvoiceItem>();
+                await _database.CreateTableAsync<Product>();
+                await _database.CreateTableAsync<Customer>();
+
+                // Load Dummy Data if empty
+                if (await _database.Table<Product>().CountAsync() == 0)
+                {
+                    AvailableProducts.Add(new Product { Name = "Cotton Kurta", Barcode = "1001", BaseRate = 1500, Category = GarmentCategory.ReadyMade });
+                    AvailableProducts.Add(new Product { Name = "Silk Saree Fabric", Barcode = "1002", BaseRate = 3000, Category = GarmentCategory.Fabric });
+                }
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync("Database Initialization Failed", ex);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
         [RelayCommand]
         public async Task SearchCustomerAsync()
         {
-            if (string.IsNullOrWhiteSpace(CurrentInvoice.MobileNo)) return;
+            if (string.IsNullOrWhiteSpace(CurrentInvoice.MobileNo) || IsBusy) return;
 
-            var customer = await _database.Table<Customer>().FirstOrDefaultAsync(c => c.MobileNo == CurrentInvoice.MobileNo);
-            if (customer != null)
+            try
             {
-                CurrentInvoice.CustomerName = customer.Name;
-                CurrentInvoice.Gstin = customer.Gstin;
-                IsNewCustomer = false; // Hide the save button
-                OnPropertyChanged(nameof(CurrentInvoice));
+                IsBusy = true;
+                var customer = await _database.Table<Customer>().FirstOrDefaultAsync(c => c.MobileNo == CurrentInvoice.MobileNo);
+                if (customer != null)
+                {
+                    CurrentInvoice.CustomerName = customer.Name;
+                    CurrentInvoice.Gstin = customer.Gstin;
+                    IsNewCustomer = false;
+                    OnPropertyChanged(nameof(CurrentInvoice));
+                }
+                else
+                {
+                    IsNewCustomer = true;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                // Customer not found, show the save button
-                IsNewCustomer = true;
+                await ShowErrorAsync("Customer Search Error", ex);
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
-        // UPDATE your SaveCustomerAsync method to hide the button after saving:
         [RelayCommand]
         public async Task SaveCustomerAsync()
         {
+            if (IsBusy) return;
             if (string.IsNullOrWhiteSpace(CurrentInvoice.MobileNo) || string.IsNullOrWhiteSpace(CurrentInvoice.CustomerName))
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "Please enter Mobile No and Name to save.", "OK");
+                await Application.Current.MainPage.DisplayAlert("Validation", "Please enter a valid Mobile No and Name.", "OK");
                 return;
             }
 
-            var existing = await _database.Table<Customer>().FirstOrDefaultAsync(c => c.MobileNo == CurrentInvoice.MobileNo);
-            if (existing == null)
+            try
             {
-                await _database.InsertAsync(new Customer
+                IsBusy = true;
+                var existing = await _database.Table<Customer>().FirstOrDefaultAsync(c => c.MobileNo == CurrentInvoice.MobileNo);
+                if (existing == null)
                 {
-                    MobileNo = CurrentInvoice.MobileNo,
-                    Name = CurrentInvoice.CustomerName,
-                    Gstin = CurrentInvoice.Gstin
-                });
-                await Application.Current.MainPage.DisplayAlert("Success", "Customer saved to database.", "OK");
-                IsNewCustomer = false; // Hide the button now that they are saved
+                    await _database.InsertAsync(new Customer
+                    {
+                        MobileNo = CurrentInvoice.MobileNo,
+                        Name = CurrentInvoice.CustomerName,
+                        Gstin = CurrentInvoice.Gstin
+                    });
+                    IsNewCustomer = false;
+                    await Application.Current.MainPage.DisplayAlert("Success", "Customer details saved successfully.", "OK");
+                }
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync("Save Customer Error", ex);
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
-        // --- FEATURE: Add/Delete Items & Auto-Calculate ---
         [RelayCommand]
         public void AddProductToInvoice()
         {
             if (SelectedProduct == null) return;
 
-            var newItem = new InvoiceItem
+            try
             {
-                ProductName = SelectedProduct.Name,
-                Category = SelectedProduct.Category,
-                Rate = SelectedProduct.BaseRate,
-                Quantity = 1,
-                DiscountAmount = 0
-            };
-
-            // Subscribe to changes so editing the grid updates totals
-            newItem.PropertyChanged += InvoiceItem_PropertyChanged;
-
-            InvoiceItems.Add(newItem);
-            SelectedProduct = null;
-            CalculateInvoiceTotals();
-        }
-
-        // UPDATE your RemoveInvoiceItem method to prevent the crash:
-        // 1. UPDATE THE DELETE COMMAND
-        [RelayCommand]
-        public async Task RemoveInvoiceItemAsync(InvoiceItem item) // Added Async to the name
-        {
-            if (item != null && InvoiceItems.Contains(item))
-            {
-                // CRITICAL FIX: Yield the thread for a fraction of a second.
-                // This stops Syncfusion from crashing when deleting the row you just clicked.
-                await Task.Delay(50);
-
-                MainThread.BeginInvokeOnMainThread(() =>
+                var newItem = new InvoiceItem
                 {
-                    item.PropertyChanged -= InvoiceItem_PropertyChanged;
-                    InvoiceItems.Remove(item);
-                    CalculateInvoiceTotals();
-                });
+                    ProductName = SelectedProduct.Name,
+                    Category = SelectedProduct.Category,
+                    Rate = SelectedProduct.BaseRate,
+                    Quantity = 1,
+                    DiscountAmount = 0
+                };
+
+                newItem.PropertyChanged += InvoiceItem_PropertyChanged;
+                InvoiceItems.Add(newItem);
+                SelectedProduct = null;
+                CalculateInvoiceTotals();
+            }
+            catch (Exception ex)
+            {
+                _ = ShowErrorAsync("Failed to add product", ex);
             }
         }
 
+        [RelayCommand]
+        public void RemoveInvoiceItem(InvoiceItem item)
+        {
+            if (item == null || !InvoiceItems.Contains(item)) return;
+
+            item.PropertyChanged -= InvoiceItem_PropertyChanged;
+
+            if (SelectedInvoiceItem == item)
+                SelectedInvoiceItem = null;
+
+            Application.Current.Dispatcher.Dispatch(() =>
+            {
+                try
+                {
+                    InvoiceItems.Remove(item);
+                    CalculateInvoiceTotals();
+                }
+                catch (Exception ex)
+                {
+                    _ = ShowErrorAsync("Failed to remove item", ex);
+                }
+            });
+        }
+        public void CalculateInvoiceTotals()
+        {
+            try
+            {
+                // 1. Calculate Item-Level Totals
+                CurrentInvoice.SubTotal = InvoiceItems.Sum(i => (i.Rate * i.Quantity));
+                CurrentInvoice.TotalDiscount = InvoiceItems.Sum(i => i.DiscountAmount); // Item discounts
+                CurrentInvoice.TotalTax = InvoiceItems.Sum(i => i.TaxAmount);
+
+                // 2. Pre-Global Discount Total
+                decimal preDiscountTotal = (CurrentInvoice.SubTotal - CurrentInvoice.TotalDiscount) + CurrentInvoice.TotalTax;
+
+                // 3. Apply Global Bill Discount (Amount or Percentage)
+                if (GlobalDiscountTypeInput == "%")
+                {
+                    CurrentInvoice.GlobalDiscountAmount = preDiscountTotal * (GlobalDiscountInput / 100m);
+                }
+                else // "Amount"
+                {
+                    CurrentInvoice.GlobalDiscountAmount = GlobalDiscountInput;
+                }
+
+                // 4. Exact Grand Total after Global Discount
+                decimal exactGrandTotal = preDiscountTotal - CurrentInvoice.GlobalDiscountAmount;
+
+                // Prevent negative totals if the user enters a discount larger than the bill
+                if (exactGrandTotal < 0) exactGrandTotal = 0;
+
+                // 5. Apply Round Off
+                CurrentInvoice.GrandTotal = Math.Round(exactGrandTotal, 0, MidpointRounding.AwayFromZero);
+                CurrentInvoice.RoundOffAmount = CurrentInvoice.GrandTotal - exactGrandTotal;
+
+                // 6. Calculate Balances
+                CurrentInvoice.PaidAmount = Payments.Sum(p => p.Amount);
+            }
+            catch (Exception ex)
+            {
+                _ = ShowErrorAsync("Calculation Error", ex);
+            }
+        }
         private void InvoiceItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            // Triggers when user edits Rate, Qty, or Discount in the SfDataGrid
             if (e.PropertyName is nameof(InvoiceItem.Rate) or nameof(InvoiceItem.Quantity) or nameof(InvoiceItem.DiscountAmount))
             {
                 CalculateInvoiceTotals();
             }
         }
 
-        // --- FEATURE: Multiple Payment Modes ---
         [RelayCommand]
         public void AddPayment()
         {
             if (PaymentAmountInput <= 0) return;
 
             Payments.Add(new PaymentDetail { Mode = PaymentModeInput, Amount = PaymentAmountInput });
-            PaymentAmountInput = 0; // Reset input field
+            PaymentAmountInput = 0;
             CalculateInvoiceTotals();
         }
 
@@ -174,65 +276,90 @@ namespace Garmetix.AI.Billing.ViewModels
             }
         }
 
-        // 2. UPDATE THE CALCULATIONS
         public void CalculateInvoiceTotals()
         {
-            CurrentInvoice.SubTotal = InvoiceItems.Sum(i => (i.Rate * i.Quantity));
-            CurrentInvoice.TotalDiscount = InvoiceItems.Sum(i => i.DiscountAmount);
-            CurrentInvoice.TotalTax = InvoiceItems.Sum(i => i.TaxAmount);
+            try
+            {
+                CurrentInvoice.SubTotal = InvoiceItems.Sum(i => (i.Rate * i.Quantity));
+                CurrentInvoice.TotalDiscount = InvoiceItems.Sum(i => i.DiscountAmount);
+                CurrentInvoice.TotalTax = InvoiceItems.Sum(i => i.TaxAmount);
 
-            // Calculate exact total first
-            decimal exactGrandTotal = (CurrentInvoice.SubTotal - CurrentInvoice.TotalDiscount) + CurrentInvoice.TotalTax;
-
-            // Round to nearest whole number
-            CurrentInvoice.GrandTotal = Math.Round(exactGrandTotal, 0, MidpointRounding.AwayFromZero);
-
-            // Calculate the Round Off difference (e.g., if Exact is 100.40, Grand is 100. RoundOff is -0.40)
-            CurrentInvoice.RoundOffAmount = CurrentInvoice.GrandTotal - exactGrandTotal;
-
-            CurrentInvoice.PaidAmount = Payments.Sum(p => p.Amount);
-
-            // REMOVED: OnPropertyChanged(nameof(CurrentInvoice)); 
-            // Do not put that line back! Your properties are Observable, they update the UI automatically.
+                decimal exactGrandTotal = (CurrentInvoice.SubTotal - CurrentInvoice.TotalDiscount) + CurrentInvoice.TotalTax;
+                CurrentInvoice.GrandTotal = Math.Round(exactGrandTotal, 0, MidpointRounding.AwayFromZero);
+                CurrentInvoice.RoundOffAmount = CurrentInvoice.GrandTotal - exactGrandTotal;
+                CurrentInvoice.PaidAmount = Payments.Sum(p => p.Amount);
+            }
+            catch (Exception ex)
+            {
+                _ = ShowErrorAsync("Calculation Error", ex);
+            }
         }
 
         [RelayCommand]
         public async Task SaveInvoiceAsync()
         {
-            if (InvoiceItems.Count == 0) return;
-
-            CurrentInvoice.InvoiceNo = "INV-" + DateTime.Now.Ticks.ToString();
-            CalculateInvoiceTotals();
-
-            if (CurrentInvoice.PaidAmount < CurrentInvoice.GrandTotal)
+            if (InvoiceItems.Count == 0)
             {
-                var page = Application.Current?.Windows[0]?.Page;
-                if (page == null) return;
-
-                bool proceed = await page.DisplayAlert("Part Payment", $"Balance of Rs. {CurrentInvoice.BalanceAmount} remaining. Proceed?", "Yes", "No");
-                if (!proceed) return;
+                await Application.Current.MainPage.DisplayAlert("Validation", "Cannot save an empty invoice. Please add items.", "OK");
+                return;
             }
+            if (IsBusy) return;
 
-            // Save Invoice
-            await _database.InsertAsync(CurrentInvoice);
-
-            // Save Items
-            foreach (var item in InvoiceItems)
+            try
             {
-                item.InvoiceId = CurrentInvoice.Id;
-                await _database.InsertAsync(item);
+                IsBusy = true;
+                CurrentInvoice.InvoiceNo = "INV-" + DateTime.Now.ToString("yyyyMMdd-HHmmss");
+                CalculateInvoiceTotals();
+
+                if (CurrentInvoice.PaidAmount < CurrentInvoice.GrandTotal)
+                {
+                    bool proceed = await Application.Current.MainPage.DisplayAlert(
+                        "Part Payment",
+                        $"Balance of Rs. {CurrentInvoice.BalanceAmount} is unpaid. Proceed with saving?",
+                        "Yes", "No");
+
+                    if (!proceed) return;
+                }
+
+                // Database Transaction
+                await _database.RunInTransactionAsync(tran =>
+                {
+                    tran.Insert(CurrentInvoice);
+                    foreach (var item in InvoiceItems)
+                    {
+                        item.InvoiceId = CurrentInvoice.Id;
+                        tran.Insert(item);
+                    }
+                });
+
+                // Generate and Print
+                byte[] rawReceiptBytes = ReceiptBuilder.GenerateInvoiceBytes(CurrentInvoice, InvoiceItems);
+                await _printService.PrintReceiptAsync(rawReceiptBytes);
+
+                // Reset Form
+                foreach (var item in InvoiceItems) item.PropertyChanged -= InvoiceItem_PropertyChanged;
+                InvoiceItems.Clear();
+                Payments.Clear();
+                CurrentInvoice = new Invoice();
+                OnPropertyChanged(nameof(CurrentInvoice));
+
+                await Application.Current.MainPage.DisplayAlert("Success", "Invoice saved and printed successfully.", "OK");
             }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync("Failed to Save Invoice", ex);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
 
-            // Generate and Print (Pass Payments list if your ReceiptBuilder supports it)
-            byte[] rawReceiptBytes = ReceiptBuilder.GenerateInvoiceBytes(CurrentInvoice, InvoiceItems);
-            await _printService.PrintReceiptAsync(rawReceiptBytes);
-
-            // Reset Form
-            foreach (var item in InvoiceItems) item.PropertyChanged -= InvoiceItem_PropertyChanged;
-            InvoiceItems.Clear();
-            Payments.Clear();
-            CurrentInvoice = new Invoice();
-            OnPropertyChanged(nameof(CurrentInvoice));
+        // Standardized Error Helper
+        private async Task ShowErrorAsync(string title, Exception ex)
+        {
+            // In a production app, log 'ex.Message' to AppCenter or Crashlytics here.
+            await Application.Current.MainPage.DisplayAlert(title, $"An unexpected error occurred: {ex.Message}", "OK");
         }
     }
 }
