@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using Garmetix.AI.Billing.Services;
+using Garmetix.Billing.AIBased.Services;
 
 namespace Garmetix.AI.Billing.Platforms.Windows
 {

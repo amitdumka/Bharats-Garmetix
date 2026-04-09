@@ -34,12 +34,12 @@
                 <Button Text="Add Item" Command="{Binding AddProductToInvoiceCommand}" />
             </HorizontalStackLayout>
 
-            <datagrid:SfDataGrid HeightRequest="250" ItemsSource="{Binding InvoiceItems}" AllowEditing="True" ColumnWidthMode="Fill">
+            <datagrid:SfDataGrid AllowSelectionOnSecondaryTap="True"   ShowToolTip="True" EditTapAction="OnTap" AllowDeleting="True"  AllowEditing="True" AutoGenerateColumnsMode="None" HeightRequest="250" ItemsSource="{Binding InvoiceItems}"   ColumnWidthMode="Fill">
                 <datagrid:SfDataGrid.Columns>
                     <datagrid:DataGridTextColumn MappingName="ProductName" HeaderText="Item Name" Width="150" AllowEditing="False"/>
-                    <datagrid:DataGridNumericColumn MappingName="Rate" HeaderText="Rate" Format="N2"/>
-                    <datagrid:DataGridNumericColumn MappingName="Quantity" HeaderText="Qty"/>
-                    <datagrid:DataGridNumericColumn MappingName="DiscountAmount" HeaderText="Disc." Format="N2"/>
+                    <datagrid:DataGridNumericColumn MappingName="Rate" HeaderText="Rate" Format="N2" AllowEditing="True"/>
+                    <datagrid:DataGridNumericColumn MappingName="Quantity" HeaderText="Qty" AllowEditing="True"/>
+                    <datagrid:DataGridNumericColumn MappingName="DiscountAmount" HeaderText="Disc." Format="N2"  AllowEditing="True"/>
                     <datagrid:DataGridTextColumn MappingName="GstPercentage" HeaderText="GST %" Format="{}{0}%" AllowEditing="False"/>
                     <datagrid:DataGridNumericColumn MappingName="TotalAmount" HeaderText="Total" Format="N2" AllowEditing="False"/>
                 </datagrid:SfDataGrid.Columns>

@@ -3,9 +3,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SQLite;
 using Garmetix.AI.Billing.Models;
-using Garmetix.AI.Billing.Services;
-using Garmetix.AI.Billing.Helpers;
 using Microsoft.Maui.Controls;
+using Garmetix.Billing.AIBased.Services;
+using Garmetix.Billing.AIBased.Helpers;
 
 namespace  Garmetix.AI.Billing.ViewModels
 {

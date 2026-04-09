@@ -5,7 +5,7 @@ using Android.Bluetooth;
 using Android.Content;
 using Java.Util;
 using Microsoft.Maui.ApplicationModel; // Required for MAUI Permissions
-using Garmetix.AI.Billing.Services;
+using Garmetix.Billing.AIBased.Services;
 
 namespace Garmetix.AI.Billing.Platforms.Android
 {

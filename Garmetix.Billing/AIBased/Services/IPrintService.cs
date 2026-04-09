@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace  Garmetix.AI.Billing.Services
+namespace  Garmetix.Billing.AIBased.Services
 {
     public interface IPrintService
     {
