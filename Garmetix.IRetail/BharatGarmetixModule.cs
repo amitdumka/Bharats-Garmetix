@@ -35,9 +35,38 @@ namespace Garmetix.IRetail
         {
             builder.EnableAccounting().EnableBanking().EnableHRM().UseAuthentication();
             builder.EnableDashboard().EnableOnBoarding().EnableStore().UseReporting();
+            builder.EnableSentryModule();
             return builder;
         }
 
+        public static MauiAppBuilder EnableSentryModule(this MauiAppBuilder builder)
+        {
+            // Add this section anywhere on the builder:
+            builder.UseSentry(options =>
+            {
+                // The DSN is the only required setting.
+                options.Dsn = "https://0104adb654cb4511dc40a771542f441a@o4509464503386112.ingest.us.sentry.io/4509464506138624";
+                // Use debug mode if you want to see what the SDK is doing.
+                // Debug messages are written to stdout with Console.Writeline,
+                // and are viewable in your IDE's debug console or with 'adb logcat', etc.
+                // This option is not recommended when deploying your application.
+                options.Debug = true;
+                // Adds request URL and headers, IP and name for users, etc.
+                options.SendDefaultPii = true;
+                // This option is recommended. It enables Sentry's "Release Health" feature.
+                options.AutoSessionTracking = true;
+                // Enabling this option is recommended for client applications only. It ensures all threads use the same global scope.
+                options.IsGlobalModeEnabled = false;
+                // Example sample rate for your transactions: captures 10% of transactions
+                options.TracesSampleRate = 0.1;
+                // Other Sentry options can be set here.
+                // By default it's already the most verbose level: Debug
+                // You can use this make this less noisy by changing it to
+                // a less verbose level such as `Information` or `Warning`.
+                options.DiagnosticLevel = SentryLevel.Debug;
+            });
+            return builder;
+        }
         public static void RegisterPaeRoutes()
         {
             // Register any additional routes here if needed

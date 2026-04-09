@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:vm="clr-namespace: Garmetix.Billing.ViewModels"
+             xmlns:sfBarcode="clr-namespace:Syncfusion.Maui.Barcode;assembly=Syncfusion.Maui.Barcode"
+             xmlns:sfDataGrid="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
+             BackgroundColor="{AppThemeBinding Light=#fafafa,Dark=#121212}"
+             x:Class=" Garmetix.Billing.Pages.InvoiceEntryPage"
+             Title="Invoice">
+    <ContentPage.BindingContext>
+        <vm:InvoiceEntryViewModel />
+    </ContentPage.BindingContext>
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <!-- Customer Details -->
+            <Label Text="Customer Details" FontSize="20" />
+            <Entry Placeholder="Name" Text="{Binding Customer.Name}" />
+            <Entry Placeholder="Mobile Number" Keyboard="Telephone" Text="{Binding Customer.Mobile}" />
+            <Entry Placeholder="GSTIN (Optional)" Text="{Binding Customer.Gstin}" />
+
+            <!-- Line Items -->
+            <Label Text="Add Item" FontSize="20" Margin="0,20,0,0" />
+            <Entry Placeholder="Item Code" Text="{Binding NewItem.ItemCode}" />
+            <Button Text="Scan Barcode" Command="{Binding ScanBarcodeCommand}" />
+            <Label Text="{Binding ScannedCode}" FontAttributes="Italic" />
+
+            <Entry Placeholder="Description" Text="{Binding NewItem.Description}" />
+            <Entry Placeholder="Quantity" Keyboard="Numeric" Text="{Binding NewItem.Quantity, Mode=TwoWay}" />
+            <Entry Placeholder="Rate (₹)" Keyboard="Numeric" Text="{Binding NewItem.Rate, Mode=TwoWay}" />
+            <Button Text="Add Item" Command="{Binding AddItemCommand}" />
+
+            <sfDataGrid:SfDataGrid
+                ItemsSource="{Binding Items}"
+                AutoGenerateColumnsMode="None"
+                HeightRequest="200">
+                <sfDataGrid:SfDataGrid.Columns>
+                    <sfDataGrid:DataGridTextColumn MappingName="Description" HeaderText="Item" />
+                    <sfDataGrid:DataGridNumericColumn MappingName="Quantity" HeaderText="Qty" />
+                    <sfDataGrid:DataGridNumericColumn MappingName="Rate" HeaderText="Rate" Format="C2" />
+                    <sfDataGrid:DataGridNumericColumn MappingName="Amount" HeaderText="Amt" Format="C2" />
+                    <sfDataGrid:DataGridNumericColumn MappingName="Cgst" HeaderText="CGST" Format="C2" />
+                    <sfDataGrid:DataGridNumericColumn MappingName="Sgst" HeaderText="SGST" Format="C2" />
+                    <sfDataGrid:DataGridNumericColumn MappingName="Total" HeaderText="Total" Format="C2" />
+                </sfDataGrid:SfDataGrid.Columns>
+            </sfDataGrid:SfDataGrid>
+
+            <!-- Totals -->
+            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto">
+                <Label Text="Subtotal:" />
+                <Label Text="{Binding SubTotal, StringFormat='₹{0:F2}'}" Grid.Column="1" />
+                <Label Text="CGST Total:" Grid.Row="1" />
+                <Label Text="{Binding TotalCgst, StringFormat='₹{0:F2}'}" Grid.Row="1" Grid.Column="1" />
+                <Label Text="SGST Total:" Grid.Row="2" />
+                <Label Text="{Binding TotalSgst, StringFormat='₹{0:F2}'}" Grid.Row="2" Grid.Column="1" />
+                <Label Text="Grand Total:" FontAttributes="Bold" Grid.Row="3" />
+                <Label Text="{Binding GrandTotal, StringFormat='₹{0:F2}'}"
+                       FontAttributes="Bold" Grid.Row="3" Grid.Column="1" />
+            </Grid>
+
+            <!-- Payment & UPI QR -->
+            <Button Text="Generate UPI QR Code" Command="{Binding GenerateUpiQrCommand}" />
+            <sfBarcode:SfBarcodeGenerator
+                ShowText="True"  
+                Value="{Binding UpiQrData}"
+                HeightRequest="200"
+                WidthRequest="200"
+                HorizontalOptions="Center" />
+            <!-- ... existing InvoiceEntryPage content ... -->
+            <Button Text="Save Invoice"
+        Command="{Binding SaveInvoiceAsyncCommand}" />
+
+            <Button Text="Print Receipt"
+        Command="{Binding PrintReceiptAsyncCommand}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>            
