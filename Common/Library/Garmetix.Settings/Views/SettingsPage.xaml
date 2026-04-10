@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
+             x:Class="Garmetix.Settings.Views.SettingsPage"
+             Title="System Settings"
+             BackgroundColor="#F4F6F9">
+
+    <ContentPage.Resources>
+        <Style TargetType="Border" x:Key="SettingsCard">
+            <Setter Property="BackgroundColor" Value="#FFFFFF" />
+            <Setter Property="Padding" Value="15,10" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 10" />
+            <Setter Property="StrokeThickness" Value="0" />
+            <Setter Property="Margin" Value="0,0,0,15" />
+            <Setter Property="Shadow">
+                <Setter.Value>
+                    <Shadow Brush="#1A000000" Offset="0,2" Radius="6" Opacity="0.3" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="Label" x:Key="GroupHeader">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="TextColor" Value="#6C757D" />
+            <Setter Property="Margin" Value="5,15,0,5" />
+            <Setter Property="TextTransform" Value="Uppercase" />
+        </Style>
+
+        <Style TargetType="Label" x:Key="SettingTitle">
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="TextColor" Value="#2C3E50" />
+        </Style>
+
+        <Style TargetType="Label" x:Key="SettingSubtitle">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="TextColor" Value="#868E96" />
+            <Setter Property="Margin" Value="0,2,0,0" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Padding="20,10,20,40" Spacing="0">
+
+                <Label Text="Cloud &amp; Network Status" Style="{StaticResource GroupHeader}" />
+                <Border Style="{StaticResource SettingsCard}">
+                    <VerticalStackLayout Spacing="15">
+                        <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto">
+                            <Label Text="Online Mode" Style="{StaticResource SettingTitle}" Grid.Row="0" Grid.Column="0"/>
+                            <Label Text="Sync data to the cloud. Turn off to save locally." Style="{StaticResource SettingSubtitle}" Grid.Row="1" Grid.Column="0"/>
+                            <Switch IsToggled="{Binding IsOnlineMode}" Grid.RowSpan="2" Grid.Column="1" VerticalOptions="Center" OnColor="#28A745"/>
+                        </Grid>
+                        <BoxView HeightRequest="1" Color="#F0F2F5" />
+                        <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto">
+                            <Label Text="Auto-Backup Database" Style="{StaticResource SettingTitle}" Grid.Row="0" Grid.Column="0"/>
+                            <Label Text="Automatically backup local SQLite file daily." Style="{StaticResource SettingSubtitle}" Grid.Row="1" Grid.Column="0"/>
+                            <Switch IsToggled="{Binding IsAutoBackupEnabled}" Grid.RowSpan="2" Grid.Column="1" VerticalOptions="Center" OnColor="#005A9C"/>
+                        </Grid>
+                        <BoxView HeightRequest="1" Color="#F0F2F5" />
+                        <core:SfTextInputLayout Hint="Remote Server API URL" ContainerType="Outlined">
+                            <Entry Text="{Binding ApiUrl}" Keyboard="Url" />
+                        </core:SfTextInputLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label Text="Account &amp; Security" Style="{StaticResource GroupHeader}" />
+                <Border Style="{StaticResource SettingsCard}">
+                    <VerticalStackLayout Spacing="15">
+                        <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto">
+                            <Label Text="Auto-Login" Style="{StaticResource SettingTitle}" Grid.Row="0" Grid.Column="0"/>
+                            <Label Text="Bypass login screen on app startup." Style="{StaticResource SettingSubtitle}" Grid.Row="1" Grid.Column="0"/>
+                            <Switch IsToggled="{Binding IsAutoLoginEnabled}" Grid.RowSpan="2" Grid.Column="1" VerticalOptions="Center" OnColor="#005A9C"/>
+                        </Grid>
+                        <BoxView HeightRequest="1" Color="#F0F2F5" IsVisible="{Binding IsAutoLoginEnabled}" />
+                        <VerticalStackLayout Spacing="10" IsVisible="{Binding IsAutoLoginEnabled}">
+                            <core:SfTextInputLayout Hint="Username" ContainerType="Outlined">
+                                <Entry Text="{Binding Username}" />
+                            </core:SfTextInputLayout>
+                            <core:SfTextInputLayout Hint="Password" ContainerType="Outlined">
+                                <Entry Text="{Binding Password}" IsPassword="True" />
+                            </core:SfTextInputLayout>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label Text="Pos Identity" Style="{StaticResource GroupHeader}" />
+                <Border Style="{StaticResource SettingsCard}">
+                    <Grid ColumnDefinitions="*, *, *" ColumnSpacing="10" RowSpacing="15">
+                        <core:SfTextInputLayout Hint="Company" ContainerType="Outlined" Grid.Column="0">
+                            <Entry Text="{Binding CompanyCode}" TextTransform="Uppercase"/>
+                        </core:SfTextInputLayout>
+                        <core:SfTextInputLayout Hint="Group" ContainerType="Outlined" Grid.Column="1">
+                            <Entry Text="{Binding StoreGroupCode}" TextTransform="Uppercase"/>
+                        </core:SfTextInputLayout>
+                        <core:SfTextInputLayout Hint="Store" ContainerType="Outlined" Grid.Column="2">
+                            <Entry Text="{Binding StoreCode}" TextTransform="Uppercase"/>
+                        </core:SfTextInputLayout>
+                    </Grid>
+                </Border>
+
+                <Label Text="Features &amp; Integrations" Style="{StaticResource GroupHeader}" />
+                <Border Style="{StaticResource SettingsCard}">
+                    <VerticalStackLayout Spacing="15">
+                        <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto">
+                            <Label Text="Invoice Printing" Style="{StaticResource SettingTitle}" Grid.Row="0" Grid.Column="0"/>
+                            <Label Text="Enable physical invoice generation." Style="{StaticResource SettingSubtitle}" Grid.Row="1" Grid.Column="0"/>
+                            <Switch IsToggled="{Binding IsInvoicePrintEnabled}" Grid.RowSpan="2" Grid.Column="1" VerticalOptions="Center"/>
+                        </Grid>
+                        <BoxView HeightRequest="1" Color="#F0F2F5" />
+                        <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto">
+                            <Label Text="Voucher Printing" Style="{StaticResource SettingTitle}" Grid.Row="0" Grid.Column="0"/>
+                            <Label Text="Enable printing for payment vouchers." Style="{StaticResource SettingSubtitle}" Grid.Row="1" Grid.Column="0"/>
+                            <Switch IsToggled="{Binding IsVoucherPrintEnabled}" Grid.RowSpan="2" Grid.Column="1" VerticalOptions="Center"/>
+                        </Grid>
+                        <BoxView HeightRequest="1" Color="#F0F2F5" />
+                        <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto">
+                            <Label Text="WhatsApp Integration" Style="{StaticResource SettingTitle}" Grid.Row="0" Grid.Column="0"/>
+                            <Label Text="Allow sharing invoices directly to customer WhatsApp." Style="{StaticResource SettingSubtitle}" Grid.Row="1" Grid.Column="0"/>
+                            <Switch IsToggled="{Binding IsWhatsAppShareEnabled}" Grid.RowSpan="2" Grid.Column="1" VerticalOptions="Center" OnColor="#25D366"/>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label Text="Application" Style="{StaticResource GroupHeader}" />
+                <Border Style="{StaticResource SettingsCard}">
+                    <VerticalStackLayout Spacing="15">
+                        <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto">
+                            <Label Text="Dark Mode" Style="{StaticResource SettingTitle}" Grid.Row="0" Grid.Column="0"/>
+                            <Label Text="Switch between Light and Dark UI themes." Style="{StaticResource SettingSubtitle}" Grid.Row="1" Grid.Column="0"/>
+                            <Switch IsToggled="{Binding IsDarkMode}" Grid.RowSpan="2" Grid.Column="1" VerticalOptions="Center"/>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <VerticalStackLayout HorizontalOptions="Center" Margin="0,15">
+                    <Label Text="DEVICE IDENTIFIER" FontSize="10" TextColor="#ADB5BD" FontAttributes="Bold" HorizontalOptions="Center" />
+                    <Label Text="{Binding AppUniqueId}" FontSize="11" TextColor="#868E96" HorizontalOptions="Center" />
+                </VerticalStackLayout>
+
+                <Grid ColumnDefinitions="*, *" ColumnSpacing="15" Margin="0,10,0,20">
+                    <Button Text="Reset Defaults" Command="{Binding ResetToDefaultsCommand}" Grid.Column="0" 
+                            BackgroundColor="Transparent" TextColor="#D32F2F" BorderColor="#D32F2F" BorderWidth="1" FontAttributes="Bold" HeightRequest="50" CornerRadius="8"/>
+
+                    <Button Text="Save Settings" Command="{Binding SaveSettingsCommand}" Grid.Column="1" 
+                            BackgroundColor="#005A9C" TextColor="White" FontAttributes="Bold" HeightRequest="50" CornerRadius="8"/>
+                </Grid>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <ContentView BackgroundColor="#80FFFFFF" IsVisible="{Binding IsBusy}" VerticalOptions="Fill" HorizontalOptions="Fill">
+            <ActivityIndicator IsRunning="{Binding IsBusy}" Color="#005A9C" WidthRequest="60" HeightRequest="60" VerticalOptions="Center" HorizontalOptions="Center"/>
+        </ContentView>
+    </Grid>
+</ContentPage>
