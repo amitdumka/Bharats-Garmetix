@@ -67,7 +67,7 @@ namespace Garmetix.AI.Billing.ViewModels
             try
             {
                 IsBusy = true;
-                string dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "aadwika_billing.db3");
+                string dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "aadwikabilling.db3");
                 _database = new SQLiteAsyncConnection(dbPath);
 
                 await _database.CreateTableAsync<Invoice>();
@@ -171,7 +171,7 @@ namespace Garmetix.AI.Billing.ViewModels
                     Category = SelectedProduct.Category,
                     Rate = SelectedProduct.BaseRate,
                     Quantity = 1,
-                    DiscountAmount = 0
+                    DiscountPercentage = 0
                 };
 
                 newItem.PropertyChanged += InvoiceItem_PropertyChanged;
@@ -210,7 +210,8 @@ namespace Garmetix.AI.Billing.ViewModels
 
         private void InvoiceItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName is nameof(InvoiceItem.Rate) or nameof(InvoiceItem.Quantity) or nameof(InvoiceItem.DiscountAmount))
+            // CHANGED DiscountAmount to DiscountPercentage
+            if (e.PropertyName is nameof(InvoiceItem.Rate) or nameof(InvoiceItem.Quantity) or nameof(InvoiceItem.DiscountPercentage) or nameof(InvoiceItem.DiscountAmount))
             {
                 CalculateInvoiceTotals();
             }
@@ -357,16 +358,17 @@ namespace Garmetix.AI.Billing.ViewModels
         {
             if (await SaveInvoiceToDatabaseAsync())
             {
-                // Pass the Payments collection into the PDF generator
+                // 1. Generate the PDF
                 string pdfPath = PdfReceiptBuilder.GenerateA5Pdf(CurrentInvoice, InvoiceItems, Payments);
 
-                // Native sharing opens the PDF directly in the device's PDF viewer or print spooler
-                await Share.Default.RequestAsync(new ShareFileRequest
+                // 2. Open the PDF natively so the user can immediately hit Print
+                await Microsoft.Maui.ApplicationModel.Launcher.Default.OpenAsync(new OpenFileRequest
                 {
                     Title = "Print Invoice",
-                    File = new ShareFile(pdfPath)
+                    File = new ReadOnlyFile(pdfPath)
                 });
 
+                // 3. Clear the screen for the next customer
                 ResetFormWithoutPrompt();
             }
         }

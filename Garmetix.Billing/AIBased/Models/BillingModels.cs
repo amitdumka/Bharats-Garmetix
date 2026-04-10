@@ -92,7 +92,13 @@ namespace Garmetix.AI.Billing.Models
         [ObservableProperty] private string size;
         [ObservableProperty] private decimal rate;
         [ObservableProperty] private int quantity = 1;
-        [ObservableProperty] private decimal discountAmount;
+
+        // This is where the user enters the percentage (e.g., 10 for 10%)
+        [ObservableProperty] private decimal discountPercentage;
+
+        // Automatically converts the percentage into a flat monetary amount
+        [Ignore]
+        public decimal DiscountAmount => (Rate * Quantity) * (DiscountPercentage / 100m);
 
         [Ignore]
         public decimal GstPercentage
@@ -100,6 +106,8 @@ namespace Garmetix.AI.Billing.Models
             get
             {
                 if (Category == GarmentCategory.Fabric) return 5m;
+
+                // Calculate unit discount based on the newly calculated DiscountAmount
                 decimal unitDiscount = Quantity > 0 ? DiscountAmount / Quantity : 0;
                 decimal unitTaxableValue = Rate - unitDiscount;
                 return unitTaxableValue > 2499 ? 18m : 5m;
@@ -115,12 +123,14 @@ namespace Garmetix.AI.Billing.Models
         [Ignore]
         public decimal TotalAmount => TaxableValue + TaxAmount;
 
+        // Triggers UI recalculations when user changes Rate, Qty, or Percentage
         partial void OnRateChanged(decimal value) => Refresh();
         partial void OnQuantityChanged(int value) => Refresh();
-        partial void OnDiscountAmountChanged(decimal value) => Refresh();
+        partial void OnDiscountPercentageChanged(decimal value) => Refresh();
 
         private void Refresh()
         {
+            OnPropertyChanged(nameof(DiscountAmount));
             OnPropertyChanged(nameof(GstPercentage));
             OnPropertyChanged(nameof(TaxableValue));
             OnPropertyChanged(nameof(TaxAmount));

@@ -54,15 +54,15 @@
                         <Label Text="Customer Information" Style="{StaticResource HeaderLabelStyle}" />
 
                         <Grid ColumnDefinitions="*, *, *, Auto" RowSpacing="15" ColumnSpacing="15">
-                            <core:SfTextInputLayout Hint="Mobile Number" ContainerType="Outlined" Grid.Column="0">
+                            <core:SfTextInputLayout Hint="Mobile Number" ContainerType="None" Grid.Column="0">
                                 <Entry Text="{Binding CurrentInvoice.MobileNo}" Keyboard="Numeric" MaxLength="10" Unfocused="MobileNoEntry_Unfocused"/>
                             </core:SfTextInputLayout>
 
-                            <core:SfTextInputLayout Hint="Customer Name" ContainerType="Outlined" Grid.Column="1">
+                            <core:SfTextInputLayout Hint="Customer Name" ContainerType="None" Grid.Column="1">
                                 <Entry Text="{Binding CurrentInvoice.CustomerName}" />
                             </core:SfTextInputLayout>
 
-                            <core:SfTextInputLayout Hint="GSTIN (Optional)" ContainerType="Outlined" Grid.Column="2">
+                            <core:SfTextInputLayout Hint="GSTIN (Optional)" ContainerType="None" Grid.Column="2">
                                 <Entry Text="{Binding CurrentInvoice.Gstin}" />
                             </core:SfTextInputLayout>
 
@@ -85,18 +85,20 @@
                             <Button Text="+ Add Item" Command="{Binding AddProductToInvoiceCommand}" Style="{StaticResource PrimaryActionStyle}" WidthRequest="120" HeightRequest="45" />
                         </HorizontalStackLayout>
 
-                        <datagrid:SfDataGrid AllowSelectionOnSecondaryTap="True" AllowEditing="True" SelectionMode="Single" NavigationMode="Cell"
+                        <datagrid:SfDataGrid  BackgroundColor="AliceBlue" AllowSelectionOnSecondaryTap="True"  AllowEditing="True" SelectionMode="Single" NavigationMode="Cell"
                                              SelectedRow="{Binding SelectedInvoiceItem}" HeaderRowHeight="45" RowHeight="50"
                                              AutoGenerateColumnsMode="None" HeightRequest="300" ItemsSource="{Binding InvoiceItems}" ColumnWidthMode="Fill">
                             <datagrid:SfDataGrid.Columns>
                                 <datagrid:DataGridTextColumn MappingName="ProductName" HeaderText="Item Description" Width="200" AllowEditing="False"/>
                                 <datagrid:DataGridNumericColumn MappingName="Rate" HeaderText="Rate (₹)" Format="N2" AllowEditing="True"/>
                                 <datagrid:DataGridNumericColumn MappingName="Quantity" HeaderText="Qty" AllowEditing="True"/>
-                                <datagrid:DataGridNumericColumn MappingName="DiscountAmount" HeaderText="Disc (₹)" Format="N2" AllowEditing="True"/>
+                                
+                                <datagrid:DataGridNumericColumn MappingName="DiscountPercentage" HeaderText="Disc %" Format="N2" AllowEditing="True"/>
+                                <datagrid:DataGridNumericColumn MappingName="DiscountAmount" HeaderText="Disc (₹)" Format="N2" AllowEditing="False"/>
                                 <datagrid:DataGridNumericColumn MappingName="GstPercentage" HeaderText="GST %" Format="N0" AllowEditing="False"/>
                                 <datagrid:DataGridNumericColumn MappingName="TotalAmount" HeaderText="Amount" Format="N0" AllowEditing="False"/>
 
-                                <datagrid:DataGridTemplateColumn MappingName="Id" HeaderText="Action" Width="70">
+                                <datagrid:DataGridTemplateColumn MappingName="Id" HeaderText="Action" Width="100">
                                     <datagrid:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Button Text="✖" BackgroundColor="#FFF1F0" TextColor="#D32F2F" Padding="0" 
