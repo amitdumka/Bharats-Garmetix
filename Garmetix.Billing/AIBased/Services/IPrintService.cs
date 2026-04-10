@@ -4,6 +4,10 @@ namespace  Garmetix.Billing.AIBased.Services
 {
     public interface IPrintService
     {
-        Task PrintReceiptAsync(byte[] receiptData);
+        // Your existing thermal print method
+        Task PrintReceiptAsync(byte[] receiptBytes);
+
+        // NEW: Direct HTML Print method
+        Task PrintHtmlAsync(string htmlContent, string documentName = "Invoice");
     }
 }

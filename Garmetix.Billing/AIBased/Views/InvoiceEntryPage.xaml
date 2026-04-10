@@ -94,6 +94,7 @@
                                 <datagrid:DataGridNumericColumn MappingName="Quantity" HeaderText="Qty" AllowEditing="True"/>
                                 <datagrid:DataGridNumericColumn MappingName="DiscountAmount" HeaderText="Disc (₹)" Format="N2" AllowEditing="True"/>
                                 <datagrid:DataGridNumericColumn MappingName="GstPercentage" HeaderText="GST %" Format="N0" AllowEditing="False"/>
+                                <datagrid:DataGridNumericColumn MappingName="TotalAmount" HeaderText="Amount" Format="N0" AllowEditing="False"/>
 
                                 <datagrid:DataGridTemplateColumn MappingName="Id" HeaderText="Action" Width="70">
                                     <datagrid:DataGridTemplateColumn.CellTemplate>
@@ -204,13 +205,25 @@
 
                 <HorizontalStackLayout HorizontalOptions="End" Spacing="15" Margin="0,5,0,30">
 
-                    <Button Text="Clear" BackgroundColor="#E9ECEF" TextColor="#495057" 
-                            WidthRequest="100" HeightRequest="50" FontSize="15" CornerRadius="6" 
+                    <Grid ColumnDefinitions="Auto, *, *, *" ColumnSpacing="10" Margin="0,10,0,30">
+
+                        <Button Text="Clear" BackgroundColor="#E9ECEF" TextColor="#495057" 
+                            Grid.Column="0" WidthRequest="80" HeightRequest="50" FontSize="14" CornerRadius="6" 
                             FontAttributes="Bold" Command="{Binding ClearInvoiceCommand}"/>
 
-                    <Button Text="Save &amp; Print Receipt" Style="{StaticResource PrimaryActionStyle}" 
-                            WidthRequest="220" HeightRequest="50" FontSize="15" 
-                            Command="{Binding SaveInvoiceCommand}"/>
+                        <Button Text="Save &amp; Share" Grid.Column="1"
+                            BackgroundColor="#17A2B8" TextColor="White" HeightRequest="50" FontSize="14" CornerRadius="6"
+                            FontAttributes="Bold" Command="{Binding SaveAndShareCommand}"/>
+
+                        <Button Text="Print A5" Grid.Column="2"
+                            BackgroundColor="#005A9C" TextColor="White" HeightRequest="50" FontSize="14" CornerRadius="6"
+                            FontAttributes="Bold" Command="{Binding SaveAndPrintA5Command}"/>
+
+                        <Button Text="Print Thermal" Grid.Column="3"
+                            BackgroundColor="#343A40" TextColor="White" HeightRequest="50" FontSize="14" CornerRadius="6"
+                            FontAttributes="Bold" Command="{Binding SaveAndPrintThermalCommand}"/>
+
+                    </Grid>
 
                 </HorizontalStackLayout>
 

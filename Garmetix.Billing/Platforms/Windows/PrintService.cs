@@ -1,13 +1,38 @@
+using Garmetix.Billing.AIBased.Services;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using Garmetix.Billing.AIBased.Services;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Garmetix.AI.Billing.Platforms.Windows
 {
     public class PrintService : IPrintService
     {
+        public async Task PrintHtmlAsync(string htmlContent, string documentName = "Invoice")
+        {
+            try
+            {
+                var webView = new WebView2();
+
+                await webView.EnsureCoreWebView2Async();
+                webView.NavigateToString(htmlContent);
+
+                webView.NavigationCompleted += async (sender, args) =>
+                {
+                    if (args.IsSuccess)
+                    {
+                        // 100% reliable way to trigger the native print dialog in WebView2
+                        await webView.CoreWebView2.ExecuteScriptAsync("window.print();");
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Windows Print Error: {ex.Message}");
+            }
+        }
         public async Task PrintReceiptAsync(byte[] receiptData)
         {
             await Task.Run(() =>
@@ -72,7 +97,7 @@ namespace Garmetix.AI.Billing.Platforms.Windows
             int lastWin32Error = Marshal.GetLastWin32Error();
             if (lastWin32Error == 122) // ERROR_INSUFFICIENT_BUFFER (Expected)
             {
-                StringBuilder pszBuffer = new StringBuilder(pcchBuffer);
+                StringBuilder pszBuffer = new(pcchBuffer);
                 if (GetDefaultPrinter(pszBuffer, ref pcchBuffer))
                 {
                     return pszBuffer.ToString();
@@ -86,8 +111,8 @@ namespace Garmetix.AI.Billing.Platforms.Windows
             IntPtr pUnmanagedBytes = Marshal.AllocCoTaskMem(bytes.Length);
             Marshal.Copy(bytes, 0, pUnmanagedBytes, bytes.Length);
             bool bSuccess = false;
-            IntPtr hPrinter = new IntPtr(0);
-            DOCINFOA di = new DOCINFOA { pDocName = "POS Receipt", pDataType = "RAW" };
+            IntPtr hPrinter = new(0);
+            DOCINFOA di = new() { pDocName = "POS Receipt", pDataType = "RAW" };
 
             if (OpenPrinter(szPrinterName.Normalize(), out hPrinter, IntPtr.Zero))
             {

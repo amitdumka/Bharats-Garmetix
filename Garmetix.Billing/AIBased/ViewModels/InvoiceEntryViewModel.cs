@@ -269,13 +269,147 @@ namespace Garmetix.AI.Billing.ViewModels
             }
         }
         // --- NAVIGATION & UTILITY COMMANDS ---
+        // ==========================================
+        // DATABASE SAVING ENGINE (CENTRALIZED)
+        // ==========================================
+        private async Task<bool> SaveInvoiceToDatabaseAsync()
+        {
+            if (InvoiceItems.Count == 0)
+            {
+                await Application.Current.MainPage.DisplayAlert("Validation", "Cannot save empty invoice.", "OK");
+                return false;
+            }
+            if (IsBusy) return false;
 
+            try
+            {
+                IsBusy = true;
+                CurrentInvoice.InvoiceNo = "INV-" + DateTime.Now.ToString("yyyyMMdd-HHmmss");
+                CalculateInvoiceTotals();
+
+                if (CurrentInvoice.PaidAmount < CurrentInvoice.GrandTotal)
+                {
+                    bool proceed = await Application.Current.MainPage.DisplayAlert(
+                        "Part Payment",
+                        $"Balance of ₹ {CurrentInvoice.BalanceAmount} is unpaid. Proceed?",
+                        "Yes", "No");
+
+                    if (!proceed) return false;
+                }
+
+                await _database.RunInTransactionAsync(tran =>
+                {
+                    tran.Insert(CurrentInvoice);
+                    foreach (var item in InvoiceItems)
+                    {
+                        item.InvoiceId = CurrentInvoice.Id;
+                        tran.Insert(item);
+                    }
+                });
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync("Save Invoice Error", ex);
+                return false;
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        // ==========================================
+        // THE 3 ACTION COMMANDS
+        // ==========================================
+
+        [RelayCommand]
+        public async Task SaveAndPrintThermalAsync()
+        {
+            if (await SaveInvoiceToDatabaseAsync())
+            {
+                byte[] thermalBytes = ReceiptBuilder.GenerateThermalReceiptBytes(CurrentInvoice, InvoiceItems);
+                await _printService.PrintReceiptAsync(thermalBytes);
+
+                await Application.Current.MainPage.DisplayAlert("Success", "Thermal Receipt Printed.", "OK");
+                ResetFormWithoutPrompt();
+            }
+        }
+
+        //[RelayCommand]
+        //public async Task SaveAndPrintA5Async()
+        //{
+        //    if (await SaveInvoiceToDatabaseAsync())
+        //    {
+        //        string html = ReceiptBuilder.GenerateA5HtmlInvoice(CurrentInvoice, InvoiceItems);
+        //        //TODO: from where to send print?
+        //        // 2. Send it directly to the OS Native Printer
+        //        await _printService.PrintHtmlAsync(html, $"Invoice_{CurrentInvoice.InvoiceNo}");
+
+        //        // Pushes the preview page so the user can see it and print it
+        //        await Application.Current.MainPage.Navigation.PushModalAsync(new Views.InvoicePreviewPage(html, CurrentInvoice.InvoiceNo));
+        //        ResetFormWithoutPrompt();
+        //    }
+        //}
+        [RelayCommand]
+        public async Task SaveAndPrintA5Async()
+        {
+            if (await SaveInvoiceToDatabaseAsync())
+            {
+                // Pass the Payments collection into the PDF generator
+                string pdfPath = PdfReceiptBuilder.GenerateA5Pdf(CurrentInvoice, InvoiceItems, Payments);
+
+                // Native sharing opens the PDF directly in the device's PDF viewer or print spooler
+                await Share.Default.RequestAsync(new ShareFileRequest
+                {
+                    Title = "Print Invoice",
+                    File = new ShareFile(pdfPath)
+                });
+
+                ResetFormWithoutPrompt();
+            }
+        }
+
+        [RelayCommand]
+        public async Task SaveAndShareAsync()
+        {
+            if (await SaveInvoiceToDatabaseAsync())
+            {
+                // Pass the Payments collection into the PDF generator
+                string pdfPath = PdfReceiptBuilder.GenerateA5Pdf(CurrentInvoice, InvoiceItems, Payments);
+
+                // Share the file directly to WhatsApp (or email)
+                await Share.Default.RequestAsync(new ShareFileRequest
+                {
+                    Title = $"Share Invoice {CurrentInvoice.InvoiceNo}",
+                    File = new ShareFile(pdfPath)
+                });
+
+                ResetFormWithoutPrompt();
+            }
+        }
+
+        //[RelayCommand]
+        //public async Task SaveAndShareAsync()
+        //{
+        //    if (await SaveInvoiceToDatabaseAsync())
+        //    {
+        //        string html = ReceiptBuilder.GenerateA5HtmlInvoice(CurrentInvoice, InvoiceItems);
+
+        //        // Pushes the preview page so the user can review before sharing
+        //        await Application.Current.MainPage.Navigation.PushModalAsync(new Views.InvoicePreviewPage(html, CurrentInvoice.InvoiceNo));
+        //        ResetFormWithoutPrompt();
+        //    }
+        //}
+
+        // ==========================================
+        // UTILITIES
+        // ==========================================
         [RelayCommand]
         public async Task GoBackAsync()
         {
             if (IsBusy) return;
-
-            // This is the standard MAUI way to navigate to the previous page
             await Shell.Current.GoToAsync("..");
         }
 
@@ -283,22 +417,13 @@ namespace Garmetix.AI.Billing.ViewModels
         public async Task ClearInvoiceAsync()
         {
             if (IsBusy) return;
+            bool confirm = await Application.Current.MainPage.DisplayAlert("Clear Form", "Clear the entire invoice?", "Yes", "Cancel");
+            if (confirm) ResetFormWithoutPrompt();
+        }
 
-            // Safety check before wiping the screen
-            bool confirm = await Application.Current.MainPage.DisplayAlert(
-                "Clear Form",
-                "Are you sure you want to clear the entire invoice?",
-                "Yes, Clear It", "Cancel");
-
-            if (!confirm) return;
-
-            // Safely unsubscribe from events to prevent memory leaks
-            foreach (var item in InvoiceItems)
-            {
-                item.PropertyChanged -= InvoiceItem_PropertyChanged;
-            }
-
-            // Wipe all collections and reset inputs
+        private void ResetFormWithoutPrompt()
+        {
+            foreach (var item in InvoiceItems) item.PropertyChanged -= InvoiceItem_PropertyChanged;
             InvoiceItems.Clear();
             Payments.Clear();
             GlobalDiscountInput = 0;
@@ -308,11 +433,12 @@ namespace Garmetix.AI.Billing.ViewModels
             IsNewCustomer = false;
             SelectedProduct = null;
             SelectedInvoiceItem = null;
-
-            // Generate a fresh invoice object
             CurrentInvoice = new Invoice();
             OnPropertyChanged(nameof(CurrentInvoice));
         }
+         
+
+         
         [RelayCommand]
         public async Task SaveInvoiceAsync()
         {
@@ -349,7 +475,7 @@ namespace Garmetix.AI.Billing.ViewModels
                     }
                 });
 
-                byte[] rawReceiptBytes = ReceiptBuilder.GenerateInvoiceBytes(CurrentInvoice, InvoiceItems);
+                byte[] rawReceiptBytes = ReceiptBuilder.GenerateThermalReceiptBytes(CurrentInvoice, InvoiceItems);
                 await _printService.PrintReceiptAsync(rawReceiptBytes);
 
                 foreach (var item in InvoiceItems) item.PropertyChanged -= InvoiceItem_PropertyChanged;

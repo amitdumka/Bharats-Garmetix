@@ -1,18 +1,59 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Android.Bluetooth;
 using Android.Content;
-using Java.Util;
-using Microsoft.Maui.ApplicationModel; // Required for MAUI Permissions
+using Android.Print;
 using Garmetix.Billing.AIBased.Services;
+using Java.Util;
+using System.Threading.Tasks;
+using Android.Content;
+using Android.Print;
+using Application = Android.App.Application;
+// 1. ADD THESE TWO ALIASES USING "global::"
+using NativeWebView = global::Android.Webkit.WebView;
+using NativeWebViewClient = global::Android.Webkit.WebViewClient;
 
 namespace Garmetix.AI.Billing.Platforms.Android
 {
     public class PrintService : IPrintService
     {
         private static readonly UUID RspSppUuid = UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
+        public Task PrintHtmlAsync(string htmlContent, string documentName = "Invoice")
+        {
+            var context = Application.Context;
 
+            // 2. Use the alias to create the WebView
+            var webView = new NativeWebView(context);
+
+            webView.SetWebViewClient(new PrintWebViewClient(documentName));
+            webView.LoadDataWithBaseURL(null, htmlContent, "text/HTML", "UTF-8", null);
+
+            return Task.CompletedTask;
+        }
+
+        // 3. Inherit from the alias
+        private class PrintWebViewClient : NativeWebViewClient
+        {
+            private readonly string _documentName;
+
+            public PrintWebViewClient(string documentName)
+            {
+                _documentName = documentName;
+            }
+
+            // 4. Use the alias in the method signature
+            public override void OnPageFinished(NativeWebView view, string url)
+            {
+                base.OnPageFinished(view, url);
+
+                var printManager = (PrintManager)Application.Context.GetSystemService(Context.PrintService);
+                var printAdapter = view.CreatePrintDocumentAdapter(_documentName);
+
+                var printAttributes = new PrintAttributes.Builder()
+                    .SetMediaSize(PrintAttributes.MediaSize.IsoA5)
+                    .Build();
+
+                printManager.Print(_documentName, printAdapter, printAttributes);
+            }
+        }
         public async Task PrintReceiptAsync(byte[] receiptData)
         {
             try
@@ -45,13 +86,8 @@ namespace Garmetix.AI.Billing.Platforms.Android
                         d.Name.IndexOf("printer", StringComparison.OrdinalIgnoreCase) >= 0 ||
                         d.Name.IndexOf("pos", StringComparison.OrdinalIgnoreCase) >= 0
                     ))
-                );
-
-                if (printer == null) throw new Exception("No paired Bluetooth printer found.");
-
-                BluetoothSocket? socket = printer.CreateRfcommSocketToServiceRecord(RspSppUuid);
-                if (socket == null) throw new Exception("Failed to create Bluetooth socket for printer.");
-
+                ) ?? throw new Exception("No paired Bluetooth printer found.");
+                BluetoothSocket? socket = printer.CreateRfcommSocketToServiceRecord(RspSppUuid) ?? throw new Exception("Failed to create Bluetooth socket for printer.");
                 await socket.ConnectAsync();
 
                 if (socket.IsConnected)

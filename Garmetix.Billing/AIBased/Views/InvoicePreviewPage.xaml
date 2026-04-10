@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Garmetix.AI.Billing.Views.InvoicePreviewPage"
+             Title="Invoice Preview"
+             BackgroundColor="#F4F6F9">
+
+    <Grid RowDefinitions="*, Auto">
+        <WebView x:Name="InvoiceWebView" Grid.Row="0" Margin="10" />
+
+        <Border Grid.Row="1" BackgroundColor="White" Padding="15" StrokeThickness="0">
+            <Border.Shadow>
+                <Shadow Brush="#1A000000" Offset="0,-4" Radius="10" Opacity="0.5" />
+            </Border.Shadow>
+
+            <Grid ColumnDefinitions="*, *, *" ColumnSpacing="10">
+                <Button Text="Close" Clicked="Close_Clicked" Grid.Column="0" 
+                        BackgroundColor="#6C757D" TextColor="White" FontAttributes="Bold" HeightRequest="45" CornerRadius="6"/>
+
+                <Button Text="Print A5" Clicked="Print_Clicked" Grid.Column="1" 
+                        BackgroundColor="#005A9C" TextColor="White" FontAttributes="Bold" HeightRequest="45" CornerRadius="6"/>
+
+                <Button Text="Share (WhatsApp)" Clicked="Share_Clicked" Grid.Column="2" 
+                        BackgroundColor="#25D366" TextColor="White" FontAttributes="Bold" HeightRequest="45" CornerRadius="6"/>
+            </Grid>
+        </Border>
+    </Grid>
+</ContentPage>
