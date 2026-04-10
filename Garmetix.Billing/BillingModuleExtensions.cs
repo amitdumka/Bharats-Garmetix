@@ -32,5 +32,18 @@ namespace Garmetix.Billing
             builder.Services.AddTransient<InvoiceEntryPage>();
             return builder;
         }
+
+
+
+        public static MauiAppBuilder EnableBillingAndInventory(this MauiAppBuilder builder)
+        {
+            // Register AI Inventory services and dependencies here
+            // e.g., builder.Services.AddSingleton<IAIInventoryService, AIInventoryService>();
+
+
+
+
+            return builder;
+        }
     }
 }

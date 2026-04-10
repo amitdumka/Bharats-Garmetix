@@ -30,7 +30,13 @@ namespace Garmetix.Models.Enums
         Female,
         TransGender
     }
-
+    public enum CardType //TODO: this is not complete, need to add more card types and abstract this to a separate class if needed in future
+    {
+        Debit,
+        Credit,
+        Prepaid,
+        Other
+    }
     public enum PaymentMode
     {
         Cash,

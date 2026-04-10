@@ -1,51 +1,121 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Garmetix.Billing.Models;
 using System.Collections.ObjectModel;
 
-namespace  Garmetix.Billing.ViewModels;
+namespace Garmetix.Billing.ViewModels;
 
-// Customer details
-public class Customer
-{
-    public string Name { get; set; }
-    public string Mobile { get; set; }
-    public string Gstin { get; set; } // Optional
-}
+
+
 
 // Single invoice line item
-public class InvoiceItem
+internal class InvoiceItem
 {
     public string ItemCode { get; set; }
     public string Description { get; set; }
     public int Quantity { get; set; }
     public decimal Rate { get; set; }
-    public decimal Amount => Quantity * Rate;
+    public decimal DiscountPercent { get; set; } // New property for discount percentage
+    public decimal Discount => Quantity * Rate * DiscountPercent / 100m; // Calculate discount amount
+    public decimal Amount => Quantity * Rate - Discount;
     public decimal GstPercent { get; set; } = 12m; // default 12%
     public decimal Cgst => Amount * GstPercent / 200m;
     public decimal Sgst => Amount * GstPercent / 200m;
     public decimal Total => Amount + Cgst + Sgst;
 }
 
-//internal class InvoiceEntryViewModel
-//{
-//    public InvoiceEntryViewModel() { }
-//}
+
 internal partial class InvoiceEntryViewModel : ObservableObject
 {
-    [ObservableProperty] private Customer customer = new();
+    [ObservableProperty] private Party customer = new();
     [ObservableProperty] private ObservableCollection<InvoiceItem> items = new();
     [ObservableProperty] private InvoiceItem newItem = new();
-    [ObservableProperty] private string upiQrData;
-    [ObservableProperty] private string scannedCode;
+
+    [ObservableProperty] private string upiQrData = string.Empty;
+    [ObservableProperty] private string scannedCode = string.Empty;
+
+    // Invoice Details
+    [ObservableProperty] private string invoiceNumber = $"INV-{DateTime.Now:yyyyMMddHHmmss}";
+    [ObservableProperty] private DateTime invoiceDate = DateTime.Now;
+    [ObservableProperty] private decimal billDiscountAmount;
+    [ObservableProperty] private bool isSaleReturn = false;
+    [ObservableProperty] private string invoiceCode = string.Empty;
+    [ObservableProperty] private bool isB2B = false;
+
+
 
     public decimal SubTotal => Items.Sum(i => i.Amount);
     public decimal TotalCgst => Items.Sum(i => i.Cgst);
     public decimal TotalSgst => Items.Sum(i => i.Sgst);
     public decimal GrandTotal => Items.Sum(i => i.Total);
 
+    public decimal TotalItemWiseDiscount => Items.Sum(i => i.Discount);
+
+    public decimal TotalDiscount => TotalItemWiseDiscount + BillDiscountAmount;
+    public decimal PayableAmount => GrandTotal - BillDiscountAmount;
+
+
+    public decimal TotalQuantity => Items.Sum(i => i.Quantity);
+    public decimal Count => Items.Count;
+
+
+    // Constructor for regular invoice entry
     public InvoiceEntryViewModel()
     {
         NewItem = new InvoiceItem();
+        UpiQrData = string.Empty;
+        this.IsB2B = false;
+        this.IsSaleReturn = false;
+    }
+
+    // Constructor for sale return or B2C invoice entry
+    public InvoiceEntryViewModel(bool saleReturn = false, bool b2c = false)
+    {
+        // Call the default constructor to initialize properties
+        this.isSaleReturn = saleReturn;
+        this.isB2B = b2c;
+        NewItem = new InvoiceItem();
+        UpiQrData = string.Empty;
+    }
+
+    [RelayCommand]
+    void RemoveItem(InvoiceItem item)
+    {
+        if (Items.Contains(item))
+        {
+            Items.Remove(item);
+            OnPropertyChanged(nameof(SubTotal));
+            OnPropertyChanged(nameof(TotalCgst));
+            OnPropertyChanged(nameof(TotalSgst));
+            OnPropertyChanged(nameof(GrandTotal));
+            OnPropertyChanged(nameof(TotalItemWiseDiscount));
+            OnPropertyChanged(nameof(TotalDiscount));
+            OnPropertyChanged(nameof(TotalQuantity));
+        }
+    }
+
+    [RelayCommand]
+    void ClearItems()
+    {
+        Items.Clear();
+        OnPropertyChanged(nameof(SubTotal));
+        OnPropertyChanged(nameof(TotalCgst));
+        OnPropertyChanged(nameof(TotalSgst));
+        OnPropertyChanged(nameof(GrandTotal));
+        OnPropertyChanged(nameof(TotalItemWiseDiscount));
+        OnPropertyChanged(nameof(TotalDiscount));
+        OnPropertyChanged(nameof(TotalQuantity));
+    }
+
+    [RelayCommand]
+    void SaveCustomer()
+    {
+        //TODO: Implement logic to save customer details to database or service
+        // Check for Customer Name, GSTIN, and other required fields before saving 
+        // Check if the customer already exists and update details if necessary
+        // if not exists, create a new customer record
+        //Write the code to save the customer details to the database or service here
+        
     }
 
     [RelayCommand]
@@ -60,6 +130,9 @@ internal partial class InvoiceEntryViewModel : ObservableObject
         OnPropertyChanged(nameof(TotalCgst));
         OnPropertyChanged(nameof(TotalSgst));
         OnPropertyChanged(nameof(GrandTotal));
+        OnPropertyChanged(nameof(TotalItemWiseDiscount));
+        OnPropertyChanged(nameof(TotalDiscount));
+        OnPropertyChanged(nameof(TotalQuantity));
     }
 
     [RelayCommand]
@@ -75,8 +148,8 @@ internal partial class InvoiceEntryViewModel : ObservableObject
     void GenerateUpiQr()
     {
         // Example UPI URI: "upi://pay?pa=merchant@bank&pn=StoreName&am=1000"
-        var amount = GrandTotal.ToString("F2");
-        upiQrData = $"upi://pay?pa=merchant@bank&pn=GarmentStore&am={amount}&cu=INR";
+        var amount = PayableAmount.ToString("F2");
+        UpiQrData = $"upi://pay?pa=merchant@bank&pn=GarmentStore&am={amount}&cu=INR";
 
 
     }

@@ -1,11 +1,11 @@
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using SQLite;
 using Garmetix.AI.Billing.Models;
-using Garmetix.Billing.AIBased.Services;
 using Garmetix.Billing.AIBased.Helpers;
+using Garmetix.Billing.AIBased.Services;
+using SQLite;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace Garmetix.AI.Billing.ViewModels
 {
