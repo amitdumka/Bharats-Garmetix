@@ -15,9 +15,9 @@
 
             <!-- Customer Details -->
             <Label Text="Customer Details" FontSize="20" />
-            <Entry Placeholder="Name" Text="{Binding Customer.Name}" />
-            <Entry Placeholder="Mobile Number" Keyboard="Telephone" Text="{Binding Customer.Mobile}" />
-            <Entry Placeholder="GSTIN (Optional)" Text="{Binding Customer.Gstin}" />
+            <Entry Placeholder="Name" Text="{Binding Party.Name}" />
+            <Entry Placeholder="Mobile Number" Keyboard="Telephone" Text="{Binding Party.Mobile}" />
+            <Entry Placeholder="GSTIN (Optional)" Text="{Binding Party.Gstin}" />
 
             <!-- Line Items -->
             <Label Text="Add Item" FontSize="20" Margin="0,20,0,0" />
@@ -28,6 +28,8 @@
             <Entry Placeholder="Description" Text="{Binding NewItem.Description}" />
             <Entry Placeholder="Quantity" Keyboard="Numeric" Text="{Binding NewItem.Quantity, Mode=TwoWay}" />
             <Entry Placeholder="Rate (₹)" Keyboard="Numeric" Text="{Binding NewItem.Rate, Mode=TwoWay}" />
+            <Entry Placeholder="Discount %" Keyboard="Numeric" Text="{Binding NewItem.DiscountPercent, Mode=TwoWay}" />
+            <Entry Placeholder="Discount (₹)" Keyboard="Numeric" Text="{Binding NewItem.Discount, Mode=OneWay}" IsReadOnly="True"/>
             <Button Text="Add Item" Command="{Binding AddItemCommand}" />
 
             <sfDataGrid:SfDataGrid
@@ -37,11 +39,12 @@
                 <sfDataGrid:SfDataGrid.Columns>
                     <sfDataGrid:DataGridTextColumn MappingName="Description" HeaderText="Item" />
                     <sfDataGrid:DataGridNumericColumn MappingName="Quantity" HeaderText="Qty" />
-                    <sfDataGrid:DataGridNumericColumn MappingName="Rate" HeaderText="Rate" Format="C2" />
-                    <sfDataGrid:DataGridNumericColumn MappingName="Amount" HeaderText="Amt" Format="C2" />
-                    <sfDataGrid:DataGridNumericColumn MappingName="Cgst" HeaderText="CGST" Format="C2" />
-                    <sfDataGrid:DataGridNumericColumn MappingName="Sgst" HeaderText="SGST" Format="C2" />
-                    <sfDataGrid:DataGridNumericColumn MappingName="Total" HeaderText="Total" Format="C2" />
+                    <sfDataGrid:DataGridNumericColumn MappingName="Rate" HeaderText="Rate(₹)" Format="C2" />
+                    <sfDataGrid:DataGridNumericColumn MappingName="Discount" HeaderText="Disc(₹)" Format="C2" />
+                    <sfDataGrid:DataGridNumericColumn MappingName="Amount" HeaderText="Amt(₹)" Format="C2" />
+                    <sfDataGrid:DataGridNumericColumn MappingName="Cgst" HeaderText="CGST(₹)" Format="C2" />
+                    <sfDataGrid:DataGridNumericColumn MappingName="Sgst" HeaderText="SGST(₹)" Format="C2" />
+                    <sfDataGrid:DataGridNumericColumn MappingName="Total" HeaderText="Total(₹)" Format="C2" />
                 </sfDataGrid:SfDataGrid.Columns>
             </sfDataGrid:SfDataGrid>
 
@@ -53,7 +56,9 @@
                 <Label Text="{Binding TotalCgst, StringFormat='₹{0:F2}'}" Grid.Row="1" Grid.Column="1" />
                 <Label Text="SGST Total:" Grid.Row="2" />
                 <Label Text="{Binding TotalSgst, StringFormat='₹{0:F2}'}" Grid.Row="2" Grid.Column="1" />
-                <Label Text="Grand Total:" FontAttributes="Bold" Grid.Row="3" />
+                <Label Text="Discount Total:" Grid.Row="3" />
+                <Label Text="{Binding TotalDiscount, StringFormat='₹{0:F2}'}" Grid.Row="3" Grid.Column="1" />
+                <Label Text="Grand Total:" FontAttributes="Bold" Grid.Row="4" />
                 <Label Text="{Binding GrandTotal, StringFormat='₹{0:F2}'}"
                        FontAttributes="Bold" Grid.Row="3" Grid.Column="1" />
             </Grid>
