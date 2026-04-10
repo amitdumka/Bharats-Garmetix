@@ -40,7 +40,7 @@
     <Grid>
         <ScrollView>
             <VerticalStackLayout Padding="20" Spacing="10" IsEnabled="{Binding IsNotBusy}">
-                
+
                 <!--<HorizontalStackLayout Spacing="10" Margin="0,0,0,10">
                     <Button Text="← Back" BackgroundColor="Transparent" TextColor="#005A9C" 
                             FontAttributes="Bold" FontSize="16" Padding="5,0" 
@@ -48,7 +48,7 @@
                     <Label Text="Create New Invoice" FontSize="20" FontAttributes="Bold" 
                            VerticalOptions="Center" TextColor="#2C3E50" Margin="10,0,0,0"/>
                 </HorizontalStackLayout>-->
-                
+
                 <Border Style="{StaticResource CardStyle}">
                     <VerticalStackLayout>
                         <Label Text="Customer Information" Style="{StaticResource HeaderLabelStyle}" />
@@ -77,10 +77,21 @@
                         <Label Text="Cart Details" Style="{StaticResource HeaderLabelStyle}" />
 
                         <HorizontalStackLayout Spacing="15">
-                            <inputs:SfAutocomplete 
+                            <!--<inputs:SfAutocomplete 
                                 WidthRequest="350" Placeholder="Scan Barcode or Type Product Name..."
                                 ItemsSource="{Binding AvailableProducts}" DisplayMemberPath="Name" TextMemberPath="Barcode"
-                                SelectedItem="{Binding SelectedProduct}" HeightRequest="45" DropDownBackground="#FFFFFF"/>
+                                SelectedItem="{Binding SelectedProduct}" HeightRequest="45" DropDownBackground="#FFFFFF"/>-->
+                            <inputs:SfAutocomplete 
+    WidthRequest="350" 
+    Placeholder="Scan Barcode or Type Product Name..."
+    ItemsSource="{Binding FilteredProducts}" 
+    DisplayMemberPath="DisplayText" 
+    TextMemberPath="DisplayText"
+    TextSearchMode="Contains"
+    Text="{Binding SearchText, Mode=TwoWay}"
+    SelectedItem="{Binding SelectedProduct}" 
+    HeightRequest="45" 
+    DropDownBackground="#FFFFFF"/>
 
                             <Button Text="+ Add Item" Command="{Binding AddProductToInvoiceCommand}" Style="{StaticResource PrimaryActionStyle}" WidthRequest="120" HeightRequest="45" />
                         </HorizontalStackLayout>
@@ -91,8 +102,8 @@
                             <datagrid:SfDataGrid.Columns>
                                 <datagrid:DataGridTextColumn MappingName="ProductName" HeaderText="Item Description" Width="200" AllowEditing="False"/>
                                 <datagrid:DataGridNumericColumn MappingName="Rate" HeaderText="Rate (₹)" Format="N2" AllowEditing="True"/>
-                                <datagrid:DataGridNumericColumn MappingName="Quantity" HeaderText="Qty" AllowEditing="True"/>
-                                
+                                <!--<datagrid:DataGridNumericColumn MappingName="Quantity" HeaderText="Qty" AllowEditing="True"/>-->
+                                <datagrid:DataGridNumericColumn MappingName="Quantity" HeaderText="Qty" Format="0.##" AllowEditing="True"/>
                                 <datagrid:DataGridNumericColumn MappingName="DiscountPercentage" HeaderText="Disc %" Format="N2" AllowEditing="True"/>
                                 <datagrid:DataGridNumericColumn MappingName="DiscountAmount" HeaderText="Disc (₹)" Format="N2" AllowEditing="False"/>
                                 <datagrid:DataGridNumericColumn MappingName="GstPercentage" HeaderText="GST %" Format="N0" AllowEditing="False"/>
@@ -216,12 +227,15 @@
                         <Button Text="Save &amp; Share" Grid.Column="1"
                             BackgroundColor="#17A2B8" TextColor="White" HeightRequest="50" FontSize="14" CornerRadius="6"
                             FontAttributes="Bold" Command="{Binding SaveAndShareCommand}"/>
+                        <Button Text="Save &amp; WhatsApp" Grid.Column="2"
+    BackgroundColor="#17A2B8" TextColor="White" HeightRequest="50" FontSize="14" CornerRadius="6"
+    FontAttributes="Bold" Command="{Binding SaveAndWhatsAppCommand}"/>
 
-                        <Button Text="Print A5" Grid.Column="2"
+                        <Button Text="Print A5" Grid.Column="3"
                             BackgroundColor="#005A9C" TextColor="White" HeightRequest="50" FontSize="14" CornerRadius="6"
                             FontAttributes="Bold" Command="{Binding SaveAndPrintA5Command}"/>
 
-                        <Button Text="Print Thermal" Grid.Column="3"
+                        <Button Text="Print Thermal" Grid.Column="4"
                             BackgroundColor="#343A40" TextColor="White" HeightRequest="50" FontSize="14" CornerRadius="6"
                             FontAttributes="Bold" Command="{Binding SaveAndPrintThermalCommand}"/>
 

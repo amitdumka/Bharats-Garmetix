@@ -18,5 +18,14 @@ namespace Garmetix.AI.Billing.Views
                 vm.SearchCustomerCommand.Execute(null);
             }
         }
+        // --- NEW: Wires the Search Box to the ViewModel Cache ---
+        //private void ProductSearch_TextChanged(object sender, Syncfusion.Maui.Inputs.TextChangedEventArgs e)
+        //{
+        //    if (BindingContext is ViewModels.InvoiceEntryViewModel vm)
+        //    {
+        //        // Passes the typed text (Barcode or Name) into the high-speed search engine
+        //        vm.UpdateFilteredProducts(e.NewTextValue);
+        //    }
+        //}
     }
 }

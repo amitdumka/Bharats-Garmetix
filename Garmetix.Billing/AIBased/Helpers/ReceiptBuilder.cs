@@ -68,7 +68,9 @@ namespace Garmetix.Billing.AIBased.Helpers
             foreach (var item in items)
             {
                 string name = item.ProductName.Length > 12 ? item.ProductName.Substring(0, 12) : item.ProductName.PadRight(12);
-                string qty = item.Quantity.ToString().PadLeft(3);
+                //string qty = item.Quantity.ToString().PadLeft(3);
+                // Expanded PadLeft to 4 to accommodate the decimal point
+                string qty = item.Quantity.ToString("0.##").PadLeft(4);
                 string rate = item.Rate.ToString("0").PadLeft(6);
                 string total = item.TotalAmount.ToString("0").PadLeft(7);
                 bytes.AddRange(Encoding.ASCII.GetBytes($"{name} {qty} {rate} {total}\n"));

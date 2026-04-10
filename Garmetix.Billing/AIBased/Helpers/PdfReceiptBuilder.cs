@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Garmetix.AI.Billing.Models;
-using Garmetix.AI.Billing.Models;
+﻿using Garmetix.AI.Billing.Models;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -137,7 +132,8 @@ namespace Garmetix.Billing.AIBased.Helpers
                     {
                         table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).Text(sNo++.ToString());
                         table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).Text(item.ProductName).SemiBold();
-                        table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).AlignRight().Text(item.Quantity.ToString());
+                        table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).AlignRight().Text(item.Quantity.ToString("0.##"));
+                        //table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).AlignRight().Text(item.Quantity.ToString());
                         table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).AlignRight().Text($"₹ {item.Rate:F2}");
                         table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).AlignRight().Text($"{item.GstPercentage}%");
                         table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).AlignRight().Text($"₹ {item.TotalAmount:F2}").SemiBold();
