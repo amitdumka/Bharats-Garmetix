@@ -13,6 +13,7 @@ namespace Garmetix.Billing.AIBased.ViewModels
         private List<PaymentDetail>? _allPayments = new();
 
         [ObservableProperty] private bool isBusy;
+        public bool NotBusy => !IsBusy;
 
         // --- SUMMARY STATS ---
         [ObservableProperty] private decimal totalSales;
@@ -20,15 +21,15 @@ namespace Garmetix.Billing.AIBased.ViewModels
         [ObservableProperty] private decimal totalPending;
 
         // --- THE DATA GRID SOURCE ---
-        public ObservableCollection<Invoice> FilteredInvoices { get; set; } = new();
+        public ObservableCollection<Invoice> FilteredInvoices { get; set; } = [];
 
         // --- SEARCH AND FILTERS ---
         [ObservableProperty] private string searchText = string.Empty;
 
-        public List<string> DateRanges { get; } = new()
-        {
+        public List<string> DateRanges { get; } =
+        [
             "All Time", "Today", "Yesterday", "This Week", "Last Week", "This Month", "Last Month", "This Year"
-        };
+        ];
         [ObservableProperty] private string selectedDateRange = "This Month";
 
         public List<string> PaymentModes { get; } = new()
@@ -59,10 +60,12 @@ namespace Garmetix.Billing.AIBased.ViewModels
                // await _database.CreateTableAsync<PaymentDetail>();
 
                 _database=await DatabaseHelper.GetDatabaseAsync();
+
                 if(_database == null)
                 {
                     throw new Exception("Failed to initialize database connection.");
                 }
+                
                 // 2. CRITICAL FIX: Fetch raw data FIRST, then sort it in C# memory. 
                 // This prevents the SQLite LINQ translator from crashing.
                 var rawInvoices = await _database.Table<Invoice>().ToListAsync();

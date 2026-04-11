@@ -59,9 +59,11 @@
                                  HeaderRowHeight="50"
                                  RowHeight="55">
                 <datagrid:SfDataGrid.Columns>
-                    <datagrid:DataGridTextColumn MappingName="Date" HeaderText="Date" Format="dd-MMM-yyyy" Width="100"/>
+                    <datagrid:DataGridDateColumn MappingName="Date" HeaderText="Date" Format="dd-MMM-yyyy" Width="100"/>
+
                     <datagrid:DataGridTextColumn MappingName="InvoiceNo" HeaderText="Invoice No" Width="160"/>
                     <datagrid:DataGridTextColumn MappingName="CustomerName" HeaderText="Customer Name" />
+
                     <datagrid:DataGridNumericColumn MappingName="GrandTotal" HeaderText="Bill Amount" Format="C" />
                     <datagrid:DataGridNumericColumn MappingName="PaidAmount" HeaderText="Received" Format="C" />
                     <datagrid:DataGridNumericColumn MappingName="BalanceAmount" HeaderText="Balance Due" Format="C" />
