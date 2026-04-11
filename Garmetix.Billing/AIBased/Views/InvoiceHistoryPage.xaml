@@ -2,76 +2,132 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
-             xmlns:datagrid="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
+             xmlns:sfgrid="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
              x:Class="Garmetix.AI.Billing.Views.InvoiceHistoryPage"
-             Title="Sales &amp; Invoice History"
+             Title="Sales &amp; Financial Dashboard"
              BackgroundColor="#F4F6F9">
+
+    <ContentPage.Resources>
+        <Style TargetType="Border" x:Key="MetricCard">
+            <Setter Property="Padding" Value="20, 15" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 16" />
+            <Setter Property="StrokeThickness" Value="0" />
+            <Setter Property="Shadow">
+                <Setter.Value>
+                    <Shadow Brush="#1A000000" Offset="0,4" Radius="12" Opacity="0.4" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="Border" x:Key="DashboardSection">
+            <Setter Property="BackgroundColor" Value="#FFFFFF" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 16" />
+            <Setter Property="StrokeThickness" Value="0" />
+            <Setter Property="Shadow">
+                <Setter.Value>
+                    <Shadow Brush="#0D000000" Offset="0,2" Radius="8" Opacity="0.2" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="Label" x:Key="MetricTitle">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="TextColor" Value="#FFFFFF" />
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="Opacity" Value="0.85" />
+            <Setter Property="CharacterSpacing" Value="1" />
+        </Style>
+
+        <Style TargetType="Label" x:Key="MetricValue">
+            <Setter Property="FontSize" Value="22" />
+            <Setter Property="TextColor" Value="#FFFFFF" />
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="Margin" Value="0,4,0,0" />
+        </Style>
+    </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto, Auto, *">
 
-        <Grid Grid.Row="0" ColumnDefinitions="*,*,*" ColumnSpacing="15" Padding="20,20,20,10">
+        <Grid Grid.Row="0" ColumnDefinitions="*,*,*" ColumnSpacing="15" Padding="20">
 
-            <Border Grid.Column="0" BackgroundColor="#0284C7" Padding="15" StrokeShape="RoundRectangle 10" StrokeThickness="0">
-                <VerticalStackLayout>
-                    <Label Text="TOTAL SALES" FontSize="11" TextColor="#E0F2FE" FontAttributes="Bold" />
-                    <Label Text="{Binding TotalSales, StringFormat='₹ {0:N2}'}" FontSize="18" TextColor="White" FontAttributes="Bold" Margin="0,5,0,0"/>
-                </VerticalStackLayout>
+            <Border Grid.Column="0" BackgroundColor="#4F46E5" Style="{StaticResource MetricCard}">
+                <Grid ColumnDefinitions="*, Auto">
+                    <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                        <Label Text="TOTAL SALES" Style="{StaticResource MetricTitle}" />
+                        <Label Text="{Binding TotalSales, StringFormat='₹ {0:N2}'}" Style="{StaticResource MetricValue}"/>
+                    </VerticalStackLayout>
+                    <Label Grid.Column="1" Text="📈" FontSize="32" Opacity="0.5" VerticalOptions="Center"/>
+                </Grid>
             </Border>
 
-            <Border Grid.Column="1" BackgroundColor="#16A34A" Padding="15" StrokeShape="RoundRectangle 10" StrokeThickness="0">
-                <VerticalStackLayout>
-                    <Label Text="RECEIVED" FontSize="11" TextColor="#DCFCE7" FontAttributes="Bold" />
-                    <Label Text="{Binding TotalReceived, StringFormat='₹ {0:N2}'}" FontSize="18" TextColor="White" FontAttributes="Bold" Margin="0,5,0,0"/>
-                </VerticalStackLayout>
+            <Border Grid.Column="1" BackgroundColor="#10B981" Style="{StaticResource MetricCard}">
+                <Grid ColumnDefinitions="*, Auto">
+                    <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                        <Label Text="RECEIVED" Style="{StaticResource MetricTitle}" />
+                        <Label Text="{Binding TotalReceived, StringFormat='₹ {0:N2}'}" Style="{StaticResource MetricValue}"/>
+                    </VerticalStackLayout>
+                    <Label Grid.Column="1" Text="💳" FontSize="32" Opacity="0.5" VerticalOptions="Center"/>
+                </Grid>
             </Border>
 
-            <Border Grid.Column="2" BackgroundColor="#DC2626" Padding="15" StrokeShape="RoundRectangle 10" StrokeThickness="0">
-                <VerticalStackLayout>
-                    <Label Text="PENDING DUE" FontSize="11" TextColor="#FEE2E2" FontAttributes="Bold" />
-                    <Label Text="{Binding TotalPending, StringFormat='₹ {0:N2}'}" FontSize="18" TextColor="White" FontAttributes="Bold" Margin="0,5,0,0"/>
-                </VerticalStackLayout>
+            <Border Grid.Column="2" BackgroundColor="#F43F5E" Style="{StaticResource MetricCard}">
+                <Grid ColumnDefinitions="*, Auto">
+                    <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                        <Label Text="BALANCE DUE" Style="{StaticResource MetricTitle}" />
+                        <Label Text="{Binding TotalPending, StringFormat='₹ {0:N2}'}" Style="{StaticResource MetricValue}"/>
+                    </VerticalStackLayout>
+                    <Label Grid.Column="1" Text="⏳" FontSize="32" Opacity="0.5" VerticalOptions="Center"/>
+                </Grid>
             </Border>
         </Grid>
 
-        <Border Grid.Row="1" BackgroundColor="White" Margin="20,5,20,10" Padding="15,10" StrokeShape="RoundRectangle 10" StrokeThickness="0">
+        <Border Grid.Row="1" Margin="20,0,20,15" Padding="15,10" Style="{StaticResource DashboardSection}">
             <Grid ColumnDefinitions="2*, 1.5*, 1.5*" ColumnSpacing="15">
 
-                <core:SfTextInputLayout Hint="Search Customer or Invoice #" ContainerType="Outlined" Grid.Column="0">
+                <core:SfTextInputLayout Hint="🔍 Search Customer or Invoice #" ContainerType="Outlined" Grid.Column="0" OutlineCornerRadius="8">
                     <Entry Text="{Binding SearchText, Mode=TwoWay}" ClearButtonVisibility="WhileEditing" />
                 </core:SfTextInputLayout>
 
-                <core:SfTextInputLayout Hint="Date Range" ContainerType="Outlined" Grid.Column="1">
+                <core:SfTextInputLayout Hint="📅 Date Range" ContainerType="Outlined" Grid.Column="1" OutlineCornerRadius="8">
                     <Picker ItemsSource="{Binding DateRanges}" SelectedItem="{Binding SelectedDateRange}" />
                 </core:SfTextInputLayout>
 
-                <core:SfTextInputLayout Hint="Payment Type" ContainerType="Outlined" Grid.Column="2">
+                <core:SfTextInputLayout Hint="💵 Payment Type" ContainerType="Outlined" Grid.Column="2" OutlineCornerRadius="8">
                     <Picker ItemsSource="{Binding PaymentModes}" SelectedItem="{Binding SelectedPaymentMode}" />
                 </core:SfTextInputLayout>
             </Grid>
         </Border>
 
-        <Border Grid.Row="2" BackgroundColor="White" Margin="20,5,20,20" StrokeShape="RoundRectangle 10" StrokeThickness="0">
-            <datagrid:SfDataGrid ItemsSource="{Binding FilteredInvoices}" 
-                                 AutoGenerateColumnsMode="None"
-                                 SelectionMode="Single"
-                                 HeaderGridLinesVisibility="Horizontal"
-                                 GridLinesVisibility="Horizontal"
-                                 HeaderRowHeight="50"
-                                 RowHeight="55">
-                <datagrid:SfDataGrid.Columns>
-                    <datagrid:DataGridDateColumn MappingName="Date" HeaderText="Date" Format="dd-MMM-yyyy" Width="100"/>
+        <Border Grid.Row="2" Margin="20,0,20,20" Padding="15,10" Style="{StaticResource DashboardSection}">
+            <Grid>
+                <sfgrid:SfDataGrid x:Name="dataGrid" 
+                                   ItemsSource="{Binding FilteredInvoices}"  
+                                   SelectionMode="Single" 
+                                   HeaderGridLinesVisibility="Horizontal"
+                                   GridLinesVisibility="Horizontal" 
+                                   HeaderRowHeight="55"
+                                   RowHeight="60" 
+                                   BackgroundColor="AliceBlue"
+                                   ColumnWidthMode="Fill"
+                                   AutoGenerateColumnsMode="None">
 
-                    <datagrid:DataGridTextColumn MappingName="InvoiceNo" HeaderText="Invoice No" Width="160"/>
-                    <datagrid:DataGridTextColumn MappingName="CustomerName" HeaderText="Customer Name" />
+                    <sfgrid:SfDataGrid.Columns>
+                        <sfgrid:DataGridDateColumn MappingName="Date" HeaderText="Date" Format="dd-MMM-yyyy" Width="110"/>
+                        <sfgrid:DataGridTextColumn MappingName="InvoiceNo" HeaderText="Invoice No" Width="170"/>
+                        <sfgrid:DataGridTextColumn MappingName="CustomerName" HeaderText="Customer Name" />
 
-                    <datagrid:DataGridNumericColumn MappingName="GrandTotal" HeaderText="Bill Amount" Format="C" />
-                    <datagrid:DataGridNumericColumn MappingName="PaidAmount" HeaderText="Received" Format="C" />
-                    <datagrid:DataGridNumericColumn MappingName="BalanceAmount" HeaderText="Balance Due" Format="C" />
-                </datagrid:SfDataGrid.Columns>
-            </datagrid:SfDataGrid>
+                        <sfgrid:DataGridNumericColumn MappingName="GrandTotal" HeaderText="Bill Amount" Format="N2" />
+                        <sfgrid:DataGridNumericColumn MappingName="PaidAmount" HeaderText="Received" Format="N2" />
+
+                        <sfgrid:DataGridNumericColumn MappingName="BalanceAmount" HeaderText="Balance Due" Format="N2" />
+                    </sfgrid:SfDataGrid.Columns>
+                </sfgrid:SfDataGrid>
+            </Grid>
         </Border>
 
-        <ActivityIndicator Grid.RowSpan="3" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" HorizontalOptions="Center" VerticalOptions="Center" Color="#0284C7"/>
+        <ContentView Grid.RowSpan="3" BackgroundColor="#66FFFFFF" IsVisible="{Binding IsBusy}">
+            <ActivityIndicator IsRunning="{Binding IsBusy}" HorizontalOptions="Center" VerticalOptions="Center" Color="#4F46E5" WidthRequest="60" HeightRequest="60"/>
+        </ContentView>
 
     </Grid>
 </ContentPage>

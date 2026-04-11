@@ -6,11 +6,30 @@ using System.Collections.ObjectModel;
 
 namespace Garmetix.Billing.AIBased.ViewModels
 {
+
+    public class TestData
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public DateTime Date { get; set; } = DateTime.Now;
+
+       
+    }
+
     public partial class InvoiceHistoryViewModel : ObservableObject
     {
         private SQLiteAsyncConnection _database;
         private List<Invoice>? _allInvoices = new();
         private List<PaymentDetail>? _allPayments = new();
+
+        [ObservableProperty] private ObservableCollection<TestData> dataList = new ObservableCollection<TestData>() { 
+        
+            new TestData { Id = 1, Name = "Test 1" },
+            new TestData { Id = 2, Name = "Test 2" },
+            new TestData { Id = 3, Name = "Test 3" }
+
+        };
+
 
         [ObservableProperty] private bool isBusy;
         public bool NotBusy => !IsBusy;
@@ -21,8 +40,9 @@ namespace Garmetix.Billing.AIBased.ViewModels
         [ObservableProperty] private decimal totalPending;
 
         // --- THE DATA GRID SOURCE ---
-        public ObservableCollection<Invoice> FilteredInvoices { get; set; } = [];
-
+        // public ObservableCollection<Invoice> FilteredInvoices { get; set; } = [];
+        [ObservableProperty]
+        private ObservableCollection<Invoice> filteredInvoices = [];
         // --- SEARCH AND FILTERS ---
         [ObservableProperty] private string searchText = string.Empty;
 
@@ -49,6 +69,8 @@ namespace Garmetix.Billing.AIBased.ViewModels
         partial void OnSearchTextChanged(string value) => ApplyFilters();
         partial void OnSelectedDateRangeChanged(string value) => ApplyFilters();
         partial void OnSelectedPaymentModeChanged(string value) => ApplyFilters();
+
+
         public async Task LoadDataAsync()
         {
             if (IsBusy) return;
@@ -161,12 +183,13 @@ namespace Garmetix.Billing.AIBased.ViewModels
 
                 // 4. Execute and Update UI
                 var finalResults = query.ToList();
-
-                FilteredInvoices.Clear();
-                foreach (var invoice in finalResults)
-                {
-                    FilteredInvoices.Add(invoice);
-                }
+                // Assign a brand new collection all at once to prevent DataGrid layout crashes!
+                FilteredInvoices = new ObservableCollection<Invoice>(finalResults);
+                //FilteredInvoices.Clear();
+                //foreach (var invoice in finalResults)
+                //{
+                //    FilteredInvoices.Add(invoice);
+                //}
 
                 // 5. Update Summary Dashboards
                 TotalSales = finalResults.Sum(i => i.GrandTotal);
