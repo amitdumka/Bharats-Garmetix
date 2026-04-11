@@ -5,8 +5,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Garmetix.IRetail"
     xmlns:controls="clr-namespace:Garmetix.Views.Controls;assembly=Garmetix.Core"
+    xmlns:core="clr-namespace:Garmetix.Core.Views;assembly=Garmetix.Core"    
     xmlns:coreBase="clr-namespace:Garmetix.CoreBase.View;assembly=Garmetix.CoreBase"
     xmlns:billing="clr-namespace:Garmetix.Billing.AIBased.Views;assembly=Garmetix.Billing"
+    xmlns:settings="clr-namespace:Garmetix.Settings.Views;assembly=Garmetix.Settings"
     xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"    
     FlyoutBackgroundColor="{AppThemeBinding Dark={DynamicResource BackgroundColorDark},
                                          Light={DynamicResource BackgroundColorLight}}"
@@ -21,7 +23,7 @@
     <Shell.FlyoutHeader>
         <controls:ShellHeader />
     </Shell.FlyoutHeader>
-    
+
     <ShellContent
         Title="Home"
         ContentTemplate="{DataTemplate local:MainPage}"
@@ -33,6 +35,21 @@
     <coreBase:HRMMenu />
     <coreBase:BankingMenu />
     <coreBase:CompanyMenu />
+    <ShellContent
+    Title="Settings"
+    ContentTemplate="{DataTemplate settings:SettingsPage}"
+    Route="SettingsPage" />
+
+    <ShellContent
+Title="Contact Support"
+ContentTemplate="{DataTemplate core:ContactUsPage}"
+Route="ContactUsPage" />
+
+    <ShellContent
+Title="About Us"
+ContentTemplate="{DataTemplate core:AboutUsPage}"
+Route="AboutUsPage" />
+
 
 
     <MenuItem

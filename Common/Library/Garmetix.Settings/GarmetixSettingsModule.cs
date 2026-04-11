@@ -9,6 +9,8 @@
         {
             // Register the Garmetix Settings Service
             // builder.Services.AddSingleton<IGarmetixSettingsService, GarmetixSettingsService>();
+            builder.Services.AddTransient<Garmetix.Settings.ViewModels.SettingsViewModel>();
+            builder.Services.AddTransient<Garmetix.Settings.Views.SettingsPage>();
             return builder;
         }
         //public static IRouteBuilder EnableSettingRoute(this IRouteBuilder builder)

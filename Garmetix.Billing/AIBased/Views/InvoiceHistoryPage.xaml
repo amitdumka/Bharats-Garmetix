@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
+             xmlns:datagrid="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
+             x:Class="Garmetix.AI.Billing.Views.InvoiceHistoryPage"
+             Title="Sales &amp; Invoice History"
+             BackgroundColor="#F4F6F9">
+
+    <Grid RowDefinitions="Auto, Auto, *">
+
+        <Grid Grid.Row="0" ColumnDefinitions="*,*,*" ColumnSpacing="15" Padding="20,20,20,10">
+
+            <Border Grid.Column="0" BackgroundColor="#0284C7" Padding="15" StrokeShape="RoundRectangle 10" StrokeThickness="0">
+                <VerticalStackLayout>
+                    <Label Text="TOTAL SALES" FontSize="11" TextColor="#E0F2FE" FontAttributes="Bold" />
+                    <Label Text="{Binding TotalSales, StringFormat='₹ {0:N2}'}" FontSize="18" TextColor="White" FontAttributes="Bold" Margin="0,5,0,0"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Grid.Column="1" BackgroundColor="#16A34A" Padding="15" StrokeShape="RoundRectangle 10" StrokeThickness="0">
+                <VerticalStackLayout>
+                    <Label Text="RECEIVED" FontSize="11" TextColor="#DCFCE7" FontAttributes="Bold" />
+                    <Label Text="{Binding TotalReceived, StringFormat='₹ {0:N2}'}" FontSize="18" TextColor="White" FontAttributes="Bold" Margin="0,5,0,0"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Grid.Column="2" BackgroundColor="#DC2626" Padding="15" StrokeShape="RoundRectangle 10" StrokeThickness="0">
+                <VerticalStackLayout>
+                    <Label Text="PENDING DUE" FontSize="11" TextColor="#FEE2E2" FontAttributes="Bold" />
+                    <Label Text="{Binding TotalPending, StringFormat='₹ {0:N2}'}" FontSize="18" TextColor="White" FontAttributes="Bold" Margin="0,5,0,0"/>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="1" BackgroundColor="White" Margin="20,5,20,10" Padding="15,10" StrokeShape="RoundRectangle 10" StrokeThickness="0">
+            <Grid ColumnDefinitions="2*, 1.5*, 1.5*" ColumnSpacing="15">
+
+                <core:SfTextInputLayout Hint="Search Customer or Invoice #" ContainerType="Outlined" Grid.Column="0">
+                    <Entry Text="{Binding SearchText, Mode=TwoWay}" ClearButtonVisibility="WhileEditing" />
+                </core:SfTextInputLayout>
+
+                <core:SfTextInputLayout Hint="Date Range" ContainerType="Outlined" Grid.Column="1">
+                    <Picker ItemsSource="{Binding DateRanges}" SelectedItem="{Binding SelectedDateRange}" />
+                </core:SfTextInputLayout>
+
+                <core:SfTextInputLayout Hint="Payment Type" ContainerType="Outlined" Grid.Column="2">
+                    <Picker ItemsSource="{Binding PaymentModes}" SelectedItem="{Binding SelectedPaymentMode}" />
+                </core:SfTextInputLayout>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="2" BackgroundColor="White" Margin="20,5,20,20" StrokeShape="RoundRectangle 10" StrokeThickness="0">
+            <datagrid:SfDataGrid ItemsSource="{Binding FilteredInvoices}" 
+                                 AutoGenerateColumnsMode="None"
+                                 SelectionMode="Single"
+                                 HeaderGridLinesVisibility="Horizontal"
+                                 GridLinesVisibility="Horizontal"
+                                 HeaderRowHeight="50"
+                                 RowHeight="55">
+                <datagrid:SfDataGrid.Columns>
+                    <datagrid:DataGridTextColumn MappingName="Date" HeaderText="Date" Format="dd-MMM-yyyy" Width="100"/>
+                    <datagrid:DataGridTextColumn MappingName="InvoiceNo" HeaderText="Invoice No" Width="160"/>
+                    <datagrid:DataGridTextColumn MappingName="CustomerName" HeaderText="Customer Name" />
+                    <datagrid:DataGridNumericColumn MappingName="GrandTotal" HeaderText="Bill Amount" Format="C" />
+                    <datagrid:DataGridNumericColumn MappingName="PaidAmount" HeaderText="Received" Format="C" />
+                    <datagrid:DataGridNumericColumn MappingName="BalanceAmount" HeaderText="Balance Due" Format="C" />
+                </datagrid:SfDataGrid.Columns>
+            </datagrid:SfDataGrid>
+        </Border>
+
+        <ActivityIndicator Grid.RowSpan="3" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" HorizontalOptions="Center" VerticalOptions="Center" Color="#0284C7"/>
+
+    </Grid>
+</ContentPage>
