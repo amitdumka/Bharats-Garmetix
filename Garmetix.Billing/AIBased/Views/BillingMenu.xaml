@@ -6,7 +6,7 @@
     xmlns:aibill="clr-namespace:Garmetix.AI.Billing.Views"
     Title="Billing">
 
-    <Tab Title="Voucher" Icon="rain_icon.png">
+    <!--<Tab Title="Entry" Icon="rain_icon.png">
         <ShellContent
         Title="Voucher"
         ContentTemplate="{DataTemplate aibill:InvoiceEntryPage}"
@@ -14,7 +14,16 @@
     </Tab>
     <Tab Title="Sales History" Route="InvoiceHistoryPage">
         <ShellContent ContentTemplate="{DataTemplate aibill:InvoiceHistoryPage}" />
+    </Tab>-->
+    <Tab Title="Dashboard" Route="DashboardPage">
+        <ShellContent ContentTemplate="{DataTemplate aibill:DashboardPage}" />
+    </Tab>
+    <Tab Title="Sales History" Route="InvoiceHistoryPage">
+        <ShellContent ContentTemplate="{DataTemplate aibill:InvoiceHistoryPage}" />
     </Tab>
 
+    <Tab Title="Purchase Registry" Route="PurchaseHistoryPage">
+        <ShellContent ContentTemplate="{DataTemplate aibill:PurchaseHistoryPage}" />
+    </Tab>
 </FlyoutItem>
     

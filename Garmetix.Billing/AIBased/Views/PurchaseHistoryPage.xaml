@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
+             xmlns:sfgrid="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
+             x:Class="Garmetix.AI.Billing.Views.PurchaseHistoryPage"
+             Title="Purchase &amp; Inward Registry"
+             BackgroundColor="#F4F6F9">
+
+    <ContentPage.Resources>
+        <Style TargetType="Border" x:Key="MetricCard">
+            <Setter Property="Padding" Value="20, 15" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 16" />
+            <Setter Property="StrokeThickness" Value="0" />
+            <Setter Property="Shadow">
+                <Setter.Value>
+                    <Shadow Brush="#1A000000" Offset="0,4" Radius="12" Opacity="0.4" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto, *">
+
+        <Grid Grid.Row="0" ColumnDefinitions="*,*" ColumnSpacing="15" Padding="20">
+            <Border Grid.Column="0" BackgroundColor="#8B5CF6" Style="{StaticResource MetricCard}">
+                <VerticalStackLayout>
+                    <Label Text="TOTAL PURCHASES" FontSize="12" TextColor="#FFFFFF" FontAttributes="Bold" Opacity="0.85" />
+                    <Label Text="{Binding TotalPurchaseAmount, StringFormat='₹ {0:N2}'}" FontSize="22" TextColor="#FFFFFF" FontAttributes="Bold" Margin="0,4,0,0"/>
+                </VerticalStackLayout>
+            </Border>
+            <Border Grid.Column="1" BackgroundColor="#F59E0B" Style="{StaticResource MetricCard}">
+                <VerticalStackLayout>
+                    <Label Text="INPUT TAX PAID (ITC)" FontSize="12" TextColor="#FFFFFF" FontAttributes="Bold" Opacity="0.85" />
+                    <Label Text="{Binding TotalTaxPaid, StringFormat='₹ {0:N2}'}" FontSize="22" TextColor="#FFFFFF" FontAttributes="Bold" Margin="0,4,0,0"/>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="1" Margin="20,0,20,20" BackgroundColor="White" Padding="15" StrokeShape="RoundRectangle 16" StrokeThickness="0">
+            <Grid>
+                <sfgrid:SfDataGrid ItemsSource="{Binding Purchases}" SelectedRow="{Binding SelectedPurchase, Mode=TwoWay}"
+                                   SelectionMode="Single" HeaderRowHeight="55" RowHeight="60" AutoGenerateColumnsMode="None">
+                    <sfgrid:SfDataGrid.Columns>
+                        <sfgrid:DataGridDateColumn MappingName="InwardDate" HeaderText="Inward Date" Format="dd-MMM-yyyy" Width="110"/>
+                        <sfgrid:DataGridTextColumn MappingName="InwardNo" HeaderText="Inward No." Width="150"/>
+                        <sfgrid:DataGridTextColumn MappingName="VendorName" HeaderText="Vendor / Supplier" />
+                        <sfgrid:DataGridTextColumn MappingName="VendorInvoiceNo" HeaderText="Bill No." Width="120"/>
+                        <sfgrid:DataGridNumericColumn MappingName="GrandTotal" HeaderText="Bill Amount" Format="N2" />
+                    </sfgrid:SfDataGrid.Columns>
+                </sfgrid:SfDataGrid>
+            </Grid>
+        </Border>
+
+        <Button Grid.Row="1" Command="{Binding AddNewPurchaseCommand}" Text="+" FontSize="32" FontAttributes="Bold" TextColor="White"
+                BackgroundColor="#8B5CF6" CornerRadius="30" WidthRequest="60" HeightRequest="60" HorizontalOptions="End" VerticalOptions="End" Margin="0,0,30,40">
+            <Button.Shadow>
+                <Shadow Brush="#8B5CF6" Offset="0,4" Radius="10" Opacity="0.6" />
+            </Button.Shadow>
+        </Button>
+
+    </Grid>
+</ContentPage>

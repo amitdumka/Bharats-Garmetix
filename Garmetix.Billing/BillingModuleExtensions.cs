@@ -34,8 +34,23 @@ namespace Garmetix.Billing
             builder.Services.AddTransient<Garmetix.AI.Billing.Views.InvoiceHistoryPage>();
             builder.Services.AddTransient<Garmetix.AI.Billing.ViewModels.EditInvoiceViewModel>();
             builder.Services.AddTransient<Garmetix.AI.Billing.Views.EditInvoicePage>();
-            Routing.RegisterRoute("EditInvoicePage", typeof( EditInvoicePage));
+           
+            // Sales Routes
             Routing.RegisterRoute("InvoiceEntryPage", typeof(InvoiceEntryPage));
+            Routing.RegisterRoute("EditInvoicePage", typeof(EditInvoicePage));
+
+            // NEW: Purchase Route
+            Routing.RegisterRoute("PurchaseEntryPage", typeof(PurchaseEntryPage));
+            // --- PURCHASE MODULE ---
+            builder.Services.AddTransient<Garmetix.AI.Billing.ViewModels.PurchaseHistoryViewModel>();
+            builder.Services.AddTransient<Garmetix.AI.Billing.Views.PurchaseHistoryPage>();
+
+            builder.Services.AddTransient<Garmetix.AI.Billing.ViewModels.PurchaseEntryViewModel>();
+            builder.Services.AddTransient<Garmetix.AI.Billing.Views.PurchaseEntryPage>();
+
+
+            builder.Services.AddTransient<DashboardViewModel>();
+            builder.Services.AddTransient<DashboardPage>();
             return builder;
         }
 

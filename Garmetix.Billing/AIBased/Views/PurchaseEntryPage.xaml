@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:inputs="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
+             xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
+             xmlns:datagrid="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
+             x:Class="Garmetix.AI.Billing.Views.PurchaseEntryPage"
+             BackgroundColor="#F4F6F9"
+             Title="{Binding PageTitle}">
+
+    <ContentPage.Resources>
+        <Style TargetType="Border" x:Key="CardStyle">
+            <Setter Property="BackgroundColor" Value="#FFFFFF" />
+            <Setter Property="Padding" Value="20" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 12" />
+            <Setter Property="StrokeThickness" Value="0" />
+            <Setter Property="Margin" Value="0,0,0,15" />
+            <Setter Property="Shadow">
+                <Setter.Value>
+                    <Shadow Brush="#1A000000" Offset="0,4" Radius="10" Opacity="0.3" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="Label" x:Key="SectionHeader">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="TextColor" Value="#6C757D" />
+            <Setter Property="TextTransform" Value="Uppercase" />
+            <Setter Property="Margin" Value="0,0,0,15" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Padding="20" Spacing="0">
+
+                <Border Style="{StaticResource CardStyle}">
+                    <Grid ColumnDefinitions="*, Auto, *" ColumnSpacing="30">
+
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="Internal Inward Info" Style="{StaticResource SectionHeader}"/>
+                            <core:SfTextInputLayout Hint="Inward Number (Auto)" ContainerType="Outlined" Margin="0,0,0,10">
+                                <Entry Text="{Binding CurrentPurchase.InwardNo}" IsReadOnly="True" TextColor="#495057" FontAttributes="Bold"/>
+                            </core:SfTextInputLayout>
+                            <core:SfTextInputLayout Hint="Inward Date" ContainerType="Outlined">
+                                <DatePicker Date="{Binding CurrentPurchase.InwardDate}" />
+                            </core:SfTextInputLayout>
+                        </VerticalStackLayout>
+
+                        <BoxView Grid.Column="1" WidthRequest="1" Color="#E2E8F0" Margin="0,10"/>
+
+                        <VerticalStackLayout Grid.Column="2">
+                            <Label Text="Vendor Invoice Info" Style="{StaticResource SectionHeader}"/>
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,0,0,10">
+                                <core:SfTextInputLayout Hint="Vendor Bill No." ContainerType="Outlined" Grid.Column="0">
+                                    <Entry Text="{Binding CurrentPurchase.VendorInvoiceNo}" />
+                                </core:SfTextInputLayout>
+                                <core:SfTextInputLayout Hint="Bill Date" ContainerType="Outlined" Grid.Column="1">
+                                    <DatePicker Date="{Binding CurrentPurchase.VendorInvoiceDate}" />
+                                </core:SfTextInputLayout>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="2*,*" ColumnSpacing="10" Margin="0,0,0,10">
+                                <core:SfTextInputLayout Hint="Vendor/Supplier Name" ContainerType="Outlined" Grid.Column="0">
+                                    <Entry Text="{Binding CurrentPurchase.VendorName}" FontAttributes="Bold"/>
+                                </core:SfTextInputLayout>
+                                <core:SfTextInputLayout Hint="Vendor GSTIN" ContainerType="Outlined" Grid.Column="1">
+                                    <Entry Text="{Binding CurrentPurchase.VendorGstin}" />
+                                </core:SfTextInputLayout>
+                            </Grid>
+
+                            <core:SfTextInputLayout Hint="Vendor Address/City" ContainerType="Outlined">
+                                <Entry Text="{Binding CurrentPurchase.VendorAddress}" />
+                            </core:SfTextInputLayout>
+                        </VerticalStackLayout>
+                    </Grid>
+                </Border>
+
+                <Border Style="{StaticResource CardStyle}">
+                    <VerticalStackLayout Spacing="15">
+                        <Label Text="Purchased Items" Style="{StaticResource SectionHeader}" />
+
+                        <inputs:SfAutocomplete 
+                            WidthRequest="400" HorizontalOptions="Start"
+                            Placeholder="🔍 Search Product to Add to Purchase..."
+                            ItemsSource="{Binding FilteredProducts}" 
+                            DisplayMemberPath="Name" TextMemberPath="Name"
+                            TextSearchMode="Contains" Text="{Binding SearchText, Mode=TwoWay}"
+                            SelectedItem="{Binding SelectedProduct}" HeightRequest="45" />
+
+                        <datagrid:SfDataGrid ItemsSource="{Binding PurchaseItems}" 
+                                             AllowEditing="True" SelectionMode="None"
+                                             HeaderGridLinesVisibility="Horizontal" GridLinesVisibility="Horizontal"
+                                             HeaderRowHeight="50" RowHeight="55" AutoGenerateColumnsMode="None" 
+                                             HeightRequest="300" ColumnWidthMode="Fill">
+                            <datagrid:SfDataGrid.Columns>
+                                <datagrid:DataGridTextColumn MappingName="ProductName" HeaderText="Item Description" Width="250" AllowEditing="False"/>
+                                <datagrid:DataGridNumericColumn MappingName="Rate" HeaderText="Buy Rate" Format="N2" AllowEditing="True"/>
+                                <datagrid:DataGridNumericColumn MappingName="Quantity" HeaderText="Qty" Format="0.##" AllowEditing="True"/>
+                                <datagrid:DataGridNumericColumn MappingName="TaxPercentage" HeaderText="GST %" Format="0.##" AllowEditing="True"/>
+                                <datagrid:DataGridNumericColumn MappingName="TotalAmount" HeaderText="Total (₹)" Format="N2" AllowEditing="False"/>
+                                <datagrid:DataGridTemplateColumn HeaderText="Act" Width="80">
+                                    <datagrid:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Text="✕" BackgroundColor="#FFF1F0" TextColor="#D32F2F" Padding="0" 
+                                                    Command="{Binding BindingContext.RemoveItemCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}" 
+                                                    CommandParameter="{Binding .}" HeightRequest="35" WidthRequest="35" CornerRadius="4"/>
+                                        </DataTemplate>
+                                    </datagrid:DataGridTemplateColumn.CellTemplate>
+                                </datagrid:DataGridTemplateColumn>
+                            </datagrid:SfDataGrid.Columns>
+                        </datagrid:SfDataGrid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource CardStyle}">
+                    <Grid ColumnDefinitions="*, Auto">
+                        <core:SfTextInputLayout Hint="Internal Notes / Transport Details" ContainerType="Outlined" Grid.Column="0" Margin="0,0,30,0">
+                            <Editor Text="{Binding CurrentPurchase.Notes}" HeightRequest="100"/>
+                        </core:SfTextInputLayout>
+
+                        <VerticalStackLayout Grid.Column="1" Spacing="8" WidthRequest="300" VerticalOptions="End">
+                            <Grid ColumnDefinitions="*, Auto">
+                                <Label Text="Sub Total:" TextColor="#6C757D"/>
+                                <Label Text="{Binding SubTotal, StringFormat='₹ {0:N2}'}"/>
+                            </Grid>
+                            <Grid ColumnDefinitions="*, Auto">
+                                <Label Text="Tax (GST):" TextColor="#6C757D"/>
+                                <Label Text="{Binding TotalTax, StringFormat='₹ {0:N2}'}"/>
+                            </Grid>
+                            <BoxView HeightRequest="1" Color="#E2E8F0" Margin="0,5"/>
+                            <Grid ColumnDefinitions="*, Auto">
+                                <Label Text="GRAND TOTAL:" FontSize="18" FontAttributes="Bold"/>
+                                <Label Text="{Binding GrandTotal, StringFormat='₹ {0:N2}'}" FontSize="20" TextColor="#005A9C" FontAttributes="Bold"/>
+                            </Grid>
+
+                            <HorizontalStackLayout Spacing="10" Margin="0,15,0,0" HorizontalOptions="End">
+                                <Button Text="Cancel" Command="{Binding GoBackCommand}" BackgroundColor="#E9ECEF" TextColor="#495057" WidthRequest="100" HeightRequest="45" FontAttributes="Bold"/>
+                                <Button Text="Save Purchase" Command="{Binding SavePurchaseCommand}" BackgroundColor="#10B981" TextColor="White" WidthRequest="150" HeightRequest="45" FontAttributes="Bold"/>
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </Grid>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <ContentView BackgroundColor="#80FFFFFF" IsVisible="{Binding IsBusy}" VerticalOptions="Fill" HorizontalOptions="Fill">
+            <ActivityIndicator IsRunning="{Binding IsBusy}" Color="#005A9C" WidthRequest="60" HeightRequest="60" VerticalOptions="Center" HorizontalOptions="Center"/>
+        </ContentView>
+    </Grid>
+</ContentPage>
