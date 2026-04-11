@@ -22,6 +22,7 @@ namespace Garmetix.AI.Billing.Models
         public Guid InvoiceId { get; set; }
         public string Mode { get; set; }
         public decimal Amount { get; set; }
+        public DateTime? PaymentDate { get; set; }= DateTime.Now;
     }
 
     // --- MERGED & UPGRADED PRODUCT CLASS ---

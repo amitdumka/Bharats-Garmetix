@@ -1,7 +1,6 @@
 ﻿using Garmetix.AI.Billing.ViewModels;
 using Garmetix.AI.Billing.Views;
-using Garmetix.Billing.AIBased.Services;
-using Garmetix.Billing.AIBased.ViewModels;
+using Garmetix.Billing.AIBased.Services; 
 #if ANDROID
 using Garmetix.AI.Billing.Platforms.Android;
 #endif
@@ -33,6 +32,10 @@ namespace Garmetix.Billing
             builder.Services.AddTransient<InvoiceEntryPage>();
             builder.Services.AddTransient<InvoiceHistoryViewModel>();
             builder.Services.AddTransient<Garmetix.AI.Billing.Views.InvoiceHistoryPage>();
+            builder.Services.AddTransient<Garmetix.AI.Billing.ViewModels.EditInvoiceViewModel>();
+            builder.Services.AddTransient<Garmetix.AI.Billing.Views.EditInvoicePage>();
+            Routing.RegisterRoute("EditInvoicePage", typeof( EditInvoicePage));
+            Routing.RegisterRoute("InvoiceEntryPage", typeof(InvoiceEntryPage));
             return builder;
         }
 

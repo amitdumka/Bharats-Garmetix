@@ -1,75 +1,55 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Garmetix.AI.Billing.Models;
-using Garmetix.Billing.AIBased.Helpers;
-using SQLite;
+using Garmetix.Billing.AIBased.Helpers; // Ensure you have this for DatabaseHelper
+using Microsoft.Maui.Controls;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Garmetix.Billing.AIBased.ViewModels
+namespace Garmetix.AI.Billing.ViewModels
 {
-
-    public class TestData
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public DateTime Date { get; set; } = DateTime.Now;
-
-       
-    }
-
     public partial class InvoiceHistoryViewModel : ObservableObject
     {
-        private SQLiteAsyncConnection _database;
-        private List<Invoice>? _allInvoices = new();
-        private List<PaymentDetail>? _allPayments = new();
-
-        [ObservableProperty] private ObservableCollection<TestData> dataList = new ObservableCollection<TestData>() { 
-        
-            new TestData { Id = 1, Name = "Test 1" },
-            new TestData { Id = 2, Name = "Test 2" },
-            new TestData { Id = 3, Name = "Test 3" }
-
-        };
-
+        private List<Invoice> _allInvoices = new();
+        private List<PaymentDetail> _allPayments = new();
 
         [ObservableProperty] private bool isBusy;
-        public bool NotBusy => !IsBusy;
-
-        // --- SUMMARY STATS ---
         [ObservableProperty] private decimal totalSales;
         [ObservableProperty] private decimal totalReceived;
         [ObservableProperty] private decimal totalPending;
 
-        // --- THE DATA GRID SOURCE ---
-        // public ObservableCollection<Invoice> FilteredInvoices { get; set; } = [];
-        [ObservableProperty]
-        private ObservableCollection<Invoice> filteredInvoices = [];
-        // --- SEARCH AND FILTERS ---
+        [ObservableProperty] private ObservableCollection<Invoice> filteredInvoices = new();
+
+        // --- SELECTION & MODAL STATE ---
+        [ObservableProperty] private Invoice selectedInvoice;
+        [ObservableProperty] private bool isDetailsModalVisible;
+
+        // Data for the popup modal
+        [ObservableProperty] private ObservableCollection<InvoiceItem> modalItems = new();
+        [ObservableProperty] private Invoice modalInvoiceDetails;
+
+        // --- FILTERS ---
         [ObservableProperty] private string searchText = string.Empty;
-
-        public List<string> DateRanges { get; } =
-        [
-            "All Time", "Today", "Yesterday", "This Week", "Last Week", "This Month", "Last Month", "This Year"
-        ];
+        public List<string> DateRanges { get; } = new() { "All Time", "Today", "Yesterday", "This Week", "This Month" };
         [ObservableProperty] private string selectedDateRange = "This Month";
-
-        public List<string> PaymentModes { get; } = new()
-        {
-            "All Modes", "Cash", "UPI", "Card", "Bank Transfer"
-        };
+        public List<string> PaymentModes { get; } = new() { "All Modes", "Cash", "UPI", "Card", "Bank Transfer" };
         [ObservableProperty] private string selectedPaymentMode = "All Modes";
 
-        public InvoiceHistoryViewModel()
-        {
-            // FORCE the use of the v2 database to guarantee no schema clashes
-            string dbPath = Path.Combine(Microsoft.Maui.Storage.FileSystem.AppDataDirectory, "aadwikabilling_v2.db3");
-            _database = new SQLiteAsyncConnection(dbPath);
-        }
-
-        // Triggers the filter engine whenever the user types or changes a dropdown
         partial void OnSearchTextChanged(string value) => ApplyFilters();
         partial void OnSelectedDateRangeChanged(string value) => ApplyFilters();
         partial void OnSelectedPaymentModeChanged(string value) => ApplyFilters();
 
+        // Triggered the moment a user clicks a row in the DataGrid
+        partial void OnSelectedInvoiceChanged(Invoice value)
+        {
+            if (value != null)
+            {
+                _ = HandleInvoiceSelectionAsync(value);
+            }
+        }
 
         public async Task LoadDataAsync()
         {
@@ -77,137 +57,165 @@ namespace Garmetix.Billing.AIBased.ViewModels
             IsBusy = true;
             try
             {
-                // 1. Ensure tables exist
-               // await _database.CreateTableAsync<Invoice>();
-               // await _database.CreateTableAsync<PaymentDetail>();
+                var db = await DatabaseHelper.GetDatabaseAsync();
 
-                _database=await DatabaseHelper.GetDatabaseAsync();
-
-                if(_database == null)
-                {
-                    throw new Exception("Failed to initialize database connection.");
-                }
-                
-                // 2. CRITICAL FIX: Fetch raw data FIRST, then sort it in C# memory. 
-                // This prevents the SQLite LINQ translator from crashing.
-                var rawInvoices = await _database.Table<Invoice>().ToListAsync();
-                if(rawInvoices == null)
-                {
-                    throw new Exception("Failed to fetch invoices from the database.");
-                }
+                var rawInvoices = await db.Table<Invoice>().ToListAsync();
                 _allInvoices = rawInvoices.OrderByDescending(i => i.Date).ToList();
+                _allPayments = await db.Table<PaymentDetail>().ToListAsync();
 
-                _allPayments = await _database.Table<PaymentDetail>().ToListAsync();
-
-                // 3. Update UI safely on the Main Thread
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    ApplyFilters();
-                });
+                MainThread.BeginInvokeOnMainThread(() => ApplyFilters());
             }
             catch (Exception ex)
             {
-                MainThread.BeginInvokeOnMainThread(async () =>
-                {
-                    if (Application.Current?.MainPage != null)
-                    {
-                        await Application.Current.MainPage.DisplayAlert("Database Error", $"Details: {ex.Message}", "OK");
-                    }
-                });
+                await ShowErrorAsync("Load Error", ex.Message);
             }
             finally
             {
                 IsBusy = false;
             }
         }
-         
 
-        private void ApplyFilters()
+        private async Task HandleInvoiceSelectionAsync(Invoice invoice)
         {
+            // 1. Show the native Action Sheet
+            string action = await Application.Current.MainPage.DisplayActionSheet(
+                $"Invoice {invoice.InvoiceNo}", "Cancel", "Delete Invoice", "View Details", "Edit Invoice");
+
+            if (action == "View Details")
+            {
+                await OpenInvoiceDetailsModalAsync(invoice);
+            }
+            else if (action == "Delete Invoice")
+            {
+                await DeleteInvoiceAsync(invoice);
+            }
+            else if (action == "Edit Invoice")
+            {
+                // Navigate to the Edit Page and pass the unique Invoice ID securely
+                await Shell.Current.GoToAsync($"EditInvoicePage?InvoiceId={invoice.Id}");
+            }
+
+            // Deselect the row so it can be clicked again
+            SelectedInvoice = null;
+        }
+
+        private async Task OpenInvoiceDetailsModalAsync(Invoice invoice)
+        {
+            IsBusy = true;
             try
             {
+                var db = await DatabaseHelper.GetDatabaseAsync();
+                var items = await db.Table<InvoiceItem>().Where(i => i.InvoiceId == invoice.Id).ToListAsync();
 
-                var query = _allInvoices.AsEnumerable();
+                ModalInvoiceDetails = invoice;
+                ModalItems = new ObservableCollection<InvoiceItem>(items);
 
-                // 1. Apply Search Text (Invoice No or Customer Name)
-                if (!string.IsNullOrWhiteSpace(SearchText))
-                {
-                    string search = SearchText.ToLower();
-                    query = query.Where(i =>
-                        (i.InvoiceNo != null && i.InvoiceNo.ToLower().Contains(search)) ||
-                        (i.CustomerName != null && i.CustomerName.ToLower().Contains(search)));
-                }
-
-                // 2. Apply Date Filter
-                DateTime today = DateTime.Today;
-                switch (SelectedDateRange)
-                {
-                    case "Today":
-                        query = query.Where(i => i.Date.Date == today);
-                        break;
-                    case "Yesterday":
-                        query = query.Where(i => i.Date.Date == today.AddDays(-1));
-                        break;
-                    case "This Week":
-                        DateTime startOfWeek = today.AddDays(-(int)today.DayOfWeek);
-                        query = query.Where(i => i.Date.Date >= startOfWeek);
-                        break;
-                    case "Last Week":
-                        DateTime startOfLastWeek = today.AddDays(-(int)today.DayOfWeek - 7);
-                        DateTime endOfLastWeek = startOfLastWeek.AddDays(6);
-                        query = query.Where(i => i.Date.Date >= startOfLastWeek && i.Date.Date <= endOfLastWeek);
-                        break;
-                    case "This Month":
-                        query = query.Where(i => i.Date.Month == today.Month && i.Date.Year == today.Year);
-                        break;
-                    case "Last Month":
-                        DateTime lastMonth = today.AddMonths(-1);
-                        query = query.Where(i => i.Date.Month == lastMonth.Month && i.Date.Year == lastMonth.Year);
-                        break;
-                    case "This Year":
-                        query = query.Where(i => i.Date.Year == today.Year);
-                        break;
-                }
-
-                // 3. Apply Payment Mode Filter
-                if (SelectedPaymentMode != "All Modes")
-                {
-                    // Find all Invoice IDs that have a matching payment type in the Payments table
-                    var validInvoiceIds = _allPayments
-                        .Where(p => p.Mode.Equals(SelectedPaymentMode, StringComparison.OrdinalIgnoreCase))
-                        .Select(p => p.InvoiceId)
-                        .ToHashSet();
-
-                    query = query.Where(i => validInvoiceIds.Contains(i.Id));
-                }
-
-                // 4. Execute and Update UI
-                var finalResults = query.ToList();
-                // Assign a brand new collection all at once to prevent DataGrid layout crashes!
-                FilteredInvoices = new ObservableCollection<Invoice>(finalResults);
-                //FilteredInvoices.Clear();
-                //foreach (var invoice in finalResults)
-                //{
-                //    FilteredInvoices.Add(invoice);
-                //}
-
-                // 5. Update Summary Dashboards
-                TotalSales = finalResults.Sum(i => i.GrandTotal);
-                TotalReceived = finalResults.Sum(i => i.PaidAmount);
-                TotalPending = finalResults.Sum(i => i.BalanceAmount);
+                // Show the modal
+                IsDetailsModalVisible = true;
             }
             catch (Exception ex)
             {
-                // Safely show the error without crashing
-                MainThread.BeginInvokeOnMainThread(async () =>
+                await ShowErrorAsync("Details Error", ex.Message);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        [RelayCommand]
+        public void CloseModal()
+        {
+            IsDetailsModalVisible = false;
+            ModalItems.Clear();
+            ModalInvoiceDetails = null;
+        }
+
+        private async Task DeleteInvoiceAsync(Invoice invoice)
+        {
+            bool confirm = await Application.Current.MainPage.DisplayAlert(
+                "Delete Invoice",
+                $"Are you sure you want to permanently delete {invoice.InvoiceNo}? This will remove all associated items and payments.",
+                "Yes, Delete", "Cancel");
+
+            if (!confirm) return;
+
+            IsBusy = true;
+            try
+            {
+                var db = await DatabaseHelper.GetDatabaseAsync();
+
+                // Safely delete the invoice and its children in a transaction
+                await db.RunInTransactionAsync(tran =>
                 {
-                    if (Application.Current?.MainPage != null)
-                    {
-                        await Application.Current.MainPage.DisplayAlert("Database Error", $"Could not load history: {ex.Message}", "OK");
-                    }
+                    tran.Table<InvoiceItem>().Delete(i => i.InvoiceId == invoice.Id);
+                    tran.Table<PaymentDetail>().Delete(p => p.InvoiceId == invoice.Id);
+                    tran.Delete(invoice);
                 });
+
+                await Application.Current.MainPage.DisplayAlert("Deleted", "Invoice deleted successfully.", "OK");
+
+                // Reload the table
+                await LoadDataAsync();
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync("Delete Error", ex.Message);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        [RelayCommand]
+        public async Task AddNewInvoiceAsync()
+        {
+            // Jumps directly to the Billing page using the Shell route defined in AppShell.xaml
+            await Shell.Current.GoToAsync("//InvoiceEntryPage");
+        }
+
+        private void ApplyFilters()
+        {
+            var query = _allInvoices.AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(SearchText))
+            {
+                string search = SearchText.ToLower();
+                query = query.Where(i => (i.InvoiceNo != null && i.InvoiceNo.ToLower().Contains(search)) ||
+                                         (i.CustomerName != null && i.CustomerName.ToLower().Contains(search)));
             }
 
+            DateTime today = DateTime.Today;
+            switch (SelectedDateRange)
+            {
+                case "Today": query = query.Where(i => i.Date.Date == today); break;
+                case "Yesterday": query = query.Where(i => i.Date.Date == today.AddDays(-1)); break;
+                case "This Week": query = query.Where(i => i.Date.Date >= today.AddDays(-(int)today.DayOfWeek)); break;
+                case "This Month": query = query.Where(i => i.Date.Month == today.Month && i.Date.Year == today.Year); break;
+            }
+
+            if (SelectedPaymentMode != "All Modes")
+            {
+                var validIds = _allPayments.Where(p => p.Mode.Equals(SelectedPaymentMode, StringComparison.OrdinalIgnoreCase)).Select(p => p.InvoiceId).ToHashSet();
+                query = query.Where(i => validIds.Contains(i.Id));
+            }
+
+            var finalResults = query.ToList();
+            FilteredInvoices = new ObservableCollection<Invoice>(finalResults);
+
+            TotalSales = finalResults.Sum(i => i.GrandTotal);
+            TotalReceived = finalResults.Sum(i => i.PaidAmount);
+            TotalPending = finalResults.Sum(i => i.BalanceAmount);
+        }
+
+        private async Task ShowErrorAsync(string title, string message)
+        {
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                if (Application.Current?.MainPage != null)
+                    await Application.Current.MainPage.DisplayAlert(title, message, "OK");
+            });
         }
     }
 }

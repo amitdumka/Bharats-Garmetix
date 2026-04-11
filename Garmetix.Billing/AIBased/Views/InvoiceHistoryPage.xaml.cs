@@ -1,4 +1,4 @@
-using Garmetix.Billing.AIBased.ViewModels;
+using Garmetix.AI.Billing.ViewModels; 
 using Microsoft.Maui.Controls;
 
 namespace Garmetix.AI.Billing.Views
