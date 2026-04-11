@@ -12,6 +12,9 @@
         ContentTemplate="{DataTemplate aibill:InvoiceEntryPage}"
         Route="Voucher" />
     </Tab>
-
+    <Tab Title="Sales History" Route="InvoiceHistoryPage">
+        <ShellContent ContentTemplate="{DataTemplate aibill:InvoiceHistoryPage}" />
+    </Tab>
 
 </FlyoutItem>
+    

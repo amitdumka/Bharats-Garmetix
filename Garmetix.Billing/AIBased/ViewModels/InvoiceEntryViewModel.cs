@@ -74,14 +74,17 @@ namespace Garmetix.AI.Billing.ViewModels
             try
             {
                 IsBusy = true;
-                string dbPath = Path.Combine(FileSystem.AppDataDirectory, "aadwikabilling3.db3");
-                _database = new SQLiteAsyncConnection(dbPath);
+               // string dbPath = Path.Combine(FileSystem.AppDataDirectory, "aadwikabilling_v2.db3");
+                //_database = new SQLiteAsyncConnection(dbPath);
 
-                await _database.CreateTableAsync<Invoice>();
-                await _database.CreateTableAsync<InvoiceItem>();
-                await _database.CreateTableAsync<Product>();
-                await _database.CreateTableAsync<Customer>();
+               // await _database.CreateTableAsync<Invoice>();
+                //await _database.CreateTableAsync<InvoiceItem>();
+                //await _database.CreateTableAsync<Product>();
+                //await _database.CreateTableAsync<Customer>();
 
+                _database = await DatabaseHelper.GetDatabaseAsync();
+                if(_database == null) { await Application.Current.MainPage.DisplayAlert("Database Error", "Failed to initialize database.", "OK"); return; }
+               
                 // Load entire product catalog into background memory ONCE
                 var allProducts = await _database.Table<Product>().ToListAsync();
 

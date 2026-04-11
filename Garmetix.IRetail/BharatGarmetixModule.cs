@@ -14,6 +14,7 @@ using Garmetix.CoreServices;
 using Garmetix.Authentication;
 using Garmetix.Reports;
 using Garmetix.Billing;
+using Garmetix.Settings;
 
 #if WINDOWS
 using Microsoft.UI;
@@ -37,7 +38,7 @@ namespace Garmetix.IRetail
             builder.EnableAccounting().EnableBanking().EnableHRM().UseAuthentication();
             builder.EnableDashboard().EnableOnBoarding().EnableStore().UseReporting();
             builder.EnableSentryModule();
-            builder.EnableAIBilling();
+            builder.EnableAIBilling().UseGarmetixSettings();
             return builder;
         }
 

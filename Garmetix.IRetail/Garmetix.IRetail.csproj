@@ -83,6 +83,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Common\Library\Bharat.Themes\Bharat.Themes.csproj" />
 	  <ProjectReference Include="..\Common\Library\Garmetix.Core\Garmetix.Core.csproj" />
+	  <ProjectReference Include="..\Common\Library\Garmetix.Settings\Garmetix.Settings.csproj" />
 	  <ProjectReference Include="..\Common\Modules\Garmetix.Authentication\Garmetix.Authentication.csproj" />
 	  <ProjectReference Include="..\Common\Modules\Garmetix.CoreBase\Garmetix.CoreBase.csproj" />
 	  <ProjectReference Include="..\Common\Modules\Garmetix.Onboarding\Garmetix.Onboarding.csproj" />
