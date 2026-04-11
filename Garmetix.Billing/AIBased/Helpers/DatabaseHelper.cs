@@ -33,9 +33,9 @@ namespace Garmetix.Billing.AIBased.Helpers
         public static async Task<SQLiteAsyncConnection> GetDatabaseAsync()
         {
             if (!_isInitialized)
-        {
+            {
                 await InitializeDatabaseAsync();
-        }
+            }
             return _database;
         }
 
@@ -65,9 +65,9 @@ namespace Garmetix.Billing.AIBased.Helpers
 
                 _isInitialized = true;
                 Debug.WriteLine("Garmetix DB: Initialized successfully.");
-        }
+            }
             catch (Exception ex)
-        {
+            {
                 Debug.WriteLine($"[CRITICAL DB ERROR] Failed to initialize database: {ex.Message}");
                 throw; // Rethrow to let the app know the database is fundamentally broken
             }
@@ -80,7 +80,7 @@ namespace Garmetix.Billing.AIBased.Helpers
         private static async Task SeedDummyDataIfEmptyAsync()
         {
             try
-        {
+            {
                 var productCount = await _database.Table<Product>().CountAsync();
 
                 if (productCount == 0)
@@ -96,16 +96,8 @@ namespace Garmetix.Billing.AIBased.Helpers
 
                     await _database.InsertAllAsync(dummyData);
                     Debug.WriteLine("Garmetix DB: Dummy data seeded successfully.");
-        }
-        public static bool IsDatabaseEmptySync()
-        {
-            if (!IsDatabaseInitialized(DatabasePath))
-                return true;
-            var db = new SQLiteConnection(DatabasePath);
-            var productCount = db.Table<Product>().Count();
-            productCount+= db.Table<Invoice>().Count();
-            return productCount == 0;
-        }
+                }
+            }
             catch (Exception ex)
             {
                 Debug.WriteLine($"[DB SEED ERROR] Failed to seed dummy data: {ex.Message}");
@@ -115,7 +107,7 @@ namespace Garmetix.Billing.AIBased.Helpers
         public static async Task<bool> IsDatabaseEmptyAsync()
         {
             try
-        {
+            {
                 var db = await GetDatabaseAsync();
                 var productCount = await db.Table<Product>().CountAsync();
                 var invoiceCount = await db.Table<Invoice>().CountAsync();
@@ -127,18 +119,17 @@ namespace Garmetix.Billing.AIBased.Helpers
                 Debug.WriteLine($"[DB ERROR] Error checking if DB is empty: {ex.Message}");
                 return true; // Default to true so the app attempts to re-initialize if unreadable
             }
-            return _database;
         }
 
         public static async Task ClearDatabaseAsync()
         {
             try
-        {
+            {
                 var db = await GetDatabaseAsync();
 
                 // Wrapping in a transaction makes deleting thousands of rows nearly instantaneous and prevents partial wipes
                 await db.RunInTransactionAsync(tran =>
-            {
+                {
                     tran.DeleteAll<Invoice>();
                     tran.DeleteAll<InvoiceItem>();
                     tran.DeleteAll<Product>();
@@ -152,15 +143,7 @@ namespace Garmetix.Billing.AIBased.Helpers
             {
                 Debug.WriteLine($"[DB ERROR] Failed to clear database: {ex.Message}");
             }
-            }
-            _database = new SQLiteAsyncConnection(DatabasePath);
-
-            await _database.CreateTableAsync<Invoice>();
-            await _database.CreateTableAsync<InvoiceItem>();
-            await _database.CreateTableAsync<Product>();
-            await _database.CreateTableAsync<Customer>();
-            await _database.CreateTableAsync<PaymentDetail>();
-
+        }
 
         public static async Task ResetDatabaseAsync()
         {
@@ -170,7 +153,7 @@ namespace Garmetix.Billing.AIBased.Helpers
 
                 // 1. Properly close the connection first to release the file lock
                 if (_database != null)
-            {
+                {
                     await _database.CloseAsync();
                     _database = null;
                 }
@@ -178,7 +161,7 @@ namespace Garmetix.Billing.AIBased.Helpers
 
                 // 2. Allow the OS a brief moment to fully release the file handles
                 await Task.Delay(100);
-                
+
                 // 3. Delete the file from the hard drive
                 if (File.Exists(DatabasePath))
                 {
@@ -193,7 +176,7 @@ namespace Garmetix.Billing.AIBased.Helpers
             finally
             {
                 _initLock.Release();
-        }
+            }
 
             // 4. Spin up a brand new, clean database
             await InitializeDatabaseAsync();
