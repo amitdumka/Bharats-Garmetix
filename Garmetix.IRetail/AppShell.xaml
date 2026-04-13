@@ -9,7 +9,8 @@
     xmlns:coreBase="clr-namespace:Garmetix.CoreBase.View;assembly=Garmetix.CoreBase"
     xmlns:billing="clr-namespace:Garmetix.Billing.AIBased.Views;assembly=Garmetix.Billing"
     xmlns:settings="clr-namespace:Garmetix.Settings.Views;assembly=Garmetix.Settings"
-    xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"    
+    xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit" 
+    xmlns:dash="clr-namespace:Garmetix.AI.Billing.Views;assembly=Garmetix.Billing"
     FlyoutBackgroundColor="{AppThemeBinding Dark={DynamicResource BackgroundColorDark},
                                          Light={DynamicResource BackgroundColorLight}}"
     x:Name="shell"
@@ -26,7 +27,7 @@
 
     <ShellContent
         Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
+        ContentTemplate="{DataTemplate dash:DashboardPage}"
         Route="MainPage" />
     <billing:BillingMenu/>
     <coreBase:AccountingMenu />

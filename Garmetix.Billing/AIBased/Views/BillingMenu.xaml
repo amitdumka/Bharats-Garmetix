@@ -25,5 +25,8 @@
     <Tab Title="Purchase Registry" Route="PurchaseHistoryPage">
         <ShellContent ContentTemplate="{DataTemplate aibill:PurchaseHistoryPage}" />
     </Tab>
+    <Tab Title="Payment Registry" Route="PaymentRegistryPage">
+        <ShellContent ContentTemplate="{DataTemplate aibill:PaymentRegistryPage}" />
+    </Tab>
 </FlyoutItem>
     

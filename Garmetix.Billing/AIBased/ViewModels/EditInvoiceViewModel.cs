@@ -258,7 +258,8 @@ namespace Garmetix.AI.Billing.ViewModels
                     tran.Table<PaymentDetail>().Delete(p => p.InvoiceId == CurrentInvoice.Id);
                     foreach (var pay in Payments) tran.Insert(pay);
                 });
-
+                // Notify the dashboard that the database has changed!
+                Garmetix.AI.Billing.Services.DashboardDataService.Instance.InvalidateCache();
                 await Application.Current.MainPage.DisplayAlert("Success", "Invoice updated successfully.", "OK");
                 await Shell.Current.GoToAsync("..");
             }

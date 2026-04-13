@@ -47,7 +47,9 @@ namespace Garmetix.Billing
 
             builder.Services.AddTransient<Garmetix.AI.Billing.ViewModels.PurchaseEntryViewModel>();
             builder.Services.AddTransient<Garmetix.AI.Billing.Views.PurchaseEntryPage>();
-
+           
+            builder.Services.AddTransient<Garmetix.AI.Billing.ViewModels.PaymentHistoryViewModel>();
+            builder.Services.AddTransient<Garmetix.AI.Billing.Views.PaymentRegistryPage>();
 
             builder.Services.AddTransient<DashboardViewModel>();
             builder.Services.AddTransient<DashboardPage>();

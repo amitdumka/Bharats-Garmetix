@@ -93,7 +93,7 @@ namespace Garmetix.AI.Billing.Models
     public class PaymentDetail
     {
         [PrimaryKey, AutoIncrement]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public Guid InvoiceId { get; set; }
         public string Mode { get; set; }
         public decimal Amount { get; set; }

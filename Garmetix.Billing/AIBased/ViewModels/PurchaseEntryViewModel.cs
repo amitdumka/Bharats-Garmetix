@@ -213,7 +213,8 @@ namespace Garmetix.AI.Billing.ViewModels
                         else tran.Update(stock);
                     }
                 });
-
+                // Notify the dashboard that the database has changed!
+                Garmetix.AI.Billing.Services.DashboardDataService.Instance.InvalidateCache();
                 await Application.Current.MainPage.DisplayAlert("Success", "Purchase saved and Inventory updated.", "OK");
                 await Shell.Current.GoToAsync("..");
             }

@@ -312,7 +312,10 @@ namespace Garmetix.AI.Billing.ViewModels
                 {
                     tran.Insert(CurrentInvoice);
                     foreach (var item in InvoiceItems) { item.InvoiceId = CurrentInvoice.Id; tran.Insert(item); }
+                    
                 });
+                // Notify the dashboard that the database has changed!
+                Garmetix.AI.Billing.Services.DashboardDataService.Instance.InvalidateCache();
                 return true;
             }
             catch (Exception ex) { await ShowErrorAsync("Save Invoice Error", ex); return false; }
