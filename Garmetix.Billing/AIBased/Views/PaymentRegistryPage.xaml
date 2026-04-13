@@ -77,11 +77,11 @@
         <Border Grid.Row="1" Margin="20,0,20,15" Style="{StaticResource DashboardSection}">
             <Grid ColumnDefinitions="*, Auto, Auto" ColumnSpacing="15">
 
-                <core:SfTextInputLayout Hint="🔍 Search by Customer Name or Invoice #" ContainerType="Outlined" Grid.Column="0" OutlineCornerRadius="8">
+                <core:SfTextInputLayout Hint="🔍 Search by Customer Name or Invoice #" ContainerType="Outlined" Grid.Column="0">
                     <Entry Text="{Binding SearchText, Mode=TwoWay}" ClearButtonVisibility="WhileEditing" />
                 </core:SfTextInputLayout>
 
-                <core:SfTextInputLayout Hint="📅 Date Range" ContainerType="Outlined" Grid.Column="1" WidthRequest="200" OutlineCornerRadius="8">
+                <core:SfTextInputLayout Hint="📅 Date Range" ContainerType="Outlined" Grid.Column="1" WidthRequest="200">
                     <Picker ItemsSource="{Binding DateRanges}" SelectedItem="{Binding SelectedDateRange}" />
                 </core:SfTextInputLayout>
 
@@ -95,7 +95,6 @@
                 <sfgrid:SfDataGrid x:Name="dataGrid" 
                                    ItemsSource="{Binding FilteredPayments}"  
                                    SelectionMode="None" 
-                                   ShowColumnWhenGrouped="True"
                                    AllowGrouping="True"
                                    AllowGroupExpandCollapse="True"
                                    HeaderGridLinesVisibility="Horizontal"
@@ -103,21 +102,24 @@
                                    HeaderRowHeight="55"
                                    RowHeight="60" 
                                    AutoGenerateColumnsMode="None">
+
+                    <sfgrid:SfDataGrid.GroupColumnDescriptions>
+                        <sfgrid:GroupColumnDescription ColumnName="Mode" />
+                    </sfgrid:SfDataGrid.GroupColumnDescriptions>
+
                     <sfgrid:SfDataGrid.Columns>
-                        <sfgrid:DataGridDateColumn MappingName="Date" HeaderText="Payment Date" Format="dd-MMM-yyyy hh:mm tt" Width="180"/>
+                        <sfgrid:DataGridTextColumn MappingName="Mode"  Visible="False" />
+
+                        <sfgrid:DataGridDateColumn MappingName="Date" HeaderText="Payment Date" Format="dd-MMM-yyyy hh:mm tt" Width="200"/>
                         <sfgrid:DataGridTextColumn MappingName="InvoiceNo" HeaderText="Against Invoice" Width="170"/>
                         <sfgrid:DataGridTextColumn MappingName="CustomerName" HeaderText="Customer Name" />
-
-                        <sfgrid:DataGridTextColumn MappingName="Mode" HeaderText="Payment Mode" Width="150" />
-
-                        <sfgrid:DataGridNumericColumn MappingName="Amount" HeaderText="Amount" Format="N2" />
+                        <sfgrid:DataGridNumericColumn MappingName="Amount" HeaderText="Amount Collected" Format="N2" />
                     </sfgrid:SfDataGrid.Columns>
 
                     <sfgrid:SfDataGrid.GroupSummaryRows>
-                        <sfgrid:DataGridSummaryRow Title="Total for {Mode}: {Amount}" ShowSummaryInRow="True">
+                        <sfgrid:DataGridSummaryRow Title="Mode Collections: {Amount}" ShowSummaryInRow="True">
                             <sfgrid:DataGridSummaryRow.SummaryColumns>
-                                <sfgrid:DataGridSummaryColumn Name="Amount" Format="'₹ {Sum:N2}'"
-                                                              MappingName="Amount" SummaryType="DoubleAggregate" />
+                                <sfgrid:DataGridSummaryColumn Name="Amount" Format="'₹ {Sum:N2}'" MappingName="Amount" SummaryType="DoubleAggregate" />
                             </sfgrid:DataGridSummaryRow.SummaryColumns>
                         </sfgrid:DataGridSummaryRow>
                     </sfgrid:SfDataGrid.GroupSummaryRows>
