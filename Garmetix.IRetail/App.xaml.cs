@@ -35,7 +35,24 @@ namespace Garmetix.IRetail
             // Register services and view models here if using dependency injection
             BharatGarmetixModules.RegisterPaeRoutes();
         }
+        protected override async void OnStart()
+        {
+            base.OnStart();
 
+            // Check if user has previously logged in and set a PIN
+            string hasPin = await SecureStorage.Default.GetAsync("HasPin");
+
+            if (hasPin == "true")
+            {
+                // Bypass full login, go straight to Quick PIN Unlock
+                await Shell.Current.GoToAsync("//PinUnlockPage");
+            }
+            else
+            {
+                // First time running, or user logged out
+                await Shell.Current.GoToAsync("//LoginPage");
+            }
+        }
         protected override Window CreateWindow(IActivationState? activationState)
         {
             //return new Window(new AppShell());

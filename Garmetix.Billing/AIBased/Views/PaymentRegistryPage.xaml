@@ -109,7 +109,6 @@
 
                     <sfgrid:SfDataGrid.Columns>
                         <sfgrid:DataGridTextColumn MappingName="Mode"  Visible="False" />
-
                         <sfgrid:DataGridDateColumn MappingName="Date" HeaderText="Payment Date" Format="dd-MMM-yyyy hh:mm tt" Width="200"/>
                         <sfgrid:DataGridTextColumn MappingName="InvoiceNo" HeaderText="Against Invoice" Width="170"/>
                         <sfgrid:DataGridTextColumn MappingName="CustomerName" HeaderText="Customer Name" />

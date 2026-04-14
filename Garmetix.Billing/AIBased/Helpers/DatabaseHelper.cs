@@ -1,10 +1,6 @@
 ﻿using Garmetix.AI.Billing.Models;
 using SQLite;
-using System;
 using System.Diagnostics;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Garmetix.Billing.AIBased.Helpers
 {
@@ -59,6 +55,7 @@ namespace Garmetix.Billing.AIBased.Helpers
                 await _database.CreateTableAsync<Product>();
                 await _database.CreateTableAsync<Customer>();
                 await _database.CreateTableAsync<PaymentDetail>();
+                await _database.CreateTableAsync<User>();
 
                 // Check for empty DB and seed data
                 await SeedDummyDataIfEmptyAsync();
@@ -96,6 +93,17 @@ namespace Garmetix.Billing.AIBased.Helpers
 
                     await _database.InsertAllAsync(dummyData);
                     Debug.WriteLine("Garmetix DB: Dummy data seeded successfully.");
+                }
+                var userCount = await _database.Table<User>().CountAsync();
+                if (userCount == 0)
+                {
+                    var admin = new User
+                    {
+                        Username = "admin",
+                        // Hash for password "admin123"
+                        PasswordHash = Garmetix.AI.Billing.Services.AuthService.Instance.HashString("admin123")
+                    };
+                    await _database.InsertAsync(admin);
                 }
             }
             catch (Exception ex)

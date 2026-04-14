@@ -134,10 +134,25 @@
                                 <Label Text="{Binding GrandTotal, StringFormat='₹ {0:N2}'}" FontSize="20" TextColor="#005A9C" FontAttributes="Bold"/>
                             </Grid>
 
-                            <HorizontalStackLayout Spacing="10" Margin="0,15,0,0" HorizontalOptions="End">
-                                <Button Text="Cancel" Command="{Binding GoBackCommand}" BackgroundColor="#E9ECEF" TextColor="#495057" WidthRequest="100" HeightRequest="45" FontAttributes="Bold"/>
-                                <Button Text="Save Purchase" Command="{Binding SavePurchaseCommand}" BackgroundColor="#10B981" TextColor="White" WidthRequest="150" HeightRequest="45" FontAttributes="Bold"/>
-                            </HorizontalStackLayout>
+                            <HorizontalStackLayout Spacing="10" Margin="0,25,0,0" HorizontalOptions="End">
+
+                                <Button Text="Cancel" Command="{Binding GoBackCommand}" 
+                                        BackgroundColor="#F8FAFC" TextColor="#64748B" 
+                                        WidthRequest="100" HeightRequest="45" FontAttributes="Bold"/>
+
+                                <Button Text="Save Only" Command="{Binding SavePurchaseCommand}" 
+                                        BackgroundColor="#E2E8F0" TextColor="#334155" 
+                                        WidthRequest="120" HeightRequest="45" FontAttributes="Bold"/>
+
+                                <Button Text="🖨️ Save &amp; Print A4" Command="{Binding SaveAndPrintA4Command}" 
+                                        BackgroundColor="#10B981" TextColor="White" 
+                                        WidthRequest="170" HeightRequest="45" FontAttributes="Bold">
+                                    <Button.Shadow>
+                                        <Shadow Brush="#10B981" Offset="0,4" Radius="8" Opacity="0.4" />
+                                    </Button.Shadow>
+                                </Button>
+
+                            </HorizontalStackLayout> >
                         </VerticalStackLayout>
                     </Grid>
                 </Border>

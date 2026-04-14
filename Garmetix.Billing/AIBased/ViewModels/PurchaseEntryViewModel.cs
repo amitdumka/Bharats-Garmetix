@@ -1,13 +1,14 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Garmetix.AI.Billing.Models;
+using Garmetix.Billing.AIBased.Helpers;
+using Microsoft.Maui.Controls;
+using QuestPDF.Fluent;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using Microsoft.Maui.Controls;
-using Garmetix.AI.Billing.Models;
-using Garmetix.Billing.AIBased.Helpers;
 
 namespace Garmetix.AI.Billing.ViewModels
 {
@@ -58,7 +59,58 @@ namespace Garmetix.AI.Billing.ViewModels
             var db = await DatabaseHelper.GetDatabaseAsync();
             _productCache = await db.Table<Product>().ToListAsync();
         }
+        [RelayCommand]
+        public async Task SaveAndPrintA4Async()
+        {
+            // 1. Validate and Save exactly as before
+            if (string.IsNullOrWhiteSpace(CurrentPurchase.VendorName))
+            {
+                await ShowErrorAsync("Validation", "Vendor Name is required.");
+                return;
+            }
 
+            IsBusy = true;
+            try
+            {
+                // Call the existing save logic (Make sure your Save logic is extracted to a helper method, 
+                // or just await SavePurchaseCommand.ExecuteAsync(null); )
+                await SavePurchaseAsync(); // Assuming this succeeds and doesn't immediately navigate away
+
+                // 2. Generate PDF
+                await GenerateAndOpenPdfAsync();
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private async Task GenerateAndOpenPdfAsync()
+        {
+            try
+            {
+                // Create a temporary file path in the OS Cache directory
+                string fileName = $"Inward_{CurrentPurchase.InwardNo}.pdf";
+                string filePath = System.IO.Path.Combine(Microsoft.Maui.Storage.FileSystem.CacheDirectory, fileName);
+
+                // Pass the data to our beautiful QuestPDF Layout Engine
+                var document = new Garmetix.AI.Billing.PdfServices.PurchaseInvoiceDocument(CurrentPurchase, PurchaseItems.ToList());
+
+                // Render and Save
+                document.GeneratePdf(filePath);
+
+                // Open the Native OS PDF Viewer (which has the Print button)
+                await Microsoft.Maui.ApplicationModel.Launcher.OpenAsync(new Microsoft.Maui.ApplicationModel.OpenFileRequest
+                {
+                    Title = "View Inward Receipt",
+                    File = new Microsoft.Maui.ApplicationModel.ReadOnlyFile(filePath)
+                });
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync("PDF Error", $"Failed to generate document: {ex.Message}");
+            }
+        }
         private async Task LoadExistingPurchaseAsync(Guid id)
         {
             IsBusy = true;
@@ -216,7 +268,7 @@ namespace Garmetix.AI.Billing.ViewModels
                 // Notify the dashboard that the database has changed!
                 Garmetix.AI.Billing.Services.DashboardDataService.Instance.InvalidateCache();
                 await Application.Current.MainPage.DisplayAlert("Success", "Purchase saved and Inventory updated.", "OK");
-                await Shell.Current.GoToAsync("..");
+                //await Shell.Current.GoToAsync("..");
             }
             catch (Exception ex) { await ShowErrorAsync("Save Error", ex.Message); }
             finally { IsBusy = false; }
