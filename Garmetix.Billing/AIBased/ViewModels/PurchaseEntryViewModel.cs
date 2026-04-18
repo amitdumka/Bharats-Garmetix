@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Maui.ApplicationModel;
+using Microsoft.Maui.Storage;
 
 namespace Garmetix.AI.Billing.ViewModels
 {
@@ -100,10 +102,10 @@ namespace Garmetix.AI.Billing.ViewModels
                 document.GeneratePdf(filePath);
 
                 // Open the Native OS PDF Viewer (which has the Print button)
-                await Microsoft.Maui.ApplicationModel.Launcher.OpenAsync(new Microsoft.Maui.ApplicationModel.OpenFileRequest
+                await Launcher.OpenAsync(new OpenFileRequest
                 {
                     Title = "View Inward Receipt",
-                    File = new Microsoft.Maui.ApplicationModel.ReadOnlyFile(filePath)
+                    File = new ReadOnlyFile(filePath)
                 });
             }
             catch (Exception ex)

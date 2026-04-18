@@ -3,9 +3,6 @@ using Android.Content;
 using Android.Print;
 using Garmetix.Billing.AIBased.Services;
 using Java.Util;
-using System.Threading.Tasks;
-using Android.Content;
-using Android.Print;
 using Application = Android.App.Application;
 // 1. ADD THESE TWO ALIASES USING "global::"
 using NativeWebView = global::Android.Webkit.WebView;

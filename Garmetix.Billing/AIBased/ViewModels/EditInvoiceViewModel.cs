@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Maui.Controls;
 using Garmetix.AI.Billing.Models;
 using Garmetix.Billing.AIBased.Helpers;
 
@@ -15,7 +10,7 @@ namespace Garmetix.AI.Billing.ViewModels
     public partial class EditInvoiceViewModel : ObservableObject
     {
         [ObservableProperty] private bool isBusy;
-        [ObservableProperty] private string invoiceId;
+        [ObservableProperty] private string invoiceId = string.Empty;
 
         // --- CORE INVOICE DATA ---
         [ObservableProperty] private Invoice currentInvoice;
@@ -24,7 +19,7 @@ namespace Garmetix.AI.Billing.ViewModels
         // --- PAYMENT SPLITTING ---
         [ObservableProperty] private ObservableCollection<PaymentDetail> payments = new();
         [ObservableProperty] private string paymentModeInput = "Cash";
-        [ObservableProperty] private string paymentAmountInput;
+        [ObservableProperty] private string paymentAmountInput = string.Empty;
 
         // --- GLOBAL DISCOUNTS ---
         [ObservableProperty] private decimal globalDiscountInput;
@@ -40,7 +35,7 @@ namespace Garmetix.AI.Billing.ViewModels
         [ObservableProperty] private decimal balanceAmount;
 
         // --- AUTOCOMPLETE SEARCH ---
-        [ObservableProperty] private string searchText;
+        [ObservableProperty] private string searchText = string.Empty;
         [ObservableProperty] private ObservableCollection<Product> filteredProducts = new();
         [ObservableProperty] private Product selectedProduct;
         private List<Product> _productCache = new();
