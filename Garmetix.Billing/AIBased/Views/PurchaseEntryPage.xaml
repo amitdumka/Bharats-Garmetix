@@ -152,7 +152,7 @@
                                     </Button.Shadow>
                                 </Button>
 
-                            </HorizontalStackLayout> >
+                            </HorizontalStackLayout>
                         </VerticalStackLayout>
                     </Grid>
                 </Border>
