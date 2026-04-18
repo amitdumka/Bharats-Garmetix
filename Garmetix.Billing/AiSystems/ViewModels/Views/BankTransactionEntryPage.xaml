@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:inputs="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
+             xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
+             x:Class="Garmetix.AI.Billing.Views.BankTransactionEntryPage"
+             BackgroundColor="#F4F6F9"
+             Title="{Binding PageTitle}">
+
+    <ContentPage.Resources>
+        <Style TargetType="Border" x:Key="CardStyle">
+            <Setter Property="BackgroundColor" Value="#FFFFFF" />
+            <Setter Property="Padding" Value="20" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 12" />
+            <Setter Property="StrokeThickness" Value="0" />
+            <Setter Property="Margin" Value="0,0,0,15" />
+            <Setter Property="Shadow"><Setter.Value><Shadow Brush="#0D000000" Offset="0,4" Radius="10" Opacity="0.2" /></Setter.Value></Setter>
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Padding="20" Spacing="10" IsEnabled="{Binding IsNotBusy}">
+
+                <Border BackgroundColor="{Binding HeaderColor}" Padding="15" StrokeShape="RoundRectangle 8" StrokeThickness="0" Margin="0,0,0,10">
+                    <Grid ColumnDefinitions="*, Auto">
+                        <Label Text="{Binding PageTitle}" FontSize="18" FontAttributes="Bold" TextColor="White" VerticalOptions="Center"/>
+                        
+                        <HorizontalStackLayout Grid.Column="1" Spacing="10" VerticalOptions="Center">
+                            <Label Text="Instantly Reconciled?" TextColor="White" VerticalOptions="Center" FontAttributes="Bold"/>
+                            <Switch IsToggled="{Binding CurrentTxn.IsReconciled}" ThumbColor="#FFFFFF" OnColor="#3B82F6" />
+                        </HorizontalStackLayout>
+                    </Grid>
+                </Border>
+
+                <Border Style="{StaticResource CardStyle}">
+                    <VerticalStackLayout Spacing="15">
+                        <Label Text="Account &amp; Value" FontSize="14" FontAttributes="Bold" TextColor="#64748B" TextTransform="Uppercase"/>
+
+                        <Grid ColumnDefinitions="*, *" ColumnSpacing="20">
+                            <core:SfTextInputLayout Hint="Select Bank Account" ContainerType="Outlined" Grid.Column="0">
+                                <inputs:SfComboBox ItemsSource="{Binding AvailableAccounts}" DisplayMemberPath="Bank.Name" 
+                                                   SelectedItem="{Binding SelectedAccount}" FontAttributes="Bold"/>
+                            </core:SfTextInputLayout>
+                            
+                            <core:SfTextInputLayout Hint="Date of Transaction" ContainerType="Outlined" Grid.Column="1">
+                                <DatePicker Date="{Binding CurrentTxn.OnDate}" />
+                            </core:SfTextInputLayout>
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*, *, *" ColumnSpacing="20">
+                            <core:SfTextInputLayout Hint="Transaction Type" ContainerType="Outlined" Grid.Column="0">
+                                <inputs:SfComboBox ItemsSource="{Binding TransactionTypes}" SelectedItem="{Binding CurrentTxn.TransactionType}" FontAttributes="Bold"/>
+                            </core:SfTextInputLayout>
+
+                            <core:SfTextInputLayout Hint="Transaction Mode" ContainerType="Outlined" Grid.Column="1">
+                                <inputs:SfComboBox ItemsSource="{Binding TransactionModes}" SelectedItem="{Binding CurrentTxn.TransactionMode}" />
+                            </core:SfTextInputLayout>
+
+                            <core:SfTextInputLayout Hint="Amount (₹)" ContainerType="Outlined" Grid.Column="2">
+                                <Entry Text="{Binding CurrentTxn.Amount}" Keyboard="Numeric" FontSize="18" FontAttributes="Bold" TextColor="{Binding HeaderColor}"/>
+                            </core:SfTextInputLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource CardStyle}" IsVisible="{Binding IsChequeMode}" BackgroundColor="#F8FAFC">
+                    <VerticalStackLayout Spacing="15">
+                        <Label Text="Cheque Details Log" FontSize="14" FontAttributes="Bold" TextColor="#F59E0B" TextTransform="Uppercase"/>
+
+                        <Grid ColumnDefinitions="*, *, *" ColumnSpacing="20">
+                            <core:SfTextInputLayout Hint="Cheque Number" ContainerType="Outlined" Grid.Column="0">
+                                <Entry Text="{Binding CurrentCheque.ChequeNumber}" FontAttributes="Bold" TextColor="#475569"/>
+                            </core:SfTextInputLayout>
+                            
+                            <core:SfTextInputLayout Hint="Drawee Bank Name" ContainerType="Outlined" Grid.Column="1">
+                                <Entry Text="{Binding CurrentCheque.DraweeBankName}" Placeholder="e.g. HDFC, SBI" />
+                            </core:SfTextInputLayout>
+
+                            <core:SfTextInputLayout Hint="Date on Cheque" ContainerType="Outlined" Grid.Column="2">
+                                <DatePicker Date="{Binding CurrentCheque.ChequeDate}" />
+                            </core:SfTextInputLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource CardStyle}">
+                    <VerticalStackLayout Spacing="15">
+                        <Label Text="Reference Information" FontSize="14" FontAttributes="Bold" TextColor="#64748B" TextTransform="Uppercase"/>
+
+                        <Grid ColumnDefinitions="*, *" ColumnSpacing="20">
+                            <core:SfTextInputLayout Hint="Person / Party Name" ContainerType="Outlined" Grid.Column="0">
+                                <Entry Text="{Binding CurrentTxn.PersonName}" />
+                            </core:SfTextInputLayout>
+
+                            <core:SfTextInputLayout Hint="Bank Reference (UTR / IMPS No)" ContainerType="Outlined" Grid.Column="1">
+                                <Entry Text="{Binding CurrentTxn.Reference}" />
+                            </core:SfTextInputLayout>
+                        </Grid>
+
+                        <core:SfTextInputLayout Hint="Narration / Notes" ContainerType="Outlined">
+                            <Editor Text="{Binding CurrentTxn.Narration}" HeightRequest="60" />
+                        </core:SfTextInputLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <HorizontalStackLayout HorizontalOptions="End" Spacing="15" Margin="0,10,0,30">
+                    <Button Text="Cancel" Command="{Binding CancelCommand}" BackgroundColor="#E2E8F0" TextColor="#475569" WidthRequest="120" HeightRequest="50" FontAttributes="Bold"/>
+                    <Button Text="Save Transaction" Command="{Binding SaveTransactionCommand}" BackgroundColor="{Binding HeaderColor}" TextColor="White" WidthRequest="200" HeightRequest="50" FontAttributes="Bold">
+                        <Button.Shadow><Shadow Brush="{Binding HeaderColor}" Offset="0,4" Radius="8" Opacity="0.4" /></Button.Shadow>
+                    </Button>
+                </HorizontalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <ContentView BackgroundColor="#80FFFFFF" IsVisible="{Binding IsBusy}">
+            <ActivityIndicator IsRunning="{Binding IsBusy}" Color="{Binding HeaderColor}" WidthRequest="60" HeightRequest="60" HorizontalOptions="Center" VerticalOptions="Center"/>
+        </ContentView>
+    </Grid>
+</ContentPage>

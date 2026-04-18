@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:inputs="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
+             xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
+             x:Class="Garmetix.AI.Billing.Views.VoucherEntryPage"
+             BackgroundColor="#F4F6F9"
+             Title="{Binding PageTitle}">
+
+    <ContentPage.Resources>
+        <Style TargetType="Border" x:Key="CardStyle">
+            <Setter Property="BackgroundColor" Value="#FFFFFF" />
+            <Setter Property="Padding" Value="20" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 12" />
+            <Setter Property="StrokeThickness" Value="0" />
+            <Setter Property="Margin" Value="0,0,0,15" />
+            <Setter Property="Shadow">
+                <Setter.Value>
+                    <Shadow Brush="#0D000000" Offset="0,4" Radius="10" Opacity="0.2" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Padding="20" Spacing="0" IsEnabled="{Binding IsNotBusy}">
+
+                <Border Style="{StaticResource CardStyle}">
+                    <Grid ColumnDefinitions="*, *, *" ColumnSpacing="20">
+                        <core:SfTextInputLayout Hint="Voucher Nature" ContainerType="Outlined" Grid.Column="0">
+                            <inputs:SfComboBox ItemsSource="{Binding VoucherTypes}" SelectedItem="{Binding CurrentVoucher.VoucherType}" />
+                        </core:SfTextInputLayout>
+
+                        <core:SfTextInputLayout Hint="Voucher Number (Auto)" ContainerType="Outlined" Grid.Column="1">
+                            <Entry Text="{Binding CurrentVoucher.VoucherNumber}" IsReadOnly="True" FontAttributes="Bold" TextColor="#495057"/>
+                        </core:SfTextInputLayout>
+
+                        <core:SfTextInputLayout Hint="Date" ContainerType="Outlined" Grid.Column="2">
+                            <DatePicker Date="{Binding CurrentVoucher.OnDate}" />
+                        </core:SfTextInputLayout>
+                    </Grid>
+                </Border>
+
+                <Border Style="{StaticResource CardStyle}">
+                    <VerticalStackLayout Spacing="15">
+
+                        <core:SfTextInputLayout Hint="Party / Ledger Account Name" ContainerType="Outlined">
+                            <inputs:SfAutocomplete ItemsSource="{Binding AvailableParties}" DisplayMemberPath="Name" TextMemberPath="Name"
+                                                   Text="{Binding CurrentVoucher.PartyName, Mode=TwoWay}" 
+                                                   Placeholder="Type to Search Ledger or Add New..." FontAttributes="Bold"/>
+                        </core:SfTextInputLayout>
+
+                        <Grid ColumnDefinitions="*, *" ColumnSpacing="20">
+                            <core:SfTextInputLayout Hint="Amount (₹)" ContainerType="Outlined" Grid.Column="0">
+                                <Entry Text="{Binding CurrentVoucher.Amount}" Keyboard="Numeric" FontSize="18" FontAttributes="Bold" TextColor="#0EA5E9"/>
+                            </core:SfTextInputLayout>
+
+                            <core:SfTextInputLayout Hint="Payment Mode" ContainerType="Outlined" Grid.Column="1">
+                                <inputs:SfComboBox ItemsSource="{Binding PaymentModes}" SelectedItem="{Binding CurrentVoucher.PaymentMode}">
+                                    <inputs:SfComboBox.Behaviors>
+                                        <core:EventToCommandBehavior EventName="SelectionChanged" Command="{Binding BindingContext.CheckBankModeCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"/>
+                                    </inputs:SfComboBox.Behaviors>
+                                </inputs:SfComboBox>
+                            </core:SfTextInputLayout>
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*, *" ColumnSpacing="20" IsVisible="{Binding IsBankMode}">
+                            <core:SfTextInputLayout Hint="Select Company Bank Account" ContainerType="Outlined" Grid.Column="0">
+                                <inputs:SfComboBox ItemsSource="{Binding AvailableBanks}" DisplayMemberPath="Name" ValueMemberPath="Id"
+                                                   SelectedValue="{Binding CurrentVoucher.AccountNumber}" />
+                            </core:SfTextInputLayout>
+
+                            <core:SfTextInputLayout Hint="Reference / Cheque No / UPI ID" ContainerType="Outlined" Grid.Column="1">
+                                <Entry Text="{Binding CurrentVoucher.PaymentDetails}" />
+                            </core:SfTextInputLayout>
+                        </Grid>
+
+                        <core:SfTextInputLayout Hint="Particulars / Narration (Being...)" ContainerType="Outlined">
+                            <Editor Text="{Binding CurrentVoucher.Particulars}" HeightRequest="80" />
+                        </core:SfTextInputLayout>
+
+                    </VerticalStackLayout>
+                </Border>
+
+                <HorizontalStackLayout HorizontalOptions="End" Spacing="15" Margin="0,10,0,30">
+                    <Button Text="Cancel" Command="{Binding CancelCommand}" BackgroundColor="#F8FAFC" TextColor="#64748B" WidthRequest="120" HeightRequest="50" FontAttributes="Bold"/>
+
+                    <Button Text="🖨️ Save &amp; Print A5 Voucher" Command="{Binding SaveAndPrintCommand}" BackgroundColor="#4F46E5" TextColor="White" WidthRequest="250" HeightRequest="50" FontAttributes="Bold">
+                        <Button.Shadow>
+                            <Shadow Brush="#4F46E5" Offset="0,4" Radius="8" Opacity="0.4" />
+                        </Button.Shadow>
+                    </Button>
+                </HorizontalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <ContentView BackgroundColor="#80FFFFFF" IsVisible="{Binding IsBusy}">
+            <ActivityIndicator IsRunning="{Binding IsBusy}" Color="#4F46E5" WidthRequest="60" HeightRequest="60" HorizontalOptions="Center" VerticalOptions="Center"/>
+        </ContentView>
+    </Grid>
+</ContentPage>

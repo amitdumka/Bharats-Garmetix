@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Garmetix.AI.Billing.Views.BankRegistryPage"
+             Title="Company Bank Accounts" BackgroundColor="#F4F6F9">
+
+    <Grid RowDefinitions="Auto, *">
+        <Label Grid.Row="0" Text="Active Accounts" FontSize="18" FontAttributes="Bold" TextColor="#1E293B" Margin="20,20,20,10"/>
+
+        <CollectionView Grid.Row="1" ItemsSource="{Binding BankAccounts}" Margin="20,0">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="2" VerticalItemSpacing="20" HorizontalItemSpacing="20"/>
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border BackgroundColor="#0F172A" Padding="25" StrokeShape="RoundRectangle 16" StrokeThickness="0">
+                        <Border.Shadow><Shadow Brush="#0F172A" Offset="0,8" Radius="15" Opacity="0.3" /></Border.Shadow>
+                        <Grid RowDefinitions="Auto, *, Auto">
+                            
+                            <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
+                                <Label Text="{Binding Bank.Name}" FontSize="18" FontAttributes="Bold" TextColor="#F8FAFC"/>
+                                <Border Grid.Column="1" BackgroundColor="#334155" Padding="8,4" StrokeShape="RoundRectangle 6" StrokeThickness="0">
+                                    <Label Text="{Binding AccountType}" FontSize="11" TextColor="#94A3B8" FontAttributes="Bold"/>
+                                </Border>
+                            </Grid>
+
+                            <Label Grid.Row="1" Text="{Binding AccountNumber}" FontSize="22" FontAttributes="Bold" TextColor="#CBD5E1" LetterSpacing="2" VerticalOptions="Center" Margin="0,20"/>
+
+                            <Grid Grid.Row="2" ColumnDefinitions="*, Auto">
+                                <VerticalStackLayout>
+                                    <Label Text="ACCOUNT HOLDER" FontSize="10" TextColor="#64748B" FontAttributes="Bold"/>
+                                    <Label Text="{Binding AccountHolderName}" FontSize="14" TextColor="#F8FAFC" FontAttributes="SemiBold" TextTransform="Uppercase"/>
+                                </VerticalStackLayout>
+                                
+                                <HorizontalStackLayout Grid.Column="1" Spacing="10" VerticalOptions="End">
+                                    <Button Text="Edit" BackgroundColor="Transparent" TextColor="#38BDF8" FontAttributes="Bold" Padding="0"
+                                            Command="{Binding BindingContext.EditAccountCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                            CommandParameter="{Binding .}"/>
+                                    <Button Text="Delete" BackgroundColor="Transparent" TextColor="#F43F5E" FontAttributes="Bold" Padding="0"
+                                            Command="{Binding BindingContext.DeleteAccountCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                            CommandParameter="{Binding .}"/>
+                                </HorizontalStackLayout>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Button Grid.Row="1" Command="{Binding AddAccountCommand}" Text="+ Add Bank" FontSize="16" FontAttributes="Bold" TextColor="White"
+                BackgroundColor="#0EA5E9" CornerRadius="25" HeightRequest="50" WidthRequest="140" HorizontalOptions="Center" VerticalOptions="End" Margin="0,0,0,30">
+            <Button.Shadow><Shadow Brush="#0EA5E9" Offset="0,4" Radius="10" Opacity="0.4" /></Button.Shadow>
+        </Button>
+    </Grid>
+</ContentPage>
