@@ -13,7 +13,10 @@
 //        }
 //    }
 //}
+using Bharat.ToolKits.Helpers;
+using Garmetix.AI.Billing.Views;
 using Garmetix.Authentication.Pages;
+using Garmetix.CoreBase.DayOperations.Pages;
 using Garmetix.Databases.Services;
 using Garmetix.IRetail;
 using Garmetix.Onboarding.Pages;
@@ -34,6 +37,7 @@ namespace Garmetix.IRetail
             InitializeComponent();
             // Register services and view models here if using dependency injection
             BharatGarmetixModules.RegisterPaeRoutes();
+            Routing.RegisterRoute("//LoginPage", typeof(LoginPage));
         }
         protected override async void OnStart()
         {
@@ -50,7 +54,10 @@ namespace Garmetix.IRetail
             else
             {
                 // First time running, or user logged out
-                await Shell.Current.GoToAsync("//LoginPage");
+                if (Application.Current?.MainPage is Shell)
+                    await Shell.Current.GoToAsync("//LoginPage");
+                else
+                    Application.Current.MainPage = new AppShell(); // then navigate
             }
         }
         protected override Window CreateWindow(IActivationState? activationState)

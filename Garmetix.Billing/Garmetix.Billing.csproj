@@ -26,6 +26,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <MauiXaml Remove="AiSystems\Views\MenuView.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.51" />
 		<PackageReference Include="QuestPDF" Version="2026.2.4" />
 		<PackageReference Include="Syncfusion.Maui.Barcode" Version="33.1.47" />
@@ -71,7 +75,16 @@
 	  <MauiXaml Update="AIBased\Views\PurchaseHistoryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="AiSystems\views\VoucherEntryPage.xaml">
+	  <MauiXaml Update="AiSystems\Views\BankFormPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="AiSystems\Views\BankMenu.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="AiSystems\Views\PartyRegistryPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="AiSystems\Views\VoucherEntryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\InvoiceEntryPage.xaml">

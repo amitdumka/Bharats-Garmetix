@@ -1,6 +1,9 @@
 ﻿using Garmetix.AI.Billing.Models;
+using Garmetix.Models.Accounting;
 using SQLite;
 using System.Diagnostics;
+using BankTransaction = Garmetix.AI.Billing.Models.BankTransaction;
+using ChequeLog = Garmetix.AI.Billing.Models.ChequeLog;
 
 namespace Garmetix.Billing.AIBased.Helpers
 {
@@ -56,6 +59,19 @@ namespace Garmetix.Billing.AIBased.Helpers
                 await _database.CreateTableAsync<Customer>();
                 await _database.CreateTableAsync<PaymentDetail>();
                 await _database.CreateTableAsync<User>();
+
+
+
+                await _database.CreateTableAsync<LedgerGroup>();
+                await _database.CreateTableAsync<Ledger>();
+                await _database.CreateTableAsync<Party>();
+                await _database.CreateTableAsync<Bank>();
+                await _database.CreateTableAsync<BankAccount>();
+                await _database.CreateTableAsync<Voucher>();
+                await _database.CreateTableAsync<CashVoucher>();
+
+                await _database.CreateTableAsync<ChequeLog>();  
+                await _database.CreateTableAsync<BankTransaction>();
 
                 // Check for empty DB and seed data
                 await SeedDummyDataIfEmptyAsync();

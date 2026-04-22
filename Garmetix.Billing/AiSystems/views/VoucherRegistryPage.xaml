@@ -23,7 +23,7 @@
 
                     <sfgrid:SfDataGrid.Columns>
                         <sfgrid:DataGridDateColumn MappingName="OnDate" HeaderText="Date" Format="dd-MMM-yyyy" Width="120"/>
-                        <sfgrid:DataGridTextColumn MappingName="VoucherNumber" HeaderText="Voucher No" Width="150" FontAttributes="Bold"/>
+                        <sfgrid:DataGridTextColumn MappingName="VoucherNumber" HeaderText="Voucher No" Width="150"  />
                         <sfgrid:DataGridTextColumn MappingName="PartyName" HeaderText="Party / Ledger" />
                         <sfgrid:DataGridTextColumn MappingName="PaymentMode" HeaderText="Mode" Width="120"/>
                         <sfgrid:DataGridNumericColumn MappingName="Amount" HeaderText="Amount" Format="N2" />
@@ -40,9 +40,9 @@
                     </sfgrid:SfDataGrid.Columns>
 
                     <sfgrid:SfDataGrid.GroupSummaryRows>
-                        <sfgrid:DataGridSummaryRow Title="{Key} Totals: {Amount}" ShowSummaryInRow="True">
+                        <sfgrid:DataGridSummaryRow Title="{}{Key} Totals: {Amount}" ShowSummaryInRow="True">
                             <sfgrid:DataGridSummaryRow.SummaryColumns>
-                                <sfgrid:DataGridSummaryColumn Name="Amount" Format="'₹ {Sum:N2}'" MappingName="Amount" SummaryType="Sum" />
+                                <sfgrid:DataGridSummaryColumn Name="Amount" Format="'₹ {Sum:N2}'" MappingName="Amount" SummaryType="DoubleAggregate" />
                             </sfgrid:DataGridSummaryRow.SummaryColumns>
                         </sfgrid:DataGridSummaryRow>
                     </sfgrid:SfDataGrid.GroupSummaryRows>

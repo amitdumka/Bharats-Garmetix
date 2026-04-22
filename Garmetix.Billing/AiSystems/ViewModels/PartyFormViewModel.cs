@@ -1,10 +1,9 @@
-using System;
-using System.Threading.Tasks;
+
+
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Maui.Controls;
-using Garmetix.AI.Billing.Models;
 using Garmetix.Billing.AIBased.Helpers;
+using Garmetix.Models.Accounting;
 
 namespace Garmetix.AI.Billing.ViewModels
 {

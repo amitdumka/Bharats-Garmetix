@@ -57,18 +57,17 @@
                             </core:SfTextInputLayout>
 
                             <core:SfTextInputLayout Hint="Payment Mode" ContainerType="Outlined" Grid.Column="1">
-                                <inputs:SfComboBox ItemsSource="{Binding PaymentModes}" SelectedItem="{Binding CurrentVoucher.PaymentMode}">
-                                    <inputs:SfComboBox.Behaviors>
-                                        <core:EventToCommandBehavior EventName="SelectionChanged" Command="{Binding BindingContext.CheckBankModeCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"/>
-                                    </inputs:SfComboBox.Behaviors>
-                                </inputs:SfComboBox>
+                                <inputs:SfComboBox ItemsSource="{Binding PaymentModes}" 
+                                                   SelectedItem="{Binding CurrentVoucher.PaymentMode}"
+                                               SelectionChanged= "OnPaymentModeSelectionChanged" />
                             </core:SfTextInputLayout>
                         </Grid>
 
                         <Grid ColumnDefinitions="*, *" ColumnSpacing="20" IsVisible="{Binding IsBankMode}">
                             <core:SfTextInputLayout Hint="Select Company Bank Account" ContainerType="Outlined" Grid.Column="0">
-                                <inputs:SfComboBox ItemsSource="{Binding AvailableBanks}" DisplayMemberPath="Name" ValueMemberPath="Id"
-                                                   SelectedValue="{Binding CurrentVoucher.AccountNumber}" />
+                                <inputs:SfComboBox ItemsSource="{Binding AvailableBanks}" 
+                                                   DisplayMemberPath="AccountNumber" 
+                                                   SelectedItem="{Binding SelectedBank}" />
                             </core:SfTextInputLayout>
 
                             <core:SfTextInputLayout Hint="Reference / Cheque No / UPI ID" ContainerType="Outlined" Grid.Column="1">

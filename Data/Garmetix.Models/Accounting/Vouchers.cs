@@ -12,6 +12,7 @@ using Garmetix.Models.Bases;
 using Garmetix.Models.Enums;
 using Garmetix.Models.HRM;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
 namespace Garmetix.Models.Accounting
@@ -92,6 +93,12 @@ namespace Garmetix.Models.Accounting
 
     public class Party : CompanyBase
     {
+        [SetsRequiredMembers]
+        public Party()
+        {
+            // initialize required members
+            Name = string.Empty;
+        }
         public required string Name { get; set; } = string.Empty;
         public string? Address { get; set; }
         public string? EmailId { get; set; }
@@ -106,6 +113,11 @@ namespace Garmetix.Models.Accounting
 
     public class LedgerGroup : CompanyBase
     {
+        [SetsRequiredMembers]
+        public LedgerGroup()
+        {
+            Name = string.Empty;
+        }
         public required string Name { get; set; }
         public LedgerCategory Category { get; set; }
         public string Remarks { get; set; } = string.Empty;
@@ -113,6 +125,11 @@ namespace Garmetix.Models.Accounting
 
     public class Ledger : CompanyBase
     {
+        [SetsRequiredMembers]
+        public Ledger()
+        {
+            Name = string.Empty;
+        }
         public required string Name { get; set; } = string.Empty;
 
         public Guid LedgerGroupId { get; set; }
@@ -126,6 +143,14 @@ namespace Garmetix.Models.Accounting
 
     public class VoucherBase : StoreBase
     {
+
+        [SetsRequiredMembers]
+        public VoucherBase()
+        {
+            VoucherNumber = string.Empty;
+            PartyName = string.Empty;
+            Particulars = string.Empty;
+        }
         public required string VoucherNumber { get; set; }
         public DateTime OnDate { get; set; }
 
@@ -153,6 +178,13 @@ namespace Garmetix.Models.Accounting
 
     public class Voucher : VoucherBase
     {
+        [SetsRequiredMembers]
+        public Voucher()
+        {
+            VoucherNumber = string.Empty;
+            PartyName = string.Empty;
+            Particulars = string.Empty;
+        }
         public PaymentMode PaymentMode { get; set; } = PaymentMode.Cash;
         public string? PaymentDetails { get; set; }
 
@@ -169,6 +201,13 @@ namespace Garmetix.Models.Accounting
 
     public class CashVoucher : VoucherBase
     {
+        [SetsRequiredMembers]
+        public CashVoucher()
+        {
+            VoucherNumber = string.Empty;
+            PartyName = string.Empty;
+            Particulars = string.Empty;
+        }
         public Guid TransactionId { get; set; }
         public virtual Transaction? Transaction { get; set; }
     }

@@ -50,13 +50,15 @@
 
                         <Grid ColumnDefinitions="*, *, *" ColumnSpacing="20">
                             <core:SfTextInputLayout Hint="Transaction Type" ContainerType="Outlined" Grid.Column="0">
-                                <inputs:SfComboBox ItemsSource="{Binding TransactionTypes}" SelectedItem="{Binding CurrentTxn.TransactionType}" FontAttributes="Bold"/>
+                                <inputs:SfComboBox ItemsSource="{Binding TransactionTypes}" 
+                                                   SelectedItem="{Binding SelectedTxnType}" 
+                                                   FontAttributes="Bold"/>
                             </core:SfTextInputLayout>
 
                             <core:SfTextInputLayout Hint="Transaction Mode" ContainerType="Outlined" Grid.Column="1">
-                                <inputs:SfComboBox ItemsSource="{Binding TransactionModes}" SelectedItem="{Binding CurrentTxn.TransactionMode}" />
+                                <inputs:SfComboBox ItemsSource="{Binding TransactionModes}" 
+                                                   SelectedItem="{Binding SelectedTxnMode}" />
                             </core:SfTextInputLayout>
-
                             <core:SfTextInputLayout Hint="Amount (₹)" ContainerType="Outlined" Grid.Column="2">
                                 <Entry Text="{Binding CurrentTxn.Amount}" Keyboard="Numeric" FontSize="18" FontAttributes="Bold" TextColor="{Binding HeaderColor}"/>
                             </core:SfTextInputLayout>

@@ -1,13 +1,11 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Maui.Controls;
-using Garmetix.AI.Billing.Models;
 using Garmetix.Billing.AIBased.Helpers;
+using Garmetix.Models.Accounting;
+using Garmetix.Models.Enums;
 using QuestPDF.Fluent;
-using System.Collections.Generic;
+using QuestPDF.Infrastructure;
+using System.Collections.ObjectModel;
 
 namespace Garmetix.AI.Billing.ViewModels
 {
@@ -35,6 +33,7 @@ namespace Garmetix.AI.Billing.ViewModels
                 VoucherType = VoucherType.Payment,
                 PaymentMode = PaymentMode.Cash,
                 VoucherNumber = "VCH-" + DateTime.Now.ToString("yyyyMMddHHmm"),
+                Particulars = string.Empty, PartyName = "Cash",
                 OnDate = DateTime.Now
             };
             _ = LoadDependenciesAsync();
@@ -49,6 +48,34 @@ namespace Garmetix.AI.Billing.ViewModels
             }
         }
 
+        // Triggered by the Code-Behind when the ComboBox changes
+        public void CheckBankMode()
+        {
+            if (CurrentVoucher != null)
+            {
+                IsBankMode = CurrentVoucher.PaymentMode != PaymentMode.Cash;
+
+                if (!IsBankMode)
+                {
+                    CurrentVoucher.AccountNumber = null;
+                    CurrentVoucher.PaymentDetails = string.Empty;
+                }
+            }
+        }
+        // --- ADD THIS TO HANDLE THE COMBOBOX SELECTION ---
+        [ObservableProperty] private BankAccount selectedBank;
+
+        partial void OnSelectedBankChanged(BankAccount value)
+        {
+            if (value != null)
+            {
+                CurrentVoucher.AccountNumber = value.Id; // Map the ID securely to the database model
+            }
+            else
+            {
+                CurrentVoucher.AccountNumber = null;
+            }
+        }
         private async Task LoadDependenciesAsync()
         {
             var db = await DatabaseHelper.GetDatabaseAsync();
@@ -59,24 +86,36 @@ namespace Garmetix.AI.Billing.ViewModels
             AvailableBanks = new ObservableCollection<BankAccount>(banks);
         }
 
+        //private async Task LoadVoucherAsync(Guid id)
+        //{
+        //    var db = await DatabaseHelper.GetDatabaseAsync();
+        //    CurrentVoucher = await db.Table<Voucher>().Where(v => v.Id == id).FirstOrDefaultAsync();
+        //    CheckBankMode();
+        //}
         private async Task LoadVoucherAsync(Guid id)
         {
             var db = await DatabaseHelper.GetDatabaseAsync();
             CurrentVoucher = await db.Table<Voucher>().Where(v => v.Id == id).FirstOrDefaultAsync();
+
+            // NEW: Pre-select the bank account in the UI if editing
+            if (CurrentVoucher.AccountNumber.HasValue)
+            {
+                SelectedBank = AvailableBanks.FirstOrDefault(b => b.Id == CurrentVoucher.AccountNumber.Value);
+            }
+
             CheckBankMode();
         }
-
         // Triggered by UI when Payment Mode Changes
-        public void CheckBankMode()
-        {
-            IsBankMode = CurrentVoucher.PaymentMode != PaymentMode.Cash;
-            if (!IsBankMode)
-            {
-                CurrentVoucher.AccountNumber = null; // Clear bank details if switched to cash
-                CurrentVoucher.PaymentDetails = string.Empty;
-            }
-            OnPropertyChanged(nameof(CurrentVoucher));
-        }
+        //public void CheckBankMode()
+        //{
+        //    IsBankMode = CurrentVoucher.PaymentMode != PaymentMode.Cash;
+        //    if (!IsBankMode)
+        //    {
+        //        CurrentVoucher.AccountNumber = null; // Clear bank details if switched to cash
+        //        CurrentVoucher.PaymentDetails = string.Empty;
+        //    }
+        //    OnPropertyChanged(nameof(CurrentVoucher));
+        //}
 
         [RelayCommand]
         public async Task SaveAndPrintAsync()

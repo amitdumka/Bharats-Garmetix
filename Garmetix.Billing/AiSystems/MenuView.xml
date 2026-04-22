@@ -1,9 +1,0 @@
-<FlyoutItem Title="Voucher Registry" Route="VoucherRegistryPage">
-        <ShellContent ContentTemplate="{DataTemplate views:VoucherRegistryPage}" />
-    </FlyoutItem>
-    <FlyoutItem Title="Parties &amp; Ledgers" Route="PartyRegistryPage">
-        <ShellContent ContentTemplate="{DataTemplate views:PartyRegistryPage}" />
-    </FlyoutItem>
-    <FlyoutItem Title="Banking Vault" Route="BankRegistryPage">
-        <ShellContent ContentTemplate="{DataTemplate views:BankRegistryPage}" />
-    </FlyoutItem>

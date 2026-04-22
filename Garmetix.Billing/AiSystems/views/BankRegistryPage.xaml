@@ -24,12 +24,12 @@
                                 </Border>
                             </Grid>
 
-                            <Label Grid.Row="1" Text="{Binding AccountNumber}" FontSize="22" FontAttributes="Bold" TextColor="#CBD5E1" LetterSpacing="2" VerticalOptions="Center" Margin="0,20"/>
+                            <Label Grid.Row="1" Text="{Binding AccountNumber}" FontSize="22" FontAttributes="Bold" TextColor="#CBD5E1" CharacterSpacing="2"   VerticalOptions="Center" Margin="0,20"/>
 
                             <Grid Grid.Row="2" ColumnDefinitions="*, Auto">
                                 <VerticalStackLayout>
                                     <Label Text="ACCOUNT HOLDER" FontSize="10" TextColor="#64748B" FontAttributes="Bold"/>
-                                    <Label Text="{Binding AccountHolderName}" FontSize="14" TextColor="#F8FAFC" FontAttributes="SemiBold" TextTransform="Uppercase"/>
+                                    <Label Text="{Binding AccountHolderName}" FontSize="14" TextColor="#F8FAFC" FontAttributes="Italic,Bold" TextTransform="Uppercase"/>
                                 </VerticalStackLayout>
                                 
                                 <HorizontalStackLayout Grid.Column="1" Spacing="10" VerticalOptions="End">

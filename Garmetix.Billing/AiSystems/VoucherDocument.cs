@@ -1,8 +1,12 @@
 using System;
 using Garmetix.AI.Billing.Models;
+using Garmetix.Models.Accounting;
+using Garmetix.Models.Enums;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using Colors = QuestPDF.Helpers.Colors;
+using IContainer = QuestPDF.Infrastructure.IContainer;
 
 namespace Garmetix.AI.Billing.PdfServices
 {

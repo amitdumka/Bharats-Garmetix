@@ -1,12 +1,13 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Maui.Controls;
 using Garmetix.AI.Billing.Models;
 using Garmetix.Billing.AIBased.Helpers;
+using Garmetix.Models.Accounting;
+using System.Collections.ObjectModel;
+using BankTransaction = Garmetix.AI.Billing.Models.BankTransaction;
+using ChequeLog = Garmetix.AI.Billing.Models.ChequeLog;
+using TransactionMode = Garmetix.AI.Billing.Models.TransactionMode;
+using TransactionType = Garmetix.AI.Billing.Models.TransactionType;
 
 namespace Garmetix.AI.Billing.ViewModels
 {
@@ -19,7 +20,7 @@ namespace Garmetix.AI.Billing.ViewModels
 
         [ObservableProperty] private BankTransaction currentTxn;
         [ObservableProperty] private ChequeLog currentCheque;
-        
+
         [ObservableProperty] private ObservableCollection<BankAccount> availableAccounts = new();
         [ObservableProperty] private BankAccount selectedAccount;
 
@@ -43,27 +44,53 @@ namespace Garmetix.AI.Billing.ViewModels
             var accounts = await db.Table<BankAccount>().Where(b => b.Active).ToListAsync();
             AvailableAccounts = new ObservableCollection<BankAccount>(accounts);
         }
+        // --- UI INTERCEPTORS FOR DROPDOWNS ---
+        [ObservableProperty] private TransactionType selectedTxnType = TransactionType.Deposit;
+        [ObservableProperty] private TransactionMode selectedTxnMode = TransactionMode.Cash;
 
-        // --- DYNAMIC UI BEHAVIORS ---
-        partial void OnCurrentTxnChanged(BankTransaction value)
+        // When the user changes Deposit/Withdraw, this fires instantly
+        partial void OnSelectedTxnTypeChanged(TransactionType value)
         {
-            if (value != null)
+            if (CurrentTxn != null)
             {
-                value.PropertyChanged += (s, e) =>
-                {
-                    if (e.PropertyName == nameof(BankTransaction.TransactionMode))
-                    {
-                        IsChequeMode = CurrentTxn.TransactionMode == TransactionMode.Cheque;
-                    }
-                    if (e.PropertyName == nameof(BankTransaction.TransactionType))
-                    {
-                        HeaderColor = CurrentTxn.TransactionType == TransactionType.Deposit 
-                            ? Color.FromArgb("#10B981") // Emerald Green
-                            : Color.FromArgb("#F43F5E"); // Rose Red
-                    }
-                };
+                CurrentTxn.TransactionType = value;
             }
+
+            HeaderColor = value == TransactionType.Deposit
+                ? Color.FromArgb("#10B981") // Emerald Green for Deposit
+                : Color.FromArgb("#F43F5E"); // Rose Red for Withdraw
         }
+
+        // When the user changes Cash/Cheque/NEFT, this fires instantly
+        partial void OnSelectedTxnModeChanged(TransactionMode value)
+        {
+            if (CurrentTxn != null)
+            {
+                CurrentTxn.TransactionMode = value;
+            }
+
+            IsChequeMode = value == TransactionMode.Cheque;
+        }
+        // --- DYNAMIC UI BEHAVIORS ---
+        //partial void OnCurrentTxnChanged(BankTransaction value)
+        //{
+        //    if (value != null)
+        //    {
+        //        value.PropertyChanged += (s, e) =>
+        //        {
+        //            if (e.PropertyName == nameof(BankTransaction.TransactionMode))
+        //            {
+        //                IsChequeMode = CurrentTxn.TransactionMode == TransactionMode.Cheque;
+        //            }
+        //            if (e.PropertyName == nameof(BankTransaction.TransactionType))
+        //            {
+        //                HeaderColor = CurrentTxn.TransactionType == TransactionType.Deposit
+        //                    ? Color.FromArgb("#10B981") // Emerald Green
+        //                    : Color.FromArgb("#F43F5E"); // Rose Red
+        //            }
+        //        };
+        //    }
+        //}
 
         [RelayCommand]
         public async Task SaveTransactionAsync()
@@ -84,11 +111,11 @@ namespace Garmetix.AI.Billing.ViewModels
             try
             {
                 var db = await DatabaseHelper.GetDatabaseAsync();
-                
+
                 CurrentTxn.BankAccountId = SelectedAccount.Id;
 
                 // Handle Bank Balance Calculation
-                decimal balanceModifier = CurrentTxn.TransactionType == TransactionType.Deposit ? CurrentTxn.Amount : -CurrentTxn.Amount;
+                decimal balanceModifier = CurrentTxn.TransactionType == Models.TransactionType.Deposit ? CurrentTxn.Amount : -CurrentTxn.Amount;
 
                 await db.RunInTransactionAsync(tran =>
                 {
@@ -103,7 +130,7 @@ namespace Garmetix.AI.Billing.ViewModels
                         CurrentCheque.Type = CurrentTxn.TransactionType == TransactionType.Deposit ? ChequeType.Received : ChequeType.Issued;
                         CurrentCheque.Amount = CurrentTxn.Amount;
                         CurrentCheque.PartyName = CurrentTxn.PersonName;
-                        
+
                         // If it's auto-reconciled, mark cheque as cleared instantly
                         if (CurrentTxn.IsReconciled)
                         {
