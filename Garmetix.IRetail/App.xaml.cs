@@ -1,26 +1,7 @@
-﻿//namespace Garmetix.IRetail
-//{
-//    public partial class App : Application
-//    {
-//        public App()
-//        {
-//            InitializeComponent();
-//        }
-
-//        protected override Window CreateWindow(IActivationState? activationState)
-//        {
-//            return new Window(new AppShell());
-//        }
-//    }
-//}
-using Bharat.ToolKits.Helpers;
-using Garmetix.AI.Billing.Views;
+﻿using Garmetix.AI.Billing.Views;
 using Garmetix.Authentication.Pages;
-using Garmetix.CoreBase.DayOperations.Pages;
 using Garmetix.Databases.Services;
-using Garmetix.IRetail;
 using Garmetix.Onboarding.Pages;
-using Microsoft.Extensions.DependencyInjection;
 using System.Globalization;
 
 namespace Garmetix.IRetail

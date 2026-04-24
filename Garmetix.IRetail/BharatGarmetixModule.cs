@@ -23,8 +23,10 @@ using Microsoft.UI.Windowing;
 
 namespace Garmetix.IRetail
 {
+    [Obsolete("This class is deprecated. Please use the new module registration class instead.")]
     internal static class BharatGarmetixModules
     {
+        [Obsolete("This method is deprecated. Please use the new service registration method instead.")]
         public static MauiAppBuilder RegiserService(this MauiAppBuilder builder)
         {
             builder.UseGarmetixCoreServices();//.UseGarmetixDatabases();
@@ -33,8 +35,10 @@ namespace Garmetix.IRetail
             return builder;
         }
 
+        [Obsolete("This method is deprecated. Please use the new module registration method instead.")]
         public static MauiAppBuilder RegisterModules(this MauiAppBuilder builder)
         {
+            //Ok
             builder.EnableAccounting().EnableBanking().EnableHRM().UseAuthentication();
             builder.EnableDashboard().EnableOnBoarding().EnableStore().UseReporting();
             builder.EnableSentryModule();
@@ -42,8 +46,10 @@ namespace Garmetix.IRetail
             return builder;
         }
 
+        [Obsolete("This method is deprecated. Please use the new Sentry integration method instead.")]
         public static MauiAppBuilder EnableSentryModule(this MauiAppBuilder builder)
         {
+            //ok
             // Add this section anywhere on the builder:
             builder.UseSentry(options =>
             {
@@ -70,6 +76,7 @@ namespace Garmetix.IRetail
             });
             return builder;
         }
+        [Obsolete("This method is deprecated. Please use the new route registration method instead.")]
         public static void RegisterPaeRoutes()
         {
             // Register any additional routes here if needed
@@ -78,6 +85,7 @@ namespace Garmetix.IRetail
             AuthenticationModule.RegisterAuthenticationRoute();
         }
 
+        [Obsolete("This method is deprecated. Please use the new module registration method instead.")]
         public static MauiAppBuilder EnableBharatGarmetixModules(this MauiAppBuilder builder)
         {
             //ok
@@ -113,6 +121,7 @@ namespace Garmetix.IRetail
             return builder;
         }
 
+        [Obsolete("This method is deprecated. Please use the new font registration method instead.")]
         public static MauiAppBuilder EnableFonts(this MauiAppBuilder builder)
         {//ok
             builder.ConfigureFonts(fonts =>

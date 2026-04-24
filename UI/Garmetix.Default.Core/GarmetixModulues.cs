@@ -2,19 +2,110 @@
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 #endif
+
 using Fonts;
+using Garmetix.Authentication;
+using Garmetix.Authentication.Pages;
+using Garmetix.CoreBase;
+using Garmetix.CoreBase.Accounting;
+using Garmetix.CoreBase.Dashboard;
+using Garmetix.CoreBase.HRM;
+using Garmetix.CoreBase.Stores;
+using Garmetix.CoreServices;
+using Garmetix.DataServices;
+using Garmetix.Onboarding;
+using Garmetix.Onboarding.Pages;
+using Garmetix.PDFServices;
+using Garmetix.Reports;
 using Microsoft.Maui.LifecycleEvents;
+using Syncfusion.Maui.Core.Hosting;
+using Syncfusion.Maui.Toolkit.Hosting;
+using System.Globalization;
 
 namespace Garmetix
 {
-    public static class GarmetixModulues
-    
 
-        public const string  
+
+    public static class GarmetixHelpers
+    {
+        public const string LoginPageUrl = "//LoginPage";
+        public const string PinUnlockPageUrl = "//PinUnlockPage";
+
+        public static async Task InitApp()
+        {
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(GarmetixModulues.SyncKey);
+            CultureInfo.CurrentUICulture = new CultureInfo("en-IN");           
+            GarmetixModulues.RegisterPaeRoutes();
+          //TODO:  Routing.RegisterRoute("//LoginPage", typeof(LoginPage));
+        }
+        
+        public static async Task<Window> AppOnCreateWindows(IActivationState? activationState, Shell appShell)
+        {
+            //TODO: need to create best one  AppShell Instant creating before any thing will crash, so we need to create it after checking onboarding and session, but we need to pass it to login and onboarding pages to navigate after login or onboarding complete, so we can create it here and pass it to login and onboarding pages, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw
+            // So we need do find method so create new instance of AppShell after checking onboarding and session, and pass it to login and onboarding pages to navigate after login or onboarding complete, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null,
+            // Just need Type of(AppShell) to create new instance of it after checking onboarding and session, and pass it to login
+
+            //return new Window(new AppShell());
+            var onboardingComplete = Preferences.Get("IsOnboardingComplete", false);
+            if (!onboardingComplete)
+            {
+                // Use a NavigationPage to allow navigation between onboarding/seed pages
+                return new Window(new NavigationPage(new OnboardingChoicePage(new Login(appShell))));
+            }
+            else
+            {
+                // if android and ios then 
+
+                // var session = SessionHelper.TryLoadStoreSession().Result;
+
+                //if (!(session == null || !session.IsAutoLoginEnabled))
+                //{
+                //    return new Window(new AppShell());
+                // }
+                // else
+                {
+                    return new Window(new Login(appShell));
+                }
+
+            }
+        }
+        public static async Task AppOnStart()
+        {
+            //TODO: need to create best one 
+            // Check if user has previously logged in and set a PIN
+            string hasPin = await SecureStorage.Default.GetAsync("HasPin");
+
+            if (hasPin == "true")
+            {
+                // Bypass full login, go straight to Quick PIN Unlock
+                await Shell.Current.GoToAsync(PinUnlockPageUrl);
+            }
+            else
+            {
+                // First time running, or user logged out
+                if (Application.Current?.MainPage is Shell)
+                    await Shell.Current.GoToAsync(LoginPageUrl);
+                else
+                    Application.Current.MainPage = null;// new AppShell(); // then navigate
+            }
+        }
+
+    }
+    public static class GarmetixModulues
+    {
+
+        public const string SyncKey = "sync";
+        public static void RegisterPaeRoutes()
+        {
+            // Register any additional routes here if needed
+            GarmetixCoreBaseModule.EnableCoreModulesRoutes();
+            OnboardingModule.RegisterRouteOnboarding();
+            AuthenticationModule.RegisterAuthenticationRoute();
+        }
 
         public static MauiAppBuilder ConfigureGarmetixModules(this MauiAppBuilder builder)
         {
-            
+
             // Enabling Syncfusion Libraries
             builder
                 .ConfigureSyncfusionToolkit()
@@ -26,11 +117,20 @@ namespace Garmetix
              // Registering Garmetix Modules
              RegisterModules()
              // Enabling Fonts
-             .EnableFonts(); 
+             .EnableFonts();
             return builder;
         }
 
-        
+        public static MauiAppBuilder RegisterModules(this MauiAppBuilder builder)
+        {
+            builder.EnableAccounting().EnableBanking().EnableHRM().UseAuthentication();
+            builder.EnableDashboard().EnableOnBoarding().EnableStore().UseReporting();
+
+            builder.EnableSentryModule();
+            //Remove this line if you don't want to enable AI billing in your app, or if you want to enable it separately in specific modules.
+            //builder.EnableAIBilling().UseGarmetixSettings();
+            return builder;
+        }
         public static MauiAppBuilder UseGarmetixDefaultModules(this MauiAppBuilder builder)
         {
             builder
@@ -40,7 +140,13 @@ namespace Garmetix
             return builder;
         }
 
+        public static MauiAppBuilder RegiserService(this MauiAppBuilder builder)
+        {
+            builder.UseGarmetixCoreServices();//.UseGarmetixDatabases();
+            builder.EnablePdfServices().UseCoreModule().UseDataServices();
 
+            return builder;
+        }
         /// <summary>
         /// Enables Sentry error monitoring and performance tracing for the application by configuring the Sentry module
         /// on the specified Maui app builder.
@@ -116,8 +222,8 @@ namespace Garmetix
         /// <returns>The same builder instance, enabling method chaining.</returns>
         public static MauiAppBuilder ConfigureLifecycleEventsFullScreen(this MauiAppBuilder builder)
         {
-                   builder .ConfigureLifecycleEvents(events =>
-                {
+            builder.ConfigureLifecycleEvents(events =>
+         {
 #if WINDOWS
                     events.AddWindows(w =>
                     {
@@ -140,11 +246,11 @@ namespace Garmetix
                             });
                     });
 #endif
-                });
+         });
 
             return builder;
         }
-    
+
 
     }
 }
