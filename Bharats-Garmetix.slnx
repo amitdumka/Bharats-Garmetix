@@ -17,7 +17,6 @@
     <Project Path="Common/Modules/Garmetix.CoreBase/Garmetix.CoreBase.csproj" Id="f622f35c-fd88-4d11-9bf3-a72d46b998d9" />
     <Project Path="Common/Modules/Garmetix.Onboarding/Garmetix.Onboarding.csproj" Id="7ab219d4-ba70-466a-8af1-b0da92ae2121" />
     <Project Path="Garmetix.Billing/Garmetix.Billing.csproj" Id="66e5697d-048c-4263-8e1e-30cd634b55a6" />
-    <Project Path="PointOfSale/PointOfSale.csproj" Id="798c7f88-7a3d-4c0d-9a59-05b535ab1770" />
   </Folder>
   <Folder Name="/Services/">
     <Project Path="Common/Services/Bharat.GoogleService/Bharat.GoogleService.csproj" Id="c2dc83c1-688a-4e15-8929-d58b7eeab11a" />
@@ -25,8 +24,11 @@
     <Project Path="Common/Services/Garmetix.PdfServices/Garmetix.PdfServices.csproj" Id="b8ae3424-1507-4f8e-afb5-3632f3dab0ea" />
     <Project Path="Common/Services/Garmetix.Reports/Garmetix.Reports.csproj" Id="1bd17a20-9ecf-4d28-8526-546a1f10db12" />
   </Folder>
-  <Project Path="Garmetix.IRetail/Garmetix.IRetail.csproj" Id="b0535989-d07f-4ff2-8ebd-98d667eb6cd5" />
+  <Project Path="Garmetix.IRetail/Garmetix.IRetail.csproj" Id="b0535989-d07f-4ff2-8ebd-98d667eb6cd5">
+    <Deploy Solution="Debug|*" />
+  </Project>
   <Project Path="Garmetix/Garmetix.csproj">
     <Deploy Solution="Debug|*" />
   </Project>
+  <Project Path="UI/Garmetix.SRP/Garmetix.SRP.csproj" Id="e29fbdf6-1a78-4662-ac47-fa81c785d339" />
 </Solution>
