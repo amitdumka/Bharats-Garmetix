@@ -172,7 +172,7 @@ namespace Garmetix.AI.Billing.ViewModels
         public async Task AddNewInvoiceAsync()
         {
             // Jumps directly to the Billing page using the Shell route defined in AppShell.xaml
-            await Shell.Current.GoToAsync("//InvoiceEntryPage");
+            await Shell.Current.GoToAsync("InvoiceEntryPage");
         }
 
         private void ApplyFilters()
