@@ -80,7 +80,6 @@ namespace Garmetix.IRetail
 
         public static MauiAppBuilder EnableBharatGarmetixModules(this MauiAppBuilder builder)
         {
-            //ok
             builder.ConfigureSyncfusionToolkit()
                    .ConfigureSyncfusionCore()
 
@@ -114,7 +113,7 @@ namespace Garmetix.IRetail
         }
 
         public static MauiAppBuilder EnableFonts(this MauiAppBuilder builder)
-        {//ok
+        {
             builder.ConfigureFonts(fonts =>
             {
                 fonts.AddFont("MauiMaterialAssets.ttf", "MaterialAssets");

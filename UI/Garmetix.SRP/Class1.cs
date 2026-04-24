@@ -1,6 +1,4 @@
-﻿ 
-
-namespace Garmetix.SRP
+﻿namespace Garmetix.SRP
 {
     // All the code in this file is included in all platforms.
     public static class GarmetixSRPUIModule
@@ -21,8 +19,12 @@ namespace Garmetix.SRP
         }
 
 
+
+        public static MauiAppBuilder UseModules(this MauiAppBuilder builder) { 
+        
+            // 
+            return builder;
+        
+        }
     }
-
-
-
 }
