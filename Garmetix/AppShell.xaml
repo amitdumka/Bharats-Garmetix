@@ -5,8 +5,23 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"
     xmlns:pages="clr-namespace:Garmetix.Pages"
-    Shell.FlyoutBehavior="Flyout"
-    Title="Garmetix">
+    xmlns:controls="clr-namespace:Garmetix.Views.Controls;assembly=Garmetix.Core"
+    xmlns:coreBase="clr-namespace:Garmetix.CoreBase.View;assembly=Garmetix.CoreBase"
+    xmlns:local="clr-namespace:Garmetix"    
+    Title="Garmetix" x:Name="shell"
+    FlyoutBackgroundColor="{AppThemeBinding Dark={DynamicResource BackgroundColorDark},
+                                            Light={DynamicResource BackgroundColorLight}}"
+    FlyoutBackgroundImage="thearvindstore005.jpg"
+    FlyoutBackgroundImageAspect="Fill"
+    FlyoutHeaderBehavior="CollapseOnScroll"
+    Shell.FlyoutBehavior="Flyout">
+
+    <Shell.FlyoutHeader>
+        <controls:ShellHeader />
+    </Shell.FlyoutHeader>
+
+
+
 
     <ShellContent
         Title="Dashboard"
@@ -27,14 +42,23 @@
         Route="manage" />
 
     <Shell.FlyoutFooter>
-        <Grid Padding="15">
-            <sf:SfSegmentedControl x:Name="ThemeSegmentedControl" 
-                VerticalOptions="Center" HorizontalOptions="Center" SelectionChanged="SfSegmentedControl_SelectionChanged"
-                SegmentWidth="40" SegmentHeight="40">
+
+        <Grid Padding="15" BackgroundColor="{AppThemeBinding Dark={DynamicResource BackgroundColorDark}, Light={DynamicResource BackgroundColorLight}}">
+
+            <controls:ShellFooter BindingContext="{Binding Source={x:Reference shell}}" />
+
+
+            <sf:SfSegmentedControl
+                x:Name="ThemeSegmentedControl"
+                HorizontalOptions="End"
+                SegmentHeight="30"
+                SegmentWidth="30"
+                SelectionChanged="SfSegmentedControl_SelectionChanged"
+                VerticalOptions="End">
                 <sf:SfSegmentedControl.ItemsSource>
                     <x:Array Type="{x:Type sf:SfSegmentItem}">
-                        <sf:SfSegmentItem ImageSource="{StaticResource IconLight}" SemanticProperties.Description="Light mode"/>
-                        <sf:SfSegmentItem ImageSource="{StaticResource IconDark}" SemanticProperties.Description="Dark mode"/>
+                        <sf:SfSegmentItem ImageSource="{StaticResource IconLight}" />
+                        <sf:SfSegmentItem ImageSource="{StaticResource IconDark}" />
                     </x:Array>
                 </sf:SfSegmentedControl.ItemsSource>
             </sf:SfSegmentedControl>

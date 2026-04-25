@@ -20,27 +20,27 @@ namespace Garmetix.IRetail
             BharatGarmetixModules.RegisterPaeRoutes();
             Routing.RegisterRoute("//LoginPage", typeof(LoginPage));
         }
-        protected override async void OnStart()
-        {
-            base.OnStart();
+        //protected override async void OnStart()
+        //{
+        //    base.OnStart();
 
-            // Check if user has previously logged in and set a PIN
-            string hasPin = await SecureStorage.Default.GetAsync("HasPin");
+        //    // Check if user has previously logged in and set a PIN
+        //    string hasPin = await SecureStorage.Default.GetAsync("HasPin");
 
-            if (hasPin == "true")
-            {
-                // Bypass full login, go straight to Quick PIN Unlock
-                await Shell.Current.GoToAsync("//PinUnlockPage");
-            }
-            else
-            {
-                // First time running, or user logged out
-                if (Application.Current?.MainPage is Shell)
-                    await Shell.Current.GoToAsync("//LoginPage");
-                else
-                    Application.Current.MainPage = new AppShell(); // then navigate
-            }
-        }
+        //    if (hasPin == "true")
+        //    {
+        //        // Bypass full login, go straight to Quick PIN Unlock
+        //        await Shell.Current.GoToAsync("//PinUnlockPage");
+        //    }
+        //    else
+        //    {
+        //        // First time running, or user logged out
+        //        if (Application.Current?.MainPage is Shell)
+        //            await Shell.Current.GoToAsync("//LoginPage");
+        //        else
+        //            Application.Current.MainPage = new AppShell(); // then navigate
+        //    }
+        //}
         protected override Window CreateWindow(IActivationState? activationState)
         {
             //return new Window(new AppShell());

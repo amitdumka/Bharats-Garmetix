@@ -1,10 +1,11 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Garmetix.Databases.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Garmetix
 {
     public partial class App : Application
     {
-        public App()
+        public App(IDatabaseService ds)
         {
             _ = GarmetixHelpers.InitApp();
             InitializeComponent();
