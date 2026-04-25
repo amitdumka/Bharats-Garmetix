@@ -46,8 +46,8 @@ namespace Garmetix
             if (hasPin == "true")
             {
                 // Bypass full login, go straight to Quick PIN Unlock
-                await Shell.Current.GoToAsync(PinUnlockPageUrl);
-               // return new Window(new PinUnlockedPage(appShell));
+                //await Shell.Current.GoToAsync(PinUnlockPageUrl(appShell));
+               return new Window(new PinUnlockPage(appShell));
             }
 
             // Check if onboarding is complete

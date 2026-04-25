@@ -1,6 +1,5 @@
 ﻿using Bharat.ToolKits.Helpers;
 using Bharat.ToolKits.Notifications;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Garmetix.Authentication.Models;
 using Garmetix.Core.Sessions;
 using Garmetix.Core.Settings;
@@ -8,7 +7,9 @@ using Garmetix.Databases;
 using Garmetix.Databases.Services;
 using Garmetix.Models.Auth;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics; 
+using System.Diagnostics;
+using System.Security.Cryptography;
+using System.Text;
 
 
 namespace Garmetix.Authentication
@@ -17,13 +18,14 @@ namespace Garmetix.Authentication
     {
         private DatabaseService _dataService;
         private static AuthenticationService? _instance;
-        public static AuthenticationService  Instances { get; private set; }= new AuthenticationService();
+        public static AuthenticationService Instances { get; private set; } = new AuthenticationService();
         public static AuthenticationService Instance => _instance ??= new AuthenticationService();
 
         public AppUser? CurrentUser => _dataService.CurrentUser;
 
-        public AuthenticationService() { 
-        
+        public AuthenticationService()
+        {
+
             _dataService = DatabaseService.Instance;
             _instance = this;
         }
@@ -43,14 +45,21 @@ namespace Garmetix.Authentication
         }
 
         //Pin Unloacl
+        public string HashString(string input)
+        {
+            if (string.IsNullOrEmpty(input)) return string.Empty;
+            using var sha256 = SHA256.Create();
+            var bytes = Encoding.UTF8.GetBytes(input);
+            var hash = sha256.ComputeHash(bytes);
+            return Convert.ToBase64String(hash);
+        }
+
         public async Task<bool> SetPinAsync(string pin)
         {
-            if (CurrentUser == null || pin.Length != 4) return false;
-
-            var db = await DatabaseHelper.GetDatabaseAsync();
+            if (CurrentUser == null || pin.Length != 4) return false;            
             CurrentUser.PinHash = HashString(pin);
-            await db.UpdateAsync(CurrentUser);
-
+            _dataService.ApplicationDB.AppUsers.Update(CurrentUser);
+            await _dataService.ApplicationDB.SaveChangesAsync();
             await SecureStorage.Default.SetAsync("HasPin", "true");
             return true;
         }
@@ -59,13 +68,11 @@ namespace Garmetix.Authentication
         {
             string storedUserId = await SecureStorage.Default.GetAsync("ActiveUserId");
             if (string.IsNullOrEmpty(storedUserId)) return false;
-
-            var db = await DatabaseHelper.GetDatabaseAsync();
-            var user = await db.Table<User>().Where(u => u.Id == Guid.Parse(storedUserId)).FirstOrDefaultAsync();
+            var user = await _dataService.ApplicationDB.AppUsers.Where(x => x.Id == Guid.Parse(storedUserId)).FirstOrDefaultAsync();
 
             if (user != null && user.PinHash == HashString(pin))
             {
-                CurrentUser = user;
+                _dataService.CurrentUser = user;
                 return true;
             }
             return false;
@@ -73,7 +80,7 @@ namespace Garmetix.Authentication
 
         public void Logout()
         {
-            CurrentUser = null;
+            _dataService.CurrentUser = null;
             SecureStorage.Default.Remove("ActiveUserId");
             SecureStorage.Default.Remove("HasPin");
         }
@@ -86,7 +93,14 @@ namespace Garmetix.Authentication
             if (user != null)
             {
                 _dataService.CurrentUser = user;
+
                 //TODO: Set The Session
+                if (user != null)
+                {
+                    _dataService.CurrentUser = user;
+                     SecureStorage.Default.SetAsync("ActiveUserId", user.Id.ToString());
+                     
+                }
                 return user;
             }
             else
@@ -104,8 +118,8 @@ namespace Garmetix.Authentication
             try
             {
                 var user = _dataService.ApplicationDB.AppUsers.Where(x => x.Email == loginInfo.Email && x.Password == loginInfo.Password).FirstOrDefault();
-            
-               return user;
+
+                return user;
             }
             catch (Exception ex)
             {
@@ -131,7 +145,8 @@ namespace Garmetix.Authentication
                 {
                     StorageOps.SetPref("EnableAutoLogin", rememberMe);
                     var store = _dataService.ApplicationDB.Stores.Include(x => x.Company).Include(x => x.StoreGroup).Where(x => x.Id == user.StoreId).FirstOrDefault();
-                    CurrentSession session = new CurrentSession {
+                    CurrentSession session = new CurrentSession
+                    {
                         IsAutoLoginEnabled = rememberMe,
                         CompanyId = user.CompanyId,
                         UserName = user.UserName,
@@ -154,7 +169,7 @@ namespace Garmetix.Authentication
                     }
                     else
                     {
-                        
+
                         await Notify.DisplayNotificationAsync("Company/Store Not found, Do Bussiness Registration", speak: true);
                     }
                     _ = SessionService.StartSessionAsync(session);
@@ -194,13 +209,18 @@ namespace Garmetix.Authentication
                     Email = registerInfo.Email,
                     Password = registerInfo.Password,
                     Name = registerInfo.Name,
-                    StoreId =storeid, Admin = false,
+                    StoreId = storeid,
+                    Admin = false,
                     CompanyId = companyId,
-                    StoreGroupId = groupid, EmployeeId = registerInfo.Employee
-                    ,AppOperation =Garmetix.Models.Enums.AppOperation.Store, 
-                    Role = Garmetix.Models.Enums.LoginRole.Member, 
-                    UserName = registerInfo.Email.Split('@')[0],UserType = Garmetix.Models.Enums.UserType.Guest, 
-                    RemoteUserId=Guid.Empty, Id = Guid.NewGuid()
+                    StoreGroupId = groupid,
+                    EmployeeId = registerInfo.Employee
+                    ,
+                    AppOperation = Garmetix.Models.Enums.AppOperation.Store,
+                    Role = Garmetix.Models.Enums.LoginRole.Member,
+                    UserName = registerInfo.Email.Split('@')[0],
+                    UserType = Garmetix.Models.Enums.UserType.Guest,
+                    RemoteUserId = Guid.Empty,
+                    Id = Guid.NewGuid()
 
                 };
                 _dataService.ApplicationDB.AppUsers.Add(newUser);

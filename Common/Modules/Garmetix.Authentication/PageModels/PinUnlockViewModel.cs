@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DocumentFormat.OpenXml.Drawing.Diagrams;
 
 namespace Garmetix.Authentication.PageModels
 {
@@ -14,6 +15,14 @@ namespace Garmetix.Authentication.PageModels
         [ObservableProperty] private bool dot2;
         [ObservableProperty] private bool dot3;
         [ObservableProperty] private bool dot4;
+
+        private Shell _appShell;
+
+
+        public PinUnlockViewModel(Shell appShell)
+        {
+            _appShell = appShell;
+        }
 
         [RelayCommand]
         public async Task KeypressAsync(string digit)
@@ -48,7 +57,7 @@ namespace Garmetix.Authentication.PageModels
 
         private async Task ValidatePinAsync()
         {
-            bool isValid = await AuthService.Instance.ValidatePinAsync(PinEntry);
+            bool isValid = await AuthenticationService.Instance.ValidatePinAsync(PinEntry);
 
             if (isValid)
             {
@@ -56,8 +65,24 @@ namespace Garmetix.Authentication.PageModels
                 MessageColor = Color.FromArgb("#10B981");
                 await Task.Delay(300); // Brief pause for UX
 
-                // Navigate to the Main App Dashboard
-                await Shell.Current.GoToAsync("//DashboardPage");
+                if (_appShell != null)
+                {
+                    var currentWindow = Application.Current?.Windows.FirstOrDefault();
+                    if (currentWindow != null)
+                    {
+                        currentWindow.Page = _appShell;// new AppShell();
+                    }
+
+                   _= AuthenticationService.Instance.PostLogin(AuthenticationService.Instance.CurrentUser, true);
+                }
+                else
+                {
+                    //Fallback if Shell is not set, navigate to Dashboard directly
+                    // Navigate to the Main App Dashboard
+                    await Shell.Current.GoToAsync("//DashboardPage");
+
+                }
+
             }
             else
             {
@@ -73,7 +98,7 @@ namespace Garmetix.Authentication.PageModels
         [RelayCommand]
         public async Task SwitchUserAsync()
         {
-            AuthService.Instance.Logout();
+            AuthenticationService.Instance.Logout();
             await Shell.Current.GoToAsync("//LoginPage");
         }
     }
