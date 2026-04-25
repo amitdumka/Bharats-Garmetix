@@ -1,5 +1,6 @@
 ﻿using Bharat.ToolKits.Helpers;
 using Bharat.ToolKits.Notifications;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Garmetix.Authentication.Models;
 using Garmetix.Core.Sessions;
 using Garmetix.Core.Settings;
@@ -7,24 +8,30 @@ using Garmetix.Databases;
 using Garmetix.Databases.Services;
 using Garmetix.Models.Auth;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
+using System.Diagnostics; 
+
 
 namespace Garmetix.Authentication
 {
     public class AuthenticationService
     {
         private DatabaseService _dataService;
-        public static AuthenticationService  Instance { get; private set; }= new AuthenticationService();
+        private static AuthenticationService? _instance;
+        public static AuthenticationService  Instances { get; private set; }= new AuthenticationService();
+        public static AuthenticationService Instance => _instance ??= new AuthenticationService();
+
+        public AppUser? CurrentUser => _dataService.CurrentUser;
+
         public AuthenticationService() { 
         
             _dataService = DatabaseService.Instance;
-            Instance = this;
+            _instance = this;
         }
 
         public AuthenticationService(DatabaseService databaseService)
         {
             _dataService = databaseService;
-            Instance = this;
+            _instance = this;
         }
 
         public bool DoLogout()
@@ -34,6 +41,44 @@ namespace Garmetix.Authentication
             // Simulate logout
             return true;
         }
+
+        //Pin Unloacl
+        public async Task<bool> SetPinAsync(string pin)
+        {
+            if (CurrentUser == null || pin.Length != 4) return false;
+
+            var db = await DatabaseHelper.GetDatabaseAsync();
+            CurrentUser.PinHash = HashString(pin);
+            await db.UpdateAsync(CurrentUser);
+
+            await SecureStorage.Default.SetAsync("HasPin", "true");
+            return true;
+        }
+
+        public async Task<bool> ValidatePinAsync(string pin)
+        {
+            string storedUserId = await SecureStorage.Default.GetAsync("ActiveUserId");
+            if (string.IsNullOrEmpty(storedUserId)) return false;
+
+            var db = await DatabaseHelper.GetDatabaseAsync();
+            var user = await db.Table<User>().Where(u => u.Id == Guid.Parse(storedUserId)).FirstOrDefaultAsync();
+
+            if (user != null && user.PinHash == HashString(pin))
+            {
+                CurrentUser = user;
+                return true;
+            }
+            return false;
+        }
+
+        public void Logout()
+        {
+            CurrentUser = null;
+            SecureStorage.Default.Remove("ActiveUserId");
+            SecureStorage.Default.Remove("HasPin");
+        }
+        //End Pin Unloacl
+
 
         public AppUser DoLogin(LoginInfo loginInfo)
         {

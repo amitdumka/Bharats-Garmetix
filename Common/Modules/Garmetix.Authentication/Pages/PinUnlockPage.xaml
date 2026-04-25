@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Garmetix.Authentication.Pages.PinUnlockPage"
+              Shell.NavBarIsVisible="False"
+               BackgroundColor="#0F172A"
+             Title="Pin Unlock">
+    <ContentPage.Resources>
+        <Style TargetType="Button" x:Key="NumpadBtn">
+            <Setter Property="BackgroundColor" Value="#1E293B" />
+            <Setter Property="TextColor" Value="#F8FAFC" />
+            <Setter Property="FontSize" Value="28" />
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="CornerRadius" Value="40" />
+            <Setter Property="WidthRequest" Value="80" />
+            <Setter Property="HeightRequest" Value="80" />
+        </Style>
+    </ContentPage.Resources>
+    <Grid>
+        <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="30">
+
+            <VerticalStackLayout HorizontalOptions="Center" Spacing="10">
+                <Image Source="lock_icon.png" HeightRequest="40" WidthRequest="40" HorizontalOptions="Center" Opacity="0.5"/>
+                <Label Text="GARMETIX SECURE" FontSize="16" FontAttributes="Bold" TextColor="#F8FAFC" HorizontalOptions="Center" CharacterSpacing="2"/>
+                <Label Text="{Binding Message}" FontSize="14" TextColor="{Binding MessageColor}" FontAttributes="Bold" HorizontalOptions="Center" Margin="0,10,0,0"/>
+            </VerticalStackLayout>
+
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="20" Margin="0,10,0,30">
+                <Ellipse Fill="{Binding Dot1, Converter={x:StaticResource BoolToColorConverter}}" WidthRequest="16" HeightRequest="16" />
+                <Ellipse Fill="{Binding Dot2, Converter={x:StaticResource BoolToColorConverter}}" WidthRequest="16" HeightRequest="16" />
+                <Ellipse Fill="{Binding Dot3, Converter={x:StaticResource BoolToColorConverter}}" WidthRequest="16" HeightRequest="16" />
+                <Ellipse Fill="{Binding Dot4, Converter={x:StaticResource BoolToColorConverter}}" WidthRequest="16" HeightRequest="16" />
+            </HorizontalStackLayout>
+
+            <Grid ColumnDefinitions="Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="20" RowSpacing="20" HorizontalOptions="Center">
+                <Button Grid.Row="0" Grid.Column="0" Text="1" Command="{Binding KeypressCommand}" CommandParameter="1" Style="{StaticResource NumpadBtn}"/>
+                <Button Grid.Row="0" Grid.Column="1" Text="2" Command="{Binding KeypressCommand}" CommandParameter="2" Style="{StaticResource NumpadBtn}"/>
+                <Button Grid.Row="0" Grid.Column="2" Text="3" Command="{Binding KeypressCommand}" CommandParameter="3" Style="{StaticResource NumpadBtn}"/>
+
+                <Button Grid.Row="1" Grid.Column="0" Text="4" Command="{Binding KeypressCommand}" CommandParameter="4" Style="{StaticResource NumpadBtn}"/>
+                <Button Grid.Row="1" Grid.Column="1" Text="5" Command="{Binding KeypressCommand}" CommandParameter="5" Style="{StaticResource NumpadBtn}"/>
+                <Button Grid.Row="1" Grid.Column="2" Text="6" Command="{Binding KeypressCommand}" CommandParameter="6" Style="{StaticResource NumpadBtn}"/>
+
+                <Button Grid.Row="2" Grid.Column="0" Text="7" Command="{Binding KeypressCommand}" CommandParameter="7" Style="{StaticResource NumpadBtn}"/>
+                <Button Grid.Row="2" Grid.Column="1" Text="8" Command="{Binding KeypressCommand}" CommandParameter="8" Style="{StaticResource NumpadBtn}"/>
+                <Button Grid.Row="2" Grid.Column="2" Text="9" Command="{Binding KeypressCommand}" CommandParameter="9" Style="{StaticResource NumpadBtn}"/>
+
+                <Button Grid.Row="3" Grid.Column="1" Text="0" Command="{Binding KeypressCommand}" CommandParameter="0" Style="{StaticResource NumpadBtn}"/>
+                <Button Grid.Row="3" Grid.Column="2" Text="⌫" Command="{Binding KeypressCommand}" CommandParameter="DEL" Style="{StaticResource NumpadBtn}" BackgroundColor="Transparent" TextColor="#94A3B8"/>
+            </Grid>
+
+            <Button Text="Forgot PIN / Switch User" Command="{Binding SwitchUserCommand}" BackgroundColor="Transparent" TextColor="#38BDF8" FontAttributes="Bold" Margin="0,30,0,0"/>
+
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

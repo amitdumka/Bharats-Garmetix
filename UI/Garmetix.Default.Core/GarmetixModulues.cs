@@ -28,25 +28,31 @@ namespace Garmetix
 
     public static class GarmetixHelpers
     {
-        public const string LoginPageUrl = "//LoginPage";
-        public const string PinUnlockPageUrl = "//PinUnlockPage";
-
         public static async Task InitApp()
         {
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(GarmetixModulues.SyncKey);
-            CultureInfo.CurrentUICulture = new CultureInfo("en-IN");           
+            CultureInfo.CurrentUICulture = new CultureInfo("en-IN");
             GarmetixModulues.RegisterPaeRoutes();
-          //TODO:  Routing.RegisterRoute("//LoginPage", typeof(LoginPage));
         }
         
-        public static async Task<Window> AppOnCreateWindows(IActivationState? activationState, Shell appShell)
-        {
-            //TODO: need to create best one  AppShell Instant creating before any thing will crash, so we need to create it after checking onboarding and session, but we need to pass it to login and onboarding pages to navigate after login or onboarding complete, so we can create it here and pass it to login and onboarding pages, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw
-            // So we need do find method so create new instance of AppShell after checking onboarding and session, and pass it to login and onboarding pages to navigate after login or onboarding complete, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null, but we need to make sure that it is not used before it is created, so we can create a flag to check if it is created or not, and if it is not created we can throw an exception or return null,
-            // Just need Type of(AppShell) to create new instance of it after checking onboarding and session, and pass it to login
 
-            //return new Window(new AppShell());
+
+        public static async Task<Window> CreateMainWindow(IActivationState? activationState, Shell appShell)
+        {
+
+            // Check if user has previously logged in and set a PIN
+            string? hasPin = await SecureStorage.Default.GetAsync("HasPin");
+
+            if (hasPin == "true")
+            {
+                // Bypass full login, go straight to Quick PIN Unlock
+                await Shell.Current.GoToAsync(PinUnlockPageUrl);
+               // return new Window(new PinUnlockedPage(appShell));
+            }
+
+            // Check if onboarding is complete
             var onboardingComplete = Preferences.Get("IsOnboardingComplete", false);
+
             if (!onboardingComplete)
             {
                 // Use a NavigationPage to allow navigation between onboarding/seed pages
@@ -66,29 +72,10 @@ namespace Garmetix
                 {
                     return new Window(new Login(appShell));
                 }
+            }
 
-            }
         }
-        public static async Task AppOnStart()
-        {
-            //TODO: need to create best one 
-            // Check if user has previously logged in and set a PIN
-            string hasPin = await SecureStorage.Default.GetAsync("HasPin");
 
-            if (hasPin == "true")
-            {
-                // Bypass full login, go straight to Quick PIN Unlock
-                await Shell.Current.GoToAsync(PinUnlockPageUrl);
-            }
-            else
-            {
-                // First time running, or user logged out
-                if (Application.Current?.MainPage is Shell)
-                    await Shell.Current.GoToAsync(LoginPageUrl);
-                else
-                    Application.Current.MainPage = null;// new AppShell(); // then navigate
-            }
-        }
 
     }
     public static class GarmetixModulues
