@@ -417,7 +417,7 @@ public class Seeder
             StoreGroupId = store.StoreGroupId,
             StoreId = store.Id,
             UserName = "Admin",
-            RemoteUserId = null,
+            RemoteUserId = null, PinHash="1234"
         };
         var owner = new AppUser
         {
@@ -434,7 +434,8 @@ public class Seeder
             Role = LoginRole.Member,
             StoreGroupId = store.StoreGroupId,
             StoreId = store.Id,
-            UserName = store.Company.ContactPerson.Replace(" ", "").Trim()
+            UserName = store.Company.ContactPerson.Replace(" ", "").Trim(),
+            PinHash = "1234"
         };
         var cashier = new AppUser
         {
@@ -451,7 +452,8 @@ public class Seeder
             Role = LoginRole.StoreManager,
             StoreGroupId = store.StoreGroupId,
             StoreId = store.Id,
-            UserName = "StoreManager"
+            UserName = "StoreManager",
+            PinHash = "1234"
         };
 
         db.AppUsers.Add(admin);
