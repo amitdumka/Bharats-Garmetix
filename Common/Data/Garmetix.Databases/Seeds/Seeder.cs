@@ -14,7 +14,7 @@ namespace Garmetix.Databases.Seeds;
 public class Seeder
 {
     private DatabaseContext db = DatabaseContext.Instance;
-    private readonly ApplicationDatabaseContext appDb = ApplicationDatabaseContext.Instance;
+    private readonly ApplicationDatabaseContext appDb = ApplicationDatabaseContext.Instance??new ApplicationDatabaseContext();
     private int count = 0;
     private int saved = 0;
 
@@ -279,14 +279,14 @@ public class Seeder
             Aadhar = "NA",
             Category = EmployeeCategory.Owner,
             CompanyId = store.CompanyId,
-            FirstName = store.Company.ContactPerson.Split(" ")[0],
+            FirstName = store.Company?.ContactPerson.Split(" ")[0]??"",
             Id = Guid.NewGuid(),
-            LastName = store.Company.ContactPerson.Split(" ")[1],
-            Mobile = store.Company.ContactMobile,
+            LastName = store.Company?.ContactPerson.Split(" ")[1]??"",
+            Mobile = store.Company?.ContactMobile??"",
             DateOfBirth = DateTime.Now.Date.AddYears(-25),
             EmpId = 1,
             Gender = Gender.Male,
-            JoiningDate = store.Company.StartDate,
+            JoiningDate = (DateTime)(store.Company?.StartDate)  ,
             LeavingDate = null,
             PAN = "NA",
             StoreGroupId = store.StoreGroupId,
@@ -1091,7 +1091,7 @@ public class Seeder
                 OpeningDate = company.StartDate,
                 Synced = false,
                 Active = true,
-                BankId = db.Banks.FirstOrDefault(x => x.Name == "State Bank Of India").Id,
+                BankId = db.Banks.FirstOrDefault(static x => x.Name == "State Bank Of India").Id,
                 CompanyId = company.Id,
 
                 AccountHolderName = company.Name,

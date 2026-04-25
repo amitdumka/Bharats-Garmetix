@@ -17,11 +17,11 @@ namespace Garmetix
 
             // Application does not have a MainWindow property (hence CS1061).
             // Use the Application APIs to register/open/activate the window instead.
-            if (Application.Current != null)
-            {
-                Application.Current.OpenWindow(mainWindow);
-                Application.Current.ActivateWindow(mainWindow);
-            }
+          //  if (Application.Current != null)
+          //  {
+               // Application.Current.OpenWindow(mainWindow);
+               // Application.Current.ActivateWindow(mainWindow);
+         //   }
             return mainWindow;
 
             //TODO: Consider refactoring CreateMainWindow to be synchronous if it does not perform any truly asynchronous work, or if the asynchronous work can be handled within the method without needing to return a Task<Window>.
