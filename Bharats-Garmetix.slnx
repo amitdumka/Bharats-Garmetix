@@ -30,5 +30,6 @@
   <Project Path="Garmetix/Garmetix.csproj">
     <Deploy Solution="Debug|*" />
   </Project>
+  <Project Path="UI/Garmetix.Default.Core/Garmetix.Default.Core.csproj" Id="65d5dae7-7005-43b8-89b3-cf2cf9f180a3" />
   <Project Path="UI/Garmetix.SRP/Garmetix.SRP.csproj" Id="e29fbdf6-1a78-4662-ac47-fa81c785d339" />
 </Solution>

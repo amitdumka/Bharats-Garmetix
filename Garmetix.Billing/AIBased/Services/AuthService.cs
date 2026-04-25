@@ -5,6 +5,7 @@ using Garmetix.Billing.AIBased.Helpers;
 
 namespace Garmetix.AI.Billing.Services
 {
+    [Obsolete]
     public class AuthService
     {
         private static AuthService _instance;
@@ -12,6 +13,7 @@ namespace Garmetix.AI.Billing.Services
 
         public User CurrentUser { get; private set; }
 
+        [Obsolete]
         public string HashString(string input)
         {
             if (string.IsNullOrEmpty(input)) return string.Empty;
@@ -21,6 +23,7 @@ namespace Garmetix.AI.Billing.Services
             return Convert.ToBase64String(hash);
         }
 
+        [Obsolete]
         public async Task<bool> AuthenticateAsync(string username, string password)
         {
             var db = await DatabaseHelper.GetDatabaseAsync();
@@ -39,6 +42,8 @@ namespace Garmetix.AI.Billing.Services
             return false;
         }
 
+        [Obsolete]
+
         public async Task<bool> SetPinAsync(string pin)
         {
             if (CurrentUser == null || pin.Length != 4) return false;
@@ -51,6 +56,7 @@ namespace Garmetix.AI.Billing.Services
             return true;
         }
 
+        [Obsolete]
         public async Task<bool> ValidatePinAsync(string pin)
         {
             string storedUserId = await SecureStorage.Default.GetAsync("ActiveUserId");
@@ -67,6 +73,7 @@ namespace Garmetix.AI.Billing.Services
             return false;
         }
 
+        [Obsolete]
         public void Logout()
         {
             CurrentUser = null;

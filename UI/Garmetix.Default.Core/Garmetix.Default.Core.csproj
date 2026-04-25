@@ -27,29 +27,17 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.51" />
-		<PackageReference Include="Syncfusion.Maui.DataForm" Version="33.1.47" />
-		<PackageReference Include="Syncfusion.Maui.Toolkit" Version="1.0.9" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Data\Garmetix.Databases\Garmetix.Databases.csproj" />
-	  <ProjectReference Include="..\..\Library\Bharat.ToolKits.Notifications\Bharat.ToolKits.Notifications.csproj" />
-	  <ProjectReference Include="..\..\Library\Garmetix.Core\Garmetix.Core.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <MauiXaml Update="Pages\ForgotPassword.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\Login.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\PinUnlockPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\ResetPassword.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
+	  <ProjectReference Include="..\..\Common\Library\Garmetix.Core\Garmetix.Core.csproj" />
+	  <ProjectReference Include="..\..\Common\Library\Garmetix.Settings\Garmetix.Settings.csproj" />
+	  <ProjectReference Include="..\..\Common\Modules\Garmetix.Authentication\Garmetix.Authentication.csproj" />
+	  <ProjectReference Include="..\..\Common\Modules\Garmetix.CoreBase\Garmetix.CoreBase.csproj" />
+	  <ProjectReference Include="..\..\Common\Modules\Garmetix.Onboarding\Garmetix.Onboarding.csproj" />
+	  <ProjectReference Include="..\..\Common\Services\Garmetix.CoreServices\Garmetix.CoreServices.csproj" />
+	  <ProjectReference Include="..\..\Common\Services\Garmetix.PdfServices\Garmetix.PdfServices.csproj" />
+	  <ProjectReference Include="..\..\Common\Services\Garmetix.Reports\Garmetix.Reports.csproj" />
 	</ItemGroup>
 
 </Project>
