@@ -1,9 +1,11 @@
 ﻿using Garmetix.AI.Billing.Models;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
+using QuestPDF.Helpers; 
 using QuestPDF.Infrastructure;
 using Colors = QuestPDF.Helpers.Colors;
 using IContainer = QuestPDF.Infrastructure.IContainer;
+
 
 namespace Garmetix.Billing.AIBased.Helpers
 {
@@ -40,8 +42,8 @@ namespace Garmetix.Billing.AIBased.Helpers
 
                     page.Margin(12, Unit.Millimetre);
                     page.PageColor(Colors.White);
-                    page.DefaultTextStyle(x => x.FontSize(9).FontFamily(Fonts.Georgia).FontColor(BrandDark));
-
+                    page.DefaultTextStyle(x => x.FontSize(9).FontFamily(QuestPDF.Helpers.Fonts.Georgia).FontColor(BrandDark));
+                    //page.DefaultTextStyle(x => x.FontSize(9).FontFamily("Georgia").FontColor(BrandDark));
                     page.Header().Element(header => ComposeHeader(header, invoice));
                     page.Content().Element(content => ComposeContent(content, invoice, items, payments));
                     page.Footer().Element(footer => ComposeFooter(footer, instagramUrl, googleMapsUrl));
