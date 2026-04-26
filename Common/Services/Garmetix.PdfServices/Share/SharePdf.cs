@@ -29,7 +29,7 @@ namespace Garmetix.PdfServices.Share
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error", $"Could not share file: {ex.Message}", "OK");
+                await Shell.Current.DisplayAlertAsync("Error", $"Could not share file: {ex.Message}", "OK");
                 return false;
             }
         }
@@ -42,7 +42,7 @@ namespace Garmetix.PdfServices.Share
 
             if (string.IsNullOrWhiteSpace(emailid))
             {
-                await Shell.Current.DisplayAlert("Input Needed", "Please enter an email address to share.", "OK");
+                await Shell.Current.DisplayAlertAsync("Input Needed", "Please enter an email address to share.", "OK");
                 return false;
             }
 
@@ -61,12 +61,12 @@ namespace Garmetix.PdfServices.Share
             }
             catch (FeatureNotSupportedException)
             {
-                await Shell.Current.DisplayAlert("Not Supported", "Email is not supported on this device.", "OK");
+                await Shell.Current.DisplayAlertAsync("Not Supported", "Email is not supported on this device.", "OK");
                 return false;
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error", $"Failed to send email: {ex.Message}", "OK");
+                await Shell.Current.DisplayAlertAsync("Error", $"Failed to send email: {ex.Message}", "OK");
                 return false;
             }
         }

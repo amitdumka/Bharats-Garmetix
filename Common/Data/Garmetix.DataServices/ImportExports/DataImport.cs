@@ -380,31 +380,31 @@ namespace Garmetix.DataServices.ImportExports
 
                 if (result == null)
                 {
-                    await Shell.Current.DisplayAlert("Cancelled", "File picking cancelled.", "OK");
+                    await Shell.Current.DisplayAlertAsync("Cancelled", "File picking cancelled.", "OK");
                     return "";
                 }
 
                 string excelFilePath = result.FullPath;
-                await Shell.Current.DisplayAlert("File Selected", $"Selected file: {excelFilePath}", "OK");
+                await Shell.Current.DisplayAlertAsync("File Selected", $"Selected file: {excelFilePath}", "OK");
                 return excelFilePath; ;
                 // Step 2: Call the generic function to read and save
                 // Make sure your Excel file has headers like "Id", "Name", "Category", "Price", "Stock", "LastUpdated", "IsActive"
                 // And corresponding data below them.
                 // await ExcelService.ImportAndUpdateDatabaseSF<Product>(excelFilePath, _db);
 
-                // await Shell.Current.DisplayAlert("Success", "Excel data imported successfully!", "OK");
+                // await Shell.Current.DisplayAlertAsync("Success", "Excel data imported successfully!", "OK");
             }
             catch (FileNotFoundException ex)
             {
-                await Shell.Current.DisplayAlert("Error", $"File not found: {ex.Message}", "OK"); return "";
+                await Shell.Current.DisplayAlertAsync("Error", $"File not found: {ex.Message}", "OK"); return "";
             }
             catch (InvalidOperationException ex)
             {
-                await Shell.Current.DisplayAlert("Error", $"Operation failed: {ex.Message}", "OK"); return "";
+                await Shell.Current.DisplayAlertAsync("Error", $"Operation failed: {ex.Message}", "OK"); return "";
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error", $"An unexpected error occurred: {ex.Message}", "OK");
+                await Shell.Current.DisplayAlertAsync("Error", $"An unexpected error occurred: {ex.Message}", "OK");
                 return "";
             }
         }
@@ -454,7 +454,7 @@ namespace Garmetix.DataServices.ImportExports
             string JsonData = JsonSerializer.Serialize(dataTable);
 
             var entities = JsonSerializer.Deserialize<List<T>>(JsonData);
-            return entities;
+            return entities ?? [];
         }
 
         /// <summary>

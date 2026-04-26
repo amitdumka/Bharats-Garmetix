@@ -126,18 +126,18 @@ namespace Garmetix.Core.PageModels
                 if (success)
                 {
                     ReportMessage = $"Data exported to {filePath}";
-                    await Shell.Current.DisplayAlert("Export Complete", ReportMessage, "OK");
+                    await Shell.Current.DisplayAlertAsync("Export Complete", ReportMessage, "OK");
                 }
                 else
                 {
                     ReportMessage = "Export Failed: Could not export data to JSON.";
-                    await Shell.Current.DisplayAlert("Export Failed", ReportMessage, "OK");
+                    await Shell.Current.DisplayAlertAsync("Export Failed", ReportMessage, "OK");
                 }
             }
             catch (Exception ex)
             {
                 ReportMessage = $"An error occurred during JSON export: {ex.Message}";
-                await Shell.Current.DisplayAlert("Export Error", ReportMessage, "OK");
+                await Shell.Current.DisplayAlertAsync("Export Error", ReportMessage, "OK");
             }
         }
 
@@ -168,18 +168,18 @@ namespace Garmetix.Core.PageModels
                     ReportMessage = $"Importing data from {Path.GetFileName(filePath)} (JSON)...";                                       
                     report=await DataImportExport.ImportAndUpdateDatabaseFromJson<TEntity>(filePath,"Sheett1");
                     ReportMessage = report;
-                    await Shell.Current.DisplayAlert("Import Report (JSON)", report, "OK");
+                    await Shell.Current.DisplayAlertAsync("Import Report (JSON)", report, "OK");
                 }
                 else
                 {
                     ReportMessage = "JSON Import Cancelled: No file was selected.";
-                    await Shell.Current.DisplayAlert("Import Cancelled", ReportMessage, "OK");
+                    await Shell.Current.DisplayAlertAsync("Import Cancelled", ReportMessage, "OK");
                 }
             }
             catch (Exception ex)
             {
                 ReportMessage = $"An error occurred during JSON file picking or import: {ex.Message}";
-                await Shell.Current.DisplayAlert("Import Error (JSON)", ReportMessage, "OK");
+                await Shell.Current.DisplayAlertAsync("Import Error (JSON)", ReportMessage, "OK");
             }
         }
 
@@ -211,18 +211,18 @@ namespace Garmetix.Core.PageModels
                 if (success)
                 {
                     ReportMessage = $"Data exported to {filePath}";
-                    await Shell.Current.DisplayAlert("Export Complete", ReportMessage, "OK");
+                    await Shell.Current.DisplayAlertAsync("Export Complete", ReportMessage, "OK");
                 }
                 else
                 {
                     ReportMessage = "Export Failed: Could not export data to Excel.";
-                    await Shell.Current.DisplayAlert("Export Failed", ReportMessage, "OK");
+                    await Shell.Current.DisplayAlertAsync("Export Failed", ReportMessage, "OK");
                 }
             }
             catch (Exception ex)
             {
                 ReportMessage = $"An error occurred during export: {ex.Message}";
-                await Shell.Current.DisplayAlert("Export Error", ReportMessage, "OK");
+                await Shell.Current.DisplayAlertAsync("Export Error", ReportMessage, "OK");
             }
         }
 
@@ -253,18 +253,18 @@ namespace Garmetix.Core.PageModels
                     TEntity? entity = null;
                     report = await DataImportExport.ImportAndUpdateDatabaseFromExcel<TEntity>(filePath,"Sheett1");
                     ReportMessage = report; // Display the detailed report
-                    await Shell.Current.DisplayAlert("Import Report", report, "OK");
+                    await Shell.Current.DisplayAlertAsync("Import Report", report, "OK");
                 }
                 else
                 {
                     ReportMessage = "Import Cancelled: No file was selected.";
-                    await Shell.Current.DisplayAlert("Import Cancelled", ReportMessage, "OK");
+                    await Shell.Current.DisplayAlertAsync("Import Cancelled", ReportMessage, "OK");
                 }
             }
             catch (Exception ex)
             {
                 ReportMessage = $"An error occurred during file picking or import: {ex.Message}";
-                await Shell.Current.DisplayAlert("Import Error", ReportMessage, "OK");
+                await Shell.Current.DisplayAlertAsync("Import Error", ReportMessage, "OK");
             }
         }
 
@@ -318,7 +318,7 @@ namespace Garmetix.Core.PageModels
             TEntity entity = (TEntity)itemToDelete;
             if (entity != null)
             {
-                Shell.Current.DisplayAlert("Delete", "Are you sure you want to delete this record?", "Yes", "No").ContinueWith((result) =>
+                Shell.Current.DisplayAlertAsync("Delete", "Are you sure you want to delete this record?", "Yes", "No").ContinueWith((result) =>
                 {
                     if (result.Result == true)
                     {

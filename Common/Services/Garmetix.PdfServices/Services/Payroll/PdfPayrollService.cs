@@ -89,7 +89,7 @@ namespace Garmetix.PdfServices.Services.Payroll
             catch (Exception ex)
             {
                 // Handle any exceptions that occur during PDF creation and display an alert.
-                await Shell.Current.DisplayAlert("Error", $"Failed to create PDF: {ex.Message}", "OK");
+                await Shell.Current.DisplayAlertAsync("Error", $"Failed to create PDF: {ex.Message}", "OK");
                 return string.Empty;
             }
             finally

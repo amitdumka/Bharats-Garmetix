@@ -29,7 +29,7 @@
     <Tab Title="Petty Cash Sheet" Icon="rain_icon.png">
         <ShellContent
             Title="Petty Cash Sheet"
-            ContentTemplate="{DataTemplate days:CashDetailPage}"
+            ContentTemplate="{DataTemplate days:PettyCashSheetPage}"
             Route="PettyCashSheets" />
     </Tab>
     <Tab Title="Cash Details" Icon="rain_icon.png">

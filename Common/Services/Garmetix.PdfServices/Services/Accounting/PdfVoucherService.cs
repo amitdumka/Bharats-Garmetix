@@ -78,7 +78,7 @@ internal class PdfVoucherService : PdfBaseService, IPdfVoucherService
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            await Shell.Current.DisplayAlert("Error", $"Failed to create PDF: {ex.Message}", "OK");
+            await Shell.Current.DisplayAlertAsync("Error", $"Failed to create PDF: {ex.Message}", "OK");
             return string.Empty;
         }
         finally
@@ -142,7 +142,7 @@ internal class PdfVoucherService : PdfBaseService, IPdfVoucherService
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            await Shell.Current.DisplayAlert("Error", $"Failed to create PDF: {ex.Message}", "OK");
+            await Shell.Current.DisplayAlertAsync("Error", $"Failed to create PDF: {ex.Message}", "OK");
             return string.Empty;
         }
         finally

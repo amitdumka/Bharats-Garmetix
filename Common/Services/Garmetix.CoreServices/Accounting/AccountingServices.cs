@@ -23,7 +23,7 @@ namespace Garmetix.CoreServices.Accounting
             {
                 try
                 {
-                    var result = await Shell.Current.DisplayAlert("Save Voucher", "Do you want to save the voucher?", "Yes", "No");
+                    var result = await Shell.Current.DisplayAlertAsync("Save Voucher", "Do you want to save the voucher?", "Yes", "No");
                     tcs.SetResult(result);
                 }
                 catch (Exception ex)
@@ -56,7 +56,7 @@ namespace Garmetix.CoreServices.Accounting
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error", $"Could not share file: {ex.Message}", "OK");
+                await Shell.Current.DisplayAlertAsync("Error", $"Could not share file: {ex.Message}", "OK");
                 return false;
             }
         }
@@ -70,7 +70,7 @@ namespace Garmetix.CoreServices.Accounting
 
             if (string.IsNullOrWhiteSpace(emailid))
             {
-                await Shell.Current.DisplayAlert("Email", "Sharing over to default company email.", "OK");
+                await Shell.Current.DisplayAlertAsync("Email", "Sharing over to default company email.", "OK");
                 emailid = LastVoucherDetails.CompanyEmail;
                 // return false;
             }
@@ -90,12 +90,12 @@ namespace Garmetix.CoreServices.Accounting
             }
             catch (FeatureNotSupportedException)
             {
-                await Shell.Current.DisplayAlert("Not Supported", "Email is not supported on this device.", "OK");
+                await Shell.Current.DisplayAlertAsync("Not Supported", "Email is not supported on this device.", "OK");
                 return false;
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error", $"Failed to send email: {ex.Message}", "OK");
+                await Shell.Current.DisplayAlertAsync("Error", $"Failed to send email: {ex.Message}", "OK");
                 return false;
             }
         }
@@ -109,7 +109,7 @@ namespace Garmetix.CoreServices.Accounting
             {
                 try
                 {
-                    var result = await Shell.Current.DisplayAlert("Share Voucher", "Do you want to Share the voucher?", "Yes", "No");
+                    var result = await Shell.Current.DisplayAlertAsync("Share Voucher", "Do you want to Share the voucher?", "Yes", "No");
                     tcs.SetResult(result);
                 }
                 catch (Exception ex)

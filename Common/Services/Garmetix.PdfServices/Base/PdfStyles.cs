@@ -156,7 +156,7 @@ namespace Garmetix.PdfServices.Base
             {
                 string errorMessage = $"A required font file is missing: {ex.Message}";
                 Console.Error.WriteLine(errorMessage); // Log to console for debugging
-                await Shell.Current.DisplayAlert("Font Loading Error", errorMessage, "OK");
+                await Shell.Current.DisplayAlertAsync("Font Loading Error", errorMessage, "OK");
                 // SentrySdk.CaptureException(ex); // Uncomment if Sentry is configured
                 // NotificationService.AddNotification("Error", errorMessage); // Uncomment if NotificationService is configured
                 return false;
@@ -165,7 +165,7 @@ namespace Garmetix.PdfServices.Base
             {
                 string errorMessage = $"An I/O error occurred while loading fonts: {ex.Message}";
                 Console.Error.WriteLine(errorMessage); // Log to console
-                await Shell.Current.DisplayAlert("Font Loading Error", errorMessage, "OK");
+                await Shell.Current.DisplayAlertAsync("Font Loading Error", errorMessage, "OK");
                 // SentrySdk.CaptureException(ex); // Uncomment if Sentry is configured
                 // NotificationService.AddNotification("Error", errorMessage); // Uncomment if NotificationService is configured
                 return false;
@@ -175,7 +175,7 @@ namespace Garmetix.PdfServices.Base
                 // Catch any other unexpected errors during font loading or PdfTrueTypeFont creation.
                 string errorMessage = $"An unexpected error occurred while loading PDF fonts: {ex.Message}";
                 Console.Error.WriteLine(errorMessage); // Log to console
-                await Shell.Current.DisplayAlert("Error", errorMessage, "OK");
+                await Shell.Current.DisplayAlertAsync("Error", errorMessage, "OK");
                 // SentrySdk.CaptureMessage($"Failed to load fonts: {ex.Message}"); // Uncomment if Sentry is configured
                 // SentrySdk.CaptureException(ex); // Uncomment if Sentry is configured
                 // _ = NotificationService.AddNotification("Error", errorMessage); // Uncomment if NotificationService is configured
