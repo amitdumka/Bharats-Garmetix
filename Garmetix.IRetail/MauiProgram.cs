@@ -1,8 +1,7 @@
-﻿using CommunityToolkit.Maui;
-using Microsoft.Extensions.Logging;
-//using Plugin.LocalNotification;
+﻿//using Plugin.LocalNotification;
 
 using Garmetix.Databases;
+using Microsoft.Extensions.Logging;
 
 
 namespace Garmetix.IRetail
@@ -13,7 +12,7 @@ namespace Garmetix.IRetail
         {
             var builder = MauiApp.CreateBuilder();
             builder
-                .UseMauiApp<App>().EnableBharatGarmetixModules()
+                .UseMauiApp<App>()
                     .ConfigureMauiHandlers(handlers =>
                     {
 #if IOS || MACCATALYST
@@ -21,10 +20,7 @@ namespace Garmetix.IRetail
 #endif
                     })
                 .UseGarmetixDatabases()
-                .UseMauiCommunityToolkit(options =>
-                {
-                    options.SetShouldEnableSnackbarOnWindows(true);
-                });
+                ;
 #if DEBUG
             builder.Logging.AddDebug();
             builder.Services.AddLogging(configure => configure.AddDebug());

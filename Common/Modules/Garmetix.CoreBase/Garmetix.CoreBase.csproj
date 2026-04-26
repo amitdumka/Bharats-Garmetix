@@ -27,7 +27,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.51" />
-		<PackageReference Include="Plugin.LocalNotification" Version="14.1.0" />
+		
 	</ItemGroup>
 
 	<ItemGroup>

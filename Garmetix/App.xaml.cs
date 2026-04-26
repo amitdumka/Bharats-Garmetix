@@ -14,7 +14,7 @@ namespace Garmetix
         protected override Window CreateWindow(IActivationState? activationState)
         {
             // CreateMainWindow returns a Task<Window>; get the result synchronously because the override is not async.
-            var mainWindow = GarmetixHelpers.CreateMainWindow(activationState, new AppShell()).GetAwaiter().GetResult();
+            var mainWindow = GarmetixHelpers.CreateMainWindow(activationState, new GarmetixShell()).GetAwaiter().GetResult();
 
             // Application does not have a MainWindow property (hence CS1061).
             // Use the Application APIs to register/open/activate the window instead.

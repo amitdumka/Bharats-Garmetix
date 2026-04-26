@@ -1,7 +1,8 @@
-﻿using CommunityToolkit.Maui;
-using Microsoft.Extensions.Logging;
-using Syncfusion.Maui.Toolkit.Hosting;
+﻿
+using CommunityToolkit.Maui;
 using Garmetix.Databases;
+using Garmetix.Dependencies;
+using Microsoft.Extensions.Logging;
 
 namespace Garmetix
 {
@@ -12,44 +13,16 @@ namespace Garmetix
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
-                //.UseMauiCommunityToolkit()
-                .ConfigureGarmetixModules()
-                .UseMauiCommunityToolkit(options =>
-                {
-                    options.SetShouldEnableSnackbarOnWindows(true);
-                })
-                .UseGarmetixDatabases()
-                .ConfigureSyncfusionToolkit()
-                .ConfigureMauiHandlers(handlers =>
-                {
-#if WINDOWS
-    				Microsoft.Maui.Controls.Handlers.Items.CollectionViewHandler.Mapper.AppendToMapping("KeyboardAccessibleCollectionView", (handler, view) =>
-    				{
-    					handler.PlatformView.SingleSelectionFollowsFocus = false;
-    				});
-
-    				Microsoft.Maui.Handlers.ContentViewHandler.Mapper.AppendToMapping(nameof(Pages.Controls.CategoryChart), (handler, view) =>
-    				{
-    					if (view is Pages.Controls.CategoryChart && handler.PlatformView is Microsoft.Maui.Platform.ContentPanel contentPanel)
-    					{
-    						contentPanel.IsTabStop = true;
-    					}
-    				});
-#endif
-                })
-                .ConfigureFonts(fonts =>
-                {
-                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                    fonts.AddFont("SegoeUI-Semibold.ttf", "SegoeSemibold");
-                    fonts.AddFont("FluentSystemIcons-Regular.ttf", FluentUI.FontFamily);
-                });
+                .UseMauiCommunityToolkit()
+                .UseGarmetixDependencies()
+                .ConfigureGarmetixModules()                
+                .UseGarmetixDatabases();
 
 #if DEBUG
-    		builder.Logging.AddDebug();
-    		builder.Services.AddLogging(configure => configure.AddDebug());
+            builder.Logging.AddDebug();
+            builder.Services.AddLogging(configure => configure.AddDebug());
 #endif
-            
+
             builder.Services.AddSingleton<ProjectRepository>();
             builder.Services.AddSingleton<TaskRepository>();
             builder.Services.AddSingleton<CategoryRepository>();

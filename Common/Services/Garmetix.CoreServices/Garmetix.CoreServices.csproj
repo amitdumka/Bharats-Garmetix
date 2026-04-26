@@ -26,10 +26,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.5" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.51" />
-		<PackageReference Include="Plugin.LocalNotification" Version="14.1.0" />
-		<!--<PackageReference Include="Syncfusion.XlsIO.Net.Core" Version="33.1.47" />-->
 	</ItemGroup>
 
 	<ItemGroup>

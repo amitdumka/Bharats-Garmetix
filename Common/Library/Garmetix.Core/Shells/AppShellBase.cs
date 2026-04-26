@@ -1,10 +1,32 @@
 ﻿using Garmetix.Views.Controls;
 using Syncfusion.Maui.Toolkit.SegmentedControl;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Windows.Input;
 
 namespace Garmetix.Core.Shells
 {
     public class AppShellBase : StandardAppShell
     {
+        public new event PropertyChangedEventHandler? PropertyChanged;
+        public ICommand ExitCommand { get; }
+        protected override void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        private string _storeName = "Garmetix";
+        public string StoreName
+        {
+            get => _storeName;
+            set
+            {
+                if (_storeName != value)
+                {
+                    _storeName = value;
+                    OnPropertyChanged(nameof(StoreName));
+                }
+            }
+        }
         public AppShellBase() : base(new StandardShellConfig
         {
             AppName = "Garmetix",

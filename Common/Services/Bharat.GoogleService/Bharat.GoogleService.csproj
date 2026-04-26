@@ -29,7 +29,10 @@
 		<PackageReference Include="Google.Apis.Core" Version="1.73.0" />
 		<PackageReference Include="Google.Apis.Drive.v3" Version="1.73.0.4098" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.51" />
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Library\Garmetix.Dependencies\Garmetix.Dependencies.csproj" />
 	</ItemGroup>
 
 </Project>

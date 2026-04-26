@@ -26,6 +26,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Fonts\FluentUI.cs" />
+	  <Compile Remove="Resources\Fonts\FluentUI.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.51" />
 	</ItemGroup>
 
@@ -38,6 +43,12 @@
 	  <ProjectReference Include="..\..\Common\Services\Garmetix.CoreServices\Garmetix.CoreServices.csproj" />
 	  <ProjectReference Include="..\..\Common\Services\Garmetix.PdfServices\Garmetix.PdfServices.csproj" />
 	  <ProjectReference Include="..\..\Common\Services\Garmetix.Reports\Garmetix.Reports.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiFont Include="Fonts\FluentUI.cs" />
+	  <MauiFont Include="Resources\Fonts\FluentSystemIcons-Regular.ttf" />
+	  <MauiFont Include="Resources\Fonts\FluentUI.cs" />
 	</ItemGroup>
 
 </Project>

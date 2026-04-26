@@ -27,10 +27,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.51" />
-		<PackageReference Include="Syncfusion.Maui.DataForm" Version="33.1.47" />
-		<PackageReference Include="Syncfusion.Maui.Toolkit" Version="1.0.9" />
 	</ItemGroup>
-
+	
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Data\Garmetix.Databases\Garmetix.Databases.csproj" />
 	  <ProjectReference Include="..\..\Library\Bharat.ToolKits.Notifications\Bharat.ToolKits.Notifications.csproj" />

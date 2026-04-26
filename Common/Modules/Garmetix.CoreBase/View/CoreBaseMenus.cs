@@ -1,7 +1,9 @@
 ﻿using Garmetix.CoreBase.DayOperations.Pages;
 using Garmetix.CoreBase.Stores.Pages.Desktop;
 using Garmetix.CoreBase.Stores.Pages.Mobile;
-
+// Use C# using aliases to separate the mobile and desktop pages
+using HrmPages = Garmetix.CoreBase.HRM.Pages;
+using MobileHrmPages = Garmetix.CoreBase.HRM.Pages.Mobile;
 namespace Garmetix.CoreBase.View
 {
 
@@ -71,6 +73,59 @@ namespace Garmetix.CoreBase.View
             AddPageTab("Day Begin", "rain_icon.png", "daybegib", typeof(DayBeginEntyPage));
             AddPageTab("Day Closing", "rain_icon.png", "dayend", typeof(DayEndEntryPage));
             AddPageTab("Petty Cash Sheet", "rain_icon.png", "cashsheet", typeof(PettyCashSheetEntryPage));
+        }
+    }
+
+    public class Ledger_Menu : BaseFlyoutMenu
+    {
+        public Ledger_Menu() : base("Ledger")
+        {
+            // Just call the helper method for each page!
+            AddPageTab("Party", "rain_icon.png", "Party", typeof(PartyPage));
+            AddPageTab("Ledger", "rain_icon.png", "Ledger", typeof(LedgerPage));
+            AddPageTab("LedgerGroupPage", "rain_icon.png", "LedgerGroup", typeof(LedgerGroupPage));
+
+        }
+    }
+
+    public class HRM_Menu : BaseFlyoutMenu
+    {
+        public HRM_Menu() : base("HRM")
+        {
+            // 1. Attendance (Platform Specific)
+            AddPlatformSpecificPageTab("Attendance", "rain_icon.png", "Attendance",
+                mobilePageType: typeof(MobileHrmPages.AttendancePage),
+                desktopPageType: typeof(HrmPages.AttendancePage));
+
+            // 2. Time Sheet (Platform Specific & Hidden)
+            AddPlatformSpecificPageTab("Time Sheet", "rain_icon.png", "TimeSheets",
+                mobilePageType: typeof(MobileHrmPages.TimeSheetPage),
+                desktopPageType: typeof(HrmPages.TimeSheetPage),
+                isVisible: false);
+
+            // 3. Salary (Platform Specific)
+            AddPlatformSpecificPageTab("Salary", "rain_icon.png", "Salarys",
+                mobilePageType: typeof(MobileHrmPages.SalaryPaymentPage),
+                desktopPageType: typeof(HrmPages.SalaryPaymentPage));
+
+            // 4. Employees (Standard)
+            AddPageTab("Employees", "rain_icon.png", "Employees",
+                typeof(HrmPages.EmployeesPage));
+
+            // 5. PaySlip (Standard & Hidden)
+            AddPageTab("PaySlip", "rain_icon.png", "SalaryPaySlipPage",
+                typeof(HrmPages.SalaryPaySlipPage),
+                isVisible: false);
+
+            // 6. Salary Structures (Standard & Hidden)
+            AddPageTab("Salary Structures", "rain_icon.png", "SalaryStructurePage",
+                typeof(HrmPages.SalaryStructurePage),
+                isVisible: false);
+
+            // 7. Monthly Attendance (Platform Specific)
+            AddPlatformSpecificPageTab("Monthly Attendance", "rain_icon.png", "MonthlyAttendancePage",
+                mobilePageType: typeof(MobileHrmPages.MonthlyAttendancePage),
+                desktopPageType: typeof(HrmPages.MonthlyAttendancePage));
         }
     }
 }
