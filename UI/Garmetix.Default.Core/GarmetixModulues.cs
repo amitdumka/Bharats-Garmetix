@@ -15,8 +15,9 @@ using System.Globalization;
 
 namespace Garmetix
 {
-
-
+    /// <summary>
+    /// 
+    /// </summary>
     public static class GarmetixHelpers
     {
         public static async Task InitApp()

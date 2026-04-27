@@ -25,12 +25,8 @@
     <Project Path="Common/Services/Garmetix.PdfServices/Garmetix.PdfServices.csproj" Id="b8ae3424-1507-4f8e-afb5-3632f3dab0ea" />
     <Project Path="Common/Services/Garmetix.Reports/Garmetix.Reports.csproj" Id="1bd17a20-9ecf-4d28-8526-546a1f10db12" />
   </Folder>
-  <Project Path="Garmetix.IRetail/Garmetix.IRetail.csproj" Id="b0535989-d07f-4ff2-8ebd-98d667eb6cd5">
-    <Deploy Solution="Debug|*" />
-  </Project>
   <Project Path="Garmetix/Garmetix.csproj">
     <Deploy Solution="Debug|*" />
   </Project>
   <Project Path="UI/Garmetix.Default.Core/Garmetix.Default.Core.csproj" Id="65d5dae7-7005-43b8-89b3-cf2cf9f180a3" />
-  <Project Path="UI/Garmetix.SRP/Garmetix.SRP.csproj" Id="e29fbdf6-1a78-4662-ac47-fa81c785d339" />
 </Solution>
