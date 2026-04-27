@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Garmetix.Models.DTO
+namespace Garmetix.Core.DTO
 {
     public class LoginModel
     {

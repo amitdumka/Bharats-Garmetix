@@ -1,5 +1,5 @@
-﻿using Garmetix.Models.Accounting;
-using Garmetix.Models.Bases;
+﻿using Garmetix.Core.Models.Base;
+using Garmetix.Models.Accounting;
 using Garmetix.Models.Enums;
 using System.Text.Json.Serialization;
 

@@ -2,93 +2,40 @@
  * Garmetix
  * Author: Amit Kumar
  * https://garmetix.com/
- * Copyright (c) 2025. All rights reserved.
- * Version: 5.0.0
+ * Copyright (c) 2026. All rights reserved.
+ * Version: 6.0.0
  * License: https://garmetix.com/license
  * Website: https://garmetix.com/
 */
 
-using Garmetix.Models.Bases;
+using Garmetix.Core.Enums;
+using Garmetix.Core.Models.Accounting;
+using Garmetix.Core.Models.Base;
 using Garmetix.Models.Enums;
 using Garmetix.Models.HRM;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
 namespace Garmetix.Models.Accounting
 {
-    public enum VoucherType
-    {
-        Payment,
-        Receipt,
-        Expense,
-    }
-
-    public enum LedgerType
-    {
-        Assest,
-        Cash,
-        BankAccount,
-        Loan,
-        Expenses,
-        DirectExpenses,
-        IndirectExpenses,
-        Income,
-        DirectIncome,
-        InDirectExpenses,
-        Purcahase,
-        Sale,
-        StockItem,
-        Employee,
-        CaptialAccount,
-    }
-
-    public enum LedgerCategory
-    {
-        Credit,
-        Debit,
-        Income,
-        Expenses,
-        Assets,
-        Bank,
-        Loan,
-        Purchase,
-        Sale,
-        Vendor,
-        Customer,
-        UnCategory,
-        Employees,
-        Stock,
-        Debitor,
-        Creditor
-    }
-
-    public enum PartyType
-    {
-        Customer,
-        Supplier,
-        Employee,
-        Vendor,
-        Debitor,
-        Creditor,
-        Others,
-    }
 
     public class DueRecovery : StoreBase
     {
-        public required string InvoiceNumber { get; set; }
-        public DateTime OnDate { get; set; }
-        public decimal Amount { get; set; }
-        public bool Paid { get; set; } = false;
-        public DateTime? ClearingDate { get; set; }
+        [Display(Name = "Invoice Number")] public required string InvoiceNumber { get; set; }
+        [Display(Name = "Date")] public DateTime OnDate { get; set; }
+        [Display(Name = "Amount")] public decimal Amount { get; set; }
+        [Display(Name = "Paid")] public bool Paid { get; set; } = false;
+        [Display(Name = "Clearing Date")] public DateTime? ClearingDate { get; set; }
     }
     public class CustomerDue : StoreBase
     {
-        public required string InvoiceNumber { get; set; }
-        public DateTime OnDate { get; set; }
-        public decimal Amount { get; set; }
-        public bool Paid { get; set; } = false;
-        public DateTime? ClearingDate { get; set; }
+        [Display(Name = "Invoice Number")] public required string InvoiceNumber { get; set; }
+        [Display(Name = "Date")] public DateTime OnDate { get; set; }
+        [Display(Name = "Amount")] public decimal Amount { get; set; }
+        [Display(Name = "Paid")] public bool Paid { get; set; } = false;
+        [Display(Name = "Clearing Date")] public DateTime? ClearingDate { get; set; }
     }
 
     public class Party : CompanyBase
@@ -99,16 +46,16 @@ namespace Garmetix.Models.Accounting
             // initialize required members
             Name = string.Empty;
         }
-        public required string Name { get; set; } = string.Empty;
-        public string? Address { get; set; }
-        public string? EmailId { get; set; }
-        public string? Phone { get; set; }
-        public string? GSTIN { get; set; }
-        public string? PAN { get; set; }
-        public PartyType Category { get; set; }
-        public Guid LedgerId { get; set; } = Guid.Empty;
+        [Display(Name = "Name")] public required string Name { get; set; } = string.Empty;
+        [Display(Name = "Address")] public string? Address { get; set; }
+        [Display(Name = "Email ID")] public string? EmailId { get; set; }
+        [Display(Name = "Phone")] public string? Phone { get; set; }
+        [Display(Name = "GSTIN")] public string? GSTIN { get; set; }
+        [Display(Name = "PAN")] public string? PAN { get; set; }
+        [Display(Name = "Category")] public PartyType Category { get; set; }
+        [Display(Name = "Ledger", AutoGenerateField = false)] public Guid LedgerId { get; set; } = Guid.Empty;
         [JsonIgnore]
-        public virtual Ledger? Ledger { get; set; }
+        [Display(Name = "Ledger", AutoGenerateField = false)] public virtual Ledger? Ledger { get; set; }
     }
 
     public class LedgerGroup : CompanyBase
@@ -118,9 +65,9 @@ namespace Garmetix.Models.Accounting
         {
             Name = string.Empty;
         }
-        public required string Name { get; set; }
-        public LedgerCategory Category { get; set; }
-        public string Remarks { get; set; } = string.Empty;
+        [Display(Name = "Name")] public required string Name { get; set; }
+        [Display(Name = "Category")] public LedgerCategory Category { get; set; }
+        [Display(Name = "Remarks")] public string Remarks { get; set; } = string.Empty;
     }
 
     public class Ledger : CompanyBase
@@ -130,15 +77,15 @@ namespace Garmetix.Models.Accounting
         {
             Name = string.Empty;
         }
-        public required string Name { get; set; } = string.Empty;
+        [Display(Name = "Name")] public required string Name { get; set; } = string.Empty;
 
-        public Guid LedgerGroupId { get; set; }
+        [Display(Name = "Ledger Group", AutoGenerateField = false)] public Guid LedgerGroupId { get; set; }
         [JsonIgnore]
-        public virtual LedgerGroup? LedgerGroup { get; set; }
-        public LedgerType LedgerType { get; set; }
-        public DateTime OpenningDate { get; set; }
-        public decimal OpenningBalance { get; set; }
-        public bool IsParty { get; set; } = false;
+        [Display(Name = "Ledger Group", AutoGenerateField = false)] public virtual LedgerGroup? LedgerGroup { get; set; }
+        [Display(Name = "Ledger Type")] public LedgerType LedgerType { get; set; }
+        [Display(Name = "Opening Date")] public DateTime OpeningDate { get; set; }
+        [Display(Name = "Opening Balance")] public decimal OpeningBalance { get; set; }
+        [Display(Name = "Party")] public bool IsParty { get; set; } = false;
     }
 
     public class VoucherBase : StoreBase
@@ -151,29 +98,31 @@ namespace Garmetix.Models.Accounting
             PartyName = string.Empty;
             Particulars = string.Empty;
         }
-        public required string VoucherNumber { get; set; }
-        public DateTime OnDate { get; set; }
+        [Display(Name = "Voucher Number")] public required string VoucherNumber { get; set; }
+        [Display(Name = "Date")] public DateTime OnDate { get; set; }
 
-        public VoucherType VoucherType { get; set; } = VoucherType.Payment;
+        [Display(Name = "Voucher Type")] public VoucherType VoucherType { get; set; } = VoucherType.Payment;
 
-        public required string PartyName { get; set; }
-        public required string Particulars { get; set; }
+        [Display(Name = "Party Name")] public required string PartyName { get; set; }
+        [Display(Name = "Particulars")] public required string Particulars { get; set; }
 
-        public decimal Amount { get; set; }
-        public string Remarks { get; set; } = string.Empty;
+        [Display(Name = "Amount")] public decimal Amount { get; set; }
+        [Display(Name = "Remarks")] public string Remarks { get; set; } = string.Empty;
 
-        public string? SlipNumber { get; set; }
+        [Display(Name = "Slip Number")] public string? SlipNumber { get; set; }
 
 
-        public Guid? LedgerId { get; set; } = Guid.Empty;
-        public virtual Ledger? Ledger { get; set; }
-        public Guid? EmployeeId { get; set; } = Guid.Empty;
-        public virtual Employee? Employee { get; set; }
+        [Display(Name = "Ledger")] public Guid? LedgerId { get; set; } = Guid.Empty;
+        [JsonIgnore]
+        [Display(Name = "Ledger", AutoGenerateField = false)] public virtual Ledger? Ledger { get; set; }
+        [Display(Name = "Employee", AutoGenerateField = false)] public Guid? EmployeeId { get; set; } = Guid.Empty;
+        [JsonIgnore]
+        [Display(Name = "Employee", AutoGenerateField = false)] public virtual Employee? Employee { get; set; }
     }
 
     public class Transaction : CompanyBase
     {
-        public required string Name { get; set; }
+        [Display(Name = "Name")] public required string Name { get; set; }
     }
 
     public class Voucher : VoucherBase
@@ -185,18 +134,20 @@ namespace Garmetix.Models.Accounting
             PartyName = string.Empty;
             Particulars = string.Empty;
         }
-        public PaymentMode PaymentMode { get; set; } = PaymentMode.Cash;
-        public string? PaymentDetails { get; set; }
+        [Display(Name = "Payment Mode")] public PaymentMode PaymentMode { get; set; } = PaymentMode.Cash;
+        [Display(Name = "Payment Details")] public string? PaymentDetails { get; set; }
 
-        public bool IsParty { get; set; } = false;
-        public Guid? PartyId { get; set; } = Guid.Empty;
-        public virtual Party? Party { get; set; }
+        [Display(Name = "Is Party")] public bool IsParty { get; set; } = false;
+        [Display(Name = "Party", AutoGenerateField = false)] public Guid? PartyId { get; set; } = Guid.Empty;
+
+        [JsonIgnore]
+        [Display(Name = "Party", AutoGenerateField = false)] public virtual Party? Party { get; set; }
 
         [ForeignKey("BankAccount")]
-        public Guid? AccountNumber { get; set; }
+        [Display(Name = "Account Number", AutoGenerateField = false)] public Guid? AccountNumber { get; set; }
 
         [ForeignKey("AccountNumber")]
-        public virtual BankAccount? BankAccount { get; set; }
+        [Display(Name = "Bank Account", AutoGenerateField = false)] public virtual BankAccount? BankAccount { get; set; }
     }
 
     public class CashVoucher : VoucherBase
@@ -208,81 +159,57 @@ namespace Garmetix.Models.Accounting
             PartyName = string.Empty;
             Particulars = string.Empty;
         }
-        public Guid TransactionId { get; set; }
-        public virtual Transaction? Transaction { get; set; }
+        [Display(Name = "Transaction", AutoGenerateField = false)] public Guid TransactionId { get; set; }
+        [JsonIgnore]
+        [Display(Name = "Transaction", AutoGenerateField = false)] public virtual Transaction? Transaction { get; set; }
     }
 
 
     // Trip Expense Voucher For Travel Management and input expenses for costing to purchase items.
-    public enum ExpenseType
+
+    public class TripExpenseVoucher : BaseEntity
     {
-        Travel,
-        Transport,
-        Ticket,
-        Food,
-        Lodging,
-        Entertainment,
-        Medical,
-        OtherExpenses,
-        Fuel,
-        Miscellanous,
-        Others
-    }
-    public class TripExpenseVoucher : BaseModel
-    {
-        public DateTime OnDate { get; set; } = DateTime.Now;
-        public string Particulars { get; set; } = string.Empty;
-        public ExpenseType ExpenseType { get; set; } = ExpenseType.Travel;
-        public decimal Amount { get; set; } = 0;
-        public PaymentMode PaymentMode { get; set; } = PaymentMode.Cash;
-        public string? PaymentDetails { get; set; } = string.Empty;
-        public string Remarks { get; set; } = string.Empty;
-        public Guid? EmployeeId { get; set; } = Guid.Empty;
+        [Display(Name = "On Date")] public DateTime OnDate { get; set; } = DateTime.Now;
+        [Display(Name = "Particulars")] public string Particulars { get; set; } = string.Empty;
+        [Display(Name = "Expense Type")] public ExpenseType ExpenseType { get; set; } = ExpenseType.Travel;
+        [Display(Name = "Amount")] public decimal Amount { get; set; } = 0;
+        [Display(Name = "Payment Mode")] public PaymentMode PaymentMode { get; set; } = PaymentMode.Cash;
+        [Display(Name = "Payment Details")] public string? PaymentDetails { get; set; } = string.Empty;
+        [Display(Name = "Remarks")] public string Remarks { get; set; } = string.Empty;
+        [Display(Name = "Employee", AutoGenerateField = false)] public Guid? EmployeeId { get; set; } = Guid.Empty;
         [JsonIgnore]
         [ForeignKey("EmployeeId")]
-        public virtual Employee? Employee { get; set; }
-        public Guid? LedgerId { get; set; } = Guid.Empty;
+        [Display(Name = "Employee", AutoGenerateField = false)] public virtual Employee? Employee { get; set; }
+        [Display(Name = "Ledger", AutoGenerateField = false)] public Guid? LedgerId { get; set; } = Guid.Empty;
         [JsonIgnore]
         [ForeignKey("LedgerId")]
-        public virtual Ledger? Ledger { get; set; }
-        public string? SlipNumber { get; set; } = string.Empty;
-        public Guid? TripId { get; set; } = Guid.Empty;
+        [Display(Name = "Ledger", AutoGenerateField = false)] public virtual Ledger? Ledger { get; set; }
+        [Display(Name = "Slip Number")] public string? SlipNumber { get; set; } = string.Empty;
+        [Display(Name = "Trip", AutoGenerateField = false)] public Guid? TripId { get; set; } = Guid.Empty;
         [JsonIgnore]
         [ForeignKey("TripId")]
-        public virtual TravelTrip? Trip { get; set; }
-        public bool Biillable { get; set; } = false;
+        [Display(Name = "Trip", AutoGenerateField = false)] public virtual TravelTrip? Trip { get; set; }
+        [Display(Name = "Billable")] public bool Biillable { get; set; } = false;
     }
 
-    public class TravelTrip : BaseModel
+    public class TravelTrip : BaseEntity
     {
-        public int TripNumber { get; set; } = 0;
-        public string TripName { get; set; } = string.Empty;
-        public DateTime FromDate { get; set; } = DateTime.Now;
-        public DateTime ToDate { get; set; } = DateTime.Now;
-        public string? Remarks { get; set; } = string.Empty;
-        public Guid? EmployeeId { get; set; } = Guid.Empty;
-        
+        [Display(Name = "Trip Number")] public int TripNumber { get; set; } = 0;
+        [Display(Name = "Trip Name")] public string TripName { get; set; } = string.Empty;
+        [Display(Name = "From Date")] public DateTime FromDate { get; set; } = DateTime.Now;
+        [Display(Name = "To Date")] public DateTime ToDate { get; set; } = DateTime.Now;
+        [Display(Name = "Remarks")] public string? Remarks { get; set; } = string.Empty;
+        [Display(Name = "Employee", AutoGenerateField = false)] public Guid? EmployeeId { get; set; } = Guid.Empty;
+
         [JsonIgnore]
         [ForeignKey("EmployeeId")]
-        public virtual Employee? Employee { get; set; }
-        
-        public TripType TripType { get; set; }= TripType.Travel;
-        public string? TripDetails { get; set; }= string.Empty;
-        public Status TripStatus { get; set; }= Status.Unknown;
-        public bool IsApproved { get; set; } = false;
-        public decimal TotalExpense { get; set; }
+        [Display(Name = "Employee", AutoGenerateField = false)] public virtual Employee? Employee { get; set; }
+
+        [Display(Name = "Trip Type")] public TripType TripType { get; set; } = TripType.Travel;
+        [Display(Name = "Trip Details")] public string? TripDetails { get; set; } = string.Empty;
+        [Display(Name = "Trip Status")] public Status TripStatus { get; set; } = Status.Unknown;
+        [Display(Name = "Is Approved")] public bool IsApproved { get; set; } = false;
+        [Display(Name = "Total Expense")] public decimal TotalExpense { get; set; }
     }
-    public enum TripType
-    {
-        Purchasing, Travel, Sales, Marketing, Service, Others,Project, Training, Conference, Meeting, Research, Development, Personal
-    }
-    public enum Status
-    {
-        Pending,Ongoing,Running,
-        Approved,Success,Error,
-        Failed, InProgress,Started,Ended,
-        Processing, Waiting,
-        Rejected, Completed, Cancelled, PartiallyApproved, PartiallyRejected, 
-        PartiallyCompleted,Unknown
-    }
+
 }

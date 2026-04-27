@@ -1,4 +1,4 @@
-﻿using Garmetix.Models.Bases;
+﻿using Garmetix.Core.Models.Base;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 

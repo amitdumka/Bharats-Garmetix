@@ -78,10 +78,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\UI\Garmetix.Default.Core\Garmetix.Default.Core.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <MauiImage Update="Resources\Images\dotnet_bot.png">
 	    <Resize>True</Resize>
 	    <BaseSize>300,185</BaseSize>

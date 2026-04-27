@@ -8,14 +8,14 @@
  * Website: https://garmetix.com/
 */
 
-using Garmetix.Models.Bases;
+using Garmetix.Core.Models.Base;
 using Garmetix.Models.Enums;
 using Garmetix.Models.HRM;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace Garmetix.Models.DTO.HRM
+namespace Garmetix.Core.DTO.HRM
 {
     public class EmployeeDTo : CEntity
     {

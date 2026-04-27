@@ -31,7 +31,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Library\Bharat.Themes\Bharat.Themes.csproj" />
 	  <ProjectReference Include="..\..\Library\Garmetix.Core\Garmetix.Core.csproj" />
 	</ItemGroup>
 

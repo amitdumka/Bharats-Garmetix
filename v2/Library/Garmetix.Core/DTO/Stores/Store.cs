@@ -8,10 +8,10 @@
  * Website: https://garmetix.com/
 */
 
-using Garmetix.Models.Bases;
+using Garmetix.Core.Models.Base;
 using Garmetix.Models.Stores;
 
-namespace Garmetix.Models.DTO.Stores
+namespace Garmetix.Core.DTO.Stores
 {
     public class CompanyDto : CEntity
     {

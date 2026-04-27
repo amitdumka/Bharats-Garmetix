@@ -1,4 +1,15 @@
-﻿namespace Garmetix.Models.Dashboards
+﻿/*
+ * Garmetix
+ * Author: Amit Kumar
+ * https://garmetix.com/
+ * Copyright (c) 2026. All rights reserved.
+ * Version: 6.0.0
+ * License: https://garmetix.com/license
+ * Website: https://garmetix.com/
+*/
+
+
+namespace Garmetix.Models.Dashboards
 {
     public class PayrollInfo
     {

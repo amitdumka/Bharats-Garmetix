@@ -8,12 +8,12 @@
  * Website: https://garmetix.com/
 */
 
-using Garmetix.Models.Accounting;
-using Garmetix.Models.Bases;
+using Garmetix.Core.Enums;
+using Garmetix.Core.Models.Base;
 
-namespace Garmetix.Models.DTO.Accounting
+namespace Garmetix.Core.DTO.Accounting
 {
-    public class BankAccountDt0 : CEntity
+    public class BankAccountDto : CEntity
     {
         public string AccountNumber { get; set; } = string.Empty;
         public string AccountHolderName { get; set; } = string.Empty;

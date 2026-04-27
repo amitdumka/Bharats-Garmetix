@@ -8,11 +8,11 @@
  * Website: https://garmetix.com/
 */
 
+using Garmetix.Core.Models.Base;
 using Garmetix.Models.Accounting;
-using Garmetix.Models.Bases;
 using Garmetix.Models.Enums;
 
-namespace Garmetix.Models.DTO.Accounting
+namespace Garmetix.Core.DTO.Accounting
 {
     public class DueRecoveryDTO : CEntity
     {

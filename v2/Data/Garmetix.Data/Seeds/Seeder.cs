@@ -1,6 +1,7 @@
 ﻿//Garmetix - A.NET MAUI Application for Garment and Textile Management
 
 using Bharat.ToolKits.Notifications;
+using Garmetix.Core.Models.Accounting;
 using Garmetix.Models.Accounting;
 using Garmetix.Models.Auth;
 using Garmetix.Models.Enums;

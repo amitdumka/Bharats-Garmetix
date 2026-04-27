@@ -1,7 +1,5 @@
 <Solution>
-  <Folder Name="/Data/" />
   <Folder Name="/Library/">
-    <Project Path="Common/Library/Bharat.Themes/Bharat.Themes.csproj" Id="04630eb6-eb9e-4eae-80dc-92479b3ecb75" />
     <Project Path="Common/Library/Garmetix.Core/Garmetix.Core.csproj" Id="94abf316-8e10-4cf6-b163-aa94e456289c" />
   </Folder>
   <Folder Name="/Modules/">
@@ -34,5 +32,4 @@
   <Project Path="Garmetix/Garmetix.csproj">
     <Deploy Solution="Debug|*" />
   </Project>
-  <Project Path="UI/Garmetix.Default.Core/Garmetix.Default.Core.csproj" Id="65d5dae7-7005-43b8-89b3-cf2cf9f180a3" />
 </Solution>
