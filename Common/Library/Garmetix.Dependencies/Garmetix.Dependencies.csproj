@@ -25,10 +25,14 @@
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <MauiFont Remove="C:\Users\amitn\.nuget\packages\syncfusion.maui.toolkit\1.0.9\buildTransitive\..\buildTransitive\Resources\Fonts\MauiMaterialAssets.ttf" />
+	</ItemGroup>
+
 	 
 
 	<ItemGroup>
-	  <MauiFont Include="..\..\..\..\..\..\..\.nuget\packages\syncfusion.maui.core\33.1.47\buildTransitive\Resources\Fonts\MauiMaterialAssets.ttf" Link="Resources\Fonts\MauiMaterialAssets.ttf" />
+	  <MauiFont Include="C:\Users\amitn\.nuget\packages\syncfusion.maui.core\33.2.3\buildTransitive\Resources\Fonts\MauiMaterialAssets.ttf" Link="Resources\Fonts\MauiMaterialAssets.ttf" />
 	  <MauiFont Include="Resources\Fonts\FluentSystemIcons-Regular.ttf" />
 	  <MauiFont Include="Resources\Fonts\FluentUI.cs" />
 	</ItemGroup>

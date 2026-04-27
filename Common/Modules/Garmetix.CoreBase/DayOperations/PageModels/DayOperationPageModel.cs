@@ -7,7 +7,7 @@ using Garmetix.Models.ViewModels;
 using Syncfusion.Maui.DataForm;
 
 namespace Garmetix.CoreBase.DayOperations.PageModels
-{
+{ //TODO: make the route dynamic or default fallback url
     [ObservableRecipient]
     public partial class DayOperationPageModel : ObservableValidator, IDataFormSourceProvider
     {
@@ -464,7 +464,7 @@ namespace Garmetix.CoreBase.DayOperations.PageModels
                 catch (Exception ex)
                 {
                     _ = Notify.ShowError(ex, speak: false, snabackbar: true);
-                    await Shell.Current.GoToAsync("//main");
+                    await Shell.Current.GoToAsync("//home");
                 }
             }
              ).Start();

@@ -42,7 +42,7 @@ namespace Garmetix
              // Registering Garmetix Modules
              .UseGarmetixService()
              // Registering Garmetix Modules
-             .UseGarmetixModules()
+             .UseGarmetixModules();
              return builder;
         }
 

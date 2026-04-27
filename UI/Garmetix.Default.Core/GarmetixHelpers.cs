@@ -13,11 +13,11 @@ namespace Garmetix
         {
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(GarmetixModulues.SyncKey);
             CultureInfo.CurrentUICulture = new CultureInfo("en-IN");
-            GarmetixModulues.RegisterPaeRoutes();
+            GarmetixModulues.RegisterPageRoutes();
         }
 
 
-
+        
         public static async Task<Window> CreateMainWindow(IActivationState? activationState, Shell appShell)
         {
 
