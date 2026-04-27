@@ -13,6 +13,11 @@ namespace Garmetix.Dependencies
     // All the code in this file is included in all platforms.
     public static class AppBuilderExtensions
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <returns></returns>
         public static MauiAppBuilder UseGarmetixDependencies(this MauiAppBuilder builder)
         {
             // 1. Initialize Syncfusion globally

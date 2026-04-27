@@ -13,15 +13,17 @@ namespace Garmetix
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
-                .UseMauiCommunityToolkit()
-                .UseGarmetixDependencies()
-                .ConfigureGarmetixModules()                
-                .UseGarmetixDatabases();
+                .UseMauiCommunityToolkit() //Placeholder to ensure the toolkit is registered before any module, as some modules might depend on it.
+                .UseGarmetixDependencies() // Registering Garmetix dependencies and global configurations
+                .ConfigureGarmetix()       // Registering Garmetix Modules and their routes         
+                .UseGarmetixDatabases();   // Registering Garmetix Databases
 
 #if DEBUG
             builder.Logging.AddDebug();
             builder.Services.AddLogging(configure => configure.AddDebug());
 #endif
+
+            //TODO: these will be remove in final version, just for testing purpose
 
             builder.Services.AddSingleton<ProjectRepository>();
             builder.Services.AddSingleton<TaskRepository>();

@@ -9,39 +9,42 @@ using Syncfusion.Maui.Toolkit.Themes;
 
 namespace Garmetix
 {
-    public class GarmetixShell:AppShellBase
+    public class GarmetixShell : AppShellBase
     {
 
-            public GarmetixShell()
-            {
+        public GarmetixShell()
+        {
             var currentTheme = Application.Current!.RequestedTheme;
-            //  ThemeSegmentedControl.SelectedIndex = currentTheme == AppTheme.Light ? 0 : 1;
-
+            ThemeSegmentedControl.SelectedIndex = currentTheme == AppTheme.Light ? 0 : 1;
             StoreName = $"{StorageOps.GetPref("CompanyName", "Garmetix")}, {StorageOps.GetPref("StoreCode", "AF")}";
-            //"StorageOps.GetPref("CompanyName", "AF");
-           // ExitCommand = new Command(CloseApp);
-
+            // ExitCommand = new Command(CloseApp);
             BindingContext = this;
         }
 
         protected override void BuildAppSpecificMenu()
         {
-            // 1. Main Page
+            // 1. Dashboard Page
             Items.Add(new ShellContent
             {
                 Title = "Home",
-                Route = "MainPage",
+                Route = "Dashboard",
                 ContentTemplate = new DataTemplate(typeof(MainPage))
             });
 
             //// 2. Inject your pre-built XAML Flyout Items!
-            Items.Add(new Accounting_Menu());
-            Items.Add(new Accounts_Menu());
-            Items.Add(new Ledger_Menu());
-            Items.Add(new HRM_Menu());
-            Items.Add(new Banking_Menu());
-            Items.Add(new Company_Menu());
+            Items.Add(new Accounting_Menu());  //Accouting Menu
+            Items.Add(new Accounts_Menu());    // Accounts Menu
+            Items.Add(new Ledger_Menu());      //Ledger Menu
+            Items.Add(new HRM_Menu());         //HRM Menu
+            Items.Add(new Banking_Menu());     //Banking Menu
+            Items.Add(new Company_Menu());  
         }
+
+        /// <summary>
+        /// Update the Theme of the app
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void UpdateTheme(object sender, System.EventArgs e)
         {
             ICollection<ResourceDictionary> mergedDictionaries = Application.Current!.Resources.MergedDictionaries;
