@@ -1,0 +1,149 @@
+﻿Building a dedicated settings page is the best approach for a professional application. If you are deploying this for Aadwika Fashion, you want the app to actually remember what the user selected even after they close and reopen it.
+
+To achieve this, we will use MAUI's built-in Preferences API to save their choice, and build a clean UI to let them swap themes.
+
+Here is exactly how to build that Settings page and wire it up to the ThemeManager.
+
+1. The Settings Page UI (XAML)
+We will use a standard Picker for the theme selection. Notice how we are heavily utilizing the uniform DynamicResource keys we just created so the Settings page itself updates instantly when a new theme is picked.
+
+SettingsPage.xaml
+
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AadwikaFashion.Views.SettingsPage"
+             Title="Settings"
+             BackgroundColor="{DynamicResource PageBackgroundColor}">
+
+    <VerticalStackLayout Padding="20" Spacing="20">
+        
+        <Label Text="Display Settings" 
+               FontSize="22" 
+               FontAttributes="Bold"
+               TextColor="{DynamicResource PrimaryTextColor}" />
+
+        <Frame BackgroundColor="{DynamicResource CardBackgroundColor}"
+               BorderColor="{DynamicResource BorderColor}"
+               CornerRadius="8"
+               HasShadow="False"
+               Padding="15">
+            
+            <VerticalStackLayout Spacing="10">
+                <Label Text="App Theme" 
+                       FontSize="16" 
+                       TextColor="{DynamicResource SecondaryTextColor}" />
+                
+                <Picker x:Name="ThemePicker" 
+                        Title="Select Theme"
+                        SelectedIndexChanged="OnThemePickerChanged"
+                        TextColor="{DynamicResource PrimaryText}"
+                        TitleColor="{DynamicResource SecondaryText}">
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>System Default</x:String>
+                            <x:String>Light Mode</x:String>
+                            <x:String>Dark Mode</x:String>
+                        </x:Array>
+                    </Picker.ItemsSource>
+                </Picker>
+            </VerticalStackLayout>
+        </Frame>
+
+    </VerticalStackLayout>
+</ContentPage>
+
+
+2. The Settings Code-Behind (C#)
+Here, we will handle the logic when the user picks a new theme from the dropdown. We will change the theme instantly using your ThemeManager, and then save that choice to the device using Preferences.Set().
+
+SettingsPage.xaml.cs
+
+using Microsoft.Maui.Storage;
+using Bharat.Themes; // Your theme library namespace
+
+namespace AadwikaFashion.Views
+{
+    public partial class SettingsPage : ContentPage
+    {
+        public SettingsPage()
+        {
+            InitializeComponent();
+            LoadCurrentThemePreference();
+        }
+
+        private void LoadCurrentThemePreference()
+        {
+            // Load the saved preference. 0 is System Default, 1 is Light, 2 is Dark.
+            int savedThemeIndex = Preferences.Get("AppThemePreference", 0);
+            
+            // Set the picker to match what they previously saved without triggering the change event
+            ThemePicker.SelectedIndex = savedThemeIndex; 
+        }
+
+        private void OnThemePickerChanged(object sender, EventArgs e)
+        {
+            if (ThemePicker.SelectedIndex == -1) return;
+
+            AppThemeMode selectedMode;
+
+            switch (ThemePicker.SelectedIndex)
+            {
+                case 1:
+                    selectedMode = AppThemeMode.Light;
+                    break;
+                case 2:
+                    selectedMode = AppThemeMode.Dark;
+                    break;
+                default:
+                case 0:
+                    selectedMode = AppThemeMode.SystemDefault;
+                    break;
+            }
+
+            // 1. Instantly change the UI theme
+            ThemeManager.SetTheme(selectedMode);
+
+            // 2. Save the choice so it remembers next time the app opens
+            Preferences.Set("AppThemePreference", ThemePicker.SelectedIndex);
+        }
+    }
+}
+
+
+3. Updating App Startup to Remember the Theme
+Finally, we need to modify the code from the previous step where the app first boots up. Instead of always forcing the System Default, it needs to check if the user previously saved a specific preference.
+
+Open your main app's App.xaml.cs:
+
+using Microsoft.Maui.Storage;
+using Bharat.Themes;
+
+namespace AadwikaFashion
+{
+    public partial class App : Application
+    {
+        public App()
+        {
+            InitializeComponent();
+
+            // Load saved theme preference on startup (0 = System, 1 = Light, 2 = Dark)
+            int savedTheme = Preferences.Get("AppThemePreference", 0);
+            
+            AppThemeMode themeToApply = savedTheme switch
+            {
+                1 => AppThemeMode.Light,
+                2 => AppThemeMode.Dark,
+                _ => AppThemeMode.SystemDefault
+            };
+
+            // Apply the theme before the first page even loads
+            ThemeManager.SetTheme(themeToApply);
+
+            MainPage = new AppShell();
+        }
+    }
+}
+
+
+This completes the loop. Your app now has a bulletproof, decoupled theme engine, a settings page to control it, and memory to remember what the user likes best.
