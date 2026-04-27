@@ -34,11 +34,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Common\Library\Garmetix.Dependencies\Garmetix.Dependencies.csproj" />
-	  <ProjectReference Include="..\Data\Garmetix.Models\Garmetix.Models.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <MauiXaml Update="AIBased\Views\BillingMenu.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

@@ -31,12 +31,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Common\Library\Garmetix.Core\Garmetix.Core.csproj" />
-	  <ProjectReference Include="..\..\Common\Library\Garmetix.Settings\Garmetix.Settings.csproj" />
-	  <ProjectReference Include="..\..\Common\Modules\Garmetix.Authentication\Garmetix.Authentication.csproj" />
 	  <ProjectReference Include="..\..\Common\Modules\Garmetix.CoreBase\Garmetix.CoreBase.csproj" />
-	  <ProjectReference Include="..\..\Common\Modules\Garmetix.Onboarding\Garmetix.Onboarding.csproj" />
-	  <ProjectReference Include="..\..\Common\Services\Garmetix.CoreServices\Garmetix.CoreServices.csproj" />
-	  <ProjectReference Include="..\..\Common\Services\Garmetix.PdfServices\Garmetix.PdfServices.csproj" />
 	  <ProjectReference Include="..\..\Common\Services\Garmetix.Reports\Garmetix.Reports.csproj" />
 	</ItemGroup>
 

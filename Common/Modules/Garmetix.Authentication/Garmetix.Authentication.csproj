@@ -30,8 +30,6 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Data\Garmetix.Databases\Garmetix.Databases.csproj" />
-	  <ProjectReference Include="..\..\Library\Bharat.ToolKits.Notifications\Bharat.ToolKits.Notifications.csproj" />
 	  <ProjectReference Include="..\..\Library\Garmetix.Core\Garmetix.Core.csproj" />
 	</ItemGroup>
 

@@ -31,14 +31,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\..\Data\Garmetix.Models\Garmetix.Models.csproj" />
-	  <ProjectReference Include="..\..\Data\Garmetix.Databases\Garmetix.Databases.csproj" />
 	  <ProjectReference Include="..\..\Library\Bharat.Themes\Bharat.Themes.csproj" />
-	  <ProjectReference Include="..\..\Library\Bharat.ToolKits.Notifications\Bharat.ToolKits.Notifications.csproj" />
 	  <ProjectReference Include="..\..\Library\Garmetix.Core\Garmetix.Core.csproj" />
-	  <ProjectReference Include="..\..\Services\Garmetix.CoreServices\Garmetix.CoreServices.csproj" />
-	  <ProjectReference Include="..\..\Services\Garmetix.PdfServices\Garmetix.PdfServices.csproj" />
-	  <ProjectReference Include="..\Garmetix.Authentication\Garmetix.Authentication.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

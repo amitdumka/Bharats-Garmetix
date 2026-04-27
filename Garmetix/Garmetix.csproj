@@ -78,8 +78,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Common\Data\Garmetix.Databases\Garmetix.Databases.csproj" />
-	  <ProjectReference Include="..\Common\Library\Garmetix.Dependencies\Garmetix.Dependencies.csproj" />
 	  <ProjectReference Include="..\UI\Garmetix.Default.Core\Garmetix.Default.Core.csproj" />
 	</ItemGroup>
 

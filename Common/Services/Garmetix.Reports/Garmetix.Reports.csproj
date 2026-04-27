@@ -28,15 +28,6 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.51" />
 	</ItemGroup>
-	 
-
-	<ItemGroup>
-	  <ProjectReference Include="..\..\..\Data\Garmetix.Models\Garmetix.Models.csproj" />
-	  <ProjectReference Include="..\..\Data\Garmetix.Databases\Garmetix.Databases.csproj" />
-	  <ProjectReference Include="..\..\Library\Bharat.ToolKits.Notifications\Bharat.ToolKits.Notifications.csproj" />
-	  <ProjectReference Include="..\Garmetix.CoreServices\Garmetix.CoreServices.csproj" />
-	  <ProjectReference Include="..\Garmetix.PdfServices\Garmetix.PdfServices.csproj" />
-	</ItemGroup>
 
 	<ItemGroup>
 	  <MauiXaml Update="Old\InvoicePrinter\InvoicePrinter.xaml">

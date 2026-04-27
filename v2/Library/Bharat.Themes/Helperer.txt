@@ -1,0 +1,113 @@
+﻿3. How to Use This in Any MAUI App
+By packaging it this way, an external application only needs to do two things to use your library flawlessly:
+
+A. Reference it in XAML:
+Because the keys are uniform, the developer simply uses DynamicResource.
+
+XML
+<ContentPage BackgroundColor="{DynamicResource PageBackgroundColor}">
+    <Label Text="Hello, Bharat Themes!" 
+           TextColor="{DynamicResource PrimaryTextColor}" />
+    <Button Text="Submit" 
+            BackgroundColor="{DynamicResource PrimaryColor}" />
+</ContentPage>
+
+
+(Notice the use of DynamicResource instead of StaticResource. This is required for the colors to change instantly without restarting the app).
+
+B. Trigger the Change in C#:
+Whenever the user changes a setting, or the app initializes, just call your helper method:
+
+C#
+// To switch to Dark mode
+Bharat.Themes.ThemeManager.SetTheme(Bharat.Themes.AppThemeMode.Dark);
+
+// To switch to Light mode
+Bharat.Themes.ThemeManager.SetTheme(Bharat.Themes.AppThemeMode.Light);
+
+// To follow OS settings
+Bharat.Themes.ThemeManager.SetTheme(Bharat.Themes.AppThemeMode.SystemDefault);
+
+
+
+<?xml version="1.0" encoding="UTF-8" ?>
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:YourMainAppNamespace"
+             
+             xmlns:themes="clr-namespace:Bharat.Themes;assembly=Bharat.Themes"
+             
+             x:Class="YourMainAppNamespace.App">
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                
+                <themes:Colors />
+                
+                <themes:Light />
+                
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
+
+
+using Bharat.Themes;
+
+namespace YourMainAppNamespace
+{
+    public partial class App : Application
+    {
+        public App()
+        {
+            InitializeComponent();
+
+            // Set the initial theme based on the user's device preference
+            ThemeManager.SetTheme(AppThemeMode.SystemDefault);
+
+            MainPage = new AppShell();
+        }
+    }
+}
+test page
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="YourMainAppNamespace.Views.DashboardPage"
+             
+             BackgroundColor="{DynamicResource PageBackgroundColor}">
+
+    <VerticalStackLayout Padding="20" Spacing="15">
+        
+        <Label Text="Sales Dashboard" 
+               TextColor="{DynamicResource PrimaryTextColor}"
+               FontSize="24"
+               FontAttributes="Bold" />
+
+        <Frame BackgroundColor="{DynamicResource CardBackgroundColor}"
+               BorderColor="{DynamicResource BorderColor}"
+               CornerRadius="10"
+               Padding="15">
+            
+            <Label Text="Total Receivables" 
+                   TextColor="{DynamicResource ReceivableColor}" />
+        </Frame>
+
+        <Button Text="Share to Facebook"
+                BackgroundColor="{StaticResource FacebookBlue}"
+                TextColor="{StaticResource White}" />
+
+        <Button Text="Switch to Dark Mode"
+                BackgroundColor="{DynamicResource PrimaryColor}"
+                Clicked="OnDarkModeClicked" />
+
+    </VerticalStackLayout>
+</ContentPage>
+And in the code-behind for that page (DashboardPage.xaml.cs), to test the switch:
+
+private void OnDarkModeClicked(object sender, EventArgs e)
+{
+    // Simply call your manager, and every DynamicResource on the screen will instantly change!
+    Bharat.Themes.ThemeManager.SetTheme(Bharat.Themes.AppThemeMode.Dark);
+}
