@@ -11,8 +11,8 @@
 using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Accounting;
 using Garmetix.Core.Models.Base;
+using Garmetix.Core.Models.HRM;
 using Garmetix.Models.Enums;
-using Garmetix.Models.HRM;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;

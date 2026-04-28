@@ -1,10 +1,33 @@
-﻿using Garmetix.Models.Enums;
+﻿/*
+ * Garmetix
+ * Author: Amit Kumar
+ * https://garmetix.com/
+ * Copyright (c) 2026. All rights reserved.
+ * Version: 6.0.0
+ * License: https://garmetix.com/license
+ * Website: https://garmetix.com/
+*/
+/*
+ * CompanyConfigInfo.cs
+ *
+ * This file defines the CompanyConfigInfo class, which represents the configuration information for a company during the onboarding process.
+ * It includes properties for Client Code, Groud Code, Store Code, and Operation Mode, along with validation attributes to ensure data integrity.
+ */
+using Garmetix.Core.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace Garmetix.Models.Onboarding
+namespace Garmetix.Core.Models.Onboarding
 {
     public class CompanyConfigInfo
     {
+        public CompanyConfigInfo()
+        {
+                ClientCode = string.Empty;
+                GroudCode = string.Empty;
+                StoreCode = string.Empty;
+                OperationMode = AppOperation.Store; // Default to Store, can be changed as needed
+        }
+
         [Display(Name = "Client Code")]
         [Required(ErrorMessage = "Client Code is required")]
         [MinLength(2, ErrorMessage = "Client Code must be at least 2 characters long.")]

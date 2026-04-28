@@ -1,10 +1,34 @@
-﻿using Garmetix.Models.Enums;
+﻿/*
+ * Garmetix
+ * Author: Amit Kumar
+ * https://garmetix.com/
+ * Copyright (c) 2026. All rights reserved.
+ * Version: 6.0.0
+ * License: https://garmetix.com/license
+ * Website: https://garmetix.com/
+*/
+/* * ClientInfo.cs
+ * 
+ * This class represents the client information required during the onboarding process.
+ * It includes properties for first name, last name, email, password, phone number,
+ * date
+ */
+using Garmetix.Core.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace Garmetix.Models.Onboarding
+namespace Garmetix.Core.Models.Onboarding
 {
     public class ClientInfo
     {
+        public ClientInfo()
+        {
+            FirstName = string.Empty;
+            LastName = string.Empty;
+            Email = string.Empty;
+            Password = string.Empty;
+            PhoneNumber = string.Empty;
+        }
+
         [Display(Prompt = "First Name", Name = "First Name")]
         [Required(ErrorMessage = "First name is required.")]
         [MinLength(2, ErrorMessage = "First name must be at least 2 characters.")]

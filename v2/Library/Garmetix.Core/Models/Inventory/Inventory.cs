@@ -1,192 +1,141 @@
-﻿using Garmetix.Core.Models.Base;
+﻿/*
+ * Garmetix
+ * Author: Amit Kumar
+ * https://garmetix.com/
+ * Copyright (c) 2026. All rights reserved.
+ * Version: 6.0.0
+ * License: https://garmetix.com/license
+ * Website: https://garmetix.com/
+*/
+/*
+ * Inventory.cs
+ * 
+ * This file contains the definitions of classes related to inventory management in the Garmetix application.
+ * It includes classes for Units of Measurement (UOM), Taxes, Stock, Products, Product Categories, and Product Details.
+ * These classes are designed to represent the various entities and their relationships within the inventory system.
+ * 
+ * The classes are structured to support features such as tracking stock levels, calculating tax rates, and categorizing products.
+ * They also include properties for handling product details like barcodes, descriptions, and pricing information.
+ * 
+ * The use of attributes like [JsonIgnore] helps to control the serialization of certain properties when converting objects to JSON format.
+ * This is particularly useful for properties that are calculated or derived from other properties, ensuring that only relevant data is included in API responses or data storage.
+ */
+
+using Garmetix.Core.Enums;
+using Garmetix.Core.Models.Base;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 
-namespace Garmetix.Models.Inventory
+namespace Garmetix.Core.Models.Inventory
 {
-    public enum CARD
-    {
-        DebitCard,
-        CreditCard,
-        AmexCard,
-        GiftCard,
-        Other
-    }
-
-    public enum CARDType
-    {
-        Visa,
-        MasterCard,
-        Maestro,
-        AmexCard,
-        Dinners,
-        Rupay,
-        RupayCredit,
-        Others,
-    }
-    public enum Unit
-    {
-        Meters,
-        Nos,
-        Pcs,
-        Packets,
-        Grams,
-        Kgs,
-        Liter,
-        NoUnit,
-        Than, Boxes
-    }
-
-    public enum TaxType
-    {
-        GST,
-        SGST,
-        CGST,
-        IGST,
-        VAT,
-        CST,
-    }
-
-    public enum NotesType
-    {
-        DebitNote,
-        CreditNote,
-    }
-
-    public enum InvoiceType
-    {
-        Sales,
-        SalesReturn,
-        ManualSale,
-        ManualSaleReturn,
-    }
-
-    public enum PurchaseInvoiceType
-    {
-        Purchase,
-        PurchaseReturn,
-    }
-    /// <summary>
-    /// ProductType represents a type of a product
-    /// </summary>
-    public enum ProductType
-    {
-        Apparels,
-        Clothing,
-        Electronics,
-        Fabric,
-        Accessories,
-        InnerWear,
-        SuitCovers,
-        FootWear,
-        Readmade,
-        Jewellery,
-        Cosmetics,
-        WinterWear,
-        Others
-    }
 
 
-    //TODO: Convert to enum
+    /// <summary>    
+    ///     The UOM class represents a Unit of Measurement in the inventory system. It includes properties for the name of the unit, whether it allows decimal values, and the number of decimal places.
+    ///    Will be used in Product and Stock classes to define the unit of measurement for products and stock items.
+    ///    //TODO: When Fabric is implemented, UOM will be used to define the unit of measurement for fabrics (e.g., meters, yards) and for finished products (e.g., pieces).
+    ///    </summary>
     public class UOM : CompanyBase
     {
-        public required string Name { get; set; }
-        public bool Decimal { get; set; }
-        public int DecimalPlace { get; set; }
+
+        [Display(Name = "Name")] public required string Name { get; set; }
+        [Display(Name = "Decimal")] public bool Decimal { get; set; } = false;
+        [Display(Name = "Decimal Place")] public int DecimalPlace { get; set; } = 0;
     }
 
-    public class Tax : BaseModel
+    public class Tax : BaseEntity
     {
-        public required string Name { get; set; }
-        public decimal CompositeRate { get; set; }
-        public TaxType TaxType { get; set; } = TaxType.GST;
-        [JsonIgnore]
-        public decimal IGST { get => TaxType == TaxType.IGST ? CompositeRate : 0; }
-        [JsonIgnore]
-        public decimal CGST { get => TaxType == TaxType.GST ? CompositeRate / 2m : TaxType == TaxType.CGST ? CompositeRate : 0; }
-        [JsonIgnore]
-        public decimal SGST { get => TaxType == TaxType.GST ? CompositeRate / 2m : TaxType == TaxType.SGST ? CompositeRate : 0; }
+        [Display(Name = "Name")] public required string Name { get; set; }
+        [Display(Name = "Composite Rate")] public decimal CompositeRate { get; set; }
+        [Display(Name = "Tax Type")] public TaxType TaxType { get; set; } = TaxType.GST;
 
+        [JsonIgnore]
+        [Display(Name = "IGST")] public decimal IGST { get => TaxType == TaxType.IGST ? CompositeRate : 0; }
+        [JsonIgnore]
+        [Display(Name = "CGST")] public decimal CGST { get => TaxType == TaxType.GST ? CompositeRate / 2m : TaxType == TaxType.CGST ? CompositeRate : 0; }
+        [JsonIgnore]
+        [Display(Name = "SGST")] public decimal SGST { get => TaxType == TaxType.GST ? CompositeRate / 2m : TaxType == TaxType.SGST ? CompositeRate : 0; }
     }
 
     public class Stock : StoreBase
     {
         [ForeignKey("Product")]
-        public Guid ProductId { get; set; }
-        public required string Barcode { get; set; }
-        public string? HSNCode { get; set; }
-        public Unit Unit { get; set; }
-        public decimal PurchaseQty { get; set; } = 0;
-        public decimal CostPrice { get; set; } = 0;
-        public decimal SoldQty { get; set; } = 0;
-        public decimal MRP { get; set; } = 0;
-        public decimal TaxRate { get; set; }
-        public TaxType TaxType { get; set; }
-        public Guid TaxId { get; set; }
-
-        public bool BrandedProduct { get; set; }=true;
-
-        [JsonIgnore]
-        public virtual Tax? Tax { get; set; }
-        [JsonIgnore]
-        public virtual Product? Product { get; set; }
+        [Display(Name = "Product", AutoGenerateField = false)] public Guid ProductId { get; set; }
+        [Display(Name = "Barcode")] public required string Barcode { get; set; }
+        [Display(Name = "HSN Code")] public string? HSNCode { get; set; }
+        [Display(Name = "Unit")] public Unit Unit { get; set; }
+        [Display(Name = "Purchase Quantity")] public decimal PurchaseQty { get; set; } = 0;
+        [Display(Name = "Cost Price")] public decimal CostPrice { get; set; } = 0;
+        [Display(Name = "Sold Quantity")] public decimal SoldQty { get; set; } = 0;
+        [Display(Name = "MRP")] public decimal MRP { get; set; } = 0;
+        [Display(Name = "Tax Rate")] public decimal TaxRate { get; set; }
+        [Display(Name = "Tax Type")] public TaxType TaxType { get; set; }
+        [Display(Name = "Tax", AutoGenerateField = false)] public Guid TaxId { get; set; }
+        [Display(Name = "Branded Product")] public bool BrandedProduct { get; set; } = true;
 
         [JsonIgnore]
-        public decimal CurrentStock { get => PurchaseQty - SoldQty; }
+        [Display(Name = "Tax", AutoGenerateField = false)] public virtual Tax? Tax { get; set; }
         [JsonIgnore]
-        public decimal BasicMRP { get => MRP / (1 + (TaxRate / 100)); }
+        [Display(Name = "Product", AutoGenerateField = false)] public virtual Product? Product { get; set; }
+
         [JsonIgnore]
-        public decimal UnitTax { get => MRP - BasicMRP; }
+        [Display(Name = "Current Stock")] public decimal CurrentStock { get => PurchaseQty - SoldQty; }
         [JsonIgnore]
-        public decimal CostValue { get => CostPrice * CurrentStock; }
+        [Display(Name = "Basic MRP")] public decimal BasicMRP { get => MRP / (1 + (TaxRate / 100)); }
         [JsonIgnore]
-        public decimal MRPValue { get => MRP * CurrentStock; }
+        [Display(Name = "Unit Tax")] public decimal UnitTax { get => MRP - BasicMRP; }
+        [JsonIgnore]
+        [Display(Name = "Cost Value")] public decimal CostValue { get => CostPrice * CurrentStock; }
+        [JsonIgnore]
+        [Display(Name = "MRP Value")] public decimal MRPValue { get => MRP * CurrentStock; }
     }
 
     public class Product : GroupBase
     {
-        public required string Name { get; set; }
-        public required string Barcode { get; set; }
-        public string? Descriptions { get; set; }
-        public decimal MRP { get; set; }
-        public decimal TaxRate { get; set; }
-        public Unit Unit { get; set; }
-        public TaxType TaxType { get; set; }
-        public ProductType ProductType { get; set; } = ProductType.Fabric;
-        public Guid ProductCategoryId { get; set; }
-        public Guid ProductSubCategoryId { get; set; }
-        public virtual ProductCategory? ProductCategory { get; set; }
-        public virtual ProductSubCategory? ProductSubCategory { get; set; }
-        public virtual ICollection<Stock>? Stocks { get; set; } = null;
+        [Display(Name = "Product Name")] public required string Name { get; set; }
+        [Display(Name = "Barcode")] public required string Barcode { get; set; }
+        [Display(Name = "Descriptions")] public string? Descriptions { get; set; }
+        [Display(Name = "MRP")] public decimal MRP { get; set; }
+        [Display(Name = "Tax Rate")] public decimal TaxRate { get; set; }
+        [Display(Name = "Unit")] public Unit Unit { get; set; }
+        [Display(Name = "Tax Type")] public TaxType TaxType { get; set; }
+        [Display(Name = "Product Type")] public ProductType ProductType { get; set; } = ProductType.Fabric;
+        [Display(Name = "Product Category", AutoGenerateField = false)] public Guid ProductCategoryId { get; set; }
+        [Display(Name = "Product Sub Category", AutoGenerateField = false)] public Guid ProductSubCategoryId { get; set; }
+        [Display(Name = "Product Category", AutoGenerateField = false)] public virtual ProductCategory? ProductCategory { get; set; }
+        [Display(Name = "Product Sub Category", AutoGenerateField = false)] public virtual ProductSubCategory? ProductSubCategory { get; set; }
+        [Display(Name = "Stocks", AutoGenerateField = false)] public virtual ICollection<Stock>? Stocks { get; set; } = null;
 
     }
 
     public class ProductCategory : CompanyBase
     {
-        public required string Name { get; set; }
+        [Display(Name = "Category Name")] public required string Name { get; set; }
     }
     public class ProductSubCategory : CompanyBase
     {
-        public required string Name { get; set; }
+        [Display(Name = "Sub Category Name")] public required string Name { get; set; }
     }
 
     public class ProductDetail : CompanyBase
     {
-        public Guid ProductId { get; set; }
-        public required string Barcode { get; set; }
-        public string? StyleCode { get; set; }
-        public string? BaseColor { get; set; }
-        public string? Brand { get; set; }
-        public Guid? VendorId { get; set; }
-        public virtual Vendor? Vendor { get; set; }
-        public virtual Product? Product { get; set; }
+        [Display(Name = "Product", AutoGenerateField = false)] public Guid ProductId { get; set; }
+        [Display(Name = "Barcode")] public required string Barcode { get; set; }
+        [Display(Name = "Style Code")] public string? StyleCode { get; set; }
+        [Display(Name = "Base Color")] public string? BaseColor { get; set; }
+        [Display(Name = "Brand")] public string? Brand { get; set; }
+        [Display(Name = "Vendor", AutoGenerateField = false)] public Guid? VendorId { get; set; }
+        [Display(Name = "Vendor", AutoGenerateField = false)] public virtual Vendor? Vendor { get; set; }
+        [Display(Name = "Product", AutoGenerateField = false)] public virtual Product? Product { get; set; }
     }
 
-    public class Brand : BaseModel
+    public class Brand : BaseEntity
     {
-        public required string Name { get; set; }
-        public required string BrandCode { get; set; }
-        public Guid? SupplierId { get; set; } = null;
+
+       [Display(Name = "Brand Name")] public required string Name { get; set; }
+        [Display(Name = "Brand Code")] public required string BrandCode { get; set; }
+        [Display(Name = "Supplier", AutoGenerateField = false)] public Guid? SupplierId { get; set; } = null;
     }
 }

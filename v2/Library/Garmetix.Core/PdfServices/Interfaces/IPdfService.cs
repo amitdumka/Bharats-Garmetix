@@ -1,4 +1,5 @@
-﻿using Garmetix.Models.Reports;
+﻿using Garmetix.Core.VM.Reports;
+using Garmetix.Models.Reports;
 using Syncfusion.Pdf;
 using Syncfusion.Pdf.Graphics;
 using Syncfusion.Pdf.Grid;

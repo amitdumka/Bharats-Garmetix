@@ -1,9 +1,42 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿/*
+ * Garmetix
+ * Author: Amit Kumar
+ * https://garmetix.com/
+ * Copyright (c) 2026. All rights reserved.
+ * Version: 6.0.0
+ * License: https://garmetix.com/license
+ * Website: https://garmetix.com/
+*/
+/*
+ * KeyPersonalInfo.cs
+ * This code defines a C# class named `KeyPersonalInfo` within the `Garmetix.Models.Onboarding` namespace. 
+ * The class contains properties for storing key personal information about a store manager and an accountant, 
+ * including their names, email addresses, and phone numbers. Each property is decorated with data annotations 
+ * to enforce validation rules such as required fields, string length limits, regular expression patterns, and 
+ * specific formats for email addresses and phone numbers.
+ * 
+ */
 
-namespace Garmetix.Models.Onboarding
+
+using System.ComponentModel.DataAnnotations;
+
+namespace Garmetix.Core.Models.Onboarding
 {
     public class KeyPersonalInfo
     {
+        //Write the Constructor to initialize the properties with default values
+        public KeyPersonalInfo()
+        {
+            StoreManagerName = string.Empty;
+            StoreManagerEmail = string.Empty;
+            StoreManagerPhoneNumber = string.Empty;
+            AccountantName = string.Empty;
+            AccountantEmail = string.Empty;
+            AccountantPhoneNumber = string.Empty;
+        }
+
+
+
         [Display(Prompt = "Store Manager Name")]
         [Required(ErrorMessage = "Store Manager Name is required")]
         [MinLength(2, ErrorMessage = "Store Manager Name must be at least 2 characters long.")]

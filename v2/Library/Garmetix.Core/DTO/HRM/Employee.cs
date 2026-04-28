@@ -9,8 +9,8 @@
 */
 
 using Garmetix.Core.Models.Base;
+using Garmetix.Core.Models.HRM;
 using Garmetix.Models.Enums;
-using Garmetix.Models.HRM;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;

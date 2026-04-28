@@ -1,4 +1,26 @@
-﻿namespace Garmetix.Models.Onboarding
+﻿/*
+ * Garmetix
+ * Author: Amit Kumar
+ * https://garmetix.com/
+ * Copyright (c) 2026. All rights reserved.
+ * Version: 6.0.0
+ * License: https://garmetix.com/license
+ * Website: https://garmetix.com/
+*/
+/*
+ * OnboardingData.cs
+ * 
+ * This class represents the data structure for onboarding information in the Garmetix application. 
+ * It includes properties for client details, address details, company details, company configuration, and key personal details.
+ * The class also contains methods to check if onboarding is required and to reset the onboarding data.
+ *
+ */
+
+ 
+
+using Garmetix.Core.Models.Onboarding;
+
+namespace Garmetix.Core.VM.Onboarding
 {
     public class OnboardingData
     {

@@ -7,7 +7,17 @@
  * License: https://garmetix.com/license
  * Website: https://garmetix.com/
 */
-
+/*
+ * This file contains all the Enums used in Garmetix. Enums are used to define a set of named constants that can be used throughout the application. 
+ * This file is included in all platforms, so any changes made here will be reflected in all platforms. 
+ * Enums are used to improve code readability and maintainability by providing meaningful names for constant values. 
+ * Enums can also be used to enforce type safety and prevent invalid values from being assigned to variables. 
+ * Enums can be used in switch statements, if statements, and other control flow structures to make the code more readable and easier to understand. 
+ * Enums can also be used in data models, view models, and other classes to represent specific states or categories of data. 
+ * Enums can be defined with specific underlying types (e.g., int, byte) to optimize memory usage and performance. 
+ * Enums can also have associated methods and properties to provide additional functionality. 
+ * Overall, enums are a powerful tool for improving code quality and maintainability in Garmetix.
+ */
 
 // Base of all Enums used in Garmetix. This file is included in all platforms. 
 namespace Garmetix.Core.Enums
@@ -169,5 +179,375 @@ namespace Garmetix.Core.Enums
         Leave,
         WorkFromHome
     }
+    public enum CARD
+    {
+        DebitCard,
+        CreditCard,
+        AmexCard,
+        GiftCard,
+        Other
+    }
+
+    public enum CARDType
+    {
+        Visa,
+        MasterCard,
+        Maestro,
+        AmexCard,
+        Dinners,
+        Rupay,
+        RupayCredit,
+        Others,
+    }
+    public enum Unit
+    {
+        Meters,
+        Nos,
+        Pcs,
+        Packets,
+        Grams,
+        Kgs,
+        Liter,
+        NoUnit,
+        Than, Boxes
+    }
+
+    public enum TaxType
+    {
+        GST,
+        SGST,
+        CGST,
+        IGST,
+        VAT,
+        CST,
+    }
+
+    public enum NotesType
+    {
+        DebitNote,
+        CreditNote,
+    }
+
+    public enum InvoiceType
+    {
+        Sales,
+        SalesReturn,
+        ManualSale,
+        ManualSaleReturn,
+    }
+
+    public enum PurchaseInvoiceType
+    {
+        Purchase,
+        PurchaseReturn,
+    }
+    /// <summary>
+    /// ProductType represents a type of a product
+    /// </summary>
+    public enum ProductType
+    {
+        Apparels,
+        Clothing,
+        Electronics,
+        Fabric,
+        Accessories,
+        InnerWear,
+        SuitCovers,
+        FootWear,
+        Readmade,
+        Jewellery,
+        Cosmetics,
+        WinterWear,
+        Others
+    }
+    public enum CompanyType
+    {
+        Proprietorship, // Proprietorship
+        Partnership,
+        PrivateLimited,
+        PublicLimited,
+        LLP, // Limited Liability Partnership
+        Others
+    }
+    public enum StoreCategory
+    {
+        Cloths,
+        Garments,
+        Readymade,
+        Furniture,
+        FuelStation,
+        General,
+        Retail,
+        Wholesale,
+        Distributor,
+        Others
+    }
+
+    //Check  
+
+    public enum Order
+    { Asc, Desc }
+
+    public enum UserAccess
+    {
+        Admin,
+        SuperAdmin,
+        SuperUser,
+        PowerUser,
+        User,
+        Guest,
+    }
+
+    public enum Unit
+    {
+        Meters,
+        Nos,
+        Pcs,
+        Packets,
+        Grams,
+        Kgs,
+        Liter,
+        NoUnit,
+        Than, Boxes
+    }
+
+    public enum UOM
+    {
+        Meters,
+        Nos,
+        Pcs,
+        Packets,
+        Grams,
+        Kgs,
+        Liter,
+        NoUnit,
+        Than,
+        Boxes
+    }
+
+    public enum AttUnit
+    {
+        Present,
+        Absent,
+        HalfDay,
+        Sunday,
+        Holiday,
+        StoreClosed,
+        SundayHoliday,
+        SickLeave,
+        PaidLeave,
+        CasualLeave,
+        OnLeave,
+        Leave,
+        WorkFromHome
+    }
+
+    public enum TaxType
+    {
+        GST,
+        SGST,
+        CGST,
+        IGST,
+        VAT,
+        CST,
+    }
+
+    public enum NotesType
+    {
+        DebitNote,
+        CreditNote,
+    }
+
+    public enum InvoiceType
+    {
+        Sales,
+        SalesReturn,
+        ManualSale,
+        ManualSaleReturn,
+    }
+
+    public enum PurchaseInvoiceType
+    {
+        Purchase,
+        PurchaseReturn,
+    }
+
+    public enum EntryStatus
+    {
+        Added,
+        Approved,
+        Rejected,
+        Updated,
+        Deleted,
+        DeleteApproved,
+    }
+
+    public enum LedgerEntryType
+    {
+        Expenses,
+        Payment,
+        Receipt,
+        Salary,
+        AdvancePayment,
+        AdvanceReceipt,
+        ArvindLimited,
+        Others,
+    }
+
+    public enum NoteType
+    {
+        DebitNote,
+        CreditNote,
+    }
+
+    public enum PayMode
+    {
+        Cash,
+        Card,
+        RTGS,
+        NEFT,
+        IMPS,
+        Wallets,
+        Cheque,
+        DemandDraft,
+        Others,
+        Coupons,
+        MixPayments,
+        UPI,
+        SaleReturn,
+    }
+
+    public enum Size2
+    {
+        S,
+        M,
+        L,
+        XL,
+        XXL,
+        XXXL,
+        T28,
+        T3,
+        T32,
+        T34,
+        T36,
+        T38,
+        T4,
+        T41,
+        T42,
+        T44,
+        T46,
+        T48,
+        FreeSize,
+        NS,
+        NOTVALID,
+        B36,
+        B38,
+        B4,
+        B42,
+        B44,
+        B46,
+        B96,
+    }
+
+    public enum Size
+    {
+        S,
+        M,
+        L,
+        XL,
+        XXL,
+        XXXL,
+        C28,
+        C3,
+        C32,
+        C34,
+        C36,
+        C38,
+        C4,
+        C41,
+        C42,
+        C44,
+        C46,
+        C48,
+        C96,
+        FreeSize,
+        NS,
+        NOTVALID,
+        C39,
+        C92,
+    }
+
+    public enum ProductCategory
+    {
+        Fabric,
+        Apparel,
+        Accessories,
+        Tailoring,
+        Trims,
+        PromoItems,
+        Coupons,
+        GiftVouchers,
+        Others,
+        SuitCovers,
+        InnerWear,
+    }
+
+    public enum CARD
+    {
+        DebitCard,
+        CreditCard,
+        AmexCard,
+        GiftCard,
+        Other
+    }
+
+    public enum CARDType
+    {
+        Visa,
+        MasterCard,
+        Maestro,
+        AmexCard,
+        Dinners,
+        Rupay,
+        RupayCredit,
+        Others,
+    }
+
+    public enum VendorType
+    {
+        EBO,
+        MBO,
+        Tailoring,
+        NonSalable,
+        OtherSaleable,
+        Others,
+        TempVendor,
+        InHouse,
+        Distributor,
+        Brands,
+        BrandAuth,
+    }
+
+    public enum DebitCredit
+    {
+        In,
+        Out,
+    }
+
+    public enum RolePermission
+    {
+        Owner,
+        GeneralManager,
+        GroupManager,
+        Accountant,
+        CA,
+        StoreManager,
+        Salesmen,
+        Guest,
+        Other,
+    }
+
+
+    //Check end
 
 }

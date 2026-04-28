@@ -1,4 +1,5 @@
-﻿/*
+﻿
+/*
  * Garmetix
  * Author: Amit Kumar
  * https://garmetix.com/
@@ -7,7 +8,28 @@
  * License: https://garmetix.com/license
  * Website: https://garmetix.com/
 */
-
+/* 
+ * Employee.cs
+ * 
+ * This file contains the definitions of classes related to employee management in the Garmetix application.
+ * It includes classes for Employee, MonthlyAttendance, EmployeeDetail, Attendance, SalaryPayment, SalaryPaySlip, SalaryStructure, and TimeSheet.
+ * These classes are designed to represent the various entities and their relationships within the human resource management system.
+ * 
+ * The classes are structured to support features such as tracking employee details, managing attendance records, calculating salary payments, and generating payslips.
+ * They also include properties for handling employee categories, payment modes, and attendance statuses.
+ * 
+ * The use of attributes like [JsonIgnore] helps to control the serialization of certain properties when converting objects to JSON format.
+ * This is particularly useful for properties that are calculated or derived from other properties, ensuring that only relevant data is included in API responses or data storage.
+ *
+ * 
+ * Garmetix is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Garmetix.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Base;
@@ -16,7 +38,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
-namespace Garmetix.Models.HRM
+namespace Garmetix.Core.Models.HRM
 {
 
 
@@ -168,22 +190,23 @@ namespace Garmetix.Models.HRM
     {
         // Foreign Key
         [Required]
-        public Guid EmployeeId { get; set; }
+        [Display(Name = "Employee", AutoGenerateField = false)] public Guid EmployeeId { get; set; }
 
         [Required]
-        public DateTime OnDate { get; set; }
+        [Display(Name = "Date")] public DateTime OnDate { get; set; }
 
         [Required]
-        public AttendanceStatus Status { get; set; }
+        [Display(Name = "Status")] public AttendanceStatus Status { get; set; }
 
-        public TimeSpan? CheckInTime { get; set; } = DateTime.Now.TimeOfDay;
-        public TimeSpan? CheckOutTime { get; set; } = null;
-        public string? EntryTime { get; set; } = DateTime.Now.TimeOfDay.ToString();
+        [Display(Name = "Check In Time")] public TimeSpan? CheckInTime { get; set; } = DateTime.Now.TimeOfDay;
+        [Display(Name = "Check Out Time")] public TimeSpan? CheckOutTime { get; set; } = null;
+        [Display(Name = "Entry Time")] public string? EntryTime { get; set; } = DateTime.Now.TimeOfDay.ToString();
 
         [MaxLength(100)]
+        [Display(Name = "Remarks")]
         public string? Remarks { get; set; }
 
-        public virtual Employee? Employee { get; set; }
+        [Display(Name = "Employee", AutoGenerateField = false)] public virtual Employee? Employee { get; set; }
     }
 
     public class SalaryPayment : StoreBase
@@ -235,58 +258,57 @@ namespace Garmetix.Models.HRM
     public class SalaryPaySlip : CompanyBase
     {
         [ForeignKey("Employee")]
-        public Guid EmployeeId { get; set; }
+        [Display(Name = "Employee", AutoGenerateField = false)] public Guid EmployeeId { get; set; }
 
         [Required]
-        public string MonthYear { get; set; } = DateTime.Now.AddMonths(-1).ToString("MMMM yyyy");
+        [Display(Name = "Month Year")] public string MonthYear { get; set; } = DateTime.Now.AddMonths(-1).ToString("MMMM yyyy");
 
         [Required]
-        public DateTime PayPeriodStart { get; set; }
+        [Display(Name = "Pay Period Start")] public DateTime PayPeriodStart { get; set; }
 
-
-        public DateTime? PayPeriodEnd { get; set; }
+        [Display(Name = "Pay Period End")] public DateTime? PayPeriodEnd { get; set; }
 
         // Earnings
         [Required]
-        public decimal BasicSalary { get; set; } = 0;
+        [Display(Name = "Basic Salary")] public decimal BasicSalary { get; set; } = 0;
 
         [Required]
-        public decimal HRA { get; set; } = 0;
+        [Display(Name = "House Rent Allowance")] public decimal HRA { get; set; } = 0;
 
         [Required]
-        public decimal SpecialAllowance { get; set; }
+        [Display(Name = "Special Allowance")] public decimal SpecialAllowance { get; set; }
 
         [Required]
-        public decimal ConveyanceAllowance { get; set; }
+        [Display(Name = "Conveyance Allowance")] public decimal ConveyanceAllowance { get; set; }
 
         [Required]
-        public decimal Incentives { get; set; }
+        [Display(Name = "Incentives")] public decimal Incentives { get; set; }
 
-        public decimal OtherEarnings { get; set; } = 0;
+        [Display(Name = "Other Earnings")] public decimal OtherEarnings { get; set; } = 0;
 
         // Deductions
         [Required]
-        public decimal ProvidentFund { get; set; }
-
-        public decimal Gratuity { get; set; }
-        public decimal Deductions { get; set; }
-
-        [Required]
-        public decimal ProfessionalTax { get; set; }
+        [Display(Name = "Provident Fund")] public decimal ProvidentFund { get; set; }
+        [Display(Name = "Gratuity")] public decimal Gratuity { get; set; }
+        [Display(Name = "Deductions")] public decimal Deductions { get; set; }
 
         [Required]
-        public decimal IncomeTax { get; set; }
+        [Display(Name = "Professional Tax")] public decimal ProfessionalTax { get; set; }
+        [Required]
+        [Display(Name = "Income Tax")] public decimal IncomeTax { get; set; }
 
-        public decimal OtherDeductions { get; set; }
+        [Display(Name = "Other Deductions")] public decimal OtherDeductions { get; set; }
 
         // Total Calculations
-        public decimal TotalEarnings { get => BasicSalary + HRA + SpecialAllowance + ConveyanceAllowance + Incentives + OtherEarnings; }
+        [Display(Name = "Total Earnings")] public decimal TotalEarnings { get => BasicSalary + HRA + SpecialAllowance + ConveyanceAllowance + Incentives + OtherEarnings; }
 
-        public decimal TotalDeductions { get => ProvidentFund + Gratuity + ProfessionalTax + Deductions + IncomeTax + OtherDeductions; }
+        [Display(Name = "Total Deductions")] public decimal TotalDeductions { get => ProvidentFund + Gratuity + ProfessionalTax + Deductions + IncomeTax + OtherDeductions; }
 
         [MaxLength(200)]
-        public string? Remarks { get; set; }
+        [Display(Name = "Remarks")] public string? Remarks { get; set; }
 
+        [Display(Name = "Net Salary")]
+        [JsonIgnore]
         public decimal NetSalary
         {
             get
@@ -306,9 +328,7 @@ namespace Garmetix.Models.HRM
 
         [Display(Name = "To Date")] public DateTime? ToDate { get; set; } = null;
 
-        [Display(Name = "Is Current")]
-        public bool IsCurrent
-        { get { return ToDate == null; } }
+        [Display(Name = "Is Current")][JsonIgnore] public bool IsCurrent { get { return ToDate == null; } }
 
         [Display(Name = "Employee", AutoGenerateField = false)] public virtual Employee? Employee { get; set; }
 

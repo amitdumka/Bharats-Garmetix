@@ -1,10 +1,48 @@
-﻿using Garmetix.Models.Stores;
+﻿/*
+ * Garmetix
+ * Author: Amit Kumar
+ * https://garmetix.com/
+ * Copyright (c) 2026. All rights reserved.
+ * Version: 6.0.0
+ * License: https://garmetix.com/license
+ * Website: https://garmetix.com/
+*/
+/*
+ * CompanyInfo.cs
+ * 
+ * This file defines the CompanyInfo class, which represents the company information required during the onboarding process. 
+ * It includes properties such as CompanyName, GSTIN, PAN, CompanyType, CompanyEmail, CompanyPhoneNumber, DateOfIncorporation, and StoreCategory.
+ * Each property is decorated with data annotations to enforce validation rules and provide user-friendly error messages.
+ * The class is part of the Garmetix.Core.Models.Onboarding namespace and utilizes enums from Garmetix.Models.Stores for CompanyType and StoreCategory.
+ */
+
+
+
+
+
+using Garmetix.Core.Models.Stores;
 using System.ComponentModel.DataAnnotations;
 
-namespace Garmetix.Models.Onboarding
+namespace Garmetix.Core.Models.Onboarding
 {
     public class CompanyInfo
     {
+        public CompanyInfo()
+        {
+
+
+            CompanyName = string.Empty;
+            GSTIN = string.Empty;
+            PAN = string.Empty;
+            CompanyEmail = string.Empty;
+            CompanyPhoneNumber = string.Empty;
+            DateOfIncorporation = DateTime.Now;
+            CompanyType = CompanyType.Proprietorship;
+            StoreCategory = StoreCategory.Retail;
+
+        }
+
+
         [Required(ErrorMessage = "Company Name is required")]
         [MinLength(10, ErrorMessage = "Company Name must be at least 10 characters long.")]
         [MaxLength(200, ErrorMessage = "Company Name must be at most 200 characters long.")]

@@ -1,7 +1,7 @@
 ﻿
 
+using Garmetix.Core.VM;
 using Garmetix.Databases;
-using Garmetix.Models.ViewModels;
 
 namespace Garmetix.Core.DataModels
 {

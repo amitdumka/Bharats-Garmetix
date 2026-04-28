@@ -1,8 +1,9 @@
 ﻿
 using Bharat.ToolKits.Extensions;
 using Garmetix.Models.HRM;
+using Garmetix.Models.Reports;
 
-namespace Garmetix.Models.Reports
+namespace Garmetix.Core.VM.Reports
 {
     public class AttendanceReport
     {

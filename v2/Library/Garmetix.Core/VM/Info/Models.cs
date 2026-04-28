@@ -1,14 +1,15 @@
-﻿using Garmetix.Models.Inventory;
-using Invoice = Garmetix.Models.Inventory.Invoice;
-using PurchaseInvoice = Garmetix.Models.Inventory.PurchaseInvoice;
-using PurchaseInvoiceItem = Garmetix.Models.Inventory.PurchaseInvoiceItem;
+﻿using Garmetix.Core.Models.Inventory;
+using Invoice = Garmetix.Core.Models.Inventory.Invoice;
+using PurchaseInvoice = Garmetix.Core.Models.Inventory.PurchaseInvoice;
+using PurchaseInvoiceItem = Garmetix.Core.Models.Inventory.PurchaseInvoiceItem;
 
-namespace Garmetix.Models.Info
+namespace Garmetix.Core.VM.Info
 {
     /// <summary>
     /// Sale Invoice ViewModel for UI to display Sale Invoice details.
     /// </summary>
-    
+    //TODO: Rename to SaleInvoiceDetails or SaleInvoiceViewModel for better clarity.
+    //TODO: Check this is required or not, as we can directly use Invoice model for this purpose.
     public class SaleInvoice
     {
         public Invoice Invoice { get; set; }

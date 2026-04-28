@@ -1,8 +1,8 @@
 ﻿//Garmetix - A.NET MAUI Application for Garment and Textile Management
 
+using Garmetix.Core.Models.Stores;
 using Garmetix.Models;
 using Garmetix.Models.Auth;
-using Garmetix.Models.Stores;
 using Microsoft.EntityFrameworkCore;
 using SQLite;
 using System.ComponentModel.DataAnnotations;

@@ -1,4 +1,4 @@
-﻿namespace Garmetix.Models.Reports
+﻿namespace Garmetix.Core.VM.Reports
 {
     public class MonthlyAttendanceReport : AttendanceReport
     {

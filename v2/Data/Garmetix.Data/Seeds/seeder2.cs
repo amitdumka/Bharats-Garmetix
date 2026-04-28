@@ -6,13 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Bharat.ToolKits.Notifications;
 using Garmetix.Core.Models.Accounting;
+using Garmetix.Core.Models.Onboarding;
+using Garmetix.Core.Models.Stores;
 using Garmetix.Models.Accounting;
 using Garmetix.Models.Auth;
 using Garmetix.Models.Enums;
 using Garmetix.Models.HRM;
 using Garmetix.Models.Inventory;
-using Garmetix.Models.Onboarding;
-using Garmetix.Models.Stores;
 
 namespace Garmetix.Databases.Seeds;
 

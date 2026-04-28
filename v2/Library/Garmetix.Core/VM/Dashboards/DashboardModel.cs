@@ -1,4 +1,5 @@
-﻿/*
+﻿
+/*
  * Garmetix
  * Author: Amit Kumar
  * https://garmetix.com/
@@ -8,8 +9,7 @@
  * Website: https://garmetix.com/
 */
 
-
-namespace Garmetix.Models.Dashboards
+namespace Garmetix.Core.VM.Dashboards
 {
     public class PayrollInfo
     {

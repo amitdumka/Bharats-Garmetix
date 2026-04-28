@@ -1,12 +1,12 @@
 ﻿
 using Bharat.ToolKits.Helpers;
 using Garmetix.Core.Models.Accounting;
+using Garmetix.Core.Models.HRM;
+using Garmetix.Core.Models.Inventory;
+using Garmetix.Core.Models.Stores;
 using Garmetix.Models.Accounting;
 using Garmetix.Models.Auth;
 using Garmetix.Models.DayOperations;
-using Garmetix.Models.HRM;
-using Garmetix.Models.Inventory;
-using Garmetix.Models.Stores;
 using Microsoft.EntityFrameworkCore;
 
 namespace Garmetix.Databases

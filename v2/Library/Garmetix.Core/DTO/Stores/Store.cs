@@ -9,7 +9,7 @@
 */
 
 using Garmetix.Core.Models.Base;
-using Garmetix.Models.Stores;
+using Garmetix.Core.Models.Stores;
 
 namespace Garmetix.Core.DTO.Stores
 {

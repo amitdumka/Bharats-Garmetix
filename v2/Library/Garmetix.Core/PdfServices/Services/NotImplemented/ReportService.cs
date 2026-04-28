@@ -1,5 +1,5 @@
-using Garmetix.Models.HRM;
-using Garmetix.Models.Inventory;
+using Garmetix.Core.Models.HRM;
+using Garmetix.Core.Models.Inventory;
 
 namespace Garmetix.PdfServices.Services.NotImplemented
 {
