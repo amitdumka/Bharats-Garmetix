@@ -1,4 +1,5 @@
-﻿using Garmetix.Models.Stores;
+﻿using Garmetix.Core.DataModels;
+using Garmetix.Core.Models.Stores;
 
 namespace Garmetix.CoreBase.Stores.DataModels;
 

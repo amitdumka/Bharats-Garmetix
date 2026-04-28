@@ -1,5 +1,5 @@
-﻿using Garmetix.CoreBase.Stores.PageModels;
-using Garmetix.Core.Views.Customs.Forms;
+﻿using Garmetix.Base.Views.Customs.Forms;
+using Garmetix.CoreBase.Stores.PageModels;
 using Syncfusion.Maui.DataForm;
 
 namespace Garmetix.CoreBase.Stores.Pages

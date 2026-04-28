@@ -1,6 +1,6 @@
 using Garmetix.CoreBase.Stores.PageModels;
-using Garmetix.Core.Views.Customs.Listing;
-using Garmetix.Models.Stores;
+using Garmetix.Base.Views.Customs.Listing;
+using Garmetix.Core.Models.Stores;
 
 namespace Garmetix.CoreBase.Stores.Pages.Mobile;
 

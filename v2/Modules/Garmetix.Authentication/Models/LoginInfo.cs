@@ -1,4 +1,4 @@
-﻿using Garmetix.Models.Enums;
+﻿using Garmetix.Core.Enums;
 using Syncfusion.Maui.DataForm;
 using System.ComponentModel.DataAnnotations;
 

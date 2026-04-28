@@ -1,6 +1,7 @@
 ﻿using Bharat.ToolKits.Helpers;
 using Bharat.ToolKits.Notifications;
 using Garmetix.Authentication.Models;
+using Garmetix.Core.Models.Authentication;
 using Garmetix.Core.Sessions;
 using Garmetix.Core.Settings;
 using Garmetix.Databases;

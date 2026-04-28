@@ -1,4 +1,5 @@
-﻿using Garmetix.Models.Stores;
+﻿using Garmetix.Core.Enums;
+using Garmetix.Core.Models.Base;
 using Syncfusion.Maui.DataForm;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;

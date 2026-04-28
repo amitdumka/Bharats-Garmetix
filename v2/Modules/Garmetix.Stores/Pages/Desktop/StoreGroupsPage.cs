@@ -1,5 +1,5 @@
 ﻿using Garmetix.CoreBase.Stores.PageModels;
-using Garmetix.Core.Views.Customs.Listing;
+using Garmetix.Base.Views.Customs.Listing;
 
 namespace Garmetix.CoreBase.Stores.Pages.Desktop
 {

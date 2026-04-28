@@ -1,5 +1,10 @@
-﻿using Garmetix.CoreBase.Stores.Models;
-using Garmetix.Models.Stores;
+﻿using Garmetix.Base.PageModels;
+using Garmetix.Core.DataModels;
+using Garmetix.Core.Enums;
+using Garmetix.Core.Interfaces;
+using Garmetix.Core.Models.Stores;
+using Garmetix.CoreBase.Stores.Models;
+using Garmetix.Databases.Services;
 using Syncfusion.Maui.DataForm;
 
 namespace Garmetix.CoreBase.Stores.PageModels
