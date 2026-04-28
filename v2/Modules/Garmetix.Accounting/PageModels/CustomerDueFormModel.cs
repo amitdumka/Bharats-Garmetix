@@ -1,6 +1,12 @@
-﻿using Syncfusion.Maui.DataForm;
+﻿using Garmetix.Accounting.Models;
+using Garmetix.Base.PageModels;
+using Garmetix.Core.DataModels;
+using Garmetix.Core.Interfaces;
+using Garmetix.Core.Models.Accounting;
+using Garmetix.Databases.Services;
+using Syncfusion.Maui.DataForm;
 
-namespace Garmetix.CoreBase.Accounting.FormModels
+namespace Garmetix.Accounting.FormModels
 {
     public class CustomerDueFormModel : FormModel<CustomerDueEntry>
     {
@@ -17,7 +23,8 @@ namespace Garmetix.CoreBase.Accounting.FormModels
                 OnDate = DateTime.Now,
                 Company = DatabaseService.CompanyId,
                 StoreGroup = DatabaseService.StoreGroupId,
-                Store = DatabaseService.StoreId
+                Store = DatabaseService.StoreId,
+                InvoiceNumber = string.Empty
             };
         }
 

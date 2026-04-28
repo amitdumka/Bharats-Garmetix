@@ -1,17 +1,39 @@
-﻿using Bharat.ToolKits.Extensions;
+﻿/*
+ * Garmetix
+ * Author: Amit Kumar
+ * https://garmetix.com/
+ * Copyright (c) 2026. All rights reserved.
+ * Version: 6.0.0
+ * License: https://garmetix.com/license
+ * Website: https://garmetix.com/
+*/
+/* 
+ * FormModel.cs
+ * 
+ * This is a base class for all the
+ * Forms in the application, it contains the common properties and methods for all the forms, it is an abstract class and should be inherited by all the forms in the application
+ */
+
+
+using Bharat.ToolKits.Extensions;
 using Bharat.ToolKits.Helpers;
 using Bharat.ToolKits.Notifications;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Garmetix.Core.DataModels;
+using Garmetix.Core.Enums;
+using Garmetix.Core.Interfaces;
 using Garmetix.Core.Services;
-using Garmetix.Models.Bases;
-using Garmetix.Models.Enums;
-using Garmetix.Models.ViewModels; 
+using Garmetix.Core.VM;
 using Syncfusion.Maui.DataForm;
 
-namespace Garmetix.Core.PageModels
+namespace Garmetix.Base.PageModels
 {
+    /// <summary>
+    /// This is a base class for all the forms in the application, it contains the common properties and methods for all the forms, it is an abstract class and should be inherited by all the forms in the application
+    ///
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
     public abstract partial class FormModel<TEntity> : PageModelBase, IDataFormSourceProvider where TEntity : class, IEntity
     {
         #region Properties
@@ -351,7 +373,10 @@ namespace Garmetix.Core.PageModels
         protected virtual async Task ShareIt()
         {
             await Notify.ShowError("It is not implemented!", false);
+
         }
-        #endregion AbstracrMethods
+
+
+        #endregion AbstractMethods
     }
 }

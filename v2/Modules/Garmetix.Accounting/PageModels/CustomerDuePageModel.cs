@@ -1,6 +1,8 @@
-﻿using Syncfusion.Maui.DataGrid;
+﻿using Garmetix.Base.PageModels;
+using Garmetix.Core.Models.Accounting;
+using Syncfusion.Maui.DataGrid;
 
-namespace Garmetix.CoreBase.Accounting.PageModels
+namespace Garmetix.Accounting.PageModels
 {
     public class CustomerDuePageModel : PageModel<CustomerDue>
     {

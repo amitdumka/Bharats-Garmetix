@@ -1,7 +1,7 @@
 ﻿using Garmetix.CoreServices.Accounting;
 using Syncfusion.Maui.DataForm;
 
-namespace Garmetix.CoreBase.Accounting.FormModels
+namespace Garmetix.Accounting.FormModels
 {
     public class DueRecoveryFormModel : FormModel<DueRecoveryEntry>
     {

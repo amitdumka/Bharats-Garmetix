@@ -1,7 +1,6 @@
-﻿using Garmetix.Core.Views.Customs.Listing;
-using Bharat.ToolKits.Extensions;
+﻿using Bharat.ToolKits.Extensions;
 
-namespace Garmetix.CoreBase.Accounting.Pages
+namespace Garmetix.Accounting.Pages
 {
     public class BankAccountDetailPage : BaseListingPage
     {

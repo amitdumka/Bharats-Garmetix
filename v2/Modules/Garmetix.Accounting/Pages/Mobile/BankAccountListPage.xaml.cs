@@ -1,6 +1,7 @@
-using Garmetix.Core.Views.Customs.Listing;
+using Garmetix.Accounting.PageModels;
 
-namespace Garmetix.CoreBase.Accounting.Pages.Mobile;
+
+namespace Garmetix.Accounting.Pages.Mobile;
 
 public partial class BankAccountListPage : BaseListViewPage
 {

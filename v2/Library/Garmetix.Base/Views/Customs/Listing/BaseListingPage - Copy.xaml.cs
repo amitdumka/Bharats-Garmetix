@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace Garmetix.Core.Views.Customs.Listing
+namespace Garmetix.Base.Views.Customs.Listing
 {
     public partial class BaseListViewPage : ContentPage
     {
@@ -22,7 +22,7 @@ namespace Garmetix.Core.Views.Customs.Listing
             if (ListItemTemplate != null)
             {
                 ColView.ItemTemplate = ListItemTemplate;
-                DisplayAlert("Info Constructor", "ListItemTemplate is SET", "OK");
+                DisplayAlertAsync("Info Constructor", "ListItemTemplate is SET", "OK");
             }
         }
         protected override void OnAppearing()
@@ -38,7 +38,7 @@ namespace Garmetix.Core.Views.Customs.Listing
             }
 
             if(ListItemTemplate==null)
-                DisplayAlert("Error", "ListItemTemplate is NULL", "OK");
+                DisplayAlertAsync("Error", "ListItemTemplate is NULL", "OK");
             // Optionally, use a breakpoint here to inspect ListItemTemplate in the debugger.
             // If you see "NULL", then the DataTemplate hasn't been applied yet.
         }
@@ -64,17 +64,17 @@ namespace Garmetix.Core.Views.Customs.Listing
 
         protected virtual async void OnAddClicked(object sender, EventArgs e)
         {
-            await DisplayAlert("Add", "Add button clicked!", "OK");
+            await DisplayAlertAsync("Add", "Add button clicked!", "OK");
         }
 
         protected virtual async void OnDeleteClicked(object sender, EventArgs e)
         {
-            await DisplayAlert("Delete", "Delete button clicked!", "OK");
+            await DisplayAlertAsync("Delete", "Delete button clicked!", "OK");
         }
 
         protected virtual async void OnExportClicked(object sender, EventArgs e)
         {
-            await DisplayAlert("Export", "Export button clicked!", "OK");
+            await DisplayAlertAsync("Export", "Export button clicked!", "OK");
         }
     }
 }

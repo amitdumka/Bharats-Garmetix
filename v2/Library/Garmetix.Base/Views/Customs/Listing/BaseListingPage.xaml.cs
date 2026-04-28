@@ -1,7 +1,7 @@
 using Syncfusion.Maui.DataGrid;
 using System.Runtime.CompilerServices;
 
-namespace Garmetix.Core.Views.Customs.Listing
+namespace Garmetix.Base.Views.Customs.Listing
 {
     public partial class BaseListingPage : ContentPage
     {

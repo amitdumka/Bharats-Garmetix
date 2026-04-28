@@ -1,7 +1,7 @@
-﻿using Garmetix.Core.Views.Customs.Listing;
-using Bharat.ToolKits.Extensions;
+﻿using Bharat.ToolKits.Extensions;
+using Garmetix.Accounting.PageModels.Vouchers;
 
-namespace Garmetix.CoreBase.Accounting.Pages
+namespace Garmetix.Accounting.Pages
 {
     public class CashVoucherPage : BaseListingPage
     {

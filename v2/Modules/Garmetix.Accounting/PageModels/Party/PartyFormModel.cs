@@ -1,6 +1,13 @@
-﻿using Syncfusion.Maui.DataForm;
+﻿using Garmetix.Accounting.Models;
+using Garmetix.Base.PageModels;
+using Garmetix.Core.DataModels;
+using Garmetix.Core.Enums;
+using Garmetix.Core.Interfaces;
+using Garmetix.Core.Models.Accounting;
+using Garmetix.Databases.Services;
+using Syncfusion.Maui.DataForm;
 
-namespace Garmetix.CoreBase.Accounting.FormModels
+namespace Garmetix.Accounting.FormModels
 {
     public class PartyFormModel : FormModel<PartyEntry>
     {
@@ -113,8 +120,8 @@ namespace Garmetix.CoreBase.Accounting.FormModels
                     UpdatedAt = DateTime.UtcNow,
                     Id = Entity.LedgerId.Value,
                     IsParty = true,
-                    OpenningBalance = 0,
-                    OpenningDate = DateTime.Now
+                    OpeningBalance = 0,
+                    OpeningDate = DateTime.Now
                 }
             };
 

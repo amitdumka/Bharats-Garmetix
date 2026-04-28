@@ -1,6 +1,6 @@
 ﻿using Syncfusion.Maui.DataGrid;
 
-namespace Garmetix.CoreBase.Accounting.PageModels
+namespace Garmetix.Accounting.PageModels
 {
     public class ChequeLogPageModel : PageModel<ChequeLog>
     {

@@ -1,6 +1,12 @@
-﻿using Syncfusion.Maui.DataForm;
+﻿using Garmetix.Accounting.Models;
+using Garmetix.Base.PageModels;
+using Garmetix.Core.DataModels;
+using Garmetix.Core.Interfaces;
+using Garmetix.Core.Models.Accounting;
+using Garmetix.Databases.Services;
+using Syncfusion.Maui.DataForm;
 
-namespace Garmetix.CoreBase.Accounting.FormModels
+namespace Garmetix.Accounting.FormModels
 {
     public class TransactionFormModel : FormModel<TransactionEntry>
     {
@@ -15,7 +21,7 @@ namespace Garmetix.CoreBase.Accounting.FormModels
             Entity = new TransactionEntry
             {
                 Id = Guid.NewGuid(),
-                Company = DatabaseService.CompanyId
+                Company = DatabaseService.CompanyId, Name= string.Empty
 
             };
         }

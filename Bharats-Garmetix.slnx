@@ -6,7 +6,12 @@
     <Project Path="Common/Services/Bharat.GoogleService/Bharat.GoogleService.csproj" Id="c2dc83c1-688a-4e15-8929-d58b7eeab11a" />
     <Project Path="Common/Services/Garmetix.Reports/Garmetix.Reports.csproj" Id="1bd17a20-9ecf-4d28-8526-546a1f10db12" />
   </Folder>
-  <Folder Name="/V2/" />
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+  </Folder>
+  <Folder Name="/V2/">
+    <Project Path="v2/Garmetix.SRP/Garmetix.SRP.csproj" Id="700e02d3-2898-43af-b8c0-15a872add007" />
+  </Folder>
   <Folder Name="/V2/Data/">
     <Project Path="v2/Data/Garmetix.Data/Garmetix.Data.csproj" Id="0f4f4577-b209-473a-ab1d-0766a9a71c1d" />
     <Project Path="v2/Data/Garmetix.DataServices/Garmetix.DataServices.csproj" Id="d30b58d2-2e81-4c4e-ab9b-86a4ea65d0ef" />

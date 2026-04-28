@@ -1,6 +1,4 @@
-﻿using Garmetix.Core.Views.Customs.Listing;
-
-namespace Garmetix.CoreBase.Accounting.Pages
+﻿namespace Garmetix.Accounting.Pages
 {
     public class BankTransactionPage : BaseListingPage
     {

@@ -1,6 +1,8 @@
-﻿using Garmetix.Core.Views.Customs.Listing;
+﻿
 
-namespace Garmetix.CoreBase.Accounting.Pages
+using Garmetix.Base.Views.Customs.Listing;
+
+namespace Garmetix.Accounting.Pages
 {
     public class VoucherPage : BaseListingPage
     {

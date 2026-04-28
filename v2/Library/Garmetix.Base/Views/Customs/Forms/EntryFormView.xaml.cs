@@ -1,6 +1,6 @@
 using Syncfusion.Maui.DataForm;
 
-namespace Garmetix.Core.Views.Customs.Forms
+namespace Garmetix.Base.Views.Customs.Forms
 {
     public partial class EntryFormView : ContentView
     {

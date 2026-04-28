@@ -1,7 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Garmetix.Core.Enums;
+using Garmetix.Core.Models.Base;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Garmetix.CoreBase.Accounting.Models
+namespace Garmetix.Accounting.Models
 {
     public class CustomerDueEntry : CEntity
     {
@@ -9,7 +11,7 @@ namespace Garmetix.CoreBase.Accounting.Models
         [Required(ErrorMessage = "Invoice Number is required")]
         [RegularExpression(@"^[a-zA-Z0-9\s.,#-]+$", ErrorMessage = "Invalid invoice number format")]
 
-        public string InvoiceNumber { get; set; }
+        public required string InvoiceNumber { get; set; }
         [Display(Name = "Invoice Date"), DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         [Required(ErrorMessage = "Invoice Date is required")]
@@ -38,7 +40,7 @@ namespace Garmetix.CoreBase.Accounting.Models
         [Display(Name = "Transaction Name"), Required(ErrorMessage = "Transaction Name is required")]
         [RegularExpression(@"^[a-zA-Z0-9\s.,#-]+$", ErrorMessage = "Invalid transaction name format")]
         [StringLength(150), MinLength(5), MaxLength(150)]
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
 
         [NotMapped]
@@ -76,7 +78,7 @@ namespace Garmetix.CoreBase.Accounting.Models
         [Display(Name = "Bank Name"), Required(ErrorMessage = "Bank Name is required")]
         [StringLength(150), MinLength(3), MaxLength(150)]
         [RegularExpression(@"^[a-zA-Z0-9\s.,#-]+$", ErrorMessage = "Invalid bank name format")]
-        public string Name { get; set; }
+        public required string Name { get; set; }
     }
 
     public class VendorBankAccountEntry : CEntity
@@ -135,21 +137,21 @@ namespace Garmetix.CoreBase.Accounting.Models
         [Display(Name = "Account Number"), Required(ErrorMessage = "Account Number is required")]
         [StringLength(30), MinLength(5), MaxLength(30)]
         [RegularExpression(@"^[a-zA-Z0-9\s.,#-]+$", ErrorMessage = "Invalid account number format")]
-        public string AccountNumber { get; set; }
+        public required string AccountNumber { get; set; }
 
         [Display(Name = "Account Holder Name"), StringLength(100), MinLength(3), MaxLength(100)]
         [Required(ErrorMessage = "Account Holder Name is required")]
         [RegularExpression(@"^[a-zA-Z0-9\s.,#-]+$", ErrorMessage = "Invalid account holder name format")]
-        public string AccountHolderName { get; set; }
+        public string AccountHolderName { get; set; }= string.Empty;
 
         [Display(Name = "Bank"), Required(ErrorMessage = "Bank is required")]
-        public string BankName { get; set; }
+        public string BankName { get; set; }=string.Empty;
         [Display(Name = "Branch")]
         [RegularExpression(@"^[a-zA-Z0-9\s.,#-]+$", ErrorMessage = "Invalid branch format")]
-        public string Branch { get; set; }
+        public string Branch { get; set; }= string.Empty;
         [Display(Name = "IFS Code")]
         [RegularExpression(@"^[a-zA-Z0-9\s.,#-]+$", ErrorMessage = "Invalid IFS code format")]
-        public string IFSCode { get; set; }
+        public string IFSCode { get; set; }= string.Empty;
 
         [Display(Name = "Account Type"), Required(ErrorMessage = "Account Type is required")]
         public AccountType AccountType { get; set; }

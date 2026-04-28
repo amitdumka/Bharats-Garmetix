@@ -1,12 +1,12 @@
 ﻿
 using Bharat.ToolKits.Helpers;
+using Garmetix.Base.Shells;
 using Garmetix.CoreBase.Stores.PageModels;
 using Garmetix.CoreBase.Stores.Pages;
 using Garmetix.CoreBase.Stores.Pages.Desktop;
 using Garmetix.CoreBase.Stores.Pages.Mobile;
-using Garmetix.CoreBase.View;
 
-namespace Garmetix.CoreBase.Stores
+namespace Garmetix.Stores
 {
 
     public partial class CompanyMenu : BaseFlyoutMenu

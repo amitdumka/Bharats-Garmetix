@@ -1,7 +1,6 @@
-﻿using Garmetix.Core.Views.Customs.Forms;
-using Syncfusion.Maui.DataForm;
+﻿using Syncfusion.Maui.DataForm;
 
-namespace Garmetix.CoreBase.Accounting.Pages
+namespace Garmetix.Accounting.Pages
 {
     public class EntryVoucherPage : ContentPage
     {

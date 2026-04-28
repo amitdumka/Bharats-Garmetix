@@ -1,6 +1,8 @@
-﻿using Syncfusion.Maui.DataGrid;
+﻿using Garmetix.Base.PageModels;
+using Garmetix.Core.Models.Accounting;
+using Syncfusion.Maui.DataGrid;
 
-namespace Garmetix.CoreBase.Accounting.PageModels
+namespace Garmetix.Accounting.PageModels
 {
     public class LedgerPageModel : PageModel<Ledger>
     {
@@ -17,8 +19,8 @@ namespace Garmetix.CoreBase.Accounting.PageModels
                 AddGridColumns(nameof(Ledger.Name)),
                 AddGridColumns(nameof(Ledger.LedgerType)),
                 AddGridColumns(nameof(Ledger.LedgerGroupId)),
-                AddDateGridColumns(nameof(Ledger.OpenningDate)),
-                AddGridColumns(nameof(Ledger.OpenningBalance)),
+                AddDateGridColumns(nameof(Ledger.OpeningDate)),
+                AddGridColumns(nameof(Ledger.OpeningBalance)),
 
                 //new DataGridTextColumn() { HeaderText = nameof(Ledger.LedgerType), MappingName = nameof(Ledger.LedgerType) },
                 //new DataGridTextColumn() { HeaderText = nameof(Ledger.Name), MappingName = nameof(Ledger.Name) },

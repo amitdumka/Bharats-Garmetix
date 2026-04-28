@@ -4,7 +4,7 @@ using Garmetix.CoreServices.Accounting;
 using Syncfusion.Maui.DataForm;
 using System.Diagnostics;
 
-namespace Garmetix.CoreBase.Accounting.FormModels
+namespace Garmetix.Accounting.FormModels
 {
     public partial class VoucherFormModel : FormModel<VoucherEntry>
 

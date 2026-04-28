@@ -1,12 +1,13 @@
-﻿using Garmetix.Views.Controls;
+﻿using Garmetix.Core.Shells;
+using Garmetix.Views.Controls;
 using Syncfusion.Maui.Toolkit.SegmentedControl;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
-namespace Garmetix.Core.Shells
+namespace Garmetix.Base.Shells
 {
-    public class AppShellBase : StandardAppShell
+    public partial class AppShellBase : StandardAppShell
     {
         public new event PropertyChangedEventHandler? PropertyChanged;
         public ICommand ExitCommand { get; }
@@ -98,16 +99,16 @@ namespace Garmetix.Core.Shells
             segmentedControl.SelectionChanged += SfSegmentedControl_SelectionChanged;
             grid.Children.Add(segmentedControl);
 
-            return grid;
+            return grid  ;
         }
 
         private void SfSegmentedControl_SelectionChanged(object sender, Syncfusion.Maui.Toolkit.SegmentedControl.SelectionChangedEventArgs e)
         {
             // Your custom theme switching logic goes here
             if (e.NewIndex == 0)
-                Application.Current.UserAppTheme = AppTheme.Light;
+                Application.Current?.UserAppTheme = AppTheme.Light;
             else
-                Application.Current.UserAppTheme = AppTheme.Dark;
+                Application.Current?.UserAppTheme = AppTheme.Dark;
         }
 
         // --- Logout & Quit Implementations ---
@@ -119,7 +120,7 @@ namespace Garmetix.Core.Shells
 
         protected override void HandleQuit()
         {
-            Application.Current.Quit();
+            Application.Current?.Quit();
         }
     }
 

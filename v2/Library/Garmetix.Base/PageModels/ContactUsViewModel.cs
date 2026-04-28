@@ -1,12 +1,27 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿/*
+ * Garmetix
+ * Author: Amit Kumar
+ * https://garmetix.com/
+ * Copyright (c) 2026. All rights reserved.
+ * Version: 6.0.0
+ * License: https://garmetix.com/license
+ * Website: https://garmetix.com/
+*/
+/*
+ * ContactUsViewModel.cs
+ * 
+ * ViewModel for the Contact Us page, providing store contact information and commands to interact with it.
+ *  
+ * Copyright (c) 2024 Aadwika Fashion. All rights reserved.
+ */
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Maui.ApplicationModel;
-using Microsoft.Maui.ApplicationModel.Communication;
 
-namespace Garmetix.Core.ViewModels
+namespace Garmetix.Base.PageModels
 {
+    /// <summary>
+    /// ViewModel for the Contact Us page, providing store contact information and commands to interact with it.
+    /// </summary>
     public partial class ContactUsViewModel : ObservableObject
     {
         [ObservableProperty] private string storeName = "Aadwika Fashion";
@@ -16,7 +31,7 @@ namespace Garmetix.Core.ViewModels
 
         [RelayCommand]
         public void CallPhone()
-        {
+        { 
             if (PhoneDialer.Default.IsSupported)
                 PhoneDialer.Default.Open(Phone);
         }

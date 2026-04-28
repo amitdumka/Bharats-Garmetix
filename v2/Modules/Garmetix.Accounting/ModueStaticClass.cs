@@ -1,11 +1,28 @@
-﻿using Garmetix.CoreBase.DayOperations.PageModels;
-using Garmetix.CoreBase.DayOperations.Pages;
+﻿/*
+ * Garmetix
+ * Author: Amit Kumar
+ * https://garmetix.com/
+ * Copyright (c) 2026. All rights reserved.
+ * Version: 6.0.0
+ * License: https://garmetix.com/license
+ * Website: https://garmetix.com/
+*/
+
+/*
+ * Garmetix - Accounting Module
+ * 
+ */
+
+using Bharat.ToolKits.Helpers;
+using Garmetix.Accounting.PageModels.Party;
+using Garmetix.Accounting.PageModels.Vouchers;
+using Garmetix.Accounting.Pages;
 
 namespace Garmetix.Accounting
 {
     public static class AccountingModule
     {
-        public static void EnableRoutes()
+        public static void EnableAccountingRoutes()
         {
             RouterHelper.AddRoute(typeof(EntryVoucherPage));
             RouterHelper.AddRoute(typeof(EntryCashVoucherPage));
@@ -30,7 +47,7 @@ namespace Garmetix.Accounting
 
         }
 
-        public static MauiAppBuilder EnableBanking(this MauiAppBuilder builder)
+        public static MauiAppBuilder UseBanking(this MauiAppBuilder builder)
         {
             //Mobile Page
             builder.Services.AddSingleton<Pages.Mobile.BankPage>();
@@ -59,7 +76,7 @@ namespace Garmetix.Accounting
             builder.Services.AddTransient<EntryBankAccountDetailPage>();
             builder.Services.AddTransient<EntryVendorBankAccountPage>();
             builder.Services.AddTransient<EntryBankTransactionPage>();
-            builder.Services.AddTransient<EntryChequeLogPage>();    
+            builder.Services.AddTransient<EntryChequeLogPage>();
 
             builder.Services.AddTransient<BankFormModel>();
             builder.Services.AddTransient<BankAccountFormModel>();
@@ -73,13 +90,13 @@ namespace Garmetix.Accounting
             //TODO:no Mobile page Enabled, Create mobile and enable it
             builder.Services.AddSingleton<BankTransactionPageModel>();
             builder.Services.AddSingleton<ChequeLogPageModel>();
-            builder.Services.AddSingleton< BankTransactionPage>();
+            builder.Services.AddSingleton<BankTransactionPage>();
             builder.Services.AddSingleton<ChequeLogPage>();
 
             return builder;
         }
 
-        public static MauiAppBuilder EnableAccounting(this MauiAppBuilder builder)
+        public static MauiAppBuilder UseAccounting(this MauiAppBuilder builder)
         {
             builder.Services.AddSingleton<VoucherPageModel>();
             builder.Services.AddSingleton<VoucherPage>();

@@ -1,12 +1,32 @@
-﻿using Bharat.ToolKits.Helpers;
+﻿/*
+ * Garmetix
+ * Author: Amit Kumar
+ * https://garmetix.com/
+ * Copyright (c) 2026. All rights reserved.
+ * Version: 6.0.0
+ * License: https://garmetix.com/license
+ * Website: https://garmetix.com/
+*/
+/*
+ * PageModelBase.cs
+ *
+ *PageModelBase is the base class for all page models in the Garmetix application. It provides common properties and commands that are used by all page models, such as handling navigation events, managing busy states, and defining user roles. By inheriting from this base class, individual page models can focus on their specific functionality while still maintaining a consistent structure and behavior across the application.
+ *
+ *This file is part of Garmetix, a comprehensive inventory management system designed for garment businesses. Garmetix provides tools for managing inventory, tracking orders, and analyzing sales data to help businesses optimize their operations and increase profitability. The PageModelBase class serves as the foundational base class for all page models in the application, providing common properties and commands that are used across different pages. This includes handling navigation events, managing busy states, and defining user roles, ensuring a consistent structure and behavior throughout the application.
+ */
+
+using Bharat.ToolKits.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Garmetix.Core.Enums;
 using Garmetix.Databases;
-using Garmetix.Databases.Services;
-using Garmetix.Models.Enums;
+using Garmetix.Databases.Services; 
 
-namespace Garmetix.Core.PageModels
+namespace Garmetix.Base.PageModels
 {
+    /// <summary>
+    /// PageModelBase is the base class for all page models in the application. It provides common properties and commands that are used by all page models. This includes properties for app operations, user role, busy state, and navigation state, as well as commands for handling navigation events and editing/deleting items. By inheriting from this base class, individual page models can focus on their specific functionality while still maintaining a consistent structure and behavior across the application.
+    /// </summary>
     [ObservableRecipient]
     public partial class PageModelBase : ObservableValidator
     {

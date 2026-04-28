@@ -1,13 +1,13 @@
-using Microsoft.Maui.Controls;
+using Garmetix.Base.PageModels;
 
-namespace Garmetix.Core.Views
+namespace Garmetix.Base.Views
 {
     public partial class ContactUsPage : ContentPage
     {
         public ContactUsPage()
         {
             InitializeComponent();
-            BindingContext = new ViewModels.ContactUsViewModel();
+            BindingContext = new ContactUsViewModel();
         }
     }
 }

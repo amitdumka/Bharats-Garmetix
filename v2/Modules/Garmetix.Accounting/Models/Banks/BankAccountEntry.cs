@@ -2,7 +2,7 @@
 using Garmetix.Core.Models.Base;
 using System.ComponentModel.DataAnnotations;
 
-namespace Garmetix.CoreBase.Accounting.Models
+namespace Garmetix.Accounting.Models.Banks
 {
     public class BankAccountEntry : CEntity
     {

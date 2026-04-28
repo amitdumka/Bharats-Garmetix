@@ -1,6 +1,6 @@
-using Garmetix.Core.Views.Customs.Listing;
 
-namespace Garmetix.CoreBase.Accounting.Pages.Mobile;
+
+namespace Garmetix.Accounting.Pages.Mobile;
 
 public partial class LedgerPage : BaseListViewPage
 {

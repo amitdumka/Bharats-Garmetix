@@ -1,7 +1,7 @@
 ﻿using Garmetix.Core.PageModels;
 using Syncfusion.Maui.DataGrid;
 
-namespace Garmetix.CoreBase.Accounting.PageModels
+namespace Garmetix.Accounting.PageModels
 {
     public partial class VoucherPageModel : PageModel<Voucher>
     {

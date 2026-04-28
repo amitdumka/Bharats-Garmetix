@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Garmetix.Core.Enums;
+using Garmetix.Core.Models.Base;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Garmetix.CoreBase.Accounting.Models
+namespace Garmetix.Accounting.Models.Banks
 {
     public class BankTransactionEntry : CEntity
     {

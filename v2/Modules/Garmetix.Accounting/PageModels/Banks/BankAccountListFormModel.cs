@@ -1,6 +1,6 @@
 ﻿using Syncfusion.Maui.DataForm;
 
-namespace Garmetix.CoreBase.Accounting.FormModels
+namespace Garmetix.Accounting.FormModels
 {
     public class BankAccountListFormModel : FormModel<BankAccountListEntry>
     {

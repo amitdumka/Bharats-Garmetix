@@ -1,21 +1,45 @@
-﻿using Bharat.ToolKits.Extensions;
+﻿/*
+ * Garmetix
+ * Author: Amit Kumar
+ * https://garmetix.com/
+ * Copyright (c) 2026. All rights reserved.
+ * Version: 6.0.0
+ * License: https://garmetix.com/license
+ * Website: https://garmetix.com/
+*/
+/*
+ * 
+ * PageModel.cs
+ * 
+ * PageModel is a base class for all the page models in the application, it contains the common properties and methods that are used in all the page models. It is a generic class that takes the entity type as a parameter, which is used to define the type of data that will be displayed in the page. It also contains the implementation of the IPageModel interface, which defines the contract for all the page models in the application.
+ * PageModel class is responsible for handling the data loading, refreshing, and navigation for the pages. It also contains the implementation of the Edit and Delete functionality for the records displayed in the page. The class also contains the implementation of the Export and Import functionality for the data displayed in the page. It uses the DataModel class to interact
+ * PageModel class is also responsible for handling the state of the page, such as whether the data is being loaded, whether the page is being refreshed, and whether the page is being navigated to or from. It also contains the implementation of the toolbar commands for the page, such as the Export and Import commands. The class also contains the implementation of the grid columns for the page, which are used to display the data in a tabular format.
+ * This file contains the implementation of the PageModel class, which is a base class for all the page models in the application. It contains the common properties and methods that are used in all the page models. It is a generic class that takes the entity type as a parameter, which is used to define the type of data that will be displayed in the page. It also contains the implementation of the IPageModel interface, which defines the contract for all the page models in the application.
+ */
+
+using Bharat.ToolKits.Extensions;
 using Bharat.ToolKits.Helpers;
 using Bharat.ToolKits.Notifications;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Garmetix.Base.PageModels;
 using Garmetix.Core.DataModels;
+using Garmetix.Core.Enums;
+using Garmetix.Core.Interfaces;
 using Garmetix.Core.Sessions;
 using Garmetix.Core.Styles;
 using Garmetix.DataServices.ImportExports;
-using Garmetix.Models.Bases;
-using Garmetix.Models.Enums; 
 using Syncfusion.Maui.DataGrid;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows.Input;
 
-namespace Garmetix.Core.PageModels
+namespace Garmetix.Base.PageModels
 {
+    /// <summary>
+    /// PageModel is a base class for all the page models in the application, it contains the common properties and methods that are used in all the page models. It is a generic class that takes the entity type as a parameter, which is used to define the type of data that will be displayed in the page. It also contains the implementation of the IPageModel interface, which defines the contract for all the page models in the application.
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
     public abstract partial class PageModel<TEntity> : PageModelBase, IPageModel<TEntity> where TEntity : class,  IEntity 
     {
         /// <summary>

@@ -1,7 +1,7 @@
-﻿using Garmetix.Core.Views.Customs.Forms;
+﻿using Garmetix.Base.Views.Customs.Forms;
 using Syncfusion.Maui.DataForm;
 
-namespace Garmetix.CoreBase.Accounting.Pages
+namespace Garmetix.Accounting.Pages
 {
     public class EntryBankPage : ContentPage
     {

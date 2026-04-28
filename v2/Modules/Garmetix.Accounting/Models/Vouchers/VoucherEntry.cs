@@ -1,8 +1,10 @@
-﻿using System.ComponentModel;
+﻿using Garmetix.Core.Enums;
+using Garmetix.Core.Models.Base;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Garmetix.CoreBase.Accounting.Models
+namespace Garmetix.Accounting.Models.Vouchers
 {
     public class VoucherEntry : CEntity
     {
