@@ -20,6 +20,7 @@
 
 
 
+using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Stores;
 using System.ComponentModel.DataAnnotations;
 

@@ -8,7 +8,10 @@
  * Website: https://garmetix.com/
 */
 
+ 
 using System.Linq.Expressions;
+using Garmetix.Core.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace Garmetix.Core.Interfaces
 {
@@ -27,7 +30,7 @@ namespace Garmetix.Core.Interfaces
         int Count();
 
         string GetError();
-
+        //TODO: Order is from EFCore so implement that
         IQueryable<T> Where<TKey>(Expression<Func<T, bool>> predict, Order? orderby, Expression<Func<T, TKey>> order);
 
         Task<T?> SaveAsync(T entity, bool isNew = true);

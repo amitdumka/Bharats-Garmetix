@@ -9,9 +9,8 @@
 */
 
 using Garmetix.Core.Models.Base;
-using Garmetix.Models.Accounting;
 using Garmetix.Core.Enums;
-using System.ComponentModel.DataAnnotations; 
+using System.ComponentModel.DataAnnotations;
 
 namespace Garmetix.Core.Models.Accounting
 {

@@ -8,6 +8,7 @@
  * Website: https://garmetix.com/
 */
 
+using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Base;
 using System.Linq.Expressions;
 

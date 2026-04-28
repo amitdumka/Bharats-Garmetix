@@ -1,9 +1,5 @@
 <Solution>
-  <Folder Name="/Library/">
-    <Project Path="Common/Library/Garmetix.Core/Garmetix.Core.csproj" Id="94abf316-8e10-4cf6-b163-aa94e456289c" />
-  </Folder>
   <Folder Name="/Modules/">
-    <Project Path="Common/Modules/Garmetix.CoreBase/Garmetix.CoreBase.csproj" Id="f622f35c-fd88-4d11-9bf3-a72d46b998d9" />
     <Project Path="Garmetix.Billing/Garmetix.Billing.csproj" Id="66e5697d-048c-4263-8e1e-30cd634b55a6" />
   </Folder>
   <Folder Name="/Services/">
@@ -25,7 +21,12 @@
     <Project Path="v2/Library/Garmetix.Settings/Garmetix.Settings.csproj" />
   </Folder>
   <Folder Name="/V2/Modules/">
+    <Project Path="v2/Modules/Garmetix.Accounting/Garmetix.Accounting.csproj" Id="bc7eb63d-f16a-47e3-8441-ac95aa06a4b8" />
     <Project Path="v2/Modules/Garmetix.Authentication/Garmetix.Authentication.csproj" Id="c85bced0-5155-49e0-a3fd-493ec0e50cc7" />
+    <Project Path="v2/Modules/Garmetix.Commons/Garmetix.Commons.csproj" Id="8ec1a691-79c0-42bb-9895-a34e891dff85" />
+    <Project Path="v2/Modules/Garmetix.HRM/Garmetix.HRM.csproj" Id="40ffbf4c-444b-4890-967e-c9dfc7f0c5a7" />
+    <Project Path="v2/Modules/Garmetix.Onboarding/Garmetix.Onboarding.csproj" />
+    <Project Path="v2/Modules/Garmetix.Stores/Garmetix.Stores.csproj" Id="8fe21b26-d1f0-44c4-bb12-565817d662b2" />
   </Folder>
   <Folder Name="/V2/Service/">
     <Project Path="v2/ML/Services/Garmetix.CoreServices/Garmetix.CoreServices.csproj" Id="ab9e37a5-eee2-4379-980c-2991247456b6" />

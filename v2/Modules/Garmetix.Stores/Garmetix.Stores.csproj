@@ -27,7 +27,23 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.51" />
-		
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Library\Bharat.Toolkits\Bharat.ToolKits.csproj" />
+	  <ProjectReference Include="..\..\Library\Garmetix.Base\Garmetix.Base.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="Pages\Mobile\CompanyPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\Mobile\StoreGroupPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\Mobile\StorePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	</ItemGroup>
 
 </Project>

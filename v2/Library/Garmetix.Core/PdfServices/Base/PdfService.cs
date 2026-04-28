@@ -1,6 +1,7 @@
 ﻿// Assuming these namespaces exist in your project.
 // If not, you might need to adjust or create dummy classes.
 using Garmetix.Core.Interfaces;
+using Garmetix.PdfServices.Base;
 using Syncfusion.Drawing;
 using Syncfusion.Pdf;
 using Syncfusion.Pdf.Barcode;
@@ -12,14 +13,14 @@ using SizeF = Syncfusion.Drawing.SizeF;
 // For SentrySdk, if it's truly used globally.
 // using Sentry;
 //Final Version
-namespace Garmetix.PdfServices.Base
+namespace Garmetix.Core.PdfServices.Base
 {
     /// <summary>
     /// Provides services for generating PDF documents, including voucher and report generation.
     /// This class must be initialized asynchronously using the <see cref="CreateAsync"/> factory method.
     /// </summary>
     //TODO: Move this logic to a Core Service Library or Modules as this is a core service that can be used across different modules (e.g., Sales, Inventory, Finance).
-    internal class PdfService : IPdfService, IDisposable
+    internal partial class PdfService : IPdfService, IDisposable
     {
         // --- Company Details Information (Read-only static for consistency) ---
         // These values are loaded once from Preferences.
@@ -188,7 +189,7 @@ namespace Garmetix.PdfServices.Base
         /// <returns>A new <see cref="PdfDocument"/> instance.</returns>
         public static PdfDocument CreateNewPdfDocument(SizeF pdfSize)
         {
-            PdfDocument document = new PdfDocument();
+            PdfDocument document = new();
             document.PageSettings.Orientation = PdfPageOrientation.Portrait;
             document.PageSettings.Margins.All = 20; // Default margins
             document.PageSettings.Size = pdfSize;
@@ -298,40 +299,38 @@ namespace Garmetix.PdfServices.Base
         {
             try
             {
-                using (MemoryStream stream = new MemoryStream())
+                using MemoryStream stream = new();
+                // Save the document to a memory stream.
+                document.Save(stream);
+                stream.Position = 0; // Reset stream position for reading.
+
+                // Define the file path in the app's cache directory.
+                string appSpecificDirectory = Path.Combine(FileSystem.CacheDirectory, "BharatGarmetix", directory);
+                Directory.CreateDirectory(appSpecificDirectory); // Ensure the directory exists.
+                string filePath = Path.Combine(appSpecificDirectory, fileName);
+
+                // Write the PDF content from the stream to the file.
+                await File.WriteAllBytesAsync(filePath, stream.ToArray()); // Use async for file writing.
+                _lastGeneratedPdfPath = filePath;
+
+                // Use the default launcher to open the file.
+                await Launcher.OpenAsync(new OpenFileRequest
                 {
-                    // Save the document to a memory stream.
-                    document.Save(stream);
-                    stream.Position = 0; // Reset stream position for reading.
+                    File = new ReadOnlyFile(filePath)
+                });
 
-                    // Define the file path in the app's cache directory.
-                    string appSpecificDirectory = Path.Combine(FileSystem.CacheDirectory, "BharatGarmetix", directory);
-                    Directory.CreateDirectory(appSpecificDirectory); // Ensure the directory exists.
-                    string filePath = Path.Combine(appSpecificDirectory, fileName);
+                if (externalSave)
+                {
+                    // Safely attempt to save and view using an external service.
+                    // Assuming Library.Helpers.ServiceHelper and Library.Services.SaveService exist.
+                    // Add null checks for robustness.
+                    //TODO : TO BE added Save Service
 
-                    // Write the PDF content from the stream to the file.
-                    await File.WriteAllBytesAsync(filePath, stream.ToArray()); // Use async for file writing.
-                    _lastGeneratedPdfPath = filePath;
-
-                    // Use the default launcher to open the file.
-                    await Launcher.OpenAsync(new OpenFileRequest
-                    {
-                        File = new ReadOnlyFile(filePath)
-                    });
-
-                    if (externalSave)
-                    {
-                        // Safely attempt to save and view using an external service.
-                        // Assuming Library.Helpers.ServiceHelper and Library.Services.SaveService exist.
-                        // Add null checks for robustness.
-                        //TODO : TO BE added Save Service
-                       
-                         //ServiceHelper.Current.GetService< SaveService>()?
-                         //      .SaveAndView(fileName, "application/pdf", stream);
-                    }
-
-                    return filePath;
+                    //ServiceHelper.Current.GetService< SaveService>()?
+                    //      .SaveAndView(fileName, "application/pdf", stream);
                 }
+
+                return filePath;
             }
             catch (IOException ex)
             {
@@ -391,7 +390,7 @@ namespace Garmetix.PdfServices.Base
             row.Cells[1].Style.Borders.Bottom = new PdfPen(PdfColor.Empty);
             row.Cells[1].Style.Borders.Left = new PdfPen(PdfColor.Empty);
         }
-        public void AddGridRowLastNoBorder(PdfGrid grid, PdfFont labelFont, string label, string value)
+        public static void AddGridRowLastNoBorder(PdfGrid grid, PdfFont labelFont, string label, string value)
         {
             var row = grid.Rows.Add();
             row.Cells[0].Value = label;
@@ -490,7 +489,7 @@ namespace Garmetix.PdfServices.Base
                 if (PdfStyles?.SubHeaderFont == null || PdfStyles?.BoldFont == null || PdfStyles?.NormalFont == null)
                     throw new InvalidOperationException("Required fonts for company info are not initialized in PdfStyles.");
 
-                PdfGrid infoGrid = new PdfGrid();
+                PdfGrid infoGrid = new();
                 infoGrid.Style.CellPadding = new PdfPaddings(2, 2, 2, 2);
                 infoGrid.Style.BorderOverlapStyle = PdfBorderOverlapStyle.Overlap;
                 infoGrid.Style.Font = PdfStyles.NormalFont;
@@ -554,7 +553,7 @@ namespace Garmetix.PdfServices.Base
                 if (PdfStyles?.BoldFont == null || PdfStyles?.SubHeaderFont == null)
                     throw new InvalidOperationException("Required fonts for amount grid are not initialized in PdfStyles.");
 
-                PdfGrid amountGrid = new PdfGrid();
+                PdfGrid amountGrid = new();
                 amountGrid.Columns.Add(2);
                 amountGrid.Columns[0].Width = bounds.Width * 0.7f; // Label column
                 amountGrid.Columns[1].Width = bounds.Width * 0.3f; // Value column
@@ -678,7 +677,7 @@ namespace Garmetix.PdfServices.Base
                 currentRelativeY = Math.Max(currentRelativeY, bounds.Y + bounds.Height-10); // Ensure QR code is near the bottom
                 float qrCodeY = currentRelativeY-qrSize-5;
 
-                PdfQRBarcode qrCode = new PdfQRBarcode
+                PdfQRBarcode qrCode = new()
                 {
                     Text = qrCodeText,
                     ErrorCorrectionLevel = PdfErrorCorrectionLevel.High,

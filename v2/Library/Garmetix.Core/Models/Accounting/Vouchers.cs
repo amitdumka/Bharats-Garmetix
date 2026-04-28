@@ -9,16 +9,14 @@
 */
 
 using Garmetix.Core.Enums;
-using Garmetix.Core.Models.Accounting;
 using Garmetix.Core.Models.Base;
 using Garmetix.Core.Models.HRM;
-using Garmetix.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
-namespace Garmetix.Models.Accounting
+namespace Garmetix.Core.Models.Accounting
 {
 
     public class DueRecovery : StoreBase
@@ -38,15 +36,11 @@ namespace Garmetix.Models.Accounting
         [Display(Name = "Clearing Date")] public DateTime? ClearingDate { get; set; }
     }
 
-    public class Party : CompanyBase
+    [method: SetsRequiredMembers]
+    public class Party() : CompanyBase
     {
-        [SetsRequiredMembers]
-        public Party()
-        {
-            // initialize required members
-            Name = string.Empty;
-        }
-        [Display(Name = "Name")] public required string Name { get; set; } = string.Empty;
+        [Display(Name = "Name")]
+        public required string Name { get; set; } = string.Empty;
         [Display(Name = "Address")] public string? Address { get; set; }
         [Display(Name = "Email ID")] public string? EmailId { get; set; }
         [Display(Name = "Phone")] public string? Phone { get; set; }
@@ -58,25 +52,17 @@ namespace Garmetix.Models.Accounting
         [Display(Name = "Ledger", AutoGenerateField = false)] public virtual Ledger? Ledger { get; set; }
     }
 
-    public class LedgerGroup : CompanyBase
+    [method: SetsRequiredMembers]
+    public class LedgerGroup() : CompanyBase
     {
-        [SetsRequiredMembers]
-        public LedgerGroup()
-        {
-            Name = string.Empty;
-        }
-        [Display(Name = "Name")] public required string Name { get; set; }
+        [Display(Name = "Name")] public required string Name { get; set; } = string.Empty;
         [Display(Name = "Category")] public LedgerCategory Category { get; set; }
         [Display(Name = "Remarks")] public string Remarks { get; set; } = string.Empty;
     }
 
-    public class Ledger : CompanyBase
+    [method: SetsRequiredMembers]
+    public class Ledger() : CompanyBase
     {
-        [SetsRequiredMembers]
-        public Ledger()
-        {
-            Name = string.Empty;
-        }
         [Display(Name = "Name")] public required string Name { get; set; } = string.Empty;
 
         [Display(Name = "Ledger Group", AutoGenerateField = false)] public Guid LedgerGroupId { get; set; }
@@ -88,23 +74,16 @@ namespace Garmetix.Models.Accounting
         [Display(Name = "Party")] public bool IsParty { get; set; } = false;
     }
 
-    public class VoucherBase : StoreBase
+    [method: SetsRequiredMembers]
+    public class VoucherBase() : StoreBase
     {
-
-        [SetsRequiredMembers]
-        public VoucherBase()
-        {
-            VoucherNumber = string.Empty;
-            PartyName = string.Empty;
-            Particulars = string.Empty;
-        }
-        [Display(Name = "Voucher Number")] public required string VoucherNumber { get; set; }
+        [Display(Name = "Voucher Number")] public required string VoucherNumber { get; set; } = string.Empty;
         [Display(Name = "Date")] public DateTime OnDate { get; set; }
 
         [Display(Name = "Voucher Type")] public VoucherType VoucherType { get; set; } = VoucherType.Payment;
 
-        [Display(Name = "Party Name")] public required string PartyName { get; set; }
-        [Display(Name = "Particulars")] public required string Particulars { get; set; }
+        [Display(Name = "Party Name")] public required string PartyName { get; set; } = string.Empty;
+        [Display(Name = "Particulars")] public required string Particulars { get; set; } = string.Empty;
 
         [Display(Name = "Amount")] public decimal Amount { get; set; }
         [Display(Name = "Remarks")] public string Remarks { get; set; } = string.Empty;

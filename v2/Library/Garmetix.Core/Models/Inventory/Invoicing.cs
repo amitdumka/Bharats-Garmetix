@@ -31,8 +31,8 @@
  */
 
 using Garmetix.Core.Enums;
+using Garmetix.Core.Models.Accounting;
 using Garmetix.Core.Models.Base;
-using Garmetix.Models.Accounting;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 

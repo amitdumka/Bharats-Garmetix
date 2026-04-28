@@ -1,35 +1,36 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Diagnostics;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace Garmetix.Settings.ViewModels
 {
     public partial class SettingsViewModel : ObservableObject
     {
-        [ObservableProperty] private bool isBusy;
+        [ObservableProperty] private bool isBusy = false;
 
         // --- AUTHENTICATION ---
-        [ObservableProperty] private bool isAutoLoginEnabled;
-        [ObservableProperty] private string username;
-        [ObservableProperty] private string password;
+        [ObservableProperty] private bool isAutoLoginEnabled = false;
+        [ObservableProperty] private string username = string.Empty;
+        [ObservableProperty] private string password = string.Empty;
 
         // --- SESSION & STORE DATA ---
-        [ObservableProperty] private string companyCode;
-        [ObservableProperty] private string storeGroupCode;
-        [ObservableProperty] private string storeCode;
+        [ObservableProperty] private string companyCode = string.Empty;
+        [ObservableProperty] private string storeGroupCode = string.Empty;
+        [ObservableProperty] private string storeCode = string.Empty;
 
         // --- CLOUD & NETWORK ---
-        [ObservableProperty] private bool isOnlineMode;
-        [ObservableProperty] private string apiUrl;
-        [ObservableProperty] private string appUniqueId;
-        [ObservableProperty] private bool isAutoBackupEnabled;
+        [ObservableProperty] private bool isOnlineMode = false;
+        [ObservableProperty] private string apiUrl = string.Empty;
+        [ObservableProperty] private string appUniqueId = string.Empty;
+        [ObservableProperty] private bool isAutoBackupEnabled = false;
 
         // --- FEATURES & INTEGRATIONS ---
-        [ObservableProperty] private bool isVoucherPrintEnabled;
-        [ObservableProperty] private bool isInvoicePrintEnabled;
-        [ObservableProperty] private bool isWhatsAppShareEnabled;
+        [ObservableProperty] private bool isVoucherPrintEnabled = true;
+        [ObservableProperty] private bool isInvoicePrintEnabled = true;
+        [ObservableProperty] private bool isWhatsAppShareEnabled = true;
 
         // --- UI PREFERENCES ---
-        [ObservableProperty] private bool isDarkMode;
+        [ObservableProperty] private bool isDarkMode = true;
 
         public SettingsViewModel()
         {
@@ -68,7 +69,15 @@ namespace Garmetix.Settings.ViewModels
             }
             catch (Exception ex)
             {
-                await Application.Current.MainPage.DisplayAlert("Error", $"Failed to load settings: {ex.Message}", "OK");
+                var page = Application.Current?.Windows[0].Page;
+                if (page != null)
+                {
+                    await page.DisplayAlertAsync("Error", $"Failed to load settings: {ex.Message}", "OK");
+                }
+                else
+                {
+                    Debug.WriteLine($"Failed to load settings: {ex}");
+                }
             }
             finally
             {
@@ -110,16 +119,34 @@ namespace Garmetix.Settings.ViewModels
 
                 // Save and Apply UI Theme immediately
                 Preferences.Default.Set("IsDarkMode", IsDarkMode);
-                if (Application.Current != null)
+
+                var app = Application.Current;
+                if (app != null)
                 {
-                    Application.Current.UserAppTheme = IsDarkMode ? AppTheme.Dark : AppTheme.Light;
+                    app.UserAppTheme = IsDarkMode ? AppTheme.Dark : AppTheme.Light;
                 }
 
-                await Application.Current.MainPage.DisplayAlert("Success", "Settings saved successfully.", "OK");
+                var page = Application.Current?.Windows[0].Page;
+                if (page != null)
+                {
+                    await page.DisplayAlertAsync("Success", "Settings saved successfully.", "OK");
+                }
+                else
+                {
+                    Debug.WriteLine("Settings saved successfully.");
+                }
             }
             catch (Exception ex)
             {
-                await Application.Current.MainPage.DisplayAlert("Error", $"Failed to save settings: {ex.Message}", "OK");
+                var page = Application.Current?.Windows[0].Page;
+                if (page != null)
+                {
+                    await page.DisplayAlertAsync("Error", $"Failed to save settings: {ex.Message}", "OK");
+                }
+                else
+                {
+                    Debug.WriteLine($"Failed to save settings: {ex}");
+                }
             }
             finally
             {
@@ -130,7 +157,30 @@ namespace Garmetix.Settings.ViewModels
         [RelayCommand]
         public async Task ResetToDefaultsAsync()
         {
-            bool confirm = await Application.Current.MainPage.DisplayAlert("Reset Settings", "Are you sure you want to reset all settings to their default values?", "Yes, Reset", "Cancel");
+            // Try to get a Page to show the confirmation dialog: prefer first window page, fallback to MainPage.
+            Page? page = null;
+            var app = Application.Current;
+            if (app != null)
+            {
+                if (app.Windows != null && app.Windows.Count > 0)
+                {
+                    page = app.Windows[0].Page;
+                }
+
+                if (page == null)
+                {
+                    page = app.MainPage;
+                }
+            }
+
+            if (page == null)
+            {
+                // No UI available to confirm; abort reset.
+                Debug.WriteLine("ResetToDefaultsAsync aborted: no Page available for user confirmation.");
+                return;
+            }
+
+            bool confirm = await page.DisplayAlertAsync("Reset Settings", "Are you sure you want to reset all settings to their default values?", "Yes, Reset", "Cancel");
             if (!confirm) return;
 
             Preferences.Default.Clear();

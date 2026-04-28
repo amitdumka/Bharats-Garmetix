@@ -3,6 +3,7 @@
 // For SentrySdk, if it's truly used globally.
 // using Sentry;
 //Final Version
+using Garmetix.Core.PdfServices.Base;
 using Syncfusion.Pdf.Graphics;
 
 namespace Garmetix.PdfServices.Base
