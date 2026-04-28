@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Garmetix.Models.Accounting;
-using Garmetix.Models.HRM;
+using Garmetix.Core.Enums;
 
 namespace Garmetix.Models.Reports
 {

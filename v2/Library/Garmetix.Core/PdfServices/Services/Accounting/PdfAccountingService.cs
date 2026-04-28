@@ -1,6 +1,6 @@
+using Garmetix.Core.Interfaces;
 using Garmetix.Models.Reports;
 using Garmetix.PdfServices.Base;
-using Garmetix.PdfServices.Interfaces;
 using Syncfusion.Drawing;
 using Syncfusion.Pdf;
 using Syncfusion.Pdf.Graphics;

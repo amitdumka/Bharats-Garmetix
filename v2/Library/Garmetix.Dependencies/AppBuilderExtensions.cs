@@ -4,10 +4,12 @@ using Syncfusion.Maui.Core.Hosting;
 using Syncfusion.Maui.Toolkit.Hosting;
 using Fonts;
 
+
 #if WINDOWS
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 #endif
+
 namespace Garmetix.Dependencies
 {
     // All the code in this file is included in all platforms.
@@ -62,7 +64,6 @@ namespace Garmetix.Dependencies
                 fonts.AddFont("Dashboard.ttf", "DashboardFontIcons");
                 fonts.AddFont("Roboto-Medium.ttf", "Roboto-Medium");
                 fonts.AddFont("Roboto-Regular.ttf", "Roboto-Regular");
-
                 fonts.AddFont("FluentSystemIcons-Regular.ttf", FluentUI.FontFamily);
             });
             return builder;

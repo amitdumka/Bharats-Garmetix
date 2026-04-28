@@ -8,8 +8,8 @@
  * Website: https://garmetix.com/
 */
 
+using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Base;
-using Garmetix.Core.Models.Stores;
 
 namespace Garmetix.Core.DTO.Stores
 {
@@ -45,7 +45,7 @@ namespace Garmetix.Core.DTO.Stores
         public bool Active { get; set; } = false;
 
         public Guid CompanyId { get; set; }
-        public string CompanyName { get; set; }
+        public string CompanyName { get; set; }= string.Empty;
         public string GSTIN { get; set; } = string.Empty;
         public string Pan { get; set; } = string.Empty;
     }

@@ -12,10 +12,10 @@ namespace Garmetix.Core.VM.Info
     //TODO: Check this is required or not, as we can directly use Invoice model for this purpose.
     public class SaleInvoice
     {
-        public Invoice Invoice { get; set; }
-        public List<InvoicePayment> Payments { get; set; }
-        public List<CardPayment> CardPayments { get; set; }
-        public List<InvoiceItem> InvoiceItems { get; set; }
+        public required Invoice Invoice { get; set; }
+        public List<InvoicePayment> Payments { get; set; }=[];
+        public List<CardPayment> CardPayments { get; set; }= [];
+        public List<InvoiceItem> InvoiceItems { get; set; }= [];
     }
 
     /// <summary>
@@ -23,9 +23,9 @@ namespace Garmetix.Core.VM.Info
     /// </summary>
     public class PurchaseInvoices
     {
-        public PurchaseInvoice Invoice { get; set; }
-        public List<PurchaseInvoiceItem> InvoiceItems { get; set; }
-        public List<VendorPayment> Payments { get; set; }
+        public required PurchaseInvoice Invoice { get; set; } 
+        public List<PurchaseInvoiceItem> InvoiceItems { get; set; }= [];
+        public List<VendorPayment> Payments { get; set; }= [];
     }
 
 }

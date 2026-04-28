@@ -1,8 +1,8 @@
 
 using Bharat.ToolKits.Helpers;
+using Garmetix.Core.Interfaces;
 using Garmetix.Models.Reports;
 using Garmetix.PdfServices.Base;
-using Garmetix.PdfServices.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Syncfusion.Drawing;
 using Syncfusion.Pdf;

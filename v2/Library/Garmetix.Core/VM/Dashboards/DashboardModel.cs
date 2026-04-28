@@ -13,7 +13,7 @@ namespace Garmetix.Core.VM.Dashboards
 {
     public class PayrollInfo
     {
-        public List<EmployeeInfo> EmployeeList { get; set; } = new List<EmployeeInfo>();
+        public List<EmployeeInfo> EmployeeList { get; set; } = [];
     }
     public class EmployeeInfo
     {

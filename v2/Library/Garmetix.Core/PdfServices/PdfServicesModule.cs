@@ -1,13 +1,25 @@
-﻿using Garmetix.PdfServices.Interfaces;
+﻿using Garmetix.Core.Interfaces;
 using Garmetix.PdfServices.Services.Accounting;
 using Garmetix.PdfServices.Services.Payroll;
 
-namespace Garmetix.PDFServices
+namespace Garmetix.Core.PdfServices
 {
-    // All the code in this file is included in all platforms.
+    /// <summary>
+    /// Provides extension methods for configuring PDF-related services in a .NET MAUI application. 
+    /// </summary>
+    /// <remarks>This static class is intended to be used during application startup to register PDF service
+    /// dependencies with the dependency injection container. It enables PDF voucher, payroll, and accounting services
+    /// for use throughout the application.</remarks>
     public static class PdfServicesModule
     {
-        public static MauiAppBuilder EnablePdfServices(this MauiAppBuilder builder)
+        /// <summary>
+        /// Configures the application to use PDF-related services for voucher, payroll, and accounting functionality.
+        /// </summary>
+        /// <remarks>Registers the PDF services as singletons in the dependency injection container. Call
+        /// this method during application startup to enable PDF generation features.</remarks>
+        /// <param name="builder">The <see cref="MauiAppBuilder"/> instance to configure with PDF services. Cannot be null.</param>
+        /// <returns>The same <see cref="MauiAppBuilder"/> instance, enabling method chaining.</returns>
+        public static MauiAppBuilder UsePdfServices(this MauiAppBuilder builder)
         {
             builder.Services.AddSingleton<IPdfVoucherService, PdfVoucherService>();
             builder.Services.AddSingleton<IPdfPayrollService, PdfPayrollService>();

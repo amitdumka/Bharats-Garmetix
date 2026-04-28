@@ -33,4 +33,10 @@
 	  <ProjectReference Include="..\Garmetix.Dependencies\Garmetix.Dependencies.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Reference Include="Bharat.ToolKits">
+	    <HintPath>..\Bharat.Toolkits\obj\Debug\net10.0-android\ref\Bharat.ToolKits.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
+
 </Project>

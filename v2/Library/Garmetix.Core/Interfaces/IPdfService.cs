@@ -4,7 +4,7 @@ using Syncfusion.Pdf;
 using Syncfusion.Pdf.Graphics;
 using Syncfusion.Pdf.Grid;
 
-namespace Garmetix.PdfServices.Interfaces
+namespace Garmetix.Core.Interfaces
 {
     //Final Version
     public interface IPdfAccountingService

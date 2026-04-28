@@ -8,9 +8,8 @@
  * Website: https://garmetix.com/
 */
 
+using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Base;
-using Garmetix.Models.Accounting;
-using Garmetix.Models.Enums;
 
 namespace Garmetix.Core.DTO.Accounting
 {

@@ -1,31 +1,29 @@
-namespace Garmetix.PdfServices.Services.NotImplemented;
+using Garmetix.Core.Interfaces;
 
-public interface IPdfBankingService
+ 
+
+namespace Garmetix.PdfServices.Services.NotImplemented
 {
-    Task<string> CreatePdfBankStatementAsync(DateTime periodStart, DateTime periodEnd);
-    Task<string> CreatePdfBankAccountFlowAsync(DateTime periodStart, DateTime periodEnd);
-    Task<string> CreatePdfBankBalanceSheetAsync(DateTime periodStart, DateTime periodEnd);
-    Task<string> CreatePdfBankTranscationsAsync(DateTime periodStart, DateTime periodEnd);
-}
-public class PdfBankingService : IPdfBankingService
-{
-    public Task<string> CreatePdfBankAccountFlowAsync(DateTime periodStart, DateTime periodEnd)
+    public class PdfBankingService : IPdfBankingService
     {
-        throw new NotImplementedException();
-    }
+        public Task<string> CreatePdfBankAccountFlowAsync(DateTime periodStart, DateTime periodEnd)
+        {
+            throw new NotImplementedException();
+        }
 
-    public Task<string> CreatePdfBankBalanceSheetAsync(DateTime periodStart, DateTime periodEnd)
-    {
-        throw new NotImplementedException();
-    }
+        public Task<string> CreatePdfBankBalanceSheetAsync(DateTime periodStart, DateTime periodEnd)
+        {
+            throw new NotImplementedException();
+        }
 
-    public Task<string> CreatePdfBankStatementAsync(DateTime periodStart, DateTime periodEnd)
-    {
-        throw new NotImplementedException();
-    }
+        public Task<string> CreatePdfBankStatementAsync(DateTime periodStart, DateTime periodEnd)
+        {
+            throw new NotImplementedException();
+        }
 
-    public Task<string> CreatePdfBankTranscationsAsync(DateTime periodStart, DateTime periodEnd)
-    {
-        throw new NotImplementedException();
+        public Task<string> CreatePdfBankTranscationsAsync(DateTime periodStart, DateTime periodEnd)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

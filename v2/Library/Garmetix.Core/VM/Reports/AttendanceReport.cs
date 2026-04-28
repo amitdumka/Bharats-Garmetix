@@ -1,6 +1,6 @@
 ﻿
 using Bharat.ToolKits.Extensions;
-using Garmetix.Models.HRM;
+using Garmetix.Core.Enums; 
 using Garmetix.Models.Reports;
 
 namespace Garmetix.Core.VM.Reports
@@ -17,7 +17,7 @@ namespace Garmetix.Core.VM.Reports
         public decimal Present
         { get { return (Attendances!.Count(a => a.Status == AttendanceStatus.Present || a.Status == AttendanceStatus.PaidLeave || a.Status == AttendanceStatus.Holiday || a.Status == AttendanceStatus.Sunday) + (Attendances.Count(Attendances => Attendances.Status == AttendanceStatus.HalfDay) / 2)); } }
         public decimal Absent { get { return (Attendances!.Count(a => a.Status == AttendanceStatus.Absent || a.Status == AttendanceStatus.CasualLeave || a.Status == AttendanceStatus.OnLeave) + (Attendances.Count(Attendances => Attendances.Status == AttendanceStatus.HalfDay) / 2)); } }
-        public int WorkingDays { get { return DateHelper.NoOfWorkingDaysWithoutSaturday(Date); } }
+        public int WorkingDays => DateHelper.NoOfWorkingDaysWithoutSaturday(Date);
         public int DaysInMonth
         { get { return DateTime.DaysInMonth(Date.Year, Date.Month); } }
     }

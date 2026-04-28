@@ -1,9 +1,10 @@
-﻿using Garmetix.Databases;
-using Garmetix.Databases.Services;
+﻿
 using System.Text.Json;
 
 namespace Garmetix.Core.Sessions
 {
+    //TOOD: handle this some other way for database part
+
     public class SessionHelper
     {
         public static Task<CurrentSession?> TryLoadStoreSession()

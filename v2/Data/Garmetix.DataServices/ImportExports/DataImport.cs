@@ -1,9 +1,7 @@
 ﻿using ClosedXML.Excel;
-
+using Garmetix.Core.Interfaces;
 using Garmetix.Databases;
-
 using Garmetix.Databases.Services;
-using Garmetix.Models.Bases;
 using Syncfusion.XlsIO;
 using Syncfusion.XlsIO.Implementation;
 using System.Data;

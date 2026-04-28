@@ -17,9 +17,6 @@
 
 
 using SQLite;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Garmetix.Core.VM
 {
@@ -28,8 +25,8 @@ namespace Garmetix.Core.VM
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
-        public string DataJson { get; set; }
-        public string EntityType { get; set; }  // "Product" or "Invoice"
+        public string DataJson { get; set; }= string.Empty; // JSON representation of the data to be synced
+        public string EntityType { get; set; } = string.Empty; // "Product" or "Invoice"
         public DateTime SyncedAt { get; set; } = DateTime.UtcNow; // Timestamp of when the item was synced
         public bool Synced { get; set; } = false;
     }
@@ -37,8 +34,8 @@ namespace Garmetix.Core.VM
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
-        public string DataJson { get; set; }
-        public string EntityType { get; set; }  // "Product" or "Invoice"
+        public string DataJson { get; set; }= string.Empty;
+        public string EntityType { get; set; } = string.Empty; // "Product" or "Invoice"
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow; // Timestamp of when the item was created
         public DateTime SyncedAt { get; set; } = DateTime.UtcNow; // Timestamp of when the item was synced
         public bool Synced { get; set; } = false;

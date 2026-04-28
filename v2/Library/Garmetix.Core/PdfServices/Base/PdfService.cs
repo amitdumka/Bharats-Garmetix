@@ -1,10 +1,6 @@
 ﻿// Assuming these namespaces exist in your project.
 // If not, you might need to adjust or create dummy classes.
-using Bharat.ToolKits.Helpers;
-using Garmetix.Databases;
-using Garmetix.Databases.Services;
-using Garmetix.PdfServices.Interfaces;
-using Sentry;
+using Garmetix.Core.Interfaces;
 using Syncfusion.Drawing;
 using Syncfusion.Pdf;
 using Syncfusion.Pdf.Barcode;
@@ -22,6 +18,7 @@ namespace Garmetix.PdfServices.Base
     /// Provides services for generating PDF documents, including voucher and report generation.
     /// This class must be initialized asynchronously using the <see cref="CreateAsync"/> factory method.
     /// </summary>
+    //TODO: Move this logic to a Core Service Library or Modules as this is a core service that can be used across different modules (e.g., Sales, Inventory, Finance).
     internal class PdfService : IPdfService, IDisposable
     {
         // --- Company Details Information (Read-only static for consistency) ---

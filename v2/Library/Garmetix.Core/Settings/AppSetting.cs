@@ -1,21 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Garmetix.Core.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Garmetix.Core.Settings
 {
-    public enum WorkingMode
-    {
-        Company,   // 0
-        Store,     // 1
-        Group      // 2
-    }
-
-    public enum AppMode
-    {
-        Standalone,  // 0
-        Remote,      // 1
-        Dual         // 2
-    }
-
     /// <summary>
     /// App Setting
     /// AFSBGP-202401-0001
@@ -40,11 +27,11 @@ namespace Garmetix.Core.Settings
 
         //Store Details
         public string StoreName { get; set; } = "Aadwika Fashion Store";
-        public string StoreAddress { get; set; } = "123 Fashion Street";
-        public string StoreCity { get; set; } = "Fashion City";
-        public string StoreState { get; set; } = "Fashion State";
-        public string StorePincode { get; set; } = "123456";
-        public string StoreEmail { get; set; } = "0K9Hs@example.com";
+        public string StoreAddress { get; set; } = "Bhagalpur Road Dumka";
+        public string StoreCity { get; set; } = "Dumka";
+        public string StoreState { get; set; } = "Jharkhand";
+        public string StorePincode { get; set; } = "814101";
+        public string StoreEmail { get; set; } = "aadwikafashion@gmail.com";
         public string StoreContact { get; set; } = "1234567890";
 
 

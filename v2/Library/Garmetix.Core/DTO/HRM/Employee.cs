@@ -8,9 +8,9 @@
  * Website: https://garmetix.com/
 */
 
+using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Base;
 using Garmetix.Core.Models.HRM;
-using Garmetix.Models.Enums;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
