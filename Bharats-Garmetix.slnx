@@ -2,9 +2,6 @@
   <Folder Name="/Modules/">
     <Project Path="Garmetix.Billing/Garmetix.Billing.csproj" Id="66e5697d-048c-4263-8e1e-30cd634b55a6" />
   </Folder>
-  <Folder Name="/Services/">
-    <Project Path="Common/Services/Garmetix.Reports/Garmetix.Reports.csproj" Id="1bd17a20-9ecf-4d28-8526-546a1f10db12" />
-  </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
   </Folder>
