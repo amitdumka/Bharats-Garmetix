@@ -35,7 +35,7 @@
 	  <ProjectReference Include="..\..\Library\Garmetix.Base\Garmetix.Base.csproj" />
 	  <ProjectReference Include="..\..\Library\Garmetix.Core\Garmetix.Core.csproj" />
 	  <ProjectReference Include="..\..\Library\Garmetix.Dependencies\Garmetix.Dependencies.csproj" />
-	  <ProjectReference Include="..\..\ML\Services\Garmetix.CoreServices\Garmetix.CoreServices.csproj" />
+	  <ProjectReference Include="..\..\ML\Services\Garmetix.CoreServices\Garmetix.Services.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

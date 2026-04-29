@@ -1,6 +1,6 @@
 ﻿using Garmetix.Databases.Services;
 
-namespace Garmetix.CoreServices
+namespace Garmetix.Services
 {
     public class BaseServices
     {

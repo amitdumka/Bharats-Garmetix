@@ -1,10 +1,9 @@
-﻿using Garmetix.Databases.Services;
-using Garmetix.Models.Accounting;
-using Garmetix.Models.Dashboards;
-using Garmetix.Models.HRM; 
+﻿using Garmetix.Core.Enums;
+using Garmetix.Core.VM.Dashboards;
+using Garmetix.Databases.Services;
+using Garmetix.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
-using System.Threading.Tasks;
 
 namespace Garmetix.CoreServices.Dashboard
 {
@@ -18,17 +17,20 @@ namespace Garmetix.CoreServices.Dashboard
     public class DashboardService : BaseServices
     {
         public static PayrollInfo? PayrollInfo { get; set; } = new PayrollInfo();
-        public static FinancialInfo? FinancialInfo { get; set; }= new FinancialInfo();
+        public static FinancialInfo? FinancialInfo { get; set; } = new FinancialInfo();
 
         public static DashboardService? Instance { get; private set; }
         public static DateTime LastUpdated { get; set; } = DateTime.Now.AddDays(-1);
 
         public DashboardService() : base()
         {
-            if (Instance == null)
-            {
-                Instance = this;
-            }
+            Instance ??= this;
+
+            PayrollInfo ??= new PayrollInfo();
+            FinancialInfo ??= new FinancialInfo();
+
+
+
         }
 
         public static async Task<bool> RefreshDashBoard()
@@ -179,7 +181,7 @@ namespace Garmetix.CoreServices.Dashboard
                 // This query groups by employee name and counts 'Present' statuses on the database server.
                 var monthlyAttendanceSummary = await Db.Attendances.Include(a => a.Employee)
                     .Where(a => a.StoreId == storeId && a.OnDate.Month == currentMonth && a.OnDate.Year == currentYear)
-                    .GroupBy(a => a.Employee.FirstName+" "+a.Employee.LastName) // Grouping by FullName (assuming it's unique enough for display)
+                    .GroupBy(a => a.Employee.FirstName + " " + a.Employee.LastName) // Grouping by FullName (assuming it's unique enough for display)
                     .Select(g => new
                     {
                         EmployeeFullName = g.Key,

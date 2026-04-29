@@ -1,15 +1,15 @@
 ﻿using Bharat.ToolKits.Extensions;
 using Bharat.ToolKits.Helpers;
 using Bharat.ToolKits.Notifications;
+using Garmetix.Core.Enums;
+using Garmetix.Core.Interfaces;
+using Garmetix.Core.Models.HRM;
+using Garmetix.Core.Models.Inventory;
 using Garmetix.Core.Sessions;
 using Garmetix.CoreServices.Accounting;
 using Garmetix.Databases;
 using Garmetix.Databases.Services;
-using Garmetix.Models.HRM;
-using Garmetix.Models.Inventory;
 using Garmetix.Models.Reports;
-using Garmetix.PdfServices.Interfaces;
-using Garmetix.Services.Notifications;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
@@ -22,7 +22,7 @@ namespace Garmetix.CoreServices.Payroll
 
         public static DatabaseContext Db => DatabaseService.Instance.LocalDB;
 
-        public static async Task<string> GetEmployeeName(Guid id) => (await Db.Employees.FindAsync(id)).FullName ?? "";
+        public static async Task<string> GetEmployeeName(Guid id) => (await Db.Employees.FindAsync(id))?.FullName ?? "";
 
         /// <summary>
         /// Check for duplicate attendance
@@ -61,7 +61,7 @@ namespace Garmetix.CoreServices.Payroll
         /// <returns></returns>
         public static SalaryStructure? CurrentSalaryStructure(DateTime month, ref List<SalaryStructure> structures)
         {
-            if (structures.Count == null || structures.Count == 0)
+            if (structures ==null|| structures.Count is  0) // Check for null or zero count
             {
                 return null;
             }
@@ -79,9 +79,14 @@ namespace Garmetix.CoreServices.Payroll
         /// <returns></returns>
         public static async Task<SalaryPaySlip?> GeneratePayslip(Guid empid, DateTime month)
         {
+            
             var att = Db.MonthlyAttendances.Where(a => a.OnDate.Month == month.Month && a.OnDate.Year == month.Year && a.EmployeeId == empid).FirstOrDefault();
             att ??= await GenerateMonthlyAttendance(empid, month);
-
+            
+            if(att == null)
+            {
+                return null;
+            }
             // Fetch Salary Structure
             var salaryStructures = await Db.SalaryStructures.Where(a => a.EmployeeId == empid).ToListAsync();
             // Fetch Current Valid Salary Structure
@@ -89,7 +94,7 @@ namespace Garmetix.CoreServices.Payroll
 
             var sundayCount = DateHelper.AllSunday(month);
             int workingDays = DateHelper.NoOfWorkingDays(month);
-            decimal amount = att.NoOfAbsentDays * (current.BasicSalary / 26);
+            decimal amount = att.NoOfAbsentDays * (current?.BasicSalary / 26 ?? 0);
 
             //if (DateTime.DaysInMonth(month.Year, month.Month) == 31)
             //{
@@ -130,7 +135,7 @@ namespace Garmetix.CoreServices.Payroll
                 ProvidentFund = 0,
                 Deductions = 0,
                 Incentives = 0,
-                BasicSalary = current.BasicSalary - amount,
+                BasicSalary = current?.BasicSalary - amount ?? (-amount),
             };
 
             _ = Db.SalaryPaySlips.Add(salaryPaySlip);
@@ -357,11 +362,21 @@ namespace Garmetix.CoreServices.Payroll
                 }
 
                 var _share = ServiceHelper.Current.GetService<IShare>();
-                await _share.RequestAsync(new ShareFileRequest
+                
+                if (_share != null)
                 {
-                    Title = title,
-                    File = new ShareFile(file)
-                });
+                    await _share.RequestAsync(new ShareFileRequest
+                    {
+                        Title = title,
+                        File = new ShareFile(file)
+                    });
+                }
+                else
+                {
+                    // If sharing is not supported, show an alert to the user.
+                    await Shell.Current.DisplayAlertAsync("Sharing Not Supported", "Sharing is not supported on this device.", "OK");
+                    return false;
+                }
                 return true;
             }
             catch (Exception ex)
@@ -407,7 +422,7 @@ namespace Garmetix.CoreServices.Payroll
             if (string.IsNullOrWhiteSpace(emailid))
             {
                 await Shell.Current.DisplayAlertAsync("Email", "Sharing over to default company email.", "OK");
-                emailid = SessionService.Email();
+                emailid = SessionService.Email()??"aadwiafashion@gmail.com";
                 //return false;
             }
 
@@ -417,7 +432,7 @@ namespace Garmetix.CoreServices.Payroll
                 {
                     Subject = $"From {SessionService.CompanyName()},  {modelName} {naration}",
                     Body = $"Please find the attached {modelName} {naration}.\n \nBest regards,\n{SessionService.CompanyName()}\n{SessionService.StoreAddress()}\n{SessionService.Phone()}",
-                    To = [emailid]
+                    To = [emailid], Attachments = []
                 };
 
                 message.Attachments.Add(new EmailAttachment(fileName));

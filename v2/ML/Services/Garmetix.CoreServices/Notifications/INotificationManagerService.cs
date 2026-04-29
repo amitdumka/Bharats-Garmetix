@@ -1,4 +1,4 @@
-﻿namespace Bharat.ToolKits.Notifications
+﻿namespace Garmetix.Services.Notifications
 {
     public interface INotificationManagerService
     {
