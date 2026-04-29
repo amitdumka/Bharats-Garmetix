@@ -1,8 +1,9 @@
-﻿using Garmetix.CoreBase.HRM.PageModels;
-using Garmetix.Core.Views.Customs.Forms;
+﻿ 
 using Syncfusion.Maui.DataForm;
+using Garmetix.HRM.PageModels;
+using Garmetix.Base.Views.Customs.Forms;
 
-namespace Garmetix.CoreBase.HRM.Pages.Entry;
+namespace Garmetix.HRM.Pages.Entry;
 
 public partial class EntryAttendancePage : ContentPage
 {

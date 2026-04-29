@@ -1,9 +1,14 @@
-﻿using Garmetix.CoreBase.HRM.Models;
-using Garmetix.CoreServices.Payroll;
-using Garmetix.Models.HRM;
+﻿using Garmetix.CoreServices.Payroll;
+using Garmetix.Core.Models.HRM;
 using Syncfusion.Maui.DataForm;
+using Garmetix.HRM.Models;
+using Garmetix.Base.PageModels;
+using Garmetix.Core.Interfaces;
+using Garmetix.Core.DataModels;
+using Garmetix.Databases.Services;
+using Garmetix.Core.Enums;
 
-namespace Garmetix.CoreBase.HRM.PageModels
+namespace Garmetix.HRM.PageModels
 {
     public class EmployeeFormModel : FormModel<EmployeeEntry>
     {
@@ -21,12 +26,17 @@ namespace Garmetix.CoreBase.HRM.PageModels
             }
             IsNew = false;
             var employee = await DataModel.GetByIdAsync(employeeId);
+            if (employee == null) { 
+            
+                throw new InvalidOperationException($"Employee with ID {employeeId} not found.");
+                return;
+            }
             Entity = new EmployeeEntry
             {
                 Id = employee.Id,
                 FirstName = employee.FirstName,
                 LastName = employee.LastName,
-                Title = employee.Title,
+                Title = employee.Title ?? string.Empty,
                 Aadhar = employee.Aadhar,
 
                 Mobile = employee.Mobile,
@@ -39,8 +49,8 @@ namespace Garmetix.CoreBase.HRM.PageModels
                 StreetName = employee.EmployeeDetails?.StreetName ?? string.Empty,
                 ZipCode = employee.EmployeeDetails?.ZipCode ?? string.Empty,
                 Country = employee.EmployeeDetails?.Country ?? string.Empty,
-                Email = employee.Email,
-                Pan = employee.PAN,
+                Email = employee.Email ?? string.Empty,
+                Pan = employee.PAN ?? string.Empty,
                 Company = employee.CompanyId,
                 Store = employee.StoreId,
                 StoreGroup = employee.StoreGroupId,
@@ -60,10 +70,10 @@ namespace Garmetix.CoreBase.HRM.PageModels
                 Id = employee.Id,
                 FirstName = employee.FirstName,
                 LastName = employee.LastName,
-                Title = employee.Title,
-                Aadhar = employee.Aadhar,
+                Title = employee.Title ?? string.Empty,
+                Aadhar = employee.Aadhar ?? string.Empty,
 
-                Mobile = employee.Mobile,
+                Mobile = employee.Mobile ?? string.Empty,
                 DateOfBirth = employee.DateOfBirth,
                 Gender = employee.Gender,
                 Category = employee.Category,
@@ -73,7 +83,7 @@ namespace Garmetix.CoreBase.HRM.PageModels
                 StreetName = employee.EmployeeDetails?.StreetName ?? string.Empty,
                 ZipCode = employee.EmployeeDetails?.ZipCode ?? string.Empty,
                 Country = employee.EmployeeDetails?.Country ?? string.Empty,
-                Email = employee.Email,
+                Email = employee.Email?? string.Empty,
                 Pan = employee.PAN,
                 Company = employee.CompanyId,
                 Store = employee.StoreId,

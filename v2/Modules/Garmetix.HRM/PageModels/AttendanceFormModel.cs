@@ -1,11 +1,16 @@
 ﻿using Bharat.ToolKits.Notifications;
-using Garmetix.CoreBase.HRM.Models;
+using Garmetix.HRM.Models;
 using Garmetix.CoreServices.Payroll;
-using Garmetix.Models.HRM;
+using Garmetix.Core.Models.HRM;
 using Syncfusion.Maui.DataForm;
 using System.Diagnostics;
+using Garmetix.Base.PageModels;
+using Garmetix.Core.DataModels;
+using Garmetix.Core.Interfaces;
+using Garmetix.Core.Enums;
+using Garmetix.Databases.Services;
 
-namespace Garmetix.CoreBase.HRM.PageModels
+namespace Garmetix.HRM.PageModels
 {
     public class AttendanceFormModel : FormModel<AttendanceEntry>
     {
@@ -29,7 +34,7 @@ namespace Garmetix.CoreBase.HRM.PageModels
                 Employee = attendance.EmployeeId,
                 OnDate = attendance.OnDate,
                 Status = attendance.Status,
-                Remarks = attendance.Remarks,
+                Remarks = attendance.Remarks ?? string.Empty,
                 Id = attendance.Id,
                 Company = attendance.CompanyId,
                 StoreGroup = attendance.StoreGroupId,
@@ -38,7 +43,7 @@ namespace Garmetix.CoreBase.HRM.PageModels
                 EntryTime = attendance.EntryTime ?? DateTime.Now.TimeOfDay.ToString(), // Default to current time if null
             };
 
-            Title = $"Edit Attendance [ {attendance.Employee.StaffName} ]";
+            Title = $"Edit Attendance [ {attendance.Employee?.StaffName} ]";
         }
 
         public override void InitFormViewModel()

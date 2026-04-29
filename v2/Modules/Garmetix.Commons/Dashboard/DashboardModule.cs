@@ -1,4 +1,4 @@
-﻿using Garmetix.CoreBase.Dashboard.PageModels;
+﻿using Garmetix.Commons.Dashboard.PageModels;
 using Garmetix.CoreBase.Dashboard.Pages;
 using Garmetix.CoreServices.Dashboard;
 using System;

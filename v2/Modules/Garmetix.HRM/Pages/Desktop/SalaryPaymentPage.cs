@@ -1,8 +1,9 @@
-﻿using Garmetix.CoreBase.HRM.PageModels;
-using Garmetix.Core.Views.Customs.Listing;
-using Garmetix.Models.HRM;
+﻿
+using Garmetix.Core.Models.HRM;
+using Garmetix.HRM.PageModels;
+using Garmetix.Base.Views.Customs.Listing;
 
-namespace Garmetix.CoreBase.HRM.Pages;
+namespace Garmetix.HRM.Pages.Desktop;
 
 public class SalaryPaymentPage : BaseListingPage
 {

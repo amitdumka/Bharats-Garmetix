@@ -1,13 +1,13 @@
 ﻿using Bharat.ToolKits.Helpers;
-using Garmetix.CoreBase.HRM.PageModels;
-using Garmetix.CoreBase.HRM.Pages;
-using Garmetix.CoreBase.HRM.Pages.Entry;
+using Garmetix.HRM.PageModels;
+using Garmetix.HRM.Pages.Desktop;
+using Garmetix.HRM.Pages.Entry;
 
-namespace Garmetix.CoreBase.HRM
+namespace Garmetix.HRM
 {
     public static class HRMModules
     {
-        public static void EnableRoutes()
+        public static void EnableHRMRoutes()
         {
             RouterHelper.AddRoute(typeof(EntrySalaryPaymentPage));
             RouterHelper.AddRoute(typeof(EntryEmployeePage));
@@ -17,7 +17,7 @@ namespace Garmetix.CoreBase.HRM
             RouterHelper.AddRoute(typeof(EntrySalaryStructurePage));
         }
 
-        public static MauiAppBuilder EnableHRM(this MauiAppBuilder builder)
+        public static MauiAppBuilder UseHRM(this MauiAppBuilder builder)
         {
             builder.Services.AddSingleton<EmployeePageModel>();
             builder.Services.AddSingleton<EmployeesPage>();

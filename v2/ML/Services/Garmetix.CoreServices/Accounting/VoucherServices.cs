@@ -1,7 +1,7 @@
 ﻿using Bharat.ToolKits.Notifications;
-using Garmetix.CoreServices; 
-using Garmetix.Models.Accounting;
+using Garmetix.Core.Enums;
 using Garmetix.Models.Reports;
+using Garmetix.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Garmetix.ModuleService

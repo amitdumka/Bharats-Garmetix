@@ -1,6 +1,6 @@
-﻿using Garmetix.Core.Interfaces;
-using Garmetix.PdfServices.Services.Accounting;
-using Garmetix.PdfServices.Services.Payroll;
+﻿using Garmetix.PdfServices.Services.Payroll;
+using Garmetix.Services.Interfaces;
+using Garmetix.Services.PdfServices.Services.Accounting;
 
 namespace Garmetix.Core.PdfServices
 {

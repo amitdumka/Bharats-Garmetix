@@ -30,6 +30,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\Library\Garmetix.Base\Garmetix.Base.csproj" />
+	  <ProjectReference Include="..\..\Library\Garmetix.Dependencies\Garmetix.Dependencies.csproj" />
+	  <ProjectReference Include="..\..\ML\Services\Garmetix.CoreServices\Garmetix.Services.csproj" />
+	  <ProjectReference Include="..\Garmetix.Accounting\Garmetix.Accounting.csproj" />
+	  <ProjectReference Include="..\Garmetix.HRM\Garmetix.HRM.csproj" />
+	  <ProjectReference Include="..\Garmetix.Stores\Garmetix.Stores.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <MauiXaml Update="Dashboard\Pages\AccountingDashboardPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

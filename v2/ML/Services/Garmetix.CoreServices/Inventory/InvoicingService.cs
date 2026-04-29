@@ -1,18 +1,18 @@
-﻿using Garmetix.CoreServices;
-using Garmetix.Databases;
-using Garmetix.Models.Inventory;
-using Garmetix.Models.ViewModels; 
+﻿using Garmetix.Core.Models.Inventory;
+using Garmetix.Core.VM;
+using Garmetix.Core.VM.Info;
+using Garmetix.Services;
 using Microsoft.EntityFrameworkCore;
 
 //TODO: check and solve
-using CustomerInfo = Garmetix.Models.Info.CustomerInfo;
-using Invoice = Garmetix.Models.Inventory.Invoice;
-using SaleInvoice = Garmetix.Models.Info.SaleInvoice;
-using StockInfo = Garmetix.Models.Info.StockInfo;
-using Vendor = Garmetix.Models.Inventory.Vendor;
-using VendorInfo = Garmetix.Models.Info.VendorInfo;
+//using CustomerInfo = Garmetix.Models.Info.CustomerInfo;
+//using Invoice = Garmetix.Models.Inventory.Invoice;
+//using SaleInvoice = Garmetix.Models.Info.SaleInvoice;
+//using StockInfo = Garmetix.Models.Info.StockInfo;
+//using Vendor = Garmetix.Models.Inventory.Vendor;
+//using VendorInfo = Garmetix.Models.Info.VendorInfo;
 
-namespace Garmetix.ModuleService
+namespace Garmetix.Services.Inventory
 {
     /// <summary>
     /// Invoicing Service
@@ -32,7 +32,7 @@ namespace Garmetix.ModuleService
 
             Stocks = [];
         }
-        public static async Task<Product> FetchProduct(Guid id) => await Db?.Products?.Where(c => !c.Deleted && c.Id == id)!.FirstOrDefaultAsync()!;
+        public static async Task<Product?> FetchProduct(Guid id) => await Db?.Products?.Where(c => !c.Deleted && c.Id == id)!.FirstOrDefaultAsync()!;
 
         /// <summary>
         /// Fetch Salesmen
@@ -40,7 +40,7 @@ namespace Garmetix.ModuleService
         /// <param name="storeid"></param>
         /// <returns></returns>
 
-        public async Task SalesmenListAsync(Guid storeid) => await Db.Salesmen.Where(c => !c.Deleted && c.StoreId == storeid)
+        public static async Task SalesmenListAsync(Guid storeid) => await Db.Salesmen.Where(c => !c.Deleted && c.StoreId == storeid)
                 .Select(c => new ComboBoxItemVM { Id = c.Id, Name = c.Name })
                 .ToListAsync();
 
@@ -49,7 +49,7 @@ namespace Garmetix.ModuleService
         /// </summary>
         /// <param name="mobile">Custoemr Mobile Number</param>
         /// <returns>It returns CustomerInfo</returns>
-        public async Task<CustomerInfo?> FetchCustomer(string mobile)
+        public static async Task<CustomerInfo?> FetchCustomer(string mobile)
         {
             return await Db.Customers.Where(c => !c.Deleted && c.MobileNumber == mobile)
                  .Select(c => new CustomerInfo { Count = c.BillCount, Id = c.Id, Name = c.Name, Mobile = c.MobileNumber, PurchaseValue = c.Amount })
@@ -60,7 +60,7 @@ namespace Garmetix.ModuleService
         /// Fetch All Customers
         /// </summary>
         /// <returns>It return list of Customers</returns>
-        public async Task FetchCustomers() => await Db.Customers.Where(c => !c.Deleted).OrderBy(c => c.Name).ToListAsync();
+        public static async Task FetchCustomers() => await Db.Customers.Where(c => !c.Deleted).OrderBy(c => c.Name).ToListAsync();
 
         public void FetchInvoice()
         {
@@ -141,20 +141,20 @@ namespace Garmetix.ModuleService
 
         }
 
-        public async Task<Vendor?> FetchVendor(string gstin)
+        public static async Task<Vendor?> FetchVendor(string gstin)
         {
             return await Db.Vendors.Where(c => c.GSTIN == gstin).FirstOrDefaultAsync();
         }
 
-        public async Task<Vendor?> FetchVendor(Guid vendorId)
+        public static async Task<Vendor?> FetchVendor(Guid vendorId)
         {
             return await Db.Vendors.FindAsync(vendorId);
             //.Where(c => c.Id == vendorId).FirstOrDefaultAsync();
         }
 
-        public async Task FetchVendors() => await Db.Vendors.Where(c => !c.Deleted && c.Active).Select(c => new VendorInfo { Id = c.Id, GSTIN = c.GSTIN!, VendorName = c.Name }).ToListAsync();
+        public static async Task FetchVendors() => await Db.Vendors.Where(c => !c.Deleted && c.Active).Select(c => new VendorInfo { Id = c.Id, GSTIN = c.GSTIN!, VendorName = c.Name }).ToListAsync();
 
-        public string GenerateSaleInvoiceNumber() => Guid.NewGuid().ToString();
+        public static string GenerateSaleInvoiceNumber() => Guid.NewGuid().ToString();
         public    bool SaveInvoice(SaleInvoice invoice)
         {
 

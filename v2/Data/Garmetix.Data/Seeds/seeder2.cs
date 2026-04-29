@@ -11,7 +11,7 @@ using Garmetix.Core.Models.Stores;
 using Garmetix.Models.Accounting;
 using Garmetix.Models.Auth;
 using Garmetix.Models.Enums;
-using Garmetix.Models.HRM;
+using Garmetix.Core.Models.HRM;
 using Garmetix.Models.Inventory;
 
 namespace Garmetix.Databases.Seeds;

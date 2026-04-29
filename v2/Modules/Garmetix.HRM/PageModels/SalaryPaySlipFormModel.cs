@@ -1,12 +1,17 @@
 ﻿using Bharat.ToolKits.Notifications;
 using CommunityToolkit.Mvvm.Input;
+using Garmetix.Base.PageModels;
+using Garmetix.Core.DataModels;
+using Garmetix.Core.Interfaces;
+using Garmetix.Core.Models.HRM;
 using Garmetix.CoreServices.Payroll;
+using Garmetix.Databases.Services;
 using Garmetix.HRM.Models;
-using Garmetix.Models.HRM;
+using Garmetix.Settings;
 using Syncfusion.Maui.DataForm;
 using System.Diagnostics;
 
-namespace Garmetix.CoreBase.HRM.PageModels
+namespace Garmetix.HRM.PageModels
 {
     public partial class SalaryPaySlipFormModel : FormModel<SalaryPaySlipEntry>
     {

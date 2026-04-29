@@ -1,9 +1,11 @@
 ﻿using Bharat.ToolKits.Helpers;
+using Garmetix.Core.Enums;
+using Garmetix.Core.Models.Accounting;
 using Garmetix.Core.Sessions;
-using Garmetix.Models.Accounting;
 using Garmetix.Models.Reports;
+using Garmetix.Services;
+using Garmetix.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Garmetix.PdfServices.Interfaces;
 
 namespace Garmetix.CoreServices.Accounting
 {

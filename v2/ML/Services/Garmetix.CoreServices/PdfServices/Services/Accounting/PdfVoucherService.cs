@@ -1,9 +1,8 @@
 
-using Bharat.ToolKits.Helpers;
-using Garmetix.Core.Interfaces;
-using Garmetix.Core.PdfServices.Base;
+using Bharat.ToolKits.Helpers; 
 using Garmetix.Models.Reports;
-using Garmetix.PdfServices.Base;
+using Garmetix.Services.Interfaces;
+using Garmetix.Services.PdfServices.Base;
 using Microsoft.EntityFrameworkCore;
 using Syncfusion.Drawing;
 using Syncfusion.Pdf;
@@ -11,7 +10,7 @@ using Syncfusion.Pdf.Graphics;
 using Syncfusion.Pdf.Grid;
 using System.Diagnostics;
 
-namespace Garmetix.PdfServices.Services.Accounting;
+namespace Garmetix.Services.PdfServices.Services.Accounting;
 
 internal class PdfVoucherService : PdfBaseService, IPdfVoucherService
 {

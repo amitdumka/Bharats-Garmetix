@@ -1,7 +1,7 @@
-using Garmetix.CoreBase.HRM.PageModels;
-using Garmetix.Core.Views.Customs.Listing;
+using Garmetix.Base.Views.Customs.Listing;
+using Garmetix.HRM.PageModels;
 
-namespace Garmetix.CoreBase.HRM.Pages.Mobile;
+namespace Garmetix.HRM.Pages.Mobile;
 
 public partial class MonthlyAttendancePage : BaseListViewPage
 {

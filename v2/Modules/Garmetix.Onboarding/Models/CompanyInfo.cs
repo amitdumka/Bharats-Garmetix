@@ -1,4 +1,5 @@
-﻿using Garmetix.Models.Stores;
+﻿
+using Garmetix.Core.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace Garmetix.Onboarding.Models
@@ -10,14 +11,14 @@ namespace Garmetix.Onboarding.Models
         [MaxLength(200, ErrorMessage = "Company Name must be at most 200 characters long.")]
         [Display(Prompt = "Company Name")]
         [RegularExpression(@"^[a-zA-Z0-9\s.,'-]+$", ErrorMessage = "Company Name can only contain letters, numbers, spaces, and certain punctuation marks (.,'-).")]
-        public string CompanyName { get; set; }
+        public string CompanyName { get; set; } = string.Empty;
         [Display(Prompt = "Company GSTIN")]
         [RegularExpression(@"^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$", ErrorMessage = "Invalid GSTIN format.")]
         [Required(ErrorMessage = "GSTIN is required")]
         [MinLength(15, ErrorMessage = "GSTIN must be exactly 15 characters long.")]
         [MaxLength(15, ErrorMessage = "GSTIN must be exactly 15 characters long.")]
 
-        public string GSTIN { get; set; }
+        public string GSTIN { get; set; }= string.Empty;
 
         [Display(Prompt = "Company PAN")]
         [RegularExpression(@"^[A-Z]{5}[0-9]{4}[A-Z]{1}$", ErrorMessage = "Invalid PAN format.")]
@@ -30,14 +31,14 @@ namespace Garmetix.Onboarding.Models
         [Display(Prompt = "Company Type")]
         [EnumDataType(typeof(CompanyType), ErrorMessage = "Invalid Company Type.")]
         [Range(0, 5, ErrorMessage = "Company Type must be a valid value between 0 and 5.")]
-        public CompanyType CompanyType { get; set; }
+        public CompanyType CompanyType { get; set; } = CompanyType.Proprietorship;
 
         [Display(Prompt = "Company Email")]
         [EmailAddress(ErrorMessage = "Invalid email address format.")]
         [Required(ErrorMessage = "Company Email is required")]
         [MaxLength(200, ErrorMessage = "Company Email must be at most 200 characters long.")]
         [MinLength(5, ErrorMessage = "Company Email must be at least 5 characters long.")]
-        public string CompanyEmail { get; set; }
+        public string CompanyEmail { get; set; }= string.Empty;
 
         [Display(Prompt = "Company Phone Number")]
         [Phone(ErrorMessage = "Invalid phone number format.")]
@@ -45,7 +46,7 @@ namespace Garmetix.Onboarding.Models
         [MaxLength(15, ErrorMessage = "Company Phone Number must be at most 15 characters long.")]
         [MinLength(10, ErrorMessage = "Company Phone Number must be at least 10 characters long.")]
         [RegularExpression(@"^\+?[0-9\s-]+$", ErrorMessage = "Company Phone Number can only contain numbers, spaces, dashes, and an optional leading plus sign.")]
-        public string CompanyPhoneNumber { get; set; }
+        public string CompanyPhoneNumber { get; set; } = string.Empty;
 
         [Display(Prompt = "Company Date of Incorporation")]
         [DataType(DataType.Date)]

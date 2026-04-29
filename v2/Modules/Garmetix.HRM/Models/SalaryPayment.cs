@@ -1,8 +1,9 @@
-﻿using Garmetix.Models.HRM;
+﻿using Garmetix.Core.Enums;
+using Garmetix.Core.Models.Base;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Garmetix.CoreBase.HRM.Models
+namespace Garmetix.HRM.Models
 {
     public class SalaryPaymentEntry : CEntity
     {

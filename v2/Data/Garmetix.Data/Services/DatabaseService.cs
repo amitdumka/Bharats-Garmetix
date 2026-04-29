@@ -1,6 +1,5 @@
-﻿using Garmetix.Databases.Seeds;
-using Garmetix.Models.Auth;
-using System.Runtime.CompilerServices;
+﻿using Garmetix.Core.Models.Authentication;
+using Garmetix.Databases.Seeds; 
 
 namespace Garmetix.Databases.Services
 {

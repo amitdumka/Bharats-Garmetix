@@ -1,12 +1,12 @@
 ﻿using Bharat.ToolKits.Notifications;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Garmetix.Core.VM.Dashboards;
 using Garmetix.CoreBase.Dashboard.Models;
-using Garmetix.CoreServices.Dashboard;
-using Garmetix.Models.Dashboards;
+using Garmetix.CoreServices.Dashboard; 
 using System.Diagnostics;
 
-namespace Garmetix.CoreBase.Dashboard.PageModels
+namespace Garmetix.Commons.Dashboard.PageModels
 {
     [ObservableRecipient]
     public partial class DefaultDashboardPageModel : ObservableObject
@@ -51,6 +51,8 @@ namespace Garmetix.CoreBase.Dashboard.PageModels
         {
             Title = "Dashboard";
             _service = dashboardService;
+            _payrollInfo = new PayrollInfo();
+            _financialInfo= new FinancialInfo();
         }
 
         private void GenerateColors()
@@ -125,7 +127,7 @@ namespace Garmetix.CoreBase.Dashboard.PageModels
             DataLoaded = await DashboardService.RefreshDashBoard();
             if (DataLoaded)
             {
-                PayrollInfo = DashboardService.PayrollInfo;
+                PayrollInfo =  DashboardService.PayrollInfo;
                 FinancialInfo = DashboardService.FinancialInfo;
             }
             GenerateColors();

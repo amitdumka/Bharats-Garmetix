@@ -78,6 +78,26 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\v2\Data\Garmetix.DataServices\Garmetix.DataServices.csproj" />
+	  <ProjectReference Include="..\v2\Data\Garmetix.Data\Garmetix.Data.csproj" />
+	  <ProjectReference Include="..\v2\Garmetix.SRP\Garmetix.SRP.csproj" />
+	  <ProjectReference Include="..\v2\Library\Bharat.Themes\Bharat.Themes.csproj" />
+	  <ProjectReference Include="..\v2\Library\Bharat.ToolKits.Notifications\Bharat.ToolKits.Notifications.csproj" />
+	  <ProjectReference Include="..\v2\Library\Bharat.Toolkits\Bharat.ToolKits.csproj" />
+	  <ProjectReference Include="..\v2\Library\Garmetix.Base\Garmetix.Base.csproj" />
+	  <ProjectReference Include="..\v2\Library\Garmetix.Core\Garmetix.Core.csproj" />
+	  <ProjectReference Include="..\v2\Library\Garmetix.Dependencies\Garmetix.Dependencies.csproj" />
+	  <ProjectReference Include="..\v2\Library\Garmetix.Settings\Garmetix.Settings.csproj" />
+	  <ProjectReference Include="..\v2\ML\Services\Garmetix.CoreServices\Garmetix.Services.csproj" />
+	  <ProjectReference Include="..\v2\Modules\Garmetix.Accounting\Garmetix.Accounting.csproj" />
+	  <ProjectReference Include="..\v2\Modules\Garmetix.Authentication\Garmetix.Authentication.csproj" />
+	  <ProjectReference Include="..\v2\Modules\Garmetix.Commons\Garmetix.Commons.csproj" />
+	  <ProjectReference Include="..\v2\Modules\Garmetix.HRM\Garmetix.HRM.csproj" />
+	  <ProjectReference Include="..\v2\Modules\Garmetix.Onboarding\Garmetix.Onboarding.csproj" />
+	  <ProjectReference Include="..\v2\Modules\Garmetix.Stores\Garmetix.Stores.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <MauiImage Update="Resources\Images\dotnet_bot.png">
 	    <Resize>True</Resize>
 	    <BaseSize>300,185</BaseSize>

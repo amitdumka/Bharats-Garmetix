@@ -1,8 +1,12 @@
-﻿using Garmetix.HRM.Models;
-using Garmetix.Models.HRM;
+﻿using Garmetix.Base.PageModels;
+using Garmetix.Core.DataModels;
+using Garmetix.Core.Interfaces;
+using Garmetix.Core.Models.HRM;
+using Garmetix.Databases.Services;
+using Garmetix.HRM.Models;
 using Syncfusion.Maui.DataForm;
 
-namespace Garmetix.CoreBase.HRM.PageModels
+namespace Garmetix.HRM.PageModels
 {
     public class EmployeeDetailFormModel : FormModel<EmployeeDetail>
     {

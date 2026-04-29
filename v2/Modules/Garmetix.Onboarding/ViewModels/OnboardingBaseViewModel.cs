@@ -41,7 +41,7 @@ namespace Garmetix.Onboarding
                 // Optionally, display a summary of errors or focus on the first invalid field
                 // For simplicity, we'll just rely on the UI to show individual errors.
                 // You might want to show a general error message.
-                _ = Application.Current.MainPage.DisplayAlert("Validation Error", "Please correct the highlighted fields.", "OK");
+                _ = Application.Current.MainPage.DisplayAlertAsync("Validation Error", "Please correct the highlighted fields.", "OK");
                 return false;
             }
             return true;
@@ -65,7 +65,7 @@ namespace Garmetix.Onboarding
         [RelayCommand]
         protected abstract Task NextStep();
 
-        public static ValidationResult ValidateDateOfBith(DateTime DateOfBirth, ValidationContext context)
+        public static ValidationResult ValidateDateOfBith(DateTime? DateOfBirth, ValidationContext context)
         {
 
             if (DateOfBirth == null)
@@ -78,7 +78,7 @@ namespace Garmetix.Onboarding
             }
             else
             {
-                return ValidationResult.Success;
+                return ValidationResult.Success ?? new ValidationResult("Unknown validation error.");
             }
 
         }

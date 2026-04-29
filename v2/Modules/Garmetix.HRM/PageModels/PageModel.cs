@@ -1,8 +1,9 @@
-﻿using Garmetix.CoreBase.HRM.DataModels;
-using Garmetix.Models.HRM;
+﻿using Garmetix.Base.PageModels;
+using Garmetix.Core.Models.HRM;
+using Garmetix.HRM.DataModels;
 using Syncfusion.Maui.DataGrid;
 
-namespace Garmetix.CoreBase.HRM.PageModels
+namespace Garmetix.HRM.PageModels
 {
     public class EmployeePageModel : PageModel<Employee>
     {

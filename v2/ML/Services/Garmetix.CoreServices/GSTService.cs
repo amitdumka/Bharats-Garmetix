@@ -1,6 +1,8 @@
-﻿using Garmetix.Models.Inventory;
+﻿using Garmetix.Core.Models.Inventory;
 
-namespace Garmetix.CoreServices
+
+
+namespace Garmetix.Services
 {
     /// <summary>
     /// A service to handle GST calculations for an invoice.
@@ -33,7 +35,7 @@ namespace Garmetix.CoreServices
 
             foreach (var item in invoice.InvoiceItems)
             {
-                var productGstRate = item.Product.TaxRate;
+                var productGstRate = item.Product?.TaxRate ?? 5;
                 var taxableValue = item.TaxableAmount;
 
                 if (invoice.InterState)

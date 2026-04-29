@@ -30,6 +30,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\Library\Garmetix.Core\Garmetix.Core.csproj" />
+	  <ProjectReference Include="..\Garmetix.Authentication\Garmetix.Authentication.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <MauiXaml Update="Pages\CompletionPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

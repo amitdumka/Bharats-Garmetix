@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <listing:BaseListViewPage
-    x:Class="Garmetix.CoreBase.HRM.Pages.Mobile.SalaryPaymentPage"
+    x:Class="Garmetix.HRM.Pages.Mobile.SalaryPaymentPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:listing="clr-namespace:Garmetix.Core.Views.Customs.Listing;assembly=Garmetix.Core"
-    xmlns:models="clr-namespace:Garmetix.Models.HRM;assembly=Garmetix.Models">
+    xmlns:listing="clr-namespace:Garmetix.Base.Views.Customs.Listing;assembly=Garmetix.Base"
+    xmlns:models="clr-namespace:Garmetix.Core.Models.HRM;assembly=Garmetix.Core">
     <listing:BaseListViewPage.ListItemTemplate>
         <DataTemplate x:DataType="models:SalaryPayment">
             <Border

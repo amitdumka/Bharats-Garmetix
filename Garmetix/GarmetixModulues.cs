@@ -1,6 +1,6 @@
 ﻿using Garmetix.Authentication;
 using Garmetix.Authentication.Pages;
-using Garmetix.CoreBase;
+using Garmetix.Commons;
 using Garmetix.CoreBase.Accounting;
 using Garmetix.CoreBase.Dashboard;
 using Garmetix.CoreBase.HRM;

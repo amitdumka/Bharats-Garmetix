@@ -3,7 +3,7 @@
     x:Class="Garmetix.Accounting.Pages.Mobile.LedgerPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:listing="clr-namespace:Garmetix.Core.Views.Customs.Listing;assembly=Garmetix.Core"
+    xmlns:listing="clr-namespace:Garmetix.Base.Views.Customs.Listing;assembly=Garmetix.Base"
     xmlns:models="clr-namespace:Garmetix.Models.Accounting;assembly=Garmetix.Models">
     <listing:BaseListViewPage.ListItemTemplate>
         <DataTemplate x:DataType="models:Ledger">

@@ -1,12 +1,12 @@
-﻿using Garmetix.Core.Services;
-using Garmetix.CoreBase.Accounting;
+﻿using Garmetix.Accounting;
+using Garmetix.Core.Services;
 using Garmetix.CoreBase.Dashboard;
 using Garmetix.CoreBase.DayOperations.Pages;
 using Garmetix.CoreBase.HRM;
-using Garmetix.CoreBase.Stores;
 using Garmetix.CoreBase.TimeLines;
+using Garmetix.Stores;
 
-namespace Garmetix.CoreBase
+namespace Garmetix.Commons
 {
     // All the code in this file is included in all platforms.
     public static class GarmetixCoreBaseModule
@@ -23,7 +23,7 @@ namespace Garmetix.CoreBase
             builder.Services.AddTransient<DayEndEntryPage>();
             builder.Services.AddTransient<PettyCashSheetEntryPage>();
 
-            builder.EnableAccounting().EnableBanking().EnableDashboard().EnableHRM().EnableStore();
+            builder.UseAccounting().UseBanking().EnableDashboard().UseHRM().UseStores();
 
           
 

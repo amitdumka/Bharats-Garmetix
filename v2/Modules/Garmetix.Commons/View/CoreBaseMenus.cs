@@ -1,10 +1,11 @@
-﻿using Garmetix.CoreBase.DayOperations.Pages;
-using Garmetix.CoreBase.Stores.Pages.Desktop;
-using Garmetix.CoreBase.Stores.Pages.Mobile;
+﻿using Garmetix.Base.Shells;
+using Garmetix.CoreBase.DayOperations.Pages;
+
+
 // Use C# using aliases to separate the mobile and desktop pages
-using HrmPages = Garmetix.CoreBase.HRM.Pages;
-using MobileHrmPages = Garmetix.CoreBase.HRM.Pages.Mobile;
-namespace Garmetix.CoreBase.View
+using HrmPages = Garmetix.HRM.Pages;
+using MobileHrmPages = Garmetix.HRM.Pages.Mobile;
+namespace Garmetix.Commons.View
 {
 
     public class Accounting_Menu : BaseFlyoutMenu
@@ -72,7 +73,9 @@ namespace Garmetix.CoreBase.View
             // 1. Attendance (Platform Specific)
             AddPlatformSpecificPageTab("Attendance", "rain_icon.png", "Attendance",
                 mobilePageType: typeof(MobileHrmPages.AttendancePage),
-                desktopPageType: typeof(HrmPages.AttendancePage));
+
+ 
+                desktopPageType: typeof(HrmPages.Desktop.AttendancePage));
 
             // 2. Time Sheet (Platform Specific & Hidden)
             AddPlatformSpecificPageTab("Time Sheet", "rain_icon.png", "TimeSheets",

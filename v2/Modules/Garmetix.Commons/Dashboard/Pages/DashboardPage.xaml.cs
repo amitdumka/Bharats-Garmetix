@@ -1,4 +1,4 @@
-using Garmetix.CoreBase.Dashboard.PageModels;
+using Garmetix.Commons.Dashboard.PageModels;
 
 namespace Garmetix.CoreBase.Dashboard.Pages;
 

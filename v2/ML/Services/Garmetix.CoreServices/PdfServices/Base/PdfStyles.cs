@@ -1,7 +1,7 @@
 ﻿using Syncfusion.Pdf.Graphics;
 
 // Final Version
-namespace Garmetix.PdfServices.Base
+namespace Garmetix.Services.PdfServices.Base
 {
     /// <summary>
     /// Provides consistent PDF styling, including fonts and brushes,

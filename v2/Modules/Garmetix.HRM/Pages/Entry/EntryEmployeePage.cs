@@ -1,8 +1,8 @@
-﻿using Garmetix.CoreBase.HRM.PageModels;
-using Garmetix.Core.Views.Customs.Forms;
+﻿using Garmetix.HRM.PageModels;
+using Garmetix.Base.Views.Customs.Forms;
 using Syncfusion.Maui.DataForm;
 
-namespace Garmetix.CoreBase.HRM.Pages.Entry;
+namespace Garmetix.HRM.Pages.Entry;
 
 public class EntryEmployeePage : ContentPage
 {

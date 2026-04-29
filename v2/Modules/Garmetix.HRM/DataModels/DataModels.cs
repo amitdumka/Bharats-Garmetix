@@ -1,6 +1,7 @@
-﻿using Garmetix.Models.HRM;
+﻿using Garmetix.Core.DataModels;
+using Garmetix.Core.Models.HRM;
 
-namespace Garmetix.CoreBase.HRM.DataModels
+namespace Garmetix.HRM.DataModels
 {
     public class EmployeeDataModel : DataModel<Employee>
     {

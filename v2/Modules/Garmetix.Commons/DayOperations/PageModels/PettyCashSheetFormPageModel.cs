@@ -1,9 +1,11 @@
-﻿using Garmetix.CoreBase.DayOperations.Models;
+﻿using Garmetix.Base.PageModels;
+using Garmetix.Core.Interfaces;
+using Garmetix.CoreBase.DayOperations.Models;
 using Garmetix.Models.DayOperations;
 using Syncfusion.Maui.DataForm;
 using Syncfusion.Maui.DataGrid;
 
-namespace Garmetix.CoreBase.DayOperations.PageModels
+namespace Garmetix.Commons.DayOperations.PageModels
 {
     public class PettyCashSheetFormPageModel : FormModel<PettyCashSheetEntry>
     {

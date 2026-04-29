@@ -2,11 +2,10 @@
 // If not, you might need to adjust or create dummy classes.
 // For SentrySdk, if it's truly used globally.
 // using Sentry;
-//Final Version
-using Garmetix.Core.PdfServices.Base;
+//Final Version 
 using Syncfusion.Pdf.Graphics;
 
-namespace Garmetix.PdfServices.Base
+namespace Garmetix.Services.PdfServices.Base
 {
     internal class PdfBaseService
     {

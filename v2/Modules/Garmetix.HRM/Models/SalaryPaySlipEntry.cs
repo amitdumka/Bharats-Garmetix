@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Garmetix.Core.Models.Base;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Garmetix.HRM.Models

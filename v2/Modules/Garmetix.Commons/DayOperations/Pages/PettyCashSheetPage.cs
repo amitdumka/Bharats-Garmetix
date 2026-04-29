@@ -1,6 +1,6 @@
-﻿using Garmetix.CoreBase.DayOperations.PageModels;
-using Garmetix.Core.Views.Customs.Forms;
-using Garmetix.Core.Views.Customs.Listing;
+﻿using Garmetix.Base.Views.Customs.Forms;
+using Garmetix.Base.Views.Customs.Listing;
+using Garmetix.Commons.DayOperations.PageModels;
 using Syncfusion.Maui.DataForm;
 
 namespace Garmetix.CoreBase.DayOperations.Pages

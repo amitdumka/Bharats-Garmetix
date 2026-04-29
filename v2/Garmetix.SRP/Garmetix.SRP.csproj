@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFrameworks>net10.0-android</TargetFrameworks>
@@ -30,8 +30,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\Garmetix.Billing\Garmetix.Billing.csproj" />
+	  <ProjectReference Include="..\Data\Garmetix.DataServices\Garmetix.DataServices.csproj" />
+	  <ProjectReference Include="..\Data\Garmetix.Data\Garmetix.Data.csproj" />
+	  <ProjectReference Include="..\Library\Bharat.Themes\Bharat.Themes.csproj" />
+	  <ProjectReference Include="..\Library\Bharat.ToolKits.Notifications\Bharat.ToolKits.Notifications.csproj" />
+	  <ProjectReference Include="..\Library\Bharat.Toolkits\Bharat.ToolKits.csproj" />
 	  <ProjectReference Include="..\Library\Garmetix.Base\Garmetix.Base.csproj" />
+	  <ProjectReference Include="..\Library\Garmetix.Core\Garmetix.Core.csproj" />
+	  <ProjectReference Include="..\Library\Garmetix.Dependencies\Garmetix.Dependencies.csproj" />
 	  <ProjectReference Include="..\Library\Garmetix.Settings\Garmetix.Settings.csproj" />
+	  <ProjectReference Include="..\ML\Services\Garmetix.CoreServices\Garmetix.Services.csproj" />
 	  <ProjectReference Include="..\Modules\Garmetix.Accounting\Garmetix.Accounting.csproj" />
 	  <ProjectReference Include="..\Modules\Garmetix.Authentication\Garmetix.Authentication.csproj" />
 	  <ProjectReference Include="..\Modules\Garmetix.Commons\Garmetix.Commons.csproj" />

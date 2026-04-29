@@ -2,7 +2,7 @@
 using Bharat.ToolKits.Notifications;
 using Garmetix.Databases;
 using Garmetix.Databases.Services;
-using Garmetix.Models.HRM;
+using Garmetix.Core.Models.HRM;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;

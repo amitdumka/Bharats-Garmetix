@@ -1,13 +1,13 @@
-using Garmetix.Core.Interfaces;
 using Garmetix.Models.Reports;
-using Garmetix.PdfServices.Base;
+using Garmetix.Services.Interfaces;
+using Garmetix.Services.PdfServices.Base;
 using Syncfusion.Drawing;
 using Syncfusion.Pdf;
 using Syncfusion.Pdf.Graphics;
 using Syncfusion.Pdf.Grid;
 using PointF = Syncfusion.Drawing.PointF;
 
-namespace Garmetix.PdfServices.Services.Accounting;
+namespace Garmetix.Services.PdfServices.Services.Accounting;
 
 internal class PdfAccountingService : PdfBaseService, IPdfAccountingService
 {

@@ -1,7 +1,8 @@
 ﻿// Assuming these namespaces exist in your project.
 // If not, you might need to adjust or create dummy classes.
-using Garmetix.Core.Interfaces;
-using Garmetix.PdfServices.Base;
+using Garmetix.Databases;
+using Garmetix.Databases.Services;
+using Garmetix.Services.Interfaces;
 using Syncfusion.Drawing;
 using Syncfusion.Pdf;
 using Syncfusion.Pdf.Barcode;
@@ -13,7 +14,7 @@ using SizeF = Syncfusion.Drawing.SizeF;
 // For SentrySdk, if it's truly used globally.
 // using Sentry;
 //Final Version
-namespace Garmetix.Core.PdfServices.Base
+namespace Garmetix.Services.PdfServices.Base
 {
     /// <summary>
     /// Provides services for generating PDF documents, including voucher and report generation.
@@ -390,7 +391,7 @@ namespace Garmetix.Core.PdfServices.Base
             row.Cells[1].Style.Borders.Bottom = new PdfPen(PdfColor.Empty);
             row.Cells[1].Style.Borders.Left = new PdfPen(PdfColor.Empty);
         }
-        public static void AddGridRowLastNoBorder(PdfGrid grid, PdfFont labelFont, string label, string value)
+        public void AddGridRowLastNoBorder(PdfGrid grid, PdfFont labelFont, string label, string value)
         {
             var row = grid.Rows.Add();
             row.Cells[0].Value = label;

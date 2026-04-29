@@ -1,12 +1,17 @@
 ﻿using Bharat.ToolKits.Notifications;
 using CommunityToolkit.Mvvm.Input;
-using Garmetix.CoreBase.HRM.Models;
+using Garmetix.Base.PageModels;
 using Garmetix.CoreServices.Payroll;
-using Garmetix.Models.HRM;
+using Garmetix.Core.Models.HRM;
 using Syncfusion.Maui.DataForm;
 using System.Diagnostics;
+using Garmetix.Core.Interfaces;
+using Garmetix.Core.DataModels;
+using Garmetix.Databases.Services;
+using Garmetix.Core.Enums;
+using Garmetix.HRM.Models;
 
-namespace Garmetix.CoreBase.HRM.PageModels
+namespace Garmetix.HRM.PageModels
 {
     public partial class SalaryPaymentFormModel : FormModel<SalaryPaymentEntry>
     {

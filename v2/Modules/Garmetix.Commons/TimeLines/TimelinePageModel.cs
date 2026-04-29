@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Garmetix.Core.Models;
 using Garmetix.Core.Services;
-using Garmetix.Models;
 using System.Collections.ObjectModel;
 
 namespace Garmetix.CoreBase.TimeLines;

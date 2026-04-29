@@ -31,6 +31,8 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Library\Bharat.Toolkits\Bharat.ToolKits.csproj" />
+	  <ProjectReference Include="..\..\Library\Garmetix.Base\Garmetix.Base.csproj" />
+	  <ProjectReference Include="..\..\ML\Services\Garmetix.CoreServices\Garmetix.Services.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

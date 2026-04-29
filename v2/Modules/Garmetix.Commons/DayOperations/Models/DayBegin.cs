@@ -1,5 +1,6 @@
 ﻿
 
+using Garmetix.Core.Models.Base;
 using Garmetix.Models.DayOperations;
 
 namespace Garmetix.CoreBase.DayOperations.Models

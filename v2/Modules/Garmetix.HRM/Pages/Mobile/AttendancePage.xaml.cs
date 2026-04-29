@@ -1,8 +1,8 @@
-using Garmetix.CoreBase.HRM.PageModels;
-using Garmetix.Core.Views.Customs.Listing;
-using Garmetix.Models.HRM;
+using Garmetix.Core.Models.HRM; 
+using Garmetix.Base.Views.Customs.Listing;
+using Garmetix.HRM.PageModels;
 
-namespace Garmetix.CoreBase.HRM.Pages.Mobile;
+namespace Garmetix.HRM.Pages.Mobile;
 
 public partial class AttendancePage : BaseListViewPage
 {
