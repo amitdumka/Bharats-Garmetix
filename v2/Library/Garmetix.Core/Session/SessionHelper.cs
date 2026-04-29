@@ -1,5 +1,6 @@
 ﻿
-using Garmetix.Databases.Services;
+
+using Garmetix.Core.Session;
 using System.Text.Json;
 
 namespace Garmetix.Core.Sessions
@@ -31,13 +32,15 @@ namespace Garmetix.Core.Sessions
                         {
                             CurrentSession.LoginTime = DateTime.Now;
                         }
-                        DatabaseService.CompanyId = CurrentSession.CompanyId.Value;
-                        DatabaseService.StoreGroupId = CurrentSession.GroupId.Value;
-                        DatabaseService.StoreId = CurrentSession.StoreId.Value;
-                        DatabaseService.Instance.SetCurrentUser(CurrentSession.UserName, DatabaseService.CompanyId);
+                        //TODO: handle this some other way for database part
 
-                        System.Diagnostics.Debug.WriteLine($"Session loaded for user: {CurrentSession.UserName}");
-                        _ = SessionService.StartSessionAsync(CurrentSession);
+                        //DatabaseService.CompanyId = CurrentSession.CompanyId.Value;
+                        //DatabaseService.StoreGroupId = CurrentSession.GroupId.Value;
+                        //DatabaseService.StoreId = CurrentSession.StoreId.Value;
+                        //DatabaseService.Instance.SetCurrentUser(CurrentSession.UserName, DatabaseService.CompanyId);
+
+                        //System.Diagnostics.Debug.WriteLine($"Session loaded for user: {CurrentSession.UserName}");
+                        //_ = SessionService.StartSessionAsync(CurrentSession);
                         return CurrentSession;
                     }
                 }

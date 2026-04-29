@@ -17,9 +17,12 @@
  * along with Garmetix.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+ 
+
 using Garmetix.Core.Enums;
 
-namespace Garmetix.Core.Sessions
+namespace Garmetix.Core.Session
 {
     public class CurrentSession
     {
