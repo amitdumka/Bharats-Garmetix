@@ -1,13 +1,13 @@
 ﻿//Garmetix - A.NET MAUI Application for Garment and Textile Management
 
+using Garmetix.Core.Models.Authentication;
 using Garmetix.Core.Models.Stores;
-using Garmetix.Models;
-using Garmetix.Models.Auth;
+using Garmetix.Databases;
 using Microsoft.EntityFrameworkCore;
 using SQLite;
 using System.ComponentModel.DataAnnotations;
 
-namespace Garmetix.Databases;
+namespace Garmetix.Data.Databases;
 
 public class Notification
 {
@@ -106,11 +106,5 @@ public class ApplicationDatabaseContext : DbContext
 
     public DbSet<AppUser> AppUsers { get; set; }
 
-    //Enabling TODO Items
-    public DbSet<Category> Categories { get; set; }
-
-    public DbSet<Project> Projects { get; set; } //Enabling TODO Items>
-    public DbSet<ProjectTask> ProjectTasks { get; set; } //Enabling TODO Items>
-    public DbSet<ProjectsTags> ProjectsTags { get; set; } //Enabling TODO Items>
-    public DbSet<Tag> Tags { get; set; } //Enabling TODO Items>
+   
 }

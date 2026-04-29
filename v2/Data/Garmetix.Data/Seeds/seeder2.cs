@@ -1,18 +1,15 @@
 ﻿// Garmetix - A .NET MAUI Application for Garment and Textile Management
 
-using System;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Bharat.ToolKits.Notifications;
+using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Accounting;
+using Garmetix.Core.Models.Authentication;
+using Garmetix.Core.Models.HRM;
+using Garmetix.Core.Models.Inventory;
 using Garmetix.Core.Models.Onboarding;
 using Garmetix.Core.Models.Stores;
-using Garmetix.Models.Accounting;
-using Garmetix.Models.Auth;
-using Garmetix.Models.Enums;
-using Garmetix.Core.Models.HRM;
-using Garmetix.Models.Inventory;
+using Garmetix.Data.Databases;
+using System.Text;
 
 namespace Garmetix.Databases.Seeds;
 
@@ -639,20 +636,20 @@ public class Seeder2
 
             var ledgers = new[]
             {
-                new Ledger { OpenningBalance = 0, LedgerGroupId = pettyExpenses.Id, IsParty = false, CreatedBy = "AutoAdmin", Deleted = false, Synced = false, CompanyId = company.Id, Name = "Dan", Id = Guid.NewGuid(), OpenningDate = company.StartDate, LedgerType = LedgerType.Expenses, CreatedAt = DateTime.UtcNow },
-                new Ledger { OpenningBalance = 0, LedgerGroupId = snackgroups.Id, IsParty = false, CreatedBy = "AutoAdmin", Deleted = false, Synced = false, CreatedAt = DateTime.UtcNow, CompanyId = company.Id, Name = "Snacks & Tea", Id = Guid.NewGuid(), OpenningDate = company.StartDate, LedgerType = LedgerType.Expenses },
-                new Ledger { OpenningBalance = 0, LedgerGroupId = storeexpenses.Id, CreatedAt = DateTime.UtcNow, IsParty = false, CreatedBy = "AutoAdmin", Deleted = false, Synced = false, CompanyId = company.Id, Name = "Electricity", Id = Guid.NewGuid(), OpenningDate = company.StartDate, LedgerType = LedgerType.Expenses },
-                new Ledger { OpenningBalance = 0, LedgerGroupId = snackgroups.Id, IsParty = false, CreatedBy = "AutoAdmin", CreatedAt = DateTime.UtcNow, Deleted = false, Synced = false, CompanyId = company.Id, Name = "Water", Id = Guid.NewGuid(), OpenningDate = company.StartDate, LedgerType = LedgerType.Expenses },
-                new Ledger { OpenningBalance = 0, LedgerGroupId = storeexpenses.Id, CreatedAt = DateTime.UtcNow, IsParty = false, CreatedBy = "AutoAdmin", Deleted = false, Synced = false, CompanyId = company.Id, Name = "Printing & Stationery", Id = Guid.NewGuid(), OpenningDate = company.StartDate, LedgerType = LedgerType.Expenses },
-                new Ledger { OpenningBalance = 0, LedgerGroupId = directExpenses.Id, IsParty = false, CreatedBy = "AutoAdmin", CreatedAt = DateTime.UtcNow, Deleted = false, Synced = false, CompanyId = company.Id, Name = "Transports & Freight Charges", Id = Guid.NewGuid(), OpenningDate = company.StartDate, LedgerType = LedgerType.Expenses },
-                new Ledger { OpenningBalance = 0, LedgerGroupId = storeexpenses.Id, IsParty = false, CreatedBy = "AutoAdmin", CreatedAt = DateTime.UtcNow, Deleted = false, Synced = false, CompanyId = company.Id, Name = "Miscellaneous", Id = Guid.NewGuid(), OpenningDate = company.StartDate, LedgerType = LedgerType.Expenses },
-                new Ledger { OpenningBalance = 0, LedgerGroupId = noGroup.Id, IsParty = false, CreatedBy = "AutoAdmin", CreatedAt = DateTime.UtcNow, Deleted = false, Synced = false, CompanyId = company.Id, Name = "No Party", Id = Guid.NewGuid(), OpenningDate = company.StartDate, LedgerType = LedgerType.IndirectExpenses },
-                new Ledger { OpenningBalance = 0, LedgerGroupId = cashs.Id, Deleted = false, Synced = false, CompanyId = company.Id, Name = "Cash In Hand", Id = Guid.NewGuid(), OpenningDate = company.StartDate, LedgerType = LedgerType.Cash },
-                new Ledger { OpenningBalance = 0, LedgerGroupId = directExpenses.Id, IsParty = false, CreatedBy = "AutoAdmin", CreatedAt = DateTime.UtcNow, Deleted = false, Synced = false, CompanyId = company.Id, Name = "Salary Payables", Id = Guid.NewGuid(), OpenningDate = company.StartDate, LedgerType = LedgerType.Expenses },
-                new Ledger { OpenningBalance = 0, LedgerGroupId = storeexpenses.Id, IsParty = false, CreatedBy = "AutoAdmin", CreatedAt = DateTime.UtcNow, Deleted = false, Synced = false, CompanyId = company.Id, Name = "Internet & Mobile Bills", Id = Guid.NewGuid(), OpenningDate = company.StartDate, LedgerType = LedgerType.Expenses },
-                new Ledger { OpenningBalance = 0, LedgerGroupId = storeexpenses.Id, IsParty = false, CreatedBy = "AutoAdmin", CreatedAt = DateTime.UtcNow, Deleted = false, Synced = false, CompanyId = company.Id, Name = "Store Maintenance", Id = Guid.NewGuid(), OpenningDate = company.StartDate, LedgerType = LedgerType.Expenses },
-                new Ledger { OpenningBalance = 0, LedgerGroupId = storeexpenses.Id, IsParty = false, CreatedBy = "AutoAdmin", CreatedAt = DateTime.UtcNow, Deleted = false, Synced = false, CompanyId = company.Id, Name = "Store Supplies", Id = Guid.NewGuid(), OpenningDate = company.StartDate, LedgerType = LedgerType.Expenses },
-                new Ledger { OpenningBalance = 0, LedgerGroupId = pettyExpenses.Id, IsParty = false, CreatedBy = "AutoAdmin", CreatedAt = DateTime.UtcNow, Deleted = false, Synced = false, CompanyId = company.Id, Name = "Petty Cash Expenses", Id = Guid.NewGuid(), OpenningDate = company.StartDate, LedgerType = LedgerType.Expenses }
+                new Ledger { OpeningBalance = 0, LedgerGroupId = pettyExpenses.Id, IsParty = false, CreatedBy = "AutoAdmin", Deleted = false, Synced = false, CompanyId = company.Id, Name = "Dan", Id = Guid.NewGuid(), OpeningDate = company.StartDate, LedgerType = LedgerType.Expenses, CreatedAt = DateTime.UtcNow },
+                new Ledger { OpeningBalance = 0, LedgerGroupId = snackgroups.Id, IsParty = false, CreatedBy = "AutoAdmin", Deleted = false, Synced = false, CreatedAt = DateTime.UtcNow, CompanyId = company.Id, Name = "Snacks & Tea", Id = Guid.NewGuid(), OpeningDate = company.StartDate, LedgerType = LedgerType.Expenses },
+                new Ledger { OpeningBalance = 0, LedgerGroupId = storeexpenses.Id, CreatedAt = DateTime.UtcNow, IsParty = false, CreatedBy = "AutoAdmin", Deleted = false, Synced = false, CompanyId = company.Id, Name = "Electricity", Id = Guid.NewGuid(), OpeningDate = company.StartDate, LedgerType = LedgerType.Expenses },
+                new Ledger { OpeningBalance = 0, LedgerGroupId = snackgroups.Id, IsParty = false, CreatedBy = "AutoAdmin", CreatedAt = DateTime.UtcNow, Deleted = false, Synced = false, CompanyId = company.Id, Name = "Water", Id = Guid.NewGuid(), OpeningDate = company.StartDate, LedgerType = LedgerType.Expenses },
+                new Ledger { OpeningBalance = 0, LedgerGroupId = storeexpenses.Id, CreatedAt = DateTime.UtcNow, IsParty = false, CreatedBy = "AutoAdmin", Deleted = false, Synced = false, CompanyId = company.Id, Name = "Printing & Stationery", Id = Guid.NewGuid(), OpeningDate = company.StartDate, LedgerType = LedgerType.Expenses },
+                new Ledger { OpeningBalance = 0, LedgerGroupId = directExpenses.Id, IsParty = false, CreatedBy = "AutoAdmin", CreatedAt = DateTime.UtcNow, Deleted = false, Synced = false, CompanyId = company.Id, Name = "Transports & Freight Charges", Id = Guid.NewGuid(), OpeningDate = company.StartDate, LedgerType = LedgerType.Expenses },
+                new Ledger { OpeningBalance = 0, LedgerGroupId = storeexpenses.Id, IsParty = false, CreatedBy = "AutoAdmin", CreatedAt = DateTime.UtcNow, Deleted = false, Synced = false, CompanyId = company.Id, Name = "Miscellaneous", Id = Guid.NewGuid(), OpeningDate = company.StartDate, LedgerType = LedgerType.Expenses },
+                new Ledger { OpeningBalance = 0, LedgerGroupId = noGroup.Id, IsParty = false, CreatedBy = "AutoAdmin", CreatedAt = DateTime.UtcNow, Deleted = false, Synced = false, CompanyId = company.Id, Name = "No Party", Id = Guid.NewGuid(), OpeningDate = company.StartDate, LedgerType = LedgerType.IndirectExpenses },
+                new Ledger { OpeningBalance = 0, LedgerGroupId = cashs.Id, Deleted = false, Synced = false, CompanyId = company.Id, Name = "Cash In Hand", Id = Guid.NewGuid(), OpeningDate = company.StartDate, LedgerType = LedgerType.Cash },
+                new Ledger { OpeningBalance = 0, LedgerGroupId = directExpenses.Id, IsParty = false, CreatedBy = "AutoAdmin", CreatedAt = DateTime.UtcNow, Deleted = false, Synced = false, CompanyId = company.Id, Name = "Salary Payables", Id = Guid.NewGuid(), OpeningDate = company.StartDate, LedgerType = LedgerType.Expenses },
+                new Ledger { OpeningBalance = 0, LedgerGroupId = storeexpenses.Id, IsParty = false, CreatedBy = "AutoAdmin", CreatedAt = DateTime.UtcNow, Deleted = false, Synced = false, CompanyId = company.Id, Name = "Internet & Mobile Bills", Id = Guid.NewGuid(), OpeningDate = company.StartDate, LedgerType = LedgerType.Expenses },
+                new Ledger { OpeningBalance = 0, LedgerGroupId = storeexpenses.Id, IsParty = false, CreatedBy = "AutoAdmin", CreatedAt = DateTime.UtcNow, Deleted = false, Synced = false, CompanyId = company.Id, Name = "Store Maintenance", Id = Guid.NewGuid(), OpeningDate = company.StartDate, LedgerType = LedgerType.Expenses },
+                new Ledger { OpeningBalance = 0, LedgerGroupId = storeexpenses.Id, IsParty = false, CreatedBy = "AutoAdmin", CreatedAt = DateTime.UtcNow, Deleted = false, Synced = false, CompanyId = company.Id, Name = "Store Supplies", Id = Guid.NewGuid(), OpeningDate = company.StartDate, LedgerType = LedgerType.Expenses },
+                new Ledger { OpeningBalance = 0, LedgerGroupId = pettyExpenses.Id, IsParty = false, CreatedBy = "AutoAdmin", CreatedAt = DateTime.UtcNow, Deleted = false, Synced = false, CompanyId = company.Id, Name = "Petty Cash Expenses", Id = Guid.NewGuid(), OpeningDate = company.StartDate, LedgerType = LedgerType.Expenses }
             };
 
             db.Ledgers.AddRange(ledgers);
@@ -677,8 +674,8 @@ public class Seeder2
                         CompanyId = company.Id,
                         Deleted = false,
                         Id = Guid.NewGuid(),
-                        OpenningBalance = 0,
-                        OpenningDate = company.StartDate,
+                        OpeningBalance = 0,
+                        OpeningDate = company.StartDate,
                     };
 
                     var sbicc = new BankAccount

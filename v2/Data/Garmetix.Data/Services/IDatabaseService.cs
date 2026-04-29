@@ -1,4 +1,6 @@
-﻿namespace Garmetix.Databases.Services
+﻿using Garmetix.Data.Databases;
+
+namespace Garmetix.Databases.Services
 {
     public interface IDatabaseService
     {

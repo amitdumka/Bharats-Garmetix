@@ -1,14 +1,14 @@
 ﻿//Garmetix - A.NET MAUI Application for Garment and Textile Management
 
 using Bharat.ToolKits.Notifications;
+using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Accounting;
+using Garmetix.Core.Models.Authentication;
+using Garmetix.Core.Models.HRM;
+using Garmetix.Core.Models.Inventory;
 using Garmetix.Core.Models.Onboarding;
 using Garmetix.Core.Models.Stores;
-using Garmetix.Models.Accounting;
-using Garmetix.Models.Auth;
-using Garmetix.Models.Enums;
-using Garmetix.Core.Models.HRM;
-using Garmetix.Models.Inventory;
+using Garmetix.Data.Databases;
 
 namespace Garmetix.Databases.Seeds;
 //ToDO: Move Database Services
@@ -800,7 +800,7 @@ public class Seeder
 
         var dan = new Ledger()
         {
-            OpenningBalance = 0,
+            OpeningBalance = 0,
             LedgerGroupId = pettyExpenses.Id,
             IsParty = false,
             CreatedBy = "AutoAdmin",
@@ -809,13 +809,13 @@ public class Seeder
             CompanyId = company.Id,
             Name = "Dan",
             Id = Guid.NewGuid(),
-            OpenningDate = company.StartDate,
+            OpeningDate = company.StartDate,
             LedgerType = LedgerType.Expenses,
             CreatedAt = DateTime.UtcNow
         };
         var snacks = new Ledger()
         {
-            OpenningBalance = 0,
+            OpeningBalance = 0,
             LedgerGroupId = snackgroups.Id,
             IsParty = false,
             CreatedBy = "AutoAdmin",
@@ -827,12 +827,12 @@ public class Seeder
 
             Name = "Snacks & Tea",
             Id = Guid.NewGuid(),
-            OpenningDate = company.StartDate,
+            OpeningDate = company.StartDate,
             LedgerType = LedgerType.Expenses,
         };
         var electricity = new Ledger()
         {
-            OpenningBalance = 0,
+            OpeningBalance = 0,
             LedgerGroupId = storeexpenses.Id,
             CreatedAt = DateTime.UtcNow,
             IsParty = false,
@@ -844,13 +844,13 @@ public class Seeder
 
             Name = "Electricity",
             Id = Guid.NewGuid(),
-            OpenningDate = company.StartDate,
+            OpeningDate = company.StartDate,
             LedgerType = LedgerType.Expenses,
         };
 
         var water = new Ledger()
         {
-            OpenningBalance = 0,
+            OpeningBalance = 0,
             LedgerGroupId = snackgroups.Id,
             IsParty = false,
             CreatedBy = "AutoAdmin",
@@ -862,13 +862,13 @@ public class Seeder
 
             Name = "Water",
             Id = Guid.NewGuid(),
-            OpenningDate = company.StartDate,
+            OpeningDate = company.StartDate,
             LedgerType = LedgerType.Expenses,
         };
 
         var printing = new Ledger()
         {
-            OpenningBalance = 0,
+            OpeningBalance = 0,
             LedgerGroupId = storeexpenses.Id,
             CreatedAt = DateTime.UtcNow,
             IsParty = false,
@@ -879,13 +879,13 @@ public class Seeder
             CompanyId = company.Id,
             Name = "Printing & Stationery",
             Id = Guid.NewGuid(),
-            OpenningDate = company.StartDate,
+            OpeningDate = company.StartDate,
             LedgerType = LedgerType.Expenses,
         };
 
         var transport = new Ledger()
         {
-            OpenningBalance = 0,
+            OpeningBalance = 0,
             LedgerGroupId = directExpenses.Id,
             IsParty = false,
             CreatedBy = "AutoAdmin",
@@ -897,13 +897,13 @@ public class Seeder
 
             Name = "Transports & Freight Charges",
             Id = Guid.NewGuid(),
-            OpenningDate = company.StartDate,
+            OpeningDate = company.StartDate,
             LedgerType = LedgerType.Expenses,
         };
 
         var misc = new Ledger()
         {
-            OpenningBalance = 0,
+            OpeningBalance = 0,
             LedgerGroupId = storeexpenses.Id,
             IsParty = false,
             CreatedBy = "AutoAdmin",
@@ -915,13 +915,13 @@ public class Seeder
 
             Name = "Miscellaneous",
             Id = Guid.NewGuid(),
-            OpenningDate = company.StartDate,
+            OpeningDate = company.StartDate,
             LedgerType = LedgerType.Expenses,
         };
 
         var noparty = new Ledger()
         {
-            OpenningBalance = 0,
+            OpeningBalance = 0,
             LedgerGroupId = noGroup.Id,
             IsParty = false,
             CreatedBy = "AutoAdmin",
@@ -933,12 +933,12 @@ public class Seeder
 
             Name = "No Party",
             Id = Guid.NewGuid(),
-            OpenningDate = company.StartDate,
+            OpeningDate = company.StartDate,
             LedgerType = LedgerType.IndirectExpenses,
         };
         var cashinhand = new Ledger()
         {
-            OpenningBalance = 0,
+            OpeningBalance = 0,
             LedgerGroupId = cashs.Id,
 
             Deleted = false,
@@ -948,13 +948,13 @@ public class Seeder
 
             Name = "Cash In Hand",
             Id = Guid.NewGuid(),
-            OpenningDate = company.StartDate,
+            OpeningDate = company.StartDate,
             LedgerType = LedgerType.Cash,
         };
 
         var salaryPayables = new Ledger()
         {
-            OpenningBalance = 0,
+            OpeningBalance = 0,
             LedgerGroupId = directExpenses.Id,
             IsParty = false,
             CreatedBy = "AutoAdmin",
@@ -964,13 +964,13 @@ public class Seeder
             CompanyId = company.Id,
             Name = "Salary Payables",
             Id = Guid.NewGuid(),
-            OpenningDate = company.StartDate,
+            OpeningDate = company.StartDate,
             LedgerType = LedgerType.Expenses,
         };
 
         var internet = new Ledger()
         {
-            OpenningBalance = 0,
+            OpeningBalance = 0,
             LedgerGroupId = storeexpenses.Id,
             IsParty = false,
             CreatedBy = "AutoAdmin",
@@ -980,13 +980,13 @@ public class Seeder
             CompanyId = company.Id,
             Name = "Internet & Mobile Bills",
             Id = Guid.NewGuid(),
-            OpenningDate = company.StartDate,
+            OpeningDate = company.StartDate,
             LedgerType = LedgerType.Expenses,
         };
 
         var storeMaintanance = new Ledger()
         {
-            OpenningBalance = 0,
+            OpeningBalance = 0,
             LedgerGroupId = storeexpenses.Id,
             IsParty = false,
             CreatedBy = "AutoAdmin",
@@ -996,13 +996,13 @@ public class Seeder
             CompanyId = company.Id,
             Name = "Store Maintenance",
             Id = Guid.NewGuid(),
-            OpenningDate = company.StartDate,
+            OpeningDate = company.StartDate,
             LedgerType = LedgerType.Expenses,
         };
 
         var storeSupplies = new Ledger()
         {
-            OpenningBalance = 0,
+            OpeningBalance = 0,
             LedgerGroupId = storeexpenses.Id,
             IsParty = false,
             CreatedBy = "AutoAdmin",
@@ -1012,13 +1012,13 @@ public class Seeder
             CompanyId = company.Id,
             Name = "Store Supplies",
             Id = Guid.NewGuid(),
-            OpenningDate = company.StartDate,
+            OpeningDate = company.StartDate,
             LedgerType = LedgerType.Expenses,
         };
 
         var pettyCash = new Ledger()
         {
-            OpenningBalance = 0,
+            OpeningBalance = 0,
             LedgerGroupId = pettyExpenses.Id,
             IsParty = false,
             CreatedBy = "AutoAdmin",
@@ -1028,7 +1028,7 @@ public class Seeder
             CompanyId = company.Id,
             Name = "Petty Cash Expenses",
             Id = Guid.NewGuid(),
-            OpenningDate = company.StartDate,
+            OpeningDate = company.StartDate,
             LedgerType = LedgerType.Expenses,
         };
 
@@ -1076,8 +1076,8 @@ public class Seeder
                 Deleted = false,
 
                 Id = Guid.NewGuid(),
-                OpenningBalance = 0,
-                OpenningDate = company.StartDate,
+                OpeningBalance = 0,
+                OpeningDate = company.StartDate,
             };
             var sbicc = new BankAccount
             {

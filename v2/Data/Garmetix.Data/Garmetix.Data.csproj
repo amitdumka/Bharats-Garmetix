@@ -27,6 +27,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.51" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -34,6 +35,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\Library\Bharat.ToolKits.Notifications\Bharat.ToolKits.Notifications.csproj" />
+	  <ProjectReference Include="..\..\Library\Bharat.Toolkits\Bharat.ToolKits.csproj" />
 	  <ProjectReference Include="..\..\Library\Garmetix.Core\Garmetix.Core.csproj" />
 	</ItemGroup>
 

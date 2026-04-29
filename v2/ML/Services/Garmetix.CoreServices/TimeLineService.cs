@@ -7,7 +7,7 @@ using Garmetix.Core.Sessions;
 using System.Diagnostics;
 using System.Text.Json;
 
-namespace Garmetix.Core.Services
+namespace Garmetix.Services
 {
 
     //TODO:Move to CoreSerice mdoules 

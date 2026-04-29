@@ -1,7 +1,8 @@
 ﻿using Bharat.ToolKits.Helpers;
+using Garmetix.Databases;
 using Garmetix.Databases.Services;
 
-namespace Garmetix.Databases
+namespace Garmetix.Data.Databases
 {
     // All the code in this file is included in all platforms.
     public static class GarmetixDatabasesModule

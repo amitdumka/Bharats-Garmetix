@@ -1,4 +1,4 @@
-﻿using Garmetix.Models.Queues;
+﻿using Garmetix.Core.VM;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SQLite;
