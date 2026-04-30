@@ -3,14 +3,14 @@ using Garmetix.CoreBase.DayOperations.Pages;
 
 
 // Use C# using aliases to separate the mobile and desktop pages
-using HrmPages = Garmetix.HRM.Pages;
+using HrmPages = Garmetix.HRM.Pages.Desktop;
 using MobileHrmPages = Garmetix.HRM.Pages.Mobile;
 namespace Garmetix.Commons.View
 {
 
-    public class Accounting_Menu : BaseFlyoutMenu
+    public class AccountingMenu : BaseFlyoutMenu
     {
-        public Accounting_Menu() : base("Vouchers") // The main menu title
+        public AccountingMenu() : base("Vouchers") // The main menu title
         {
             // Just call the helper method for each page!
             AddPageTab("Voucher", "rain_icon.png", "Voucher", typeof(VoucherPage));
@@ -18,9 +18,9 @@ namespace Garmetix.Commons.View
         }
     }
 
-    public class Accounts_Menu : BaseFlyoutMenu
+    public class AccountsMenu : BaseFlyoutMenu
     {
-        public Accounts_Menu() : base("Accounts") // The main menu title
+        public AccountsMenu() : base("Accounts") // The main menu title
         {
             // Just call the helper method for each page!
 
@@ -32,9 +32,9 @@ namespace Garmetix.Commons.View
         }
     }
 
-    public class  Banking_Menu: BaseFlyoutMenu//ToDO: need to check with generate code for this menu, as it is not yet implemented in the codebase.
+    public class  BankingMenu: BaseFlyoutMenu//ToDO: need to check with generate code for this menu, as it is not yet implemented in the codebase.
     {
-        public Banking_Menu() : base("Banking")
+        public BankingMenu() : base("Banking")
         {
             // Standard Tabs
             AddPageTab("Bank Accounts", "rain_icon.png", "BankAccounts", typeof(BankAccountPage));
@@ -54,9 +54,9 @@ namespace Garmetix.Commons.View
 
 
    
-    public class Ledger_Menu : BaseFlyoutMenu
+    public class LedgerMenu : BaseFlyoutMenu
     {
-        public Ledger_Menu() : base("Ledger")
+        public LedgerMenu() : base("Ledger")
         {
             // Just call the helper method for each page!
             AddPageTab("Party", "rain_icon.png", "Party", typeof(PartyPage));
@@ -66,16 +66,16 @@ namespace Garmetix.Commons.View
         }
     }
 
-    public class HRM_Menu : BaseFlyoutMenu
+    public class HRMMenu : BaseFlyoutMenu
     {
-        public HRM_Menu() : base("HRM")
+        public HRMMenu() : base("HRM")
         {
             // 1. Attendance (Platform Specific)
             AddPlatformSpecificPageTab("Attendance", "rain_icon.png", "Attendance",
                 mobilePageType: typeof(MobileHrmPages.AttendancePage),
 
  
-                desktopPageType: typeof(HrmPages.Desktop.AttendancePage));
+                desktopPageType: typeof(HrmPages.AttendancePage));
 
             // 2. Time Sheet (Platform Specific & Hidden)
             AddPlatformSpecificPageTab("Time Sheet", "rain_icon.png", "TimeSheets",

@@ -3,7 +3,7 @@
     x:Class="Garmetix.CoreBase.TimeLines.TimelinePage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:models="clr-namespace:Garmetix.Models;assembly=Garmetix.Models"
+    xmlns:models="clr-namespace:Garmetix.Core.Models;assembly=Garmetix.Core"
     xmlns:vm="clr-namespace:Garmetix.CoreBase.TimeLines"
     Title="Weekly Timeline"
     x:DataType="vm:TimelinePageModel">

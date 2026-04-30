@@ -2,11 +2,9 @@
 <FlyoutItem
     x:Class="Garmetix.CoreBase.View.HRMMenu"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:hrm="clr-namespace:Garmetix.CoreBase.HRM.Pages"
-    xmlns:mobile="clr-namespace:Garmetix.CoreBase.HRM.Pages.Mobile"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
     Title="HRM">
-    <Tab Title="Attendance" Icon="rain_icon.png">
+    <!--<Tab Title="Attendance" Icon="rain_icon.png">
         <ShellContent
             Title="Attendace"
             ContentTemplate="{OnPlatform Android={DataTemplate mobile:AttendancePage},
@@ -67,5 +65,5 @@
                                          iOS={DataTemplate mobile:MonthlyAttendancePage},
                                          Default={DataTemplate hrm:MonthlyAttendancePage}}"
             Route="MonthlyAttendancePage" />
-    </Tab>
+    </Tab>-->
 </FlyoutItem>

@@ -7,6 +7,7 @@ using Garmetix.Core.Enums;
 using Garmetix.Core.Interfaces;
 using Garmetix.Core.Models.Accounting;
 using Garmetix.Core.Sessions;
+using Garmetix.Core.Settings;
 using Garmetix.CoreServices.Accounting;
 using Garmetix.Databases.Services;
 using Syncfusion.Maui.DataForm;
@@ -28,7 +29,7 @@ namespace Garmetix.Accounting.FormModels
         {
             try
             {
-                this.EnablePrinting = SettingsService.IsPrintingEnabled();
+                this.EnablePrinting = SettingsServices.IsPrintingEnabled();
                 Entity = new CashVoucherEntry
                 {
                     Amount = 0,

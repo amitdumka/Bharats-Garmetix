@@ -1,5 +1,4 @@
-﻿using Garmetix.Core.Shells;
-using Garmetix.Views.Controls;
+﻿using Garmetix.Views.Controls;
 using Syncfusion.Maui.Toolkit.SegmentedControl;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;

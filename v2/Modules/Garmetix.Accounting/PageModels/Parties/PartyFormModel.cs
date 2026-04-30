@@ -1,13 +1,7 @@
-﻿using Garmetix.Accounting.Models;
-using Garmetix.Base.PageModels;
-using Garmetix.Core.DataModels;
-using Garmetix.Core.Enums;
-using Garmetix.Core.Interfaces;
-using Garmetix.Core.Models.Accounting;
-using Garmetix.Databases.Services;
+﻿using Garmetix.Core.Interfaces;
 using Syncfusion.Maui.DataForm;
 
-namespace Garmetix.Accounting.FormModels
+namespace Garmetix.Accounting.PageModels.Parties
 {
     public class PartyFormModel : FormModel<PartyEntry>
     {

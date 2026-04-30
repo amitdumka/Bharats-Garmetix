@@ -3,11 +3,9 @@
     x:Class="Garmetix.CoreBase.View.CompanyMenu"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:days="clr-namespace:Garmetix.CoreBase.DayOperations.Pages"
-    xmlns:desktop="clr-namespace:Garmetix.CoreBase.Stores.Pages.Desktop"
-    xmlns:mobile="clr-namespace:Garmetix.CoreBase.Stores.Pages.Mobile"
+    xmlns:days="clr-namespace:Garmetix.CoreBase.DayOperations.Pages" 
     Title="Stores">
-    <Tab Title="Store" Icon="rain_icon.png">
+    <!--<Tab Title="Store" Icon="rain_icon.png">
         <ShellContent
             Title="Stores"
             ContentTemplate="{OnPlatform Android={DataTemplate mobile:StorePage},
@@ -48,6 +46,6 @@
             Title="Petty Cash Sheet"
             ContentTemplate="{DataTemplate days:PettyCashSheetEntryPage}"
             Route="cashsheet" />
-    </Tab>
+    </Tab>-->
 
 </FlyoutItem>

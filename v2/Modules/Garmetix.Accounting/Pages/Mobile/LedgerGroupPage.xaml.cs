@@ -1,5 +1,7 @@
 
 
+using Garmetix.Accounting.PageModels.Parties;
+
 namespace Garmetix.Accounting.Pages.Mobile;
 
 public partial class LedgerGroupPage : BaseListViewPage

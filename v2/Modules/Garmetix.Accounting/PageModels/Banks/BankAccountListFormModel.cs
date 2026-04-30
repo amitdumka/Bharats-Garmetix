@@ -1,4 +1,5 @@
-﻿using Syncfusion.Maui.DataForm;
+﻿using Garmetix.Core.Interfaces;
+using Syncfusion.Maui.DataForm;
 
 namespace Garmetix.Accounting.FormModels
 {
@@ -11,7 +12,8 @@ namespace Garmetix.Accounting.FormModels
             Entity = new BankAccountListEntry
             {
                 Id = Guid.NewGuid(),
-                Company = DatabaseService.CompanyId,
+                Company = DatabaseService.CompanyId,AccountNumber = string.Empty,
+                AccountHolderName = string.Empty,
 
             };
         }

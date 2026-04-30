@@ -1,4 +1,6 @@
-﻿using Syncfusion.Maui.DataForm;
+﻿using Garmetix.Accounting.Models.Banks;
+using Garmetix.Core.Interfaces;
+using Syncfusion.Maui.DataForm;
 
 namespace Garmetix.Accounting.FormModels
 {

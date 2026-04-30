@@ -1,5 +1,4 @@
-﻿using Garmetix.Core.PageModels;
-using Syncfusion.Maui.DataGrid;
+﻿using Syncfusion.Maui.DataGrid;
 
 namespace Garmetix.Accounting.PageModels
 {

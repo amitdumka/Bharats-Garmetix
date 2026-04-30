@@ -10,6 +10,7 @@ using Garmetix.Core.DataModels;
 using Garmetix.Databases.Services;
 using Garmetix.Core.Enums;
 using Garmetix.HRM.Models;
+using Garmetix.Core.Settings;
 
 namespace Garmetix.HRM.PageModels
 {
@@ -77,7 +78,7 @@ namespace Garmetix.HRM.PageModels
 
         public void InitFormViewModel(SalaryPayment payment)
         {
-            this.EnablePrinting = SettingsService.IsPrintingEnabled();
+            this.EnablePrinting = SettingsServices.IsPrintingEnabled();
 
             if (payment == null)
             {
@@ -109,7 +110,7 @@ namespace Garmetix.HRM.PageModels
 
         public override void InitFormViewModel()
         {
-            this.EnablePrinting = SettingsService.IsPrintingEnabled();
+            this.EnablePrinting = SettingsServices.IsPrintingEnabled();
 
             Entity = new SalaryPaymentEntry()
             {

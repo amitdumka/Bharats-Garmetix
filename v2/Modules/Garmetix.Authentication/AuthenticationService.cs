@@ -1,12 +1,13 @@
 ﻿using Bharat.ToolKits.Helpers;
 using Bharat.ToolKits.Notifications;
 using Garmetix.Authentication.Models;
+using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Authentication;
 using Garmetix.Core.Session;
+using Garmetix.Core.Sessions;
 using Garmetix.Core.Settings;
 using Garmetix.Databases;
 using Garmetix.Databases.Services;
-using Garmetix.Models.Auth;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Security.Cryptography;
@@ -178,8 +179,8 @@ namespace Garmetix.Authentication
                     {
                         if (store != null)
                         {
-                            SettingsService.SetCompanyInfo(store.Company?.Name!, store.Company?.GSTIN!, store.StoreCode, store?.StoreGroup?.Name!);
-                            SettingsService.SetStoreInfo(store!.Name, store.Address, store.City, store.State, store.ZipCode, store.Email, store.ContactNumber);
+                            SettingsServices.SetCompanyInfo(store.Company?.Name!, store.Company?.GSTIN!, store.StoreCode, store?.StoreGroup?.Name!);
+                            SettingsServices.SetStoreInfo(store!.Name, store.Address, store.City, store.State, store.ZipCode, store.Email, store.ContactNumber);
                         }
                         _dataService.CurrentUser = user;
                         DatabaseService.CompanyId = store?.CompanyId ?? user.CompanyId!.Value;
@@ -216,10 +217,10 @@ namespace Garmetix.Authentication
                     StoreGroupId = groupid,
                     EmployeeId = registerInfo.Employee
                     ,
-                    AppOperation = Garmetix.Models.Enums.AppOperation.Store,
-                    Role = Garmetix.Models.Enums.LoginRole.Member,
+                    AppOperation =  AppOperation.Store,
+                    Role =  LoginRole.Member,
                     UserName = registerInfo.Email.Split('@')[0],
-                    UserType = Garmetix.Models.Enums.UserType.Guest,
+                    UserType =  UserType.Guest,
                     RemoteUserId = Guid.Empty,
                     Id = Guid.NewGuid()
 

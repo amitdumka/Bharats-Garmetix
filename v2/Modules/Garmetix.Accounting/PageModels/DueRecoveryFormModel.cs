@@ -1,4 +1,5 @@
-﻿using Garmetix.CoreServices.Accounting;
+﻿using Garmetix.Core.Interfaces;
+using Garmetix.CoreServices.Accounting;
 using Syncfusion.Maui.DataForm;
 
 namespace Garmetix.Accounting.FormModels

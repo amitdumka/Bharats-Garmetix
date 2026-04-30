@@ -12,16 +12,16 @@ namespace Garmetix.Databases.Services
         public static Guid StoreGroupId;
         public static Guid StoreId;
 
-        public static void UpdateSession()
-        {
-            DatabaseService.CompanyId = CurrentSession.CompanyId.Value;
-            DatabaseService.StoreGroupId = CurrentSession.GroupId.Value;
-            DatabaseService.StoreId = CurrentSession.StoreId.Value;
-            DatabaseService.Instance.SetCurrentUser(CurrentSession.UserName, DatabaseService.CompanyId);
+        //public static void UpdateSession()
+        //{
+        //    DatabaseService.CompanyId = CurrentSession.CompanyId.Value;
+        //    DatabaseService.StoreGroupId = CurrentSession.GroupId.Value;
+        //    DatabaseService.StoreId = CurrentSession.StoreId.Value;
+        //    DatabaseService.Instance.SetCurrentUser(CurrentSession.UserName, DatabaseService.CompanyId);
 
-            System.Diagnostics.Debug.WriteLine($"Session loaded for user: {CurrentSession.UserName}");
-            _ = SessionService.StartSessionAsync(CurrentSession);
-        }
+        //    System.Diagnostics.Debug.WriteLine($"Session loaded for user: {CurrentSession.UserName}");
+        //    _ = SessionService.StartSessionAsync(CurrentSession);
+        //}
 
 
         public AppUser CurrentUser { get; set; } = null!; // Initialize with a non-null default value

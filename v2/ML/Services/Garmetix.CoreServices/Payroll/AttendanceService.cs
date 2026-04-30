@@ -6,6 +6,7 @@ using Garmetix.Core.Models.HRM;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Garmetix.Core.Enums;
 
 namespace Garmetix.CoreServices.Payroll
 {

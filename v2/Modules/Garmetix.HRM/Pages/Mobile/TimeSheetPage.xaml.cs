@@ -1,4 +1,4 @@
-using Garmetix.Core.Views.Customs.Listing;
+using Garmetix.Base.Views.Customs.Listing;
 using Garmetix.Core.Models.HRM;
 using Garmetix.HRM.PageModels;
 

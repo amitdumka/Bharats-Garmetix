@@ -1,4 +1,4 @@
-﻿using Garmetix.Models.Enums;
+﻿using Garmetix.Core.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace Garmetix.Onboarding.Models

@@ -2,9 +2,9 @@
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using Garmetix.Authentication.Pages;
+using Garmetix.Base.Shells;
+using Garmetix.Commons.View;
 using Garmetix.Core.Sessions;
-using Garmetix.Core.Shells;
-using Garmetix.CoreBase.View;
 using Syncfusion.Maui.Toolkit.Themes;
 
 namespace Garmetix
@@ -32,12 +32,12 @@ namespace Garmetix
             });
 
             //// 2. Inject your pre-built XAML Flyout Items!
-            Items.Add(new Accounting_Menu());  //Accouting Menu
-            Items.Add(new Accounts_Menu());    // Accounts Menu
-            Items.Add(new Ledger_Menu());      //Ledger Menu
-            Items.Add(new HRM_Menu());         //HRM Menu
-            Items.Add(new Banking_Menu());     //Banking Menu
-            Items.Add(new Company_Menu());  
+            Items.Add(new AccountingMenu());  //Accouting Menu
+            Items.Add(new AccountsMenu());    // Accounts Menu
+            Items.Add(new LedgerMenu());      //Ledger Menu
+            Items.Add(new HRMMenu());         //HRM Menu
+            Items.Add(new BankingMenu());     //Banking Menu
+            //Items.Add(new CompanyMenu());  
         }
 
         /// <summary>

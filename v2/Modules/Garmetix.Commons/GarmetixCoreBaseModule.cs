@@ -1,9 +1,9 @@
 ﻿using Garmetix.Accounting;
-using Garmetix.Core.Services;
+using Garmetix.Commons.DayOperations.PageModels;
 using Garmetix.CoreBase.Dashboard;
 using Garmetix.CoreBase.DayOperations.Pages;
-using Garmetix.CoreBase.HRM;
 using Garmetix.CoreBase.TimeLines;
+using Garmetix.Services;
 using Garmetix.Stores;
 
 namespace Garmetix.Commons
@@ -23,7 +23,17 @@ namespace Garmetix.Commons
             builder.Services.AddTransient<DayEndEntryPage>();
             builder.Services.AddTransient<PettyCashSheetEntryPage>();
 
-            builder.UseAccounting().UseBanking().EnableDashboard().UseHRM().UseStores();
+
+
+            builder.Services.AddTransient<PettyCashSheetFormPageModel>();
+            builder.Services.AddTransient<CashDetailFormPageModel>();
+
+            builder.Services.AddTransient<PettyCashSheetPageModel>();
+            builder.Services.AddTransient<PettyCashSheetPage>();
+            builder.Services.AddTransient<CashDetailPageModel>();
+            builder.Services.AddTransient<CashDetailPage>();
+
+            builder.UseAccounting().UseBanking().EnableDashboard().UseStores();
 
           
 
@@ -37,10 +47,11 @@ namespace Garmetix.Commons
             RouterHelper.AddRoute(typeof(DayBeginEntyPage));
             RouterHelper.AddRoute(typeof(DayEndEntryPage));
             RouterHelper.AddRoute(typeof(PettyCashSheetEntryPage));
-
-            AccountingModule.EnableRoutes();
-            HRMModules.EnableRoutes();
-            ClientModule.EnableRoutes();
+            RouterHelper.AddRoute(typeof(EntryCashDetailPage));
+             RouterHelper.AddRoute(typeof(EntryPettyCashSheetPage));
+            AccountingModule.EnableAccountingRoutes();
+            
+            ClientModule.EnableStoreRoutes();
             
             
         }

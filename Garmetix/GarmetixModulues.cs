@@ -1,17 +1,12 @@
-﻿using Garmetix.Authentication;
-using Garmetix.Authentication.Pages;
+﻿using Garmetix.Accounting;
+using Garmetix.Authentication;
 using Garmetix.Commons;
-using Garmetix.CoreBase.Accounting;
+using Garmetix.Core.PdfServices;
 using Garmetix.CoreBase.Dashboard;
-using Garmetix.CoreBase.HRM;
-using Garmetix.CoreBase.Stores;
-using Garmetix.CoreServices;
 using Garmetix.DataServices;
 using Garmetix.Onboarding;
-using Garmetix.Onboarding.Pages;
-using Garmetix.PDFServices;
-using Garmetix.Reports;
-using System.Globalization;
+using Garmetix.Stores;
+using Garmetix.HRM;
 
 namespace Garmetix
 {
@@ -49,21 +44,21 @@ namespace Garmetix
         public static MauiAppBuilder UseGarmetixModules(this MauiAppBuilder builder)
         {
             builder
-                .EnableAccounting() // Enable the Accounting module
-                .EnableBanking() // Enable the Banking module
-                .EnableHRM() // Enable the HRM module
+                .UseAccounting() // Enable the Accounting module
+                .UseBanking() // Enable the Banking module
+                .UseHRM() // Enable the HRM module
                 .UseAuthentication(); // Enable the Authentication module
             builder
                 .EnableDashboard()  // Enable the Dashboard module
                 .EnableOnBoarding() // Enable the Onboarding module
-                .EnableStore()      // Enable the Store module
-                .UseReporting();    // Enable the Reporting module
+                .UseStores();   // Enable the Store module
+                //.UseReporting();    // Enable the Reporting module
             return builder;
         }
         public static MauiAppBuilder UseGarmetixService(this MauiAppBuilder builder)
         {
             builder
-                .EnablePdfServices()  // Enable the PDF Services module
+                .UsePdfServices()  // Enable the PDF Services module
                 .UseCoreModule()      // Enable the Core module
                 .UseDataServices();   // Enable the Data Services module
 

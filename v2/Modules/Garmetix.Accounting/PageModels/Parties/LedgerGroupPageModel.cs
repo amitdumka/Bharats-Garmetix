@@ -2,7 +2,7 @@
 using Garmetix.Core.Models.Accounting;
 using Syncfusion.Maui.DataGrid;
 
-namespace Garmetix.Accounting.PageModels
+namespace Garmetix.Accounting.PageModels.Parties
 {
     public class LedgerGroupPageModel : PageModel<LedgerGroup>
     {

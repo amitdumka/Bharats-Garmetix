@@ -4,10 +4,10 @@ using Garmetix.Base.PageModels;
 using Garmetix.Core.DataModels;
 using Garmetix.Core.Interfaces;
 using Garmetix.Core.Models.HRM;
+using Garmetix.Core.Settings;
 using Garmetix.CoreServices.Payroll;
 using Garmetix.Databases.Services;
 using Garmetix.HRM.Models;
-using Garmetix.Settings;
 using Syncfusion.Maui.DataForm;
 using System.Diagnostics;
 
@@ -66,7 +66,7 @@ namespace Garmetix.HRM.PageModels
 
         public override void InitFormViewModel()
         {
-            this.EnablePrinting = SettingsService.IsPrintingEnabled();
+            this.EnablePrinting = SettingsServices.IsPrintingEnabled();
 
             Entity = new SalaryPaySlipEntry()
             {

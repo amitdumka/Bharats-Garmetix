@@ -7,21 +7,23 @@ using Garmetix.Core.Models.Accounting;
 using Garmetix.Databases.Services;
 using Syncfusion.Maui.DataForm;
 
-namespace Garmetix.Accounting.FormModels
+namespace Garmetix.Accounting.PageModels.Parties
 {
-    public class LedgerGroupFormModel : FormModel<LedgerGroupEntry>
+    public class LedgerFormModel : FormModel<LedgerEntry>
     {
-        private readonly IDataModel<LedgerGroup> DataModel = new DataModel<LedgerGroup>();
+        private readonly IDataModel<Ledger> DataModel = new DataModel<Ledger>();
 
         public override void InitFormViewModel()
         {
-            Entity = new LedgerGroupEntry
+            Entity = new LedgerEntry()
             {
                 Id = Guid.NewGuid(),
-                Category = LedgerCategory.Credit,
+                OpenningBalance = 0,
+                OpenningDate = DateTime.Now,
                 Company = DatabaseService.CompanyId,
-                Name = string.Empty,
-                Remarks = string.Empty
+                //IsParty = false,
+                LedgerType = LedgerType.Expenses,
+                Name = string.Empty
             };
         }
 
@@ -32,15 +34,23 @@ namespace Garmetix.Accounting.FormModels
 
         protected override async void SaveButton()
         {
-            var newData = new LedgerGroup
+            var newData = new Ledger
             {
                 Id = IsNew ? Guid.NewGuid() : Entity.Id,
                 Name = Entity.Name,
-                Category = Entity.Category,
-                Synced = false,
+                LedgerGroupId = Entity.LedgerGroup,
+                LedgerType = Entity.LedgerType,
+
+                OpeningDate = Entity.OpenningDate,
+                OpeningBalance = Entity.OpenningBalance,
+
+                CompanyId = Entity.Company,
                 Deleted = false,
-                Remarks = Entity.Remarks,
-                CompanyId = Entity.Company
+                IsParty = false,
+                CreatedAt = DateTime.Now,
+                CreatedBy = DatabaseService.Instance.CurrentUser.Name,
+                UpdatedAt = DateTime.Now,
+                Synced = false,
             };
             var result = await DataModel.SaveAsync(newData, IsNew);
             Save(result != null);

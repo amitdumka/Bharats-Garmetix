@@ -1,5 +1,8 @@
 ﻿using Bharat.ToolKits.Notifications;
 using CommunityToolkit.Mvvm.Input;
+using Garmetix.Accounting.Models.Vouchers;
+using Garmetix.Core.Interfaces;
+using Garmetix.Core.Settings;
 using Garmetix.CoreServices.Accounting;
 using Syncfusion.Maui.DataForm;
 using System.Diagnostics;
@@ -17,7 +20,7 @@ namespace Garmetix.Accounting.FormModels
         {
             try
             {
-                this.EnablePrinting = SettingsService.IsPrintingEnabled();
+                this.EnablePrinting = SettingsServices.IsPrintingEnabled();
                 Entity = new VoucherEntry
                 {
                     Id = Guid.NewGuid(),

@@ -2,11 +2,10 @@
 <FlyoutItem
     x:Class="Garmetix.CoreBase.View.LedgerMenu"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:accview="clr-namespace:Garmetix.CoreBase.Accounting.Pages.Mobile"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
     Title="Ledgers">
 
-    <Tab Title="Parties" Icon="rain_icon.png">
+    <!--<Tab Title="Parties" Icon="rain_icon.png">
         <ShellContent
             Title="Party"
             ContentTemplate="{DataTemplate accview:PartyPage}"
@@ -23,7 +22,7 @@
             Title="Ledger Groups"
             ContentTemplate="{DataTemplate accview:LedgerGroupPage}"
             Route="LedgerGroups" />
-    </Tab>
+    </Tab>-->
 
 
 </FlyoutItem>

@@ -1,5 +1,4 @@
 using Bharat.ToolKits.Helpers;
-using Garmetix.Core.PdfServices.Base;
 using Garmetix.Core.VM.Reports;
 using Garmetix.Models.Reports;
 using Garmetix.Services.Interfaces;

@@ -6,7 +6,7 @@
     xmlns:pager="clr-namespace:Syncfusion.Maui.DataGrid.DataPager;assembly=Syncfusion.Maui.DataGrid"
     xmlns:syncfusion="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
     xmlns:toolkit="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
-    xmlns:viewmodels="clr-namespace:Garmetix.Core.PageModels"
+    xmlns:viewmodels="clr-namespace:Garmetix.Base.PageModels"
     x:Name="CPage"
     Title="{Binding Title}">
     <ContentPage.ToolbarItems>

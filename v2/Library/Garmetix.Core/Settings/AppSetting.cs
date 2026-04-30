@@ -1,7 +1,7 @@
 ﻿using Garmetix.Core.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace Garmetix.Settings
+namespace Garmetix.Core.Settings
 {
     /// <summary>
     /// App Setting

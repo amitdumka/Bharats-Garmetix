@@ -3,11 +3,10 @@
     x:Class="Garmetix.CoreBase.View.BankingMenu"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:acc="clr-namespace:Garmetix.CoreBase.Accounting.Pages"
-    xmlns:mobile="clr-namespace:Garmetix.CoreBase.Accounting.Pages.Mobile"
+    
     xmlns:services="clr-namespace:Garmetix.Core.Sessions;assembly=Garmetix.Core"
     Title="Banking">
-    <Tab Title="Bank Accounts" Icon="rain_icon.png">
+    <!--<Tab Title="Bank Accounts" Icon="rain_icon.png">
         <ShellContent
             Title="Bank Accounts"
             ContentTemplate="{DataTemplate mobile:BankAccountPage}"
@@ -51,5 +50,5 @@
             Title="Cheque Logs"
             ContentTemplate="{DataTemplate acc:ChequeLogPage}"
             Route="ChequeLogs" />
-    </Tab>
+    </Tab>-->
 </FlyoutItem>

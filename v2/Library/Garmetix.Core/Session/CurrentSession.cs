@@ -24,7 +24,7 @@ using Garmetix.Core.Enums;
 
 namespace Garmetix.Core.Session
 {
-    public class CurrentSession
+    public   class CurrentSession
     {
         public bool IsAutoLoginEnabled { get; set; }
         public Guid? CompanyId { get; set; }

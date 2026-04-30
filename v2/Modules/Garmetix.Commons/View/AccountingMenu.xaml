@@ -3,9 +3,9 @@
     x:Class="Garmetix.CoreBase.View.AccountingMenu"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:acc="clr-namespace:Garmetix.CoreBase.Accounting.Pages"
+    
     Title="Vouchers">
-    <Tab Title="Voucher" Icon="rain_icon.png">
+    <!--<Tab Title="Voucher" Icon="rain_icon.png">
         <ShellContent
             Title="Voucher"
             ContentTemplate="{DataTemplate acc:VoucherPage}"
@@ -16,6 +16,6 @@
             Title="CashVoucher"
             ContentTemplate="{DataTemplate acc:CashVoucherPage}"
             Route="CashVoucher" />
-    </Tab>
+    </Tab>-->
 
 </FlyoutItem>

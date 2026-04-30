@@ -30,7 +30,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Garmetix.Billing\Garmetix.Billing.csproj" />
+	 
 	  <ProjectReference Include="..\Data\Garmetix.DataServices\Garmetix.DataServices.csproj" />
 	  <ProjectReference Include="..\Data\Garmetix.Data\Garmetix.Data.csproj" />
 	  <ProjectReference Include="..\Library\Bharat.Themes\Bharat.Themes.csproj" />

@@ -1,4 +1,6 @@
-﻿using Garmetix.CoreServices.Accounting;
+﻿using Garmetix.Accounting.Models.Banks;
+using Garmetix.Core.Interfaces;
+using Garmetix.CoreServices.Accounting;
 using Syncfusion.Maui.DataForm;
 
 namespace Garmetix.Accounting.FormModels
@@ -56,8 +58,8 @@ namespace Garmetix.Accounting.FormModels
                     UpdatedAt = DateTime.Now,
                     Id = newData.Id,
                     LedgerType = LedgerType.BankAccount,
-                    OpenningBalance = 0,
-                    OpenningDate = Entity.OpeningDate,
+                    OpeningBalance = 0,
+                    OpeningDate = Entity.OpeningDate,
                     CompanyId = Entity.Company,
                     Name = Entity.AccountHolderName,
                     CreatedAt = DateTime.Now,

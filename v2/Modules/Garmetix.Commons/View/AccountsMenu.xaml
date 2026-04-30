@@ -3,10 +3,10 @@
     x:Class="Garmetix.CoreBase.View.AccountsMenu"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:accview="clr-namespace:Garmetix.CoreBase.Accounting.Pages.Mobile"
+    
     xmlns:days="clr-namespace:Garmetix.CoreBase.DayOperations.Pages"
     Title="Accounts">
-    <Tab Title="Customer Due" Icon="rain_icon.png">
+    <!--<Tab Title="Customer Due" Icon="rain_icon.png">
         <ShellContent
             Title="Customer Due"
             ContentTemplate="{DataTemplate accview:CustomerDuePage}"
@@ -37,5 +37,5 @@
             Title="Cash Details"
             ContentTemplate="{DataTemplate days:CashDetailPage}"
             Route="cashdetails" />
-    </Tab>
+    </Tab>-->
 </FlyoutItem>

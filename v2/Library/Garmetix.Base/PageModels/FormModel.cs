@@ -22,9 +22,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Garmetix.Core.DataModels;
 using Garmetix.Core.Enums;
-using Garmetix.Core.Interfaces;
-using Garmetix.Core.Services;
+using Garmetix.Core.Interfaces; 
 using Garmetix.Core.VM;
+using Garmetix.Services;
 using Syncfusion.Maui.DataForm;
 
 namespace Garmetix.Base.PageModels

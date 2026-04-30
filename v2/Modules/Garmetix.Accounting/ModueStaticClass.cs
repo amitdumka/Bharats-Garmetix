@@ -13,10 +13,8 @@
  * 
  */
 
-using Bharat.ToolKits.Helpers;
-using Garmetix.Accounting.PageModels.Party;
+using Garmetix.Accounting.PageModels.Parties;
 using Garmetix.Accounting.PageModels.Vouchers;
-using Garmetix.Accounting.Pages;
 
 namespace Garmetix.Accounting
 {
@@ -42,8 +40,7 @@ namespace Garmetix.Accounting
             RouterHelper.AddRoute(typeof(EntryBankTransactionPage));
             RouterHelper.AddRoute(typeof(EntryChequeLogPage));
 
-            RouterHelper.AddRoute(typeof(EntryCashDetailPage));
-            RouterHelper.AddRoute(typeof(EntryPettyCashSheetPage));
+         
 
         }
 
@@ -151,13 +148,6 @@ namespace Garmetix.Accounting
             builder.Services.AddTransient<TransactionFormModel>();
 
 
-            builder.Services.AddTransient<PettyCashSheetFormPageModel>();
-            builder.Services.AddTransient<CashDetailFormPageModel>();
-
-            builder.Services.AddTransient<PettyCashSheetPageModel>();
-            builder.Services.AddTransient<PettyCashSheetPage>();
-            builder.Services.AddTransient<CashDetailPageModel>();
-            builder.Services.AddTransient<CashDetailPage>();
 
             return builder;
         }

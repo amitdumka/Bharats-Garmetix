@@ -1,4 +1,3 @@
-using Syncfusion.Maui.DataGrid;
 using System.Runtime.CompilerServices;
 
 namespace Garmetix.Base.Views.Customs.Listing
