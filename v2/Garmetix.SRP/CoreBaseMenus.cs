@@ -1,12 +1,37 @@
-﻿using Garmetix.Base.Shells;
+﻿using Garmetix.Accounting.Pages;
+using Garmetix.Base.Shells;
+using Garmetix.Core.Sessions;
 using Garmetix.CoreBase.DayOperations.Pages;
-
-
+using Garmetix.CoreBase.Stores.Pages.Desktop;
+using Garmetix.CoreBase.Stores.Pages.Mobile;
 // Use C# using aliases to separate the mobile and desktop pages
 using HrmPages = Garmetix.HRM.Pages.Desktop;
 using MobileHrmPages = Garmetix.HRM.Pages.Mobile;
-namespace Garmetix.Commons.View
+namespace Garmetix.SRP
 {
+    public partial class CompanyMenu : BaseFlyoutMenu
+    {
+        public CompanyMenu() : base("Stores")
+        {
+            // --- Platform Specific Tabs ---
+            AddPlatformSpecificPageTab("Store", "rain_icon.png", "Stores",
+                mobilePageType: typeof(StorePage),
+                desktopPageType: typeof(StoresPage));
+
+            AddPlatformSpecificPageTab("Store Group", "rain_icon.png", "Group",
+                mobilePageType: typeof(StoreGroupPage),
+                desktopPageType: typeof(StoreGroupsPage));
+
+            AddPlatformSpecificPageTab("Company", "rain_icon.png", "Client",
+                mobilePageType: typeof(CompanyPage),
+                desktopPageType: typeof(CompaniesPage));
+
+            // --- Standard Tabs ---
+            // AddPageTab("Day Begin", "rain_icon.png", "daybegib", typeof(DayBeginEntyPage));
+            // AddPageTab("Day Closing", "rain_icon.png", "dayend", typeof(DayEndEntryPage));
+            // AddPageTab("Petty Cash Sheet", "rain_icon.png", "cashsheet", typeof(PettyCashSheetEntryPage));
+        }
+    }
 
     public class AccountingMenu : BaseFlyoutMenu
     {

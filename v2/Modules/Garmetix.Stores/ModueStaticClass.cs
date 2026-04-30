@@ -1,6 +1,4 @@
-﻿
-using Bharat.ToolKits.Helpers;
-using Garmetix.Base.Shells;
+﻿using Bharat.ToolKits.Helpers;
 using Garmetix.CoreBase.Stores.PageModels;
 using Garmetix.CoreBase.Stores.Pages;
 using Garmetix.CoreBase.Stores.Pages.Desktop;
@@ -8,35 +6,8 @@ using Garmetix.CoreBase.Stores.Pages.Mobile;
 
 namespace Garmetix.Stores
 {
-
-    public partial class CompanyMenu : BaseFlyoutMenu
-    {
-        public CompanyMenu() : base("Stores")
-        {
-            // --- Platform Specific Tabs ---
-            AddPlatformSpecificPageTab("Store", "rain_icon.png", "Stores",
-                mobilePageType: typeof(StorePage),
-                desktopPageType: typeof(StoresPage));
-
-            AddPlatformSpecificPageTab("Store Group", "rain_icon.png", "Group",
-                mobilePageType: typeof(StoreGroupPage),
-                desktopPageType: typeof(StoreGroupsPage));
-
-            AddPlatformSpecificPageTab("Company", "rain_icon.png", "Client",
-                mobilePageType: typeof(CompanyPage),
-                desktopPageType: typeof(CompaniesPage));
-
-            // --- Standard Tabs ---
-            // AddPageTab("Day Begin", "rain_icon.png", "daybegib", typeof(DayBeginEntyPage));
-            // AddPageTab("Day Closing", "rain_icon.png", "dayend", typeof(DayEndEntryPage));
-            // AddPageTab("Petty Cash Sheet", "rain_icon.png", "cashsheet", typeof(PettyCashSheetEntryPage));
-        }
-    }
-
     public static class ClientModule
     {
-
-
         public static MauiAppBuilder UseStores(this MauiAppBuilder builder)
         {
             builder.Services.AddSingleton<CompanyPageModel>();
@@ -45,8 +16,6 @@ namespace Garmetix.Stores
 
             builder.Services.AddTransient<CompanyFormModel>();
             builder.Services.AddTransient<EntryCompanyPage>();
-
-
 
             builder.Services.AddSingleton<StoreGroupPageModel>();
             builder.Services.AddSingleton<StoreGroupsPage>();
@@ -65,7 +34,7 @@ namespace Garmetix.Stores
             return builder;
         }
 
-        public static void EnableStoreRoutes()
+        public static void RegisterStoreRoutes()
         {
             RouterHelper.AddRoute(typeof(EntryCompanyPage));
             RouterHelper.AddRoute(typeof(EntryStorePage));

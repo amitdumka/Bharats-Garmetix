@@ -17,19 +17,7 @@ namespace Garmetix
         /// </summary>
         public const string SyncKey = "Ngo9BigBOggjHTQxAR8/V1JHaF1cXmhIfEx1RHxQdld5ZFRHallYTnNWUj0eQnxTdENjXX1YcXBURmVbV0x+XEleYA==";
         
-        /// <summary>
-        /// Register the Route of All modules
-        /// </summary>
-        public static void RegisterPageRoutes()
-        {
-            // Register any additional routes here if needed
-            //Core Base Library
-            GarmetixCoreBaseModule.EnableCoreModulesRoutes();
-            // Onboarding Module
-            OnboardingModule.RegisterRouteOnboarding();
-            // Authentication Module
-            AuthenticationModule.RegisterAuthenticationRoute();
-        }
+         
 
         public static MauiAppBuilder ConfigureGarmetix(this MauiAppBuilder builder)
         {

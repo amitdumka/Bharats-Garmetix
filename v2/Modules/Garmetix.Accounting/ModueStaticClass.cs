@@ -40,7 +40,7 @@ namespace Garmetix.Accounting
             RouterHelper.AddRoute(typeof(EntryBankTransactionPage));
             RouterHelper.AddRoute(typeof(EntryChequeLogPage));
 
-         
+
 
         }
 
@@ -59,12 +59,12 @@ namespace Garmetix.Accounting
             builder.Services.AddSingleton<VendorBankAccountPageModel>();
             builder.Services.AddSingleton<BankAccountListPageModel>();
 
-            builder.Services.AddSingleton<Pages.BankPage>();
+            builder.Services.AddSingleton<BankPage>();
             builder.Services.AddSingleton<BankAccountDetailPage>();
 
-            builder.Services.AddSingleton<Pages.BankAccountPage>();
-            builder.Services.AddSingleton<Pages.BankAccountListPage>();
-            builder.Services.AddSingleton<Pages.VendorBankAccountPage>();
+            builder.Services.AddSingleton<BankAccountPage>();
+            builder.Services.AddSingleton<BankAccountListPage>();
+            builder.Services.AddSingleton<VendorBankAccountPage>();
 
             // Entry Pages and Form Models
             builder.Services.AddTransient<EntryBankPage>();
@@ -104,27 +104,27 @@ namespace Garmetix.Accounting
 
 
             builder.Services.AddSingleton<PartyPageModel>();
-            builder.Services.AddSingleton<Pages.PartyPage>();
+            builder.Services.AddSingleton<PartyPage>();
             builder.Services.AddSingleton<Pages.Mobile.PartyPage>();
 
             builder.Services.AddSingleton<LedgerPageModel>();
-            builder.Services.AddSingleton<Pages.LedgerPage>();
+            builder.Services.AddSingleton<LedgerPage>();
             builder.Services.AddSingleton<Pages.Mobile.LedgerPage>();
 
             builder.Services.AddSingleton<LedgerGroupPageModel>();
             builder.Services.AddSingleton<Pages.Mobile.LedgerGroupPage>();
-            builder.Services.AddSingleton<Pages.LedgerGroupPage>();
+            builder.Services.AddSingleton<LedgerGroupPage>();
 
             builder.Services.AddSingleton<Pages.Mobile.TransactionPage>();
-            builder.Services.AddSingleton<Pages.TransactionPage>();
+            builder.Services.AddSingleton<TransactionPage>();
             builder.Services.AddSingleton<TransactionPageModel>();
 
             builder.Services.AddSingleton<CustomerDuePageModel>();
-            builder.Services.AddSingleton<Pages.CustomerDuePage>();
+            builder.Services.AddSingleton<CustomerDuePage>();
             builder.Services.AddSingleton<Pages.Mobile.CustomerDuePage>();
 
             builder.Services.AddSingleton<DueRecoveryPageModel>();
-            builder.Services.AddSingleton<Pages.DueRecoveryPage>();
+            builder.Services.AddSingleton<DueRecoveryPage>();
             builder.Services.AddSingleton<Pages.Mobile.DueRecoveryPage>();
 
             //Entry Pages and Form Models

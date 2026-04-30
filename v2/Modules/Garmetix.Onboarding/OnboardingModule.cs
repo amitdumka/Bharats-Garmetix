@@ -21,7 +21,7 @@ namespace Garmetix.Onboarding
             Routing.RegisterRoute(nameof(CompletionPage), typeof(CompletionPage));
 
         }
-        public static MauiAppBuilder EnableOnBoarding(this MauiAppBuilder builder) {
+        public static MauiAppBuilder UseOnboarding(this MauiAppBuilder builder) {
 
             // Register Services
             builder.Services.AddTransient<OnboardingStateService>();

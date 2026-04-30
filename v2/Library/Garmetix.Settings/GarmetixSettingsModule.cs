@@ -13,11 +13,11 @@
             builder.Services.AddTransient<Garmetix.Settings.Views.SettingsPage>();
             return builder;
         }
-        //public static IRouteBuilder EnableSettingRoute(this IRouteBuilder builder)
-        //{
-        //    // Map the Garmetix Settings Route
-        //    builder.MapRoute("garmetixsettings", "garmetixsettings", new { controller = "GarmetixSettings", action = "Index" });
-        //    return builder;
-        //}
+        public static  void RegisterSettingRoute( )
+        {
+            // Map the Garmetix Settings Route
+            //builder.MapRoute("garmetixsettings", "garmetixsettings", new { controller = "GarmetixSettings", action = "Index" });
+            //return builder;
+        }
     }
 }

@@ -51,7 +51,7 @@ namespace Garmetix.Commons
              RouterHelper.AddRoute(typeof(EntryPettyCashSheetPage));
             AccountingModule.EnableAccountingRoutes();
             
-            ClientModule.EnableStoreRoutes();
+            ClientModule.RegisterStoreRoutes();
             
             
         }
