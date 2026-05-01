@@ -64,7 +64,6 @@
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
 
-	
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.60" />
@@ -76,22 +75,20 @@
 		<PackageReference Include="CommunityToolkit.Maui" Version="14.1.0" />
 		<PackageReference Include="Microsoft.Data.Sqlite.Core" Version="10.0.7" />
 		<PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.11" />
-		<PackageReference Include="Syncfusion.Maui.Core" Version="33.2.4" />
-		<PackageReference Include="Syncfusion.Maui.Toolkit" Version="1.0.9" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\v2\Data\Garmetix.Data\Garmetix.Data.csproj" />
-	  <ProjectReference Include="..\v2\Garmetix.SRP\Garmetix.SRP.csproj" />
-	  <ProjectReference Include="..\v2\Library\Bharat.Themes\Bharat.Themes.csproj" />
-	  <ProjectReference Include="..\v2\Library\Garmetix.Dependencies\Garmetix.Dependencies.csproj" />
+		<ProjectReference Include="..\v2\Data\Garmetix.Data\Garmetix.Data.csproj" />
+		<ProjectReference Include="..\v2\Garmetix.SRP\Garmetix.SRP.csproj" />
+		<ProjectReference Include="..\v2\Library\Bharat.Themes\Bharat.Themes.csproj" />
+		<ProjectReference Include="..\v2\Library\Garmetix.Dependencies\Garmetix.Dependencies.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiImage Update="Resources\Images\dotnet_bot.png">
-	    <Resize>True</Resize>
-	    <BaseSize>300,185</BaseSize>
-	  </MauiImage>
+		<MauiImage Update="Resources\Images\dotnet_bot.png">
+			<Resize>True</Resize>
+			<BaseSize>300,185</BaseSize>
+		</MauiImage>
 	</ItemGroup>
-	
+
 </Project>

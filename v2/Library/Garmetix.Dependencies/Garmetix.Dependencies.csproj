@@ -30,11 +30,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiFont Remove="C:\Users\amitn\.nuget\packages\syncfusion.maui.core\33.2.3\buildTransitive\..\buildTransitive\Resources\Fonts\MauiMaterialAssets.ttf" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <MauiFont Include="C:\Users\amitn\.nuget\packages\syncfusion.maui.core\33.2.3\buildTransitive\Resources\Fonts\MauiMaterialAssets.ttf" Link="Resources\Fonts\MauiMaterialAssets.ttf" />
+	  <MauiFont Include="..\..\..\..\..\..\..\.nuget\packages\syncfusion.maui.core\33.2.4\buildTransitive\Resources\Fonts\MauiMaterialAssets.ttf" Link="Resources\Fonts\MauiMaterialAssets.ttf" />
 	  <MauiFont Include="Resources\Fonts\FluentSystemIcons-Regular.ttf" />
 	  <MauiFont Include="Fonts\FluentUI.cs" />
 	</ItemGroup>

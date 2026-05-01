@@ -38,4 +38,5 @@
   <Project Path="Garmetix/Garmetix.csproj">
     <Deploy Solution="Debug|*" />
   </Project>
+  <Project Path="Paggar/Paggar.csproj" Id="b19eed27-883b-45b9-8feb-cc5d2d62846a" />
 </Solution>

@@ -10,7 +10,7 @@ namespace Garmetix.Base.Shells
     public partial class AppShellBase : StandardAppShell
     {
         public new event PropertyChangedEventHandler? PropertyChanged;
-        public SfThemeSegmentedControl ThemeSegmentedControl;
+         
         public ICommand ExitCommand { get; }
         protected override void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
@@ -30,7 +30,8 @@ namespace Garmetix.Base.Shells
             }
         }
 
-        public object ThemeSegmentedControl { get; }
+        public SfSegmentedControl ThemeSegmentedControl { get; }
+        public AppTheme CurrentTheme => Application.Current?.RequestedTheme ?? AppTheme.Light;
 
         public AppShellBase() : base(new StandardShellConfig
         {
@@ -46,6 +47,7 @@ namespace Garmetix.Base.Shells
         })
         {
             var currentTheme = Application.Current!.RequestedTheme;
+
             ThemeSegmentedControl.SelectedIndex = currentTheme == AppTheme.Light ? 0 : 1;
             // We set the Footer inside the constructor because we need to build the Grid
             _config.CustomFooterView = CreateCustomFooter();
