@@ -22,25 +22,42 @@ namespace Garmetix.Onboarding.Pages
             }
             if (selectedSeed == "Aadwika Fashion By Amit Kumar")
             {
-                await DatabaseService.SeedDatabaseAsync("Aadwika Fashion By Amit Kumar");
-                Preferences.Set("IsOnboardingComplete", true);
-                await DisplayAlertAsync("Success", "Database seeded successfully!", "OK");
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-#pragma warning disable CS0618 // Type or member is obsolete
-                Application.Current.MainPage = LoginPage;
-#pragma warning restore CS0618 // Type or member is obsolete
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+                // add try catch finally block here to handle any exceptions that may occur during database seeding
+                try
+                {
+                    await DatabaseService.SeedDatabaseAsync("Aadwika Fashion By Amit Kumar");
+                    Preferences.Set("IsOnboardingComplete", true);
+                    await DisplayAlertAsync("Success", "Database seeded successfully!", "OK");
+                    Application.Current?.Windows[0].Page = LoginPage;
+                }
+                catch (Exception ex)
+                {
+
+                    await DisplayAlertAsync("Error", $"An error occurred while seeding the database: {ex.Message}", "OK");
+                    return;
+                }
+                
             }
             else if (selectedSeed == "Aadwika Fashion By Shalini Kumari")
             {
-                await DatabaseService.SeedDatabaseAsync("Aadwika Fashion By Shalini Kumari");
-                Preferences.Set("IsOnboardingComplete", true);
-                await DisplayAlertAsync("Success", "Database seeded successfully!", "OK");
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-#pragma warning disable CS0618 // Type or member is obsolete
-                Application.Current.MainPage = LoginPage;
-#pragma warning restore CS0618 // Type or member is obsolete
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+                // add try catch finally block here to handle any exceptions that may occur during database seeding
+                try
+                {
+                    await DatabaseService.SeedDatabaseAsync("Aadwika Fashion By Shalini Kumari");
+                    Preferences.Set("IsOnboardingComplete", true);
+                    await DisplayAlertAsync("Success", "Database seeded successfully!", "OK");
+                    Application.Current?.Windows[0].Page = LoginPage;
+                }
+                catch (Exception ex)
+                {
+                    await DisplayAlertAsync("Error", $"An error occurred while seeding the database: {ex.Message}", "OK");
+                    return;
+                }
+                finally
+                {
+                    Application.Current?.Windows[0].Page = LoginPage;
+                }
+                
             }
 
             await DisplayAlertAsync("Error", "Database not seeded. Please try again.", "OK"); 

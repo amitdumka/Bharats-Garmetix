@@ -64,14 +64,7 @@
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <MauiFont Remove="C:\Users\Amit Kumar\.nuget\packages\syncfusion.maui.core\33.2.4\buildTransitive\..\buildTransitive\Resources\Fonts\MauiMaterialAssets.ttf" />
-	  <MauiFont Remove="C:\Users\Amit Kumar\.nuget\packages\syncfusion.maui.toolkit\1.0.9\buildTransitive\..\buildTransitive\Resources\Fonts\MauiMaterialAssets.ttf" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <MauiFont Include="..\..\..\..\..\.nuget\packages\syncfusion.maui.core\33.2.3\buildTransitive\Resources\Fonts\MauiMaterialAssets.ttf" Link="Resources\Fonts\MauiMaterialAssets.ttf" />
-	</ItemGroup>
+	
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.60" />

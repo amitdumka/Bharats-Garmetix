@@ -34,6 +34,7 @@
     <Project Path="v2/ML/Services/Garmetix.CoreServices/Garmetix.Services.csproj" Id="ab9e37a5-eee2-4379-980c-2991247456b6" />
     <Project Path="v2/ML/Services/Garmetix.Reports/Garmetix.Reports.csproj" Id="b334a158-ef21-4a17-85b1-2ab078e4365c" />
   </Folder>
+  <Project Path="Dukan/Dukan.csproj" Id="d5cb4b6a-6592-49f0-a275-cb368759be07" />
   <Project Path="Garmetix/Garmetix.csproj">
     <Deploy Solution="Debug|*" />
   </Project>

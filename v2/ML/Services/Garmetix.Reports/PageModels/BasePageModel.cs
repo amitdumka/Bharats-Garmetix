@@ -29,15 +29,18 @@ namespace Garmetix.Reports.PageModels
 
         [ObservableProperty]
         private int _monthEnd;
+         
 
         protected void LoadPeriod()
         {
             if (Years == null || Years.Count <= 0)
-                for (int i = 2016; i <= DateTime.Now.Year + 1; i++)
+                Years = new List<int>();
+            for (int i = 2016; i <= DateTime.Now.Year + 1; i++)
                 {
                     Years.Add(i);
                 }
-            if (Months != null || Months.Count <= 0)
+            if (Months == null || Months.Count <= 0)
+                Months = new List<int>();
                 for (int i = 1; i <= 12; i++)
                 {
                     Months.Add(i);

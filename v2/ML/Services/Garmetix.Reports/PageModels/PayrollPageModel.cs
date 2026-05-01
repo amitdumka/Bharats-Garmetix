@@ -1,7 +1,7 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input; 
-using Garmetix.Models.ViewModels;
-using Bharat.ToolKits.Notifications;
+﻿using Bharat.ToolKits.Notifications;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Garmetix.Core.VM;
 
 namespace Garmetix.Reports.PageModels
 {
@@ -34,6 +34,7 @@ namespace Garmetix.Reports.PageModels
 
         public PayrollPageModel()
         {
+            _employees= new List<ComboBoxItemVM>();
             LoadData();
         }
         public void LoadData()

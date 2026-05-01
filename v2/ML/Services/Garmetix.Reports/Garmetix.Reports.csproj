@@ -30,6 +30,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\..\Data\Garmetix.Data\Garmetix.Data.csproj" />
+	  <ProjectReference Include="..\..\..\Library\Bharat.Themes\Bharat.Themes.csproj" />
+	  <ProjectReference Include="..\..\..\Library\Garmetix.Dependencies\Garmetix.Dependencies.csproj" />
+	  <ProjectReference Include="..\Garmetix.CoreServices\Garmetix.Services.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <MauiXaml Update="Old\InvoicePrinter\InvoicePrinter.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

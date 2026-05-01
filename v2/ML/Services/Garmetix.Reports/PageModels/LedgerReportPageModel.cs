@@ -2,9 +2,9 @@
 using Bharat.ToolKits.Notifications;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Garmetix.Models.ViewModels;
+using Garmetix.Core.VM;
 using Garmetix.ModuleService;
-using Garmetix.PdfServices.Interfaces;
+using Garmetix.Services.Interfaces;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
@@ -13,7 +13,7 @@ namespace Garmetix.Reports.PageModels
     public partial class LedgerReportPageModel : BasePageModel
     {
         [ObservableProperty]
-        private ObservableCollection<ComboBoxItemVM> _ledgersList = [];
+        private ObservableCollection<ComboBoxItemVM> _ledgersList;
 
         [ObservableProperty]
         private Guid _selectedLedger = Guid.Empty;
@@ -45,10 +45,13 @@ namespace Garmetix.Reports.PageModels
         public LedgerReportPageModel()
         {
             //LoadLedgers();
+
+            LedgersList = [];
+            _legers = new List<ComboBoxItemVM>();
             LoadPeriod();
             SelectedYear = DateTime.Now.Year;
             SelectedMonth = DateTime.Now.Month;
-            _pdfService= ServiceHelper.GetService<IPdfAccountingService>();
+            _pdfService = ServiceHelper.GetService<IPdfAccountingService>();
         }
 
         [RelayCommand]
@@ -72,7 +75,7 @@ namespace Garmetix.Reports.PageModels
             {
                 if (LedgerId == Guid.Empty) return;
                 var isParty = await VoucherServices.IsParyLedgerAsync(LedgerId);
-                MemoryStream pdfStream = null;
+                MemoryStream pdfStream;
                 string fileName = $"Ledger.pdf";
                 //TODO: Call PDF Generation Service to generate the PDF
                 if (isParty.Value)

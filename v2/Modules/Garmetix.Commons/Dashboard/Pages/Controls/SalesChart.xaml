@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:chart="clr-namespace:Syncfusion.Maui.Toolkit.Charts;assembly=Syncfusion.Maui.Toolkit"
     xmlns:controls="clr-namespace:Garmetix.CoreBase.Dashboard.Pages.Controls"
-    xmlns:pageModels="clr-namespace:Garmetix.CoreBase.Dashboard.PageModels"
+    xmlns:pageModels="clr-namespace:Garmetix.Commons.Dashboard.PageModels"
     xmlns:shimmer="clr-namespace:Syncfusion.Maui.Toolkit.Shimmer;assembly=Syncfusion.Maui.Toolkit"
     Margin="0,12"
     x:DataType="pageModels:DefaultDashboardPageModel"
