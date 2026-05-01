@@ -30,7 +30,7 @@ namespace Garmetix.Base.Shells
             }
         }
 
-        public SfSegmentedControl ThemeSegmentedControl { get; }
+        public SfSegmentedControl ThemeSegmentedControl { get; set; }
         public AppTheme CurrentTheme => Application.Current?.RequestedTheme ?? AppTheme.Light;
 
         public AppShellBase() : base(new StandardShellConfig
@@ -40,20 +40,21 @@ namespace Garmetix.Base.Shells
             BackgroundColorLight = Color.FromArgb("#FFFFFF"),
             BackgroundColorDark = Color.FromArgb("#121212"),
             FlyoutBackgroundImage = "thearvindstore005.jpg",
-            HeaderBehavior = FlyoutHeaderBehavior.CollapseOnScroll,
-           
+            HeaderBehavior = FlyoutHeaderBehavior.CollapseOnScroll,           
             // Injecting your existing XAML Header Control
             CustomHeaderView = new ShellHeader()
         })
         {
-            var currentTheme = Application.Current!.RequestedTheme;
+            Application.Current!.UserAppTheme = AppTheme.Light; // Set default theme to Light
+            // var currentTheme = Application.Current!.RequestedTheme;
 
-            ThemeSegmentedControl.SelectedIndex = currentTheme == AppTheme.Light ? 0 : 1;
+            
             // We set the Footer inside the constructor because we need to build the Grid
             _config.CustomFooterView = CreateCustomFooter();
 
             // Re-apply the footer now that we built it
             FlyoutFooter = _config.CustomFooterView;
+            ThemeSegmentedControl.SelectedIndex = CurrentTheme == AppTheme.Light ? 0 : 1;
         }
 
         protected override void BuildAppSpecificMenu()
@@ -89,9 +90,16 @@ namespace Garmetix.Base.Shells
             // Add your custom XAML Footer
             var shellFooter = new ShellFooter { BindingContext = this };
             grid.Children.Add(shellFooter);
+            //icon 
+            var lightIcon = Application.Current.Resources.TryGetValue("IconLight", out var lightRes)
+                        ? (ImageSource)lightRes
+                        : null;
 
+            var darkIcon = Application.Current.Resources.TryGetValue("IconDark", out var darkRes)
+                           ? (ImageSource)darkRes
+                           : null;
             // Build the Syncfusion Segmented Control
-            var segmentedControl = new SfSegmentedControl
+            ThemeSegmentedControl = new SfSegmentedControl
             {
                 HorizontalOptions = LayoutOptions.End,
                 VerticalOptions = LayoutOptions.End,
@@ -99,13 +107,13 @@ namespace Garmetix.Base.Shells
                 SegmentWidth = 30,
                 ItemsSource = new[]
                 {
-                    new SfSegmentItem { ImageSource = "icon_light.png" }, // Replace with your StaticResource image strings
-                    new SfSegmentItem { ImageSource = "icon_dark.png" }
+                    new SfSegmentItem { ImageSource = lightIcon}, // Replace with your StaticResource image strings
+                    new SfSegmentItem { ImageSource = darkIcon }
                 }
             };
 
-            segmentedControl.SelectionChanged += SfSegmentedControl_SelectionChanged;
-            grid.Children.Add(segmentedControl);
+            ThemeSegmentedControl.SelectionChanged += SfSegmentedControl_SelectionChanged;
+            grid.Children.Add(ThemeSegmentedControl);
 
             return grid  ;
         }

@@ -15,6 +15,8 @@
  * Since this is a base class, it does not contain any application-specific menu items or routes. Instead, it defines abstract methods that derived classes must implement to build their unique menu structure and register their navigation routes. This allows each application to have its own distinct menu while still adhering to the overall design and functionality standards set by StandardAppShell.
  */
 
+using Sentry.Protocol;
+
 namespace Garmetix.Base.Shells
 {
     /// <summary>
@@ -24,7 +26,14 @@ namespace Garmetix.Base.Shells
     public abstract class StandardAppShell : Shell
     {
         protected readonly StandardShellConfig _config;
+        // Helper to retrieve the resource and cast/convert it to ImageSource
+        //var lightIcon = Application.Current.Resources.TryGetValue("IconLight", out var lightRes)
+        //                ? (ImageSource)lightRes
+        //                : null;
 
+        //var darkIcon = Application.Current.Resources.TryGetValue("IconDark", out var darkRes)
+        //               ? (ImageSource)darkRes
+        //               : null;
         protected StandardAppShell(StandardShellConfig config)
         {
             _config = config;
