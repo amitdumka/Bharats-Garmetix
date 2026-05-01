@@ -29,7 +29,7 @@ namespace Garmetix.SRP
             // --- Standard Tabs ---
              AddPageTab("Day Begin", "rain_icon.png", "daybegib", typeof(DayBeginEntyPage));
              AddPageTab("Day Closing", "rain_icon.png", "dayend", typeof(DayEndEntryPage));
-             AddPageTab("Petty Cash Sheet", "rain_icon.png", "cashsheet", typeof(PettyCashSheetEntryPage));
+             AddPageTab("Petty Cash Sheet", "rain_icon.png", "pettycashsheet", typeof(PettyCashSheetEntryPage));
         }
     }
 
@@ -86,7 +86,7 @@ namespace Garmetix.SRP
             // Just call the helper method for each page!
             AddPageTab("Party", "rain_icon.png", "Party", typeof(PartyPage));
             AddPageTab("Ledger", "rain_icon.png", "Ledger", typeof(LedgerPage));
-            AddPageTab("LedgerGroupPage", "rain_icon.png", "LedgerGroup", typeof(LedgerGroupPage));
+            AddPageTab("Ledger Group", "rain_icon.png", "LedgerGroup", typeof(LedgerGroupPage));
 
         }
     }

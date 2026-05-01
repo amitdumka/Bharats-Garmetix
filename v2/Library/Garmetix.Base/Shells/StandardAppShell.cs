@@ -26,14 +26,6 @@ namespace Garmetix.Base.Shells
     public abstract class StandardAppShell : Shell
     {
         protected readonly StandardShellConfig _config;
-        // Helper to retrieve the resource and cast/convert it to ImageSource
-        //var lightIcon = Application.Current.Resources.TryGetValue("IconLight", out var lightRes)
-        //                ? (ImageSource)lightRes
-        //                : null;
-
-        //var darkIcon = Application.Current.Resources.TryGetValue("IconDark", out var darkRes)
-        //               ? (ImageSource)darkRes
-        //               : null;
         protected StandardAppShell(StandardShellConfig config)
         {
             _config = config;
@@ -93,7 +85,11 @@ namespace Garmetix.Base.Shells
         // Virtual methods allow the specific app to define *how* logout and quit work
         protected virtual Task HandleLogout() => Task.CompletedTask;
         protected virtual void HandleQuit() { }
+
+        protected abstract void UpdateTheme(object sender, System.EventArgs e);
+
+
     }
 
-     
+
 }

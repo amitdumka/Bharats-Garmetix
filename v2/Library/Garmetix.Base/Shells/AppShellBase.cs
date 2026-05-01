@@ -75,6 +75,10 @@ namespace Garmetix.Base.Shells
             //Items.Add(new BankingMenu());
             //Items.Add(new CompanyMenu());
         }
+        protected override void UpdateTheme(object sender, System.EventArgs e)
+        {
+             
+        }
 
         protected override void RegisterAppRoutes()
         {
@@ -88,7 +92,11 @@ namespace Garmetix.Base.Shells
             grid.SetAppThemeColor(Grid.BackgroundColorProperty, _config.BackgroundColorLight, _config.BackgroundColorDark);
 
             // Add your custom XAML Footer
-            var shellFooter = new ShellFooter { BindingContext = this };
+            // Note: Since we can't directly use XAML here, we instantiate the ShellFooter control in code-behind
+            // Make sure your ShellFooter control is designed to be used in code-behind and can bind to the necessary properties/events
+            //Bind the StoreName property to the ShellFooter's Label
+            var shellFooter = new ShellFooter {   StoreName=this.StoreName };
+
             grid.Children.Add(shellFooter);
             //icon 
             var lightIcon = Application.Current.Resources.TryGetValue("IconLight", out var lightRes)
@@ -125,13 +133,15 @@ namespace Garmetix.Base.Shells
                 Application.Current?.UserAppTheme = AppTheme.Light;
             else
                 Application.Current?.UserAppTheme = AppTheme.Dark;
+
+            UpdateTheme(sender, e);
         }
 
         // --- Logout & Quit Implementations ---
         protected override async Task HandleLogout()
         {
             // Implement your logout logic
-            await Current.GoToAsync("//LoginPage");
+            await Current.GoToAsync("LoginPage");
         }
 
         protected override void HandleQuit()

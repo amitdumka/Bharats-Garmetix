@@ -17,7 +17,7 @@ namespace Garmetix
         {
             var currentTheme = Application.Current!.RequestedTheme;
             //ThemeSegmentedControl.SelectedIndex = currentTheme == AppTheme.Light ? 0 : 1;
-            StoreName = $"{StorageOps.GetPref("CompanyName", "Garmetix")}, {StorageOps.GetPref("StoreCode", "AF")}";
+            StoreName = $"{StorageOps.GetPref("CompanyName", "Garmetix V2")}, {StorageOps.GetPref("StoreCode", "AF")}";
             // ExitCommand = new Command(CloseApp);
             BindingContext = this;
         }
@@ -39,7 +39,7 @@ namespace Garmetix
             Items.Add(new LedgerMenu());      //Ledger Menu
             Items.Add(new HRMMenu());         //HRM Menu
             Items.Add(new BankingMenu());     //Banking Menu
-            //Items.Add(new CompanyMenu());  
+            Items.Add(new CompanyMenu());  
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace Garmetix
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void UpdateTheme(object sender, System.EventArgs e)
+        protected override void UpdateTheme(object sender, System.EventArgs e)
         {
             ICollection<ResourceDictionary> mergedDictionaries = Application.Current!.Resources.MergedDictionaries;
             if (mergedDictionaries != null)

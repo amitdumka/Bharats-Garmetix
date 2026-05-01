@@ -1,20 +1,24 @@
-﻿using Garmetix.Base.Views.Customs.Forms;
+﻿using Bharat.ToolKits.Extensions;
+using Garmetix.Base.Views.Customs.Forms;
 using Garmetix.Base.Views.Customs.Listing;
 using Garmetix.Commons.DayOperations.PageModels;
 using Syncfusion.Maui.DataForm;
 
 namespace Garmetix.CoreBase.DayOperations.Pages
 {
-   public partial class PettyCashSheetPage:BaseListingPage    
+    public partial class PettyCashSheetPage : BaseListingPage
     {
         //private readonly PettyCashSheetPageModel _viewModel;
-        
+
         public PettyCashSheetPage(PettyCashSheetPageModel vm)
         {
             // Set the Title to the class name without the "Page" suffix
             var className = GetType().Name;
             Title = className.EndsWith("Page") ? className[..^4] : className;
+            //Title = "Petty Cash Sheet";
             vm.AddUrl = $"Entry{Title}Page";
+            //vm.AddUrl = $"EntryPettyCashSheetPage";
+            Title = Title.SplitPascalCase_Simple();
             BindingContext = vm;
         }
     }
@@ -26,6 +30,7 @@ namespace Garmetix.CoreBase.DayOperations.Pages
             var className = GetType().Name;
             Title = className.EndsWith("Page") ? className[..^4] : className;
             vm.AddUrl = $"Entry{Title}Page";
+            Title = Title.SplitPascalCase_Simple();
             BindingContext = vm;
         }
     }
