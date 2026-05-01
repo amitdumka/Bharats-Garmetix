@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Garmetix.CoreBase.Dashboard.Models
+﻿namespace Garmetix.Commons.Dashboard.Models
 {
     public class ChartData
     {

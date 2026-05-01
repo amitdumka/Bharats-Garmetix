@@ -1,9 +1,9 @@
 ﻿using Bharat.ToolKits.Notifications;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Garmetix.Commons.Dashboard.Models;
 using Garmetix.Core.VM.Dashboards;
-using Garmetix.CoreBase.Dashboard.Models;
-using Garmetix.CoreServices.Dashboard; 
+using Garmetix.CoreServices.Dashboard;
 using System.Diagnostics;
 
 namespace Garmetix.Commons.Dashboard.PageModels

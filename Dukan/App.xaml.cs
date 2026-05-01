@@ -16,6 +16,7 @@ namespace Dukan
         protected override Window CreateWindow(IActivationState? activationState)
         {
             var mainWindow = GarmetixSRP.CreateMainWindow(activationState, new GarmetixShell()).GetAwaiter().GetResult();
+
             return mainWindow;
             //return new Window(new AppShell());
         }

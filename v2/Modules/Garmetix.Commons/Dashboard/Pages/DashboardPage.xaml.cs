@@ -1,12 +1,14 @@
 using Garmetix.Commons.Dashboard.PageModels;
 
-namespace Garmetix.CoreBase.Dashboard.Pages;
-
-public partial class DashboardPage : ContentPage
+namespace Garmetix.CoreBase.Dashboard.Pages
 {
-	public DashboardPage(DefaultDashboardPageModel vm)
+
+	public partial class DashboardPage : ContentPage
 	{
-		InitializeComponent();
-		BindingContext = vm;
+		public DashboardPage(DefaultDashboardPageModel vm)
+		{
+			InitializeComponent();
+			BindingContext = vm;
+		}
 	}
 }

@@ -3,12 +3,14 @@ using Syncfusion.Maui.Toolkit.SegmentedControl;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using Syncfusion.Maui.Toolkit;
 
 namespace Garmetix.Base.Shells
 {
     public partial class AppShellBase : StandardAppShell
     {
         public new event PropertyChangedEventHandler? PropertyChanged;
+        public SfThemeSegmentedControl ThemeSegmentedControl;
         public ICommand ExitCommand { get; }
         protected override void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
@@ -27,6 +29,9 @@ namespace Garmetix.Base.Shells
                 }
             }
         }
+
+        public object ThemeSegmentedControl { get; }
+
         public AppShellBase() : base(new StandardShellConfig
         {
             AppName = "Garmetix",
@@ -35,11 +40,13 @@ namespace Garmetix.Base.Shells
             BackgroundColorDark = Color.FromArgb("#121212"),
             FlyoutBackgroundImage = "thearvindstore005.jpg",
             HeaderBehavior = FlyoutHeaderBehavior.CollapseOnScroll,
-
+           
             // Injecting your existing XAML Header Control
             CustomHeaderView = new ShellHeader()
         })
         {
+            var currentTheme = Application.Current!.RequestedTheme;
+            ThemeSegmentedControl.SelectedIndex = currentTheme == AppTheme.Light ? 0 : 1;
             // We set the Footer inside the constructor because we need to build the Grid
             _config.CustomFooterView = CreateCustomFooter();
 
@@ -123,14 +130,5 @@ namespace Garmetix.Base.Shells
         }
     }
 
-    //Template for how to create a new menu. Just inherit from BaseFlyoutMenu and call AddPageTab for each page you want to add.
-    //public class AccountingMenu : BaseFlyoutMenu
-    //{
-    //    public AccountingMenu() : base("Vouchers") // The main menu title
-    //    {
-    //        // Just call the helper method for each page!
-    //        AddPageTab("Voucher", "rain_icon.png", "Voucher", typeof(VoucherPage));
-    //        AddPageTab("Cash Voucher", "rain_icon.png", "CashVoucher", typeof(CashVoucherPage));
-    //    }
-    //}
+   
 }

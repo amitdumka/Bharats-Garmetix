@@ -1,8 +1,11 @@
 ﻿using Garmetix.Accounting;
+using Garmetix.Commons.Dashboard.PageModels;
 using Garmetix.Commons.DayOperations.PageModels;
 using Garmetix.CoreBase.Dashboard;
+using Garmetix.CoreBase.Dashboard.Pages;
 using Garmetix.CoreBase.DayOperations.Pages;
 using Garmetix.CoreBase.TimeLines;
+using Garmetix.CoreServices.Dashboard;
 using Garmetix.Services;
 using Garmetix.Stores;
 
@@ -33,7 +36,17 @@ namespace Garmetix.Commons
             builder.Services.AddTransient<CashDetailPageModel>();
             builder.Services.AddTransient<CashDetailPage>();
 
-            builder.UseAccounting().UseBanking().EnableDashboard().UseStores();
+
+            // Dashboard
+            builder.Services.AddSingleton<DashboardService>();
+            //TODO: for time being it is here it should be move to shared module
+
+            builder.Services.AddSingleton<DefaultDashboardPageModel>();
+            builder.Services.AddSingleton<DefaultDashboardPageModel>();
+
+            builder.Services.AddSingleton<DashboardPage>();
+
+           // builder.EnableDashboard();
 
           
 

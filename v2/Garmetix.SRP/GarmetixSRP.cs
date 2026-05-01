@@ -32,6 +32,7 @@ namespace Garmetix.SRP
         public static MauiAppBuilder UseGarmetixSRP(this MauiAppBuilder builder)
         {
             builder
+                .UseCoreModule() // Adds the Core module to the application.
                 .UseOnboarding() // Adds the Onboarding module to the application.
                 .UseAuthentication() // Adds the Authentication module to the application.
                 .UseStores() // Adds the Stores module to the application.
