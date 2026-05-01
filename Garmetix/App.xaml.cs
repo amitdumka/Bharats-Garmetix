@@ -1,5 +1,6 @@
 ﻿using Garmetix.Databases.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Garmetix.SRP;
 
 namespace Garmetix
 {
@@ -7,14 +8,14 @@ namespace Garmetix
     {
         public App(IDatabaseService ds)
         {
-            _ = GarmetixHelpers.InitApp();
+            _ = GarmetixSRP.InitApp();
             InitializeComponent();
         }
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
             // CreateMainWindow returns a Task<Window>; get the result synchronously because the override is not async.
-            var mainWindow = GarmetixHelpers.CreateMainWindow(activationState, new GarmetixShell()).GetAwaiter().GetResult();
+            var mainWindow = GarmetixSRP.CreateMainWindow(activationState, new GarmetixShell()).GetAwaiter().GetResult();
 
             // Application does not have a MainWindow property (hence CS1061).
             // Use the Application APIs to register/open/activate the window instead.

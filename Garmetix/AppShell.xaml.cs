@@ -14,8 +14,7 @@ namespace Garmetix
     /// <summary>
     /// 
     /// </summary>
-    [Obsolete("AppShell is marked as obsolete. Please use the new GarmetixAppShell class instead.")]
-    public partial class AppShell : Shell, INotifyPropertyChanged
+     public partial class AppShell : Shell, INotifyPropertyChanged
     {
         public new event PropertyChangedEventHandler? PropertyChanged;
         public ICommand ExitCommand { get; }

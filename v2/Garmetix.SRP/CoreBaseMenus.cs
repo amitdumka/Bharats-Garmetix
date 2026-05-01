@@ -27,9 +27,9 @@ namespace Garmetix.SRP
                 desktopPageType: typeof(CompaniesPage));
 
             // --- Standard Tabs ---
-            // AddPageTab("Day Begin", "rain_icon.png", "daybegib", typeof(DayBeginEntyPage));
-            // AddPageTab("Day Closing", "rain_icon.png", "dayend", typeof(DayEndEntryPage));
-            // AddPageTab("Petty Cash Sheet", "rain_icon.png", "cashsheet", typeof(PettyCashSheetEntryPage));
+             AddPageTab("Day Begin", "rain_icon.png", "daybegib", typeof(DayBeginEntyPage));
+             AddPageTab("Day Closing", "rain_icon.png", "dayend", typeof(DayEndEntryPage));
+             AddPageTab("Petty Cash Sheet", "rain_icon.png", "cashsheet", typeof(PettyCashSheetEntryPage));
         }
     }
 

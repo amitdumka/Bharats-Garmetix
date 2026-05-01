@@ -23,9 +23,9 @@ namespace Bharat.ToolKits.Utilities
             try
             {
                 await _semaphore.WaitAsync();
-                if (Shell.Current is Shell shell)
+                if (Shell.Current is Shell shell && shell != null)
                 {
-                    await shell.DisplayAlert("Error", ex.Message, "OK");
+                    await shell.DisplayAlertAsync("Error", ex.Message, "OK");
                 }
             }
             finally

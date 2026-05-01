@@ -3,6 +3,7 @@ using CommunityToolkit.Maui;
 using Garmetix.Data.Databases;
 using Garmetix.Dependencies;
 using Microsoft.Extensions.Logging;
+using Garmetix.SRP;
 
 namespace Garmetix
 {
@@ -14,8 +15,8 @@ namespace Garmetix
             builder
                 .UseMauiApp<App>()
                 .UseMauiCommunityToolkit() //Placeholder to ensure the toolkit is registered before any module, as some modules might depend on it.
-                .UseGarmetixDependencies() // Registering Garmetix dependencies and global configurations
-                .ConfigureGarmetix()       // Registering Garmetix Modules and their routes         
+                .UseGarmetixDependencies() // Registering Garmetix dependencies and global configurations                      
+                .UseGarmetixSRP()  // Registering Garmetix SRP modules and their routes
                 .UseGarmetixDatabases();   // Registering Garmetix Databases
 
 #if DEBUG

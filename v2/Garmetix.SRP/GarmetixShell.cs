@@ -3,8 +3,9 @@ using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using Garmetix.Authentication.Pages;
 using Garmetix.Base.Shells;
-using Garmetix.Commons.View;
 using Garmetix.Core.Sessions;
+using Garmetix.CoreBase.Dashboard.Pages;
+using Garmetix.SRP;
 using Syncfusion.Maui.Toolkit.Themes;
 
 namespace Garmetix
@@ -28,7 +29,8 @@ namespace Garmetix
             {
                 Title = "Home",
                 Route = "Dashboard",
-                ContentTemplate = new DataTemplate(typeof(MainPage))
+               // ContentTemplate = new DataTemplate(typeof(MainPage))
+                ContentTemplate = new DataTemplate(typeof(DashboardPage))
             });
 
             //// 2. Inject your pre-built XAML Flyout Items!
@@ -79,7 +81,7 @@ namespace Garmetix
         {
             Dispatcher.Dispatch(async () =>
             {
-                var exit = await DisplayAlert("Logout", "Are you sure you want to logout?", "Yes", "No");
+                var exit = await DisplayAlertAsync("Logout", "Are you sure you want to logout?", "Yes", "No");
 
                 if (exit)
                 {
@@ -101,6 +103,12 @@ namespace Garmetix
                 }
             });
         }
+
+        private async Task<bool> DisplayAlertAsync(string v1, string v2, string v3, string v4)
+        {
+            throw new NotImplementedException();
+        }
+
         private void Quit(object sender, EventArgs e)
         {
             LogoutAndClose(true);
