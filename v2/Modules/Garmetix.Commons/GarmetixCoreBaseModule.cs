@@ -1,5 +1,7 @@
-﻿using Garmetix.Accounting;
+﻿using DocumentFormat.OpenXml.Drawing;
+using Garmetix.Accounting;
 using Garmetix.Commons.Dashboard.PageModels;
+using Garmetix.Commons.Dashboard.Services;
 using Garmetix.Commons.DayOperations.PageModels;
 using Garmetix.CoreBase.Dashboard;
 using Garmetix.CoreBase.Dashboard.Pages;
@@ -46,9 +48,16 @@ namespace Garmetix.Commons
 
             builder.Services.AddSingleton<DashboardPage>();
 
-           // builder.EnableDashboard();
+            // builder.EnableDashboard();
 
-          
+            //Dashboards
+            builder.Services.AddSingleton<DashboardDataService>();
+
+            builder.Services.AddSingleton<DashboardViewModel>();
+            builder.Services.AddSingleton<Dashboard.Pages.Dashboards.DashboardPage>();
+
+
+
 
             return builder;
         }
@@ -61,12 +70,12 @@ namespace Garmetix.Commons
             RouterHelper.AddRoute(typeof(DayEndEntryPage));
             RouterHelper.AddRoute(typeof(PettyCashSheetEntryPage));
             RouterHelper.AddRoute(typeof(EntryCashDetailPage));
-             RouterHelper.AddRoute(typeof(EntryPettyCashSheetPage));
+            RouterHelper.AddRoute(typeof(EntryPettyCashSheetPage));
             AccountingModule.EnableAccountingRoutes();
-            
+
             ClientModule.RegisterStoreRoutes();
-            
-            
+
+
         }
 
     }

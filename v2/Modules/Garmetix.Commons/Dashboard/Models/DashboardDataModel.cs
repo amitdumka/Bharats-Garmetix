@@ -1,7 +1,11 @@
 ﻿using System.Collections.Generic;
 
-namespace Garmetix.AI.Billing.Models
+namespace Garmetix.Commons.Dashboard.Models
 {
+
+    /// <summary>
+    /// Dashboard Data model, Need to update 
+    /// </summary>
     public class DashboardDataModel
     {
         // Metric Cards
@@ -18,6 +22,9 @@ namespace Garmetix.AI.Billing.Models
         public List<RecentTransaction> RecentActivity { get; set; } = new();
     }
 
+    /// <summary>
+    /// Chart Data point
+    /// </summary>
     public class ChartDataPoint
     {
         public string Label { get; set; }
@@ -25,6 +32,9 @@ namespace Garmetix.AI.Billing.Models
         public double Value2 { get; set; }
     }
 
+    /// <summary>
+    /// Recent Transcation
+    /// </summary>
     public class RecentTransaction
     {
         public string Type { get; set; }

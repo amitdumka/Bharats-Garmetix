@@ -1,9 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Garmetix.Commons.Dashboard.Models;
+using Garmetix.Commons.Dashboard.Services;
 using System.Collections.ObjectModel;
 
 namespace Garmetix.Commons.Dashboard.PageModels
 {
+    /// <summary>
+    /// Dashboard ViewModels
+    /// </summary>
     public partial class DashboardViewModel : ObservableObject
     {
         [ObservableProperty] private bool isBusy;
@@ -16,9 +21,9 @@ namespace Garmetix.Commons.Dashboard.PageModels
         [ObservableProperty] private decimal cashBalance;
 
         // Charts & Feeds
-        [ObservableProperty] private ObservableCollection<ChartDataPoint> weeklyCashFlow = new();
-        [ObservableProperty] private ObservableCollection<ChartDataPoint> expenseDistribution = new();
-        [ObservableProperty] private ObservableCollection<RecentTransaction> recentTransactions = new();
+        [ObservableProperty] private ObservableCollection<ChartDataPoint> weeklyCashFlow = [];
+        [ObservableProperty] private ObservableCollection<ChartDataPoint> expenseDistribution = [];
+        [ObservableProperty] private ObservableCollection<RecentTransaction> recentTransactions = [];
 
         public DashboardViewModel()
         {
@@ -45,7 +50,7 @@ namespace Garmetix.Commons.Dashboard.PageModels
             }
             catch (Exception ex)
             {
-                await Application.Current.MainPage.DisplayAlert("Error", $"Dashboard failed to load: {ex.Message}", "OK");
+                await Application.Current?.Windows[0]?.Page?.DisplayAlertAsync("Error", $"Dashboard failed to load: {ex?.Message??" "}", "OK");
             }
             finally
             {

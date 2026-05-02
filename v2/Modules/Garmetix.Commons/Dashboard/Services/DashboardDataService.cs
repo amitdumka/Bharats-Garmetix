@@ -1,22 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Garmetix.AI.Billing.Models;
-using Garmetix.Billing.AIBased.Helpers;
+﻿using Garmetix.Commons.Dashboard.Models;
+using Garmetix.Core.Models.Inventory;
+using Garmetix.Databases.Services;
+using Microsoft.EntityFrameworkCore;
 
-namespace Garmetix.AI.Billing.Services
+namespace Garmetix.Commons.Dashboard.Services
 {
+    /// <summary>
+    /// Dashboard Data Service is Create handled
+    /// </summary>
     public class DashboardDataService
     {
         // Singleton Instance Pattern
-        private static DashboardDataService _instance;
+        private static DashboardDataService? _instance;
+
         public static DashboardDataService Instance => _instance ??= new DashboardDataService();
+        protected DatabaseContext _localDb => DatabaseService.Instance.LocalDB;
 
         // The Cache
-        private DashboardDataModel _cachedData;
+        private DashboardDataModel? _cachedData;
+
         private bool _isCacheValid = false;
         private DateTime _lastFetchTime;
+
+         
+
+        public DatabaseContext GetContext()
+        {
+            return _localDb;
+        }
 
         // Call this from ANY ViewModel when you save a new Invoice/Purchase!
         public void InvalidateCache()
@@ -32,7 +43,6 @@ namespace Garmetix.AI.Billing.Services
                 return _cachedData;
             }
 
-            var db = await DatabaseHelper.GetDatabaseAsync();
             var data = new DashboardDataModel();
 
             // Date Boundaries for SQLite-friendly querying
@@ -43,25 +53,27 @@ namespace Garmetix.AI.Billing.Services
             try
             {
                 // 1. FETCH AGGREGATES (SQLite Optimized)
-                var todaysSales = await db.Table<Invoice>().Where(i => i.Date >= today).ToListAsync();
-                var monthsPurchases = await db.Table<PurchaseInvoice>().Where(p => p.InwardDate >= startOfMonth).ToListAsync();
+                var todaysSales = await GetContext().Invoices.Where(i => i.OnDate >= today).ToListAsync();
+                var monthsPurchases = await GetContext().PurchaseInvoices.Where(p => p.InwardDate >= startOfMonth).ToListAsync();
 
                 // Assuming you have an Expense table. If not, this is a placeholder you can map later.
-                // var monthsExpenses = await db.Table<Expense>().Where(e => e.Date >= startOfMonth).ToListAsync();
+                var monthsExpenses = await GetContext().Vouchers.Where(e => e.OnDate >= startOfMonth && (e.VoucherType == VoucherType.Payment || e.VoucherType == VoucherType.Expense)).ToListAsync();
+                var cashmonthsExpenses = await GetContext().CashVouchers.Where(e => e.OnDate >= startOfMonth && (e.VoucherType == VoucherType.Payment || e.VoucherType == VoucherType.Expense)).ToListAsync();
 
                 // Calculate Cards
-                data.TodaySales = todaysSales.Sum(i => i.GrandTotal);
-                data.MonthPurchases = monthsPurchases.Sum(p => p.GrandTotal);
+                data.TodaySales = todaysSales.Sum(i => i.BillAmount);
+                data.MonthPurchases = monthsPurchases.Sum(p => p.BillAmount);
                 data.MonthExpenses = 0; // Replace with monthsExpenses.Sum(e => e.Amount)
 
                 // Cash Balance = Total Received - Total Purchases - Total Expenses
-                var allPayments = await db.Table<PaymentDetail>().ToListAsync();
-                var allPurchases = await db.Table<PurchaseInvoice>().ToListAsync();
-                data.TotalCashBalance = allPayments.Sum(p => p.Amount) - allPurchases.Sum(p => p.GrandTotal);
+                var allPayments = await GetContext().InvoicePayments.ToListAsync();
+
+                var allPurchases = await GetContext().PurchaseInvoices.ToListAsync();
+                data.TotalCashBalance = allPayments.Sum(p => p.Amount) - allPurchases.Sum(p => p.BillAmount);
 
                 // 2. COMPILE CHART DATA (Weekly Cash Flow)
-                var weeklySales = await db.Table<Invoice>().Where(i => i.Date >= startOfWeek).ToListAsync();
-                var weeklyPurchases = await db.Table<PurchaseInvoice>().Where(p => p.InwardDate >= startOfWeek).ToListAsync();
+                var weeklySales = await GetContext().Invoices.Where(i => i.OnDate >= startOfWeek).ToListAsync();
+                var weeklyPurchases = await GetContext().PurchaseInvoices.Where(p => p.InwardDate >= startOfWeek).ToListAsync();
 
                 for (int i = 0; i < 7; i++)
                 {
@@ -69,32 +81,32 @@ namespace Garmetix.AI.Billing.Services
                     data.WeeklyCashFlow.Add(new ChartDataPoint
                     {
                         Label = targetDay.ToString("ddd"),
-                        Value1 = (double)weeklySales.Where(s => s.Date.Date == targetDay).Sum(s => s.GrandTotal),
-                        Value2 = (double)weeklyPurchases.Where(p => p.InwardDate.Date == targetDay).Sum(p => p.GrandTotal)
+                        Value1 = (double)weeklySales.Where(s => s.OnDate.Date == targetDay).Sum(s => s.BillAmount),
+                        Value2 = (double)weeklyPurchases.Where(p => p.InwardDate.Date == targetDay).Sum(p => p.BillAmount)
                     });
                 }
 
                 // 3. COMPILE RECENT ACTIVITY FEED (Merging Sales and Purchases)
-                var recentSales = await db.Table<Invoice>().OrderByDescending(i => i.Date).Take(5).ToListAsync();
-                var recentPurchases = await db.Table<PurchaseInvoice>().OrderByDescending(p => p.InwardDate).Take(5).ToListAsync();
+                var recentSales = await GetContext().Invoices.OrderByDescending(i => i.OnDate).Take(5).ToListAsync();
+                var recentPurchases = await GetContext().PurchaseInvoices.OrderByDescending(p => p.InwardDate).Take(5).ToListAsync();
 
                 var mixedFeed = new List<RecentTransaction>();
 
                 mixedFeed.AddRange(recentSales.Select(s => new RecentTransaction
                 {
                     Type = "SALE",
-                    Reference = s.InvoiceNo,
-                    Amount = s.GrandTotal,
-                    SortDate = s.Date,
+                    Reference = s.InvoiceNumber,
+                    Amount = s.BillAmount,
+                    SortDate = s.OnDate,
                     ColorHex = "#10B981",
-                    TimeDisplay = GetRelativeTime(s.Date)
+                    TimeDisplay = GetRelativeTime(s.OnDate)
                 }));
 
                 mixedFeed.AddRange(recentPurchases.Select(p => new RecentTransaction
                 {
                     Type = "PURCHASE",
-                    Reference = p.InwardNo,
-                    Amount = p.GrandTotal,
+                    Reference = p.InwardNumber,
+                    Amount = p.BillAmount,
                     SortDate = p.InwardDate,
                     ColorHex = "#8B5CF6",
                     TimeDisplay = GetRelativeTime(p.InwardDate)

@@ -1,14 +1,8 @@
 ﻿using Garmetix.Commons.Dashboard.PageModels;
 using Garmetix.CoreBase.Dashboard.Pages;
 using Garmetix.CoreServices.Dashboard;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Garmetix.CoreBase.Dashboard
+namespace Garmetix.Commons.Dashboard
 {
     public static class DashboardModule
     {
