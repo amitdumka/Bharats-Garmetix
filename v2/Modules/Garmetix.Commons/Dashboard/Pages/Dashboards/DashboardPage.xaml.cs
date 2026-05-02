@@ -1,12 +1,13 @@
+using Garmetix.Commons.Dashboard.PageModels;
 using Microsoft.Maui.Controls;
 
 namespace Garmetix.Commons.Dashboard.Pages.Dashboards
 {
     public partial class DashboardPage : ContentPage
     {
-        private readonly ViewModels.DashboardViewModel _viewModel;
+        private readonly DashboardViewModel _viewModel;
 
-        public DashboardPage(ViewModels.DashboardViewModel viewModel)
+        public DashboardPage(DashboardViewModel viewModel)
         {
             InitializeComponent();
             _viewModel = viewModel;
