@@ -38,12 +38,6 @@ using System.Text.Json.Serialization;
 
 namespace Garmetix.Core.Models.Inventory
 {
-    public class Salesman : StoreBase
-    {
-        [Display(Name = "Name")] public string Name { get; set; } = "Manager";
-        [Display(Name = "Employee", AutoGenerateField = false)] public Guid? EmployeeId { get; set; }
-        [Display(Name = "Active")] public bool Active { get; set; } = true;
-    }
 
     public abstract class BaseInvoice : CompanyBase
     {
@@ -55,7 +49,7 @@ namespace Garmetix.Core.Models.Inventory
         [Display(Name = "Base Price")] public decimal BasePrice { get; set; }
         [Display(Name = "Discount Amount")] public decimal DiscountAmount { get; set; }
         [Display(Name = "Tax Amount")] public decimal TaxAmount { get; set; }
-        [Display(Name = "Net Amount")] public decimal NetAmount { get; set; }
+        [Display(Name = "Net Amount/Sub Total")] public decimal NetAmount { get; set; }
         [Display(Name = "Round Off")] public decimal RoundOff { get; set; } = 0;
         [Display(Name = "Bill Amount")] public decimal BillAmount { get; set; }
 
@@ -140,15 +134,26 @@ namespace Garmetix.Core.Models.Inventory
         [Display(Name = "Salesman", AutoGenerateField = false)] public Guid SalemanId { get; set; }
 
         [Display(Name = "Customer Name")] public string? CustomerName { get; set; }
-        [Display(Name = "Customer Mobile Number")] public required string CustomerMobileNumber { get; set; }
+        [Display(Name = "Customer Mobile Number")] public string CustomerMobileNumber { get; set; }=string.Empty;
         [Display(Name = "Customer GSTIN")] public string? CustomerGSTIN { get; set; }
 
         [Display(Name = "Credit Sale")] public bool CreditSale { get; set; }
         [Display(Name = "B2B Sale")] public bool B2BSale { get; set; } = false;
+         [Display(Name = "Bill Discount", AutoGenerateField = false)]public decimal BillDiscountAmount { get; set; } = 0m;
 
         [Display(Name = "Salesman", AutoGenerateField = false)] public virtual Salesman? Saleman { get; set; }
         [Display(Name = "Customer", AutoGenerateField = false)] public virtual Customer? Customer { get; set; }
         [Display(Name = "Invoice Items", AutoGenerateField = false)] public virtual ICollection<InvoiceItem> InvoiceItems { get; set; } = new List<InvoiceItem>();
+
+        [Display(Name = "Paid Amount", AutoGenerateField = false)]
+        public decimal PaidAmount { get; set; }
+        [Display(Name = "Balance Amount", AutoGenerateField = false)]
+        [JsonIgnore]
+        public decimal BalanceAmount => BillAmount - PaidAmount;
+
+        [Display(AutoGenerateField = false)]
+        [JsonIgnore]
+        public bool IsAmountDue { get { return BalanceAmount > 0; } }
 
     }
 
@@ -219,7 +224,9 @@ namespace Garmetix.Core.Models.Inventory
 
         [JsonIgnore]
         [Display(Name = "Line Total")] public decimal LineTotal { get { return Math.Round(TaxableAmount + TotalTaxAmount, 2); } }
-
+        
+        [JsonIgnore]
+        public virtual ProductType Category { get; set; } = ProductType.Apparels;
     }
 
     public class PurchaseInvoiceItem : InvoiceItem

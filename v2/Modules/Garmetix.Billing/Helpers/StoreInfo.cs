@@ -1,5 +1,8 @@
 ﻿namespace Garmetix.Billing.Helpers
 {
+    /// <summary>
+    /// Store Info need to be handle properly  use if older system is alread created. other this is fine
+    /// </summary>
     public static class StoreInfo
     {
         public static string StoreName { get; set; } = "AADWIKA FASHION";

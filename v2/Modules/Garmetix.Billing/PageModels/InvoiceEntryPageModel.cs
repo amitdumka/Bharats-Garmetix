@@ -2,9 +2,12 @@
 using CommunityToolkit.Mvvm.Input;
 using Garmetix.Billing.Helpers;
 using Garmetix.Core.Models.Inventory;
+using Garmetix.Databases;
+using Garmetix.Databases.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Text;
+using Microsoft.EntityFrameworkCore;
+using Garmetix.Core.Enums;
 
 namespace Garmetix.Billing.PageModels
 {
@@ -17,13 +20,13 @@ namespace Garmetix.Billing.PageModels
         private string searchText;
 
         // This automatically fires the moment you type a letter in the UI
-        private partial void OnSearchTextChanged(string value)
+        partial void OnSearchTextChanged(string value)
         {
             UpdateFilteredProducts(value);
         }
 
         // NEW: This automatically fires the moment you click an item in the search list
-        private partial void OnSelectedProductChanged(Product value)
+        partial void OnSelectedProductChanged(Product? value)
         {
             if (value != null)
             {
@@ -46,29 +49,33 @@ namespace Garmetix.Billing.PageModels
 
         [ObservableProperty] private Invoice currentInvoice;
         public ObservableCollection<InvoiceItem> InvoiceItems { get; set; } = new();
-        public ObservableCollection<PaymentDetail> Payments { get; set; } = new();
+        public ObservableCollection<InvoicePayment> Payments { get; set; } = new();
         // The UI only binds to this small filtered list to prevent lagging
 
-        [ObservableProperty] private Product selectedProduct;
-        [ObservableProperty] private InvoiceItem selectedInvoiceItem;
-        [ObservableProperty] private string paymentModeInput = "Cash";
-        [ObservableProperty] private decimal paymentAmountInput;
+        [ObservableProperty] private Product? selectedProduct;
+        [ObservableProperty] private InvoiceItem? selectedInvoiceItem;
+        [ObservableProperty] private PaymentMode paymentModeInput = PaymentMode.Cash;
+        [ObservableProperty] private decimal paymentAmountInput = 0m;
         [ObservableProperty] private bool isNewCustomer = false;
 
         // --- GLOBAL DISCOUNT INPUTS ---
         [ObservableProperty] private decimal globalDiscountInput;
 
-        private partial void OnGlobalDiscountInputChanged(decimal value) => CalculateInvoiceTotals();
+        partial void OnGlobalDiscountInputChanged(decimal value) => CalculateInvoiceTotals();
 
         [ObservableProperty] private string globalDiscountTypeInput = "Amount";
 
-        private partial void OnGlobalDiscountTypeInputChanged(string value) => CalculateInvoiceTotals();
+        partial void OnGlobalDiscountTypeInputChanged(string value) => CalculateInvoiceTotals();
 
-        public InvoiceEntryViewModel(IPrintService printService)
+        private DatabaseContext _localDb = DatabaseService.Instance.LocalDB;
+        public DatabaseContext GetContext() => _localDb;
+        public InvoiceEntryPageModel(IPrintService printService)
         {
             _printService = printService;
-            CurrentInvoice = new Invoice();
-            InitializeDatabaseAsync();
+            CurrentInvoice = new Invoice() { InvoiceNumber = "NeedtobeGenerate" };
+            searchText = ""; selectedProduct = null;
+            selectedInvoiceItem = null;
+
         }
 
         // Called when the user types in the search box
@@ -94,7 +101,7 @@ namespace Garmetix.Billing.PageModels
                 ).Take(50).ToList();
 
             // Safely push the results to the UI thread
-            Application.Current.Dispatcher.Dispatch(() =>
+            Application.Current?.Dispatcher.Dispatch(() =>
             {
                 FilteredProducts.Clear();
                 foreach (var p in results)
@@ -108,15 +115,15 @@ namespace Garmetix.Billing.PageModels
         [RelayCommand]
         public async Task SearchCustomerAsync()
         {
-            if (string.IsNullOrWhiteSpace(CurrentInvoice.MobileNo) || IsBusy) return;
+            if (string.IsNullOrWhiteSpace(CurrentInvoice.CustomerMobileNumber) || IsBusy) return;
             try
             {
                 IsBusy = true;
-                var customer = await _database.Table<Customer>().FirstOrDefaultAsync(c => c.MobileNo == CurrentInvoice.MobileNo);
+                var customer = await GetContext().Customers.FirstOrDefaultAsync(c => c.MobileNumber == CurrentInvoice.CustomerMobileNumber);
                 if (customer != null)
                 {
                     CurrentInvoice.CustomerName = customer.Name;
-                    CurrentInvoice.Gstin = customer.Gstin;
+                    CurrentInvoice.CustomerGSTIN = customer.GSTIN;
                     IsNewCustomer = false;
                     OnPropertyChanged(nameof(CurrentInvoice));
                 }
@@ -129,16 +136,16 @@ namespace Garmetix.Billing.PageModels
         [RelayCommand]
         public async Task SaveCustomerAsync()
         {
-            if (IsBusy || string.IsNullOrWhiteSpace(CurrentInvoice.MobileNo) || string.IsNullOrWhiteSpace(CurrentInvoice.CustomerName)) return;
+            if (IsBusy || string.IsNullOrWhiteSpace(CurrentInvoice.CustomerMobileNumber) || string.IsNullOrWhiteSpace(CurrentInvoice.CustomerName)) return;
             try
             {
                 IsBusy = true;
-                var existing = await _database.Table<Customer>().FirstOrDefaultAsync(c => c.MobileNo == CurrentInvoice.MobileNo);
+                var existing = await GetContext().Customers.FirstOrDefaultAsync(c => c.MobileNumber == CurrentInvoice.CustomerMobileNumber);
                 if (existing == null)
                 {
-                    await _database.InsertAsync(new Customer { MobileNo = CurrentInvoice.MobileNo, Name = CurrentInvoice.CustomerName, Gstin = CurrentInvoice.Gstin });
+                    await GetContext().Customers.AddAsync(new Customer { MobileNumber = CurrentInvoice.CustomerMobileNumber, Name = CurrentInvoice.CustomerName, GSTIN = CurrentInvoice.CustomerGSTIN });
                     IsNewCustomer = false;
-                    await Application.Current.MainPage.DisplayAlert("Success", "Customer saved.", "OK");
+                    await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Customer saved.", "OK");
                 }
             }
             catch (Exception ex) { await ShowErrorAsync("Save Customer Error", ex); }
@@ -175,15 +182,16 @@ namespace Garmetix.Billing.PageModels
             try
             {
                 var newItem = new InvoiceItem
-                {
-                    ProductName = SelectedProduct.Name,
-                    Category = SelectedProduct.Category,
-                    Rate = SelectedProduct.BaseRate,
+                {   
+                    Barcode = SelectedProduct.Barcode,
+                    Category = SelectedProduct.ProductType,
+                    BasePrice = SelectedProduct.BasicPrice,
 
                     // CHANGED: Use 1m to signify 1 as a decimal
-                    Quantity = 1m,
+                    ActualQuantity = 1m,
+                    BilledQuantity = 1m,
 
-                    DiscountPercentage = 0
+                    DiscountAmount = 0
                 };
 
                 newItem.PropertyChanged += InvoiceItem_PropertyChanged;
@@ -209,7 +217,7 @@ namespace Garmetix.Billing.PageModels
 
         private void InvoiceItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName is nameof(InvoiceItem.Rate) or nameof(InvoiceItem.Quantity) or nameof(InvoiceItem.DiscountPercentage) or nameof(InvoiceItem.DiscountAmount))
+            if (e.PropertyName is nameof(InvoiceItem.BasePrice) or nameof(InvoiceItem.BilledQuantity) or nameof(InvoiceItem.DiscountAmount) or nameof(InvoiceItem.DiscountAmount))
             {
                 CalculateInvoiceTotals();
             }
@@ -220,13 +228,13 @@ namespace Garmetix.Billing.PageModels
         public void AddPayment()
         {
             if (PaymentAmountInput <= 0) return;
-            Payments.Add(new PaymentDetail { Mode = PaymentModeInput, Amount = PaymentAmountInput });
+            Payments.Add(new InvoicePayment { PaymentMode = PaymentModeInput, Amount = PaymentAmountInput });
             PaymentAmountInput = 0;
             CalculateInvoiceTotals();
         }
 
         [RelayCommand]
-        public void RemovePayment(PaymentDetail payment)
+        public void RemovePayment(InvoicePayment payment)
         {
             if (Payments.Contains(payment)) { Payments.Remove(payment); CalculateInvoiceTotals(); }
         }

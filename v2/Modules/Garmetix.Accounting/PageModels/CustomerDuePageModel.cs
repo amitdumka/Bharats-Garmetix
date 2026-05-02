@@ -21,13 +21,7 @@ namespace Garmetix.Accounting.PageModels
                 AddDateGridColumns(nameof(CustomerDue.OnDate)),
                 AddDateGridColumns(nameof(CustomerDue.ClearingDate)),
 
-                //new DataGridTextColumn { MappingName = "Id", HeaderText = "ID" },
-                //new DataGridTextColumn() { HeaderText = nameof(CustomerDue.InvoiceNumber), MappingName = nameof(CustomerDue.InvoiceNumber) } ,
-                //new DataGridTextColumn() { HeaderText = nameof(CustomerDue.Amount), MappingName = nameof(CustomerDue.Amount) } ,
-                //new DataGridTextColumn() { HeaderText = nameof(CustomerDue.Paid), MappingName = nameof(CustomerDue.Paid) },
-                //new DataGridTextColumn() { HeaderText = nameof(CustomerDue.OnDate), MappingName = nameof(CustomerDue.OnDate), Format = "dd/MMM/yyyy" },
-                //new DataGridTextColumn() { HeaderText = nameof(CustomerDue.ClearingDate), MappingName = nameof(CustomerDue.ClearingDate), Format = "dd/MMM/yyyy" },
-            ];
+               ];
             return GridColumns;
         }
     }

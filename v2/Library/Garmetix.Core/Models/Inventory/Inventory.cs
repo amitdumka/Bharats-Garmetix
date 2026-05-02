@@ -21,6 +21,7 @@
  * This is particularly useful for properties that are calculated or derived from other properties, ensuring that only relevant data is included in API responses or data storage.
  */
 
+using Android.Net.Wifi.Aware;
 using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Base;
 using System.ComponentModel.DataAnnotations;
@@ -99,6 +100,8 @@ namespace Garmetix.Core.Models.Inventory
         [Display(Name = "Descriptions")] public string? Descriptions { get; set; }
         [Display(Name = "MRP")] public decimal MRP { get; set; }
         [Display(Name = "Tax Rate")] public decimal TaxRate { get; set; }
+        //TODO: Need to use Basic Rate Calucator Static Function need to be create in toolkit
+        [Display(Name="Basic Rate", AutoGenerateField =false)] public decimal BasicPrice =>MRP/(1 + (TaxRate/100));
         [Display(Name = "Unit")] public Unit Unit { get; set; }
         [Display(Name = "Tax Type")] public TaxType TaxType { get; set; }
         [Display(Name = "Product Type")] public ProductType ProductType { get; set; } = ProductType.Fabric;

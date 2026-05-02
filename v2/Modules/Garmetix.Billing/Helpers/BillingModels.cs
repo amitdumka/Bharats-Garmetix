@@ -1,20 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using SQLite;
-using System;
 using System.Text.Json.Serialization;
 
-namespace Garmetix.AI.Billing.Models
+namespace OldSystem.Models.NeedToRemoved
 {
-    public class User
-    {
-        [PrimaryKey]
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public string Username { get; set; }
-        public string PasswordHash { get; set; }
-        public string PinHash { get; set; } // The 4-digit PIN
-        public string Role { get; set; } = "Admin";
-        public bool IsActive { get; set; } = true;
-    }
+     
     public enum GarmentCategory { Fabric, ReadyMade, Accessories }
     public class Stock
     {

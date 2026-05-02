@@ -20,11 +20,11 @@ namespace Garmetix.Billing.Helpers
             QuestPDF.Settings.License = LicenseType.Community;
         }
 
-        public static string GenerateA5Pdf(Invoice invoice, IEnumerable<InvoiceItem> items, IEnumerable<PaymentDetail> payments)
+        public static string GenerateA5Pdf(Invoice invoice, IEnumerable<InvoiceItem> items, IEnumerable<InvoicePayment> payments)
         {
             Initialize();
 
-            string fileName = $"{invoice.InvoiceNo}.pdf";
+            string fileName = $"{invoice.InvoiceNumber}.pdf";
             string filePath = Path.Combine(Microsoft.Maui.Storage.FileSystem.CacheDirectory, fileName);
 
             string instagramUrl = "https://instagram.com/aadwikafashion";
@@ -69,17 +69,17 @@ namespace Garmetix.Billing.Helpers
 
                     column.Item().PaddingTop(5).Row(r => {
                         r.RelativeItem().Text("Invoice:").FontSize(8).FontColor(BrandGray);
-                        r.AutoItem().Text(invoice.InvoiceNo).FontSize(8).SemiBold();
+                        r.AutoItem().Text(invoice.InvoiceNumber).FontSize(8).SemiBold();
                     });
                     column.Item().Row(r => {
                         r.RelativeItem().Text("Date:").FontSize(8).FontColor(BrandGray);
-                        r.AutoItem().Text($"{invoice.Date:dd MMM yyyy}").FontSize(8);
+                        r.AutoItem().Text($"{invoice.OnDate:dd MMM yyyy}").FontSize(8);
                     });
                 });
             });
         }
 
-        private static void ComposeContent(IContainer container, Invoice invoice, IEnumerable<InvoiceItem> items, IEnumerable<PaymentDetail> payments)
+        private static void ComposeContent(IContainer container, Invoice invoice, IEnumerable<InvoiceItem> items, IEnumerable<InvoicePayment> payments)
         {
             container.Column(column =>
             {
@@ -90,14 +90,14 @@ namespace Garmetix.Billing.Helpers
                     {
                         col.Item().Text("BILLED TO").FontSize(7).Bold().FontColor(BrandGray);
                         col.Item().Text(invoice.CustomerName).FontSize(11).SemiBold();
-                        col.Item().Text($"+91 {invoice.MobileNo}").FontSize(9);
+                        col.Item().Text($"+91 {invoice.CustomerMobileNumber}").FontSize(9);
                     });
 
-                    if (!string.IsNullOrEmpty(invoice.Gstin))
+                    if (!string.IsNullOrEmpty(invoice.CustomerGSTIN))
                     {
                         row.RelativeItem().AlignRight().Column(col => {
-                            col.Item().Text("CUSTOMER GSTIN").FontSize(7).Bold().FontColor(BrandGray);
-                            col.Item().Text(invoice.Gstin).FontSize(9);
+                            col.Item().Text("Customer GSTIN").FontSize(7).Bold().FontColor(BrandGray);
+                            col.Item().Text(invoice.CustomerGSTIN).FontSize(9);
                         });
                     }
                 });
@@ -130,12 +130,12 @@ namespace Garmetix.Billing.Helpers
                     foreach (var item in items)
                     {
                         table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).Text(sNo++.ToString());
-                        table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).Text(item.ProductName).SemiBold();
-                        table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).AlignRight().Text(item.Quantity.ToString("0.##"));
-                        //table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).AlignRight().Text(item.Quantity.ToString());
-                        table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).AlignRight().Text($"₹ {item.Rate:F2}");
-                        table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).AlignRight().Text($"{item.GstPercentage}%");
-                        table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).AlignRight().Text($"₹ {item.TotalAmount:F2}").SemiBold();
+                        table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).Text(item.Product?.Name??item.Barcode).SemiBold();
+                        table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).AlignRight().Text(item.BilledQuantity.ToString("0.##"));
+                        table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).AlignRight().Text(item.ActualQuantity.ToString("0.##"));
+                        table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).AlignRight().Text($"₹ {item.BasePrice:F2}");
+                        table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).AlignRight().Text($"{item.TaxPercentage}%");
+                        table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).AlignRight().Text($"₹ {item.LineTotal:F2}").SemiBold();
                     }
                 });
 
@@ -150,10 +150,11 @@ namespace Garmetix.Billing.Helpers
                         {
                             foreach (var p in payments)
                             {
-                                pCol.Item().PaddingTop(2).Text($"{p.Mode.ToUpper()} : ₹ {p.Amount:F2}").FontSize(8).SemiBold();
+                                pCol.Item().PaddingTop(2).Text($"{p.PaymentMode} : ₹ {p.Amount:F2}").FontSize(8).SemiBold();
                             }
                         }
-                        if (invoice.BalanceAmount > 0)
+                        //TODO: Impelemnt this 
+                        if (invoice.IsAmountDue)
                         {
                             pCol.Item().PaddingTop(4).Text($"DUE AMOUNT: ₹ {invoice.BalanceAmount:F2}").FontSize(9).Bold().FontColor(Colors.Red.Medium);
                         }
@@ -172,24 +173,24 @@ namespace Garmetix.Billing.Helpers
                             });
                         }
 
-                        AddSummaryRow("Subtotal", $"₹ {invoice.SubTotal:F2}");
+                        AddSummaryRow("Subtotal", $"₹ {invoice.NetAmount:F2}");
 
-                        decimal totalDiscount = invoice.TotalDiscount + invoice.GlobalDiscountAmount;
+                        decimal totalDiscount = invoice.DiscountAmount + invoice.BillDiscountAmount;
                         if (totalDiscount > 0) AddSummaryRow("Total Discount", $"- ₹ {totalDiscount:F2}");
 
-                        if (invoice.IsInterStateSale)
-                            AddSummaryRow("IGST", $"₹ {invoice.TotalTax:F2}");
+                        if (invoice.InterState)
+                            AddSummaryRow("IGST", $"₹ {invoice.TaxAmount:F2}");
                         else
                         {
-                            decimal halfTax = invoice.TotalTax / 2m;
+                            decimal halfTax = invoice.TaxAmount / 2m;
                             AddSummaryRow("CGST (2.5%)", $"₹ {halfTax:F2}");
                             AddSummaryRow("SGST (2.5%)", $"₹ {halfTax:F2}");
                         }
 
-                        if (invoice.RoundOffAmount != 0) AddSummaryRow("Round Off", $"₹ {invoice.RoundOffAmount:F2}");
+                        if (invoice.RoundOff != 0) AddSummaryRow("Round Off", $"₹ {invoice.RoundOff:F2}");
 
                         tCol.Item().PaddingVertical(4).LineHorizontal(1).LineColor(BrandDark);
-                        AddSummaryRow("NET AMOUNT", $"₹ {invoice.GrandTotal:F2}", true);
+                        AddSummaryRow("NET AMOUNT", $"₹ {invoice.BillAmount:F2}", true);
                     });
                 });
             });

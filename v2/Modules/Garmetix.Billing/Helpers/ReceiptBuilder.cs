@@ -2,6 +2,9 @@
 using System.Text;
 namespace Garmetix.Billing.Helpers
 {
+    /// <summary>
+    /// Receipt Builder is thermal invoice 
+    /// </summary>
     public static class ReceiptBuilder
     {
         // ====================================================================================
@@ -38,58 +41,59 @@ namespace Garmetix.Billing.Helpers
 
             // --- CUSTOMER DETAILS ---
             bytes.AddRange(alignLeft);
-            bytes.AddRange(Encoding.ASCII.GetBytes($"Inv No: {invoice.InvoiceNo}\n"));
-            bytes.AddRange(Encoding.ASCII.GetBytes($"Date  : {invoice.Date:dd-MMM-yyyy HH:mm}\n"));
+            bytes.AddRange(Encoding.ASCII.GetBytes($"Inv No: {invoice.InvoiceNumber}\n"));
+            bytes.AddRange(Encoding.ASCII.GetBytes($"Date  : {invoice.OnDate:dd-MMM-yyyy HH:mm}\n"));
             bytes.AddRange(Encoding.ASCII.GetBytes($"Name  : {invoice.CustomerName}\n"));
-            bytes.AddRange(Encoding.ASCII.GetBytes($"Mobile: {invoice.MobileNo}\n"));
-            if (!string.IsNullOrEmpty(invoice.Gstin))
-                bytes.AddRange(Encoding.ASCII.GetBytes($"GSTIN : {invoice.Gstin}\n"));
+            bytes.AddRange(Encoding.ASCII.GetBytes($"Mobile: {invoice.CustomerMobileNumber}\n"));
+            if (!string.IsNullOrEmpty(invoice.CustomerGSTIN))
+                bytes.AddRange(Encoding.ASCII.GetBytes($"GSTIN : {invoice.CustomerGSTIN}\n"));
             bytes.AddRange(Encoding.ASCII.GetBytes("--------------------------------\n"));
 
             // --- ITEMS TABLE ---
             bytes.AddRange(boldOn);
-            bytes.AddRange(Encoding.ASCII.GetBytes("Item          Qty  Rate   Total \n"));
+            bytes.AddRange(Encoding.ASCII.GetBytes("Item - Barcode       \n  Qty  Rate   Total \n"));
             bytes.AddRange(boldOff);
             bytes.AddRange(Encoding.ASCII.GetBytes("--------------------------------\n"));
 
             foreach (var item in items)
             {
-                string name = item.ProductName.Length > 12 ? item.ProductName.Substring(0, 12) : item.ProductName.PadRight(12);
+                string name = item.Product?.Name.Length > 12 ? item.Product?.Name.Substring(0, 12) : item.Product?.Name.PadRight(12);
+                string barcode = item.Barcode.PadRight(12);
                 //string qty = item.Quantity.ToString().PadLeft(3);
                 // Expanded PadLeft to 4 to accommodate the decimal point
-                string qty = item.Quantity.ToString("0.##").PadLeft(4);
-                string rate = item.Rate.ToString("0").PadLeft(6);
-                string total = item.TotalAmount.ToString("0").PadLeft(7);
-                bytes.AddRange(Encoding.ASCII.GetBytes($"{name} {qty} {rate} {total}\n"));
+                string qty = item.BilledQuantity.ToString("0.##").PadLeft(4);
+                string rate = item.BasePrice.ToString("0").PadLeft(6);
+                string total = item.LineTotal.ToString("0").PadLeft(7);
+                bytes.AddRange(Encoding.ASCII.GetBytes($"{name}{barcode}\n {qty} {rate} {total}\n"));
             }
             bytes.AddRange(Encoding.ASCII.GetBytes("--------------------------------\n"));
 
             // --- TOTALS & GST LOGIC ---
             bytes.AddRange(alignLeft);
-            bytes.AddRange(Encoding.ASCII.GetBytes($"Sub Total        : Rs. {invoice.SubTotal,8:F2}\n"));
+            bytes.AddRange(Encoding.ASCII.GetBytes($"Sub Total        : Rs. {invoice.NetAmount,8:F2}\n"));
 
-            decimal totalDiscount = invoice.TotalDiscount + invoice.GlobalDiscountAmount;
+            decimal totalDiscount = invoice.DiscountAmount + invoice.BillDiscountAmount;
             if (totalDiscount > 0)
                 bytes.AddRange(Encoding.ASCII.GetBytes($"Discount         :-Rs. {totalDiscount,8:F2}\n"));
 
             // Indian GST Split Logic
-            if (invoice.IsInterStateSale)
+            if (invoice.InterState)
             {
-                bytes.AddRange(Encoding.ASCII.GetBytes($"IGST             : Rs. {invoice.TotalTax,8:F2}\n"));
+                bytes.AddRange(Encoding.ASCII.GetBytes($"IGST             : Rs. {invoice.TaxAmount,8:F2}\n"));
             }
             else
             {
-                decimal halfTax = invoice.TotalTax / 2m;
+                decimal halfTax = invoice.TaxAmount / 2m;
                 bytes.AddRange(Encoding.ASCII.GetBytes($"CGST             : Rs. {halfTax,8:F2}\n"));
                 bytes.AddRange(Encoding.ASCII.GetBytes($"SGST             : Rs. {halfTax,8:F2}\n"));
             }
 
-            if (invoice.RoundOffAmount != 0)
-                bytes.AddRange(Encoding.ASCII.GetBytes($"Round Off        : Rs. {invoice.RoundOffAmount,8:F2}\n"));
+            if (invoice.RoundOff != 0)
+                bytes.AddRange(Encoding.ASCII.GetBytes($"Round Off        : Rs. {invoice.RoundOff,8:F2}\n"));
 
             bytes.AddRange(Encoding.ASCII.GetBytes("--------------------------------\n"));
             bytes.AddRange(boldOn);
-            bytes.AddRange(Encoding.ASCII.GetBytes($"GRAND TOTAL      : Rs. {invoice.GrandTotal,8:F2}\n"));
+            bytes.AddRange(Encoding.ASCII.GetBytes($"GRAND TOTAL      : Rs. {invoice.BillAmount,8:F2}\n"));
             bytes.AddRange(boldOff);
             bytes.AddRange(Encoding.ASCII.GetBytes("--------------------------------\n"));
 
@@ -107,25 +111,25 @@ namespace Garmetix.Billing.Helpers
         // ====================================================================================
         public static string GenerateA5HtmlInvoice(Invoice invoice, IEnumerable<InvoiceItem> items)
         {
-            decimal totalDiscount = invoice.TotalDiscount + invoice.GlobalDiscountAmount;
+            decimal totalDiscount = invoice.DiscountAmount + invoice.BillDiscountAmount;
 
             string gstRows = "";
-            if (invoice.IsInterStateSale)
+            if (invoice.InterState)
             {
                 gstRows = $@"
-                    <tr><td colspan='5' class='text-right'><b>IGST</b></td><td class='text-right'>₹ {invoice.TotalTax:F2}</td></tr>";
+                    <tr><td colspan='5' class='text-right'><b>IGST</b></td><td class='text-right'>₹ {invoice.TaxAmount:F2}</td></tr>";
             }
             else
             {
-                decimal halfTax = invoice.TotalTax / 2m;
+                decimal halfTax = invoice.TaxAmount / 2m;
                 gstRows = $@"
                     <tr><td colspan='5' class='text-right'><b>CGST</b></td><td class='text-right'>₹ {halfTax:F2}</td></tr>
                     <tr><td colspan='5' class='text-right'><b>SGST</b></td><td class='text-right'>₹ {halfTax:F2}</td></tr>";
             }
 
             string discountRow = totalDiscount > 0 ? $"<tr><td colspan='5' class='text-right'><b>Total Discount</b></td><td class='text-right text-orange'>-₹ {totalDiscount:F2}</td></tr>" : "";
-            string roundOffRow = invoice.RoundOffAmount != 0 ? $"<tr><td colspan='5' class='text-right'><b>Round Off</b></td><td class='text-right'>₹ {invoice.RoundOffAmount:F2}</td></tr>" : "";
-            string customerGstinRow = !string.IsNullOrEmpty(invoice.Gstin) ? $"<br><b>GSTIN:</b> {invoice.Gstin}" : "";
+            string roundOffRow = invoice.RoundOff != 0 ? $"<tr><td colspan='5' class='text-right'><b>Round Off</b></td><td class='text-right'>₹ {invoice.RoundOff:F2}</td></tr>" : "";
+            string customerGstinRow = !string.IsNullOrEmpty(invoice.CustomerGSTIN) ? $"<br><b>GSTIN:</b> {invoice.CustomerGSTIN}" : "";
 
             StringBuilder itemRows = new StringBuilder();
             int sNo = 1;
@@ -134,11 +138,11 @@ namespace Garmetix.Billing.Helpers
                 itemRows.Append($@"
                     <tr>
                         <td class='text-center'>{sNo++}</td>
-                        <td>{item.ProductName}</td>
-                        <td class='text-center'>{item.Quantity}</td>
-                        <td class='text-right'>{item.Rate:F2}</td>
-                        <td class='text-center'>{item.GstPercentage}%</td>
-                        <td class='text-right'>{item.TotalAmount:F2}</td>
+                        <td>{item.Product?.Name}</td>
+                        <td class='text-center'>{item.BilledQuantity}</td>
+                        <td class='text-right'>{item.BasePrice:F2}</td>
+                        <td class='text-center'>{item.TaxPercentage}%</td>
+                        <td class='text-right'>{item.LineTotal:F2}</td>
                     </tr>");
             }
 
@@ -182,12 +186,12 @@ namespace Garmetix.Billing.Helpers
                             <td style='width: 50%;'>
                                 <b>Bill To:</b><br>
                                 {invoice.CustomerName}<br>
-                                Mobile: {invoice.MobileNo}
+                                Mobile: {invoice.CustomerMobileNumber}
                                 {customerGstinRow}
                             </td>
                             <td style='width: 50%; text-align: right;'>
-                                <b>Invoice No:</b> {invoice.InvoiceNo}<br>
-                                <b>Date:</b> {invoice.Date:dd-MMM-yyyy hh:mm tt}<br>
+                                <b>Invoice No:</b> {invoice.InvoiceNumber}<br>
+                                <b>Date:</b> {invoice.OnDate:dd-MMM-yyyy hh:mm tt}<br>
                                 <b>State Code:</b> {StoreInfo.StateCode}
                             </td>
                         </tr>
@@ -208,14 +212,14 @@ namespace Garmetix.Billing.Helpers
                             {itemRows}
                             <tr>
                                 <td colspan='5' class='text-right' style='border-top: 2px solid #005A9C;'><b>Sub Total</b></td>
-                                <td class='text-right' style='border-top: 2px solid #005A9C;'>₹ {invoice.SubTotal:F2}</td>
+                                <td class='text-right' style='border-top: 2px solid #005A9C;'>₹ {invoice.NetAmount:F2}</td>
                             </tr>
                             {discountRow}
                             {gstRows}
                             {roundOffRow}
                             <tr class='grand-total'>
                                 <td colspan='5' class='text-right'>GRAND TOTAL</td>
-                                <td class='text-right'>₹ {invoice.GrandTotal:F2}</td>
+                                <td class='text-right'>₹ {invoice.BillAmount:F2}</td>
                             </tr>
                         </tbody>
                     </table>

@@ -1,19 +1,23 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Inventory;
-using IntelliJ.Lang.Annotations;
+using Garmetix.Databases;
+using Garmetix.Databases.Services;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 
 namespace Garmetix.Billing.PageModels
 {
 
-    // A lightweight DTO specifically shaped for the UI DataGrid
-    
     internal partial class InvoicesPageModel : ObservableObject// public partial class InvoiceHistoryViewModel
-
     {
+
+        private DatabaseContext _localdb = DatabaseService.Instance.LocalDB;
+        public DatabaseContext GetContext() { return _localdb; }
+
         private List<Invoice> _allInvoices = new();
-        private List<PaymentDetail> _allPayments = new();
+        private List<InvoicePayment> _allPayments = new();
 
         [ObservableProperty] private bool isBusy;
         [ObservableProperty] private decimal totalSales;
@@ -23,14 +27,14 @@ namespace Garmetix.Billing.PageModels
         [ObservableProperty] private ObservableCollection<Invoice> filteredInvoices = new();
 
         // --- SELECTION & MODAL STATE ---
-        [ObservableProperty] private Invoice selectedInvoice;
+        [ObservableProperty] private Invoice? selectedInvoice;
 
         [ObservableProperty] private bool isDetailsModalVisible;
 
         // Data for the popup modal
         [ObservableProperty] private ObservableCollection<InvoiceItem> modalItems = new();
 
-        [ObservableProperty] private Invoice modalInvoiceDetails;
+        [ObservableProperty] private Invoice? modalInvoiceDetails;
 
         // --- FILTERS ---
         [ObservableProperty] private string searchText = string.Empty;
@@ -40,14 +44,14 @@ namespace Garmetix.Billing.PageModels
         public List<string> PaymentModes { get; } = new() { "All Modes", "Cash", "UPI", "Card", "Bank Transfer" };
         [ObservableProperty] private string selectedPaymentMode = "All Modes";
 
-        private partial void OnSearchTextChanged(string value) => ApplyFilters();
+        partial void OnSearchTextChanged(string value) => ApplyFilters();
 
-        private partial void OnSelectedDateRangeChanged(string value) => ApplyFilters();
+        partial void OnSelectedDateRangeChanged(string value) => ApplyFilters();
 
-        private partial void OnSelectedPaymentModeChanged(string value) => ApplyFilters();
+        partial void OnSelectedPaymentModeChanged(string value) => ApplyFilters();
 
         // Triggered the moment a user clicks a row in the DataGrid
-        private partial void OnSelectedInvoiceChanged(Invoice value)
+        partial void OnSelectedInvoiceChanged(Invoice? value)
         {
             if (value != null)
             {
@@ -61,11 +65,11 @@ namespace Garmetix.Billing.PageModels
             IsBusy = true;
             try
             {
-                var db = await DatabaseHelper.GetDatabaseAsync();
 
-                var rawInvoices = await db.Table<Invoice>().ToListAsync();
-                _allInvoices = rawInvoices.OrderByDescending(i => i.Date).ToList();
-                _allPayments = await db.Table<PaymentDetail>().ToListAsync();
+
+                var rawInvoices = await GetContext().Invoices.ToListAsync();
+                _allInvoices = rawInvoices.OrderByDescending(i => i.OnDate).ToList();
+                _allPayments = await GetContext().InvoicePayments.ToListAsync();
 
                 MainThread.BeginInvokeOnMainThread(() => ApplyFilters());
             }
@@ -82,8 +86,8 @@ namespace Garmetix.Billing.PageModels
         private async Task HandleInvoiceSelectionAsync(Invoice invoice)
         {
             // 1. Show the native Action Sheet
-            string action = await Application.Current.MainPage.DisplayActionSheet(
-                $"Invoice {invoice.InvoiceNo}", "Cancel", "Delete Invoice", "View Details", "Edit Invoice");
+            string action = await Application.Current!.Windows[0].Page!.DisplayActionSheetAsync(
+                $"Invoice {invoice.InvoiceNumber}", "Cancel", "Delete Invoice", "View Details", "Edit Invoice");
 
             if (action == "View Details")
             {
@@ -108,8 +112,8 @@ namespace Garmetix.Billing.PageModels
             IsBusy = true;
             try
             {
-                var db = await DatabaseHelper.GetDatabaseAsync();
-                var items = await db.Table<InvoiceItem>().Where(i => i.InvoiceId == invoice.Id).ToListAsync();
+
+                var items = await GetContext().InvoiceItems.Where(i => i.InvoiceId == invoice.Id).ToListAsync();
 
                 ModalInvoiceDetails = invoice;
                 ModalItems = new ObservableCollection<InvoiceItem>(items);
@@ -137,9 +141,9 @@ namespace Garmetix.Billing.PageModels
 
         private async Task DeleteInvoiceAsync(Invoice invoice)
         {
-            bool confirm = await Application.Current.MainPage.DisplayAlert(
+            bool confirm = await Application.Current!.Windows[0]!.Page!.DisplayAlertAsync(
                 "Delete Invoice",
-                $"Are you sure you want to permanently delete {invoice.InvoiceNo}? This will remove all associated items and payments.",
+                $"Are you sure you want to permanently delete {invoice.InvoiceNumber}? This will remove all associated items and payments.",
                 "Yes, Delete", "Cancel");
 
             if (!confirm) return;
@@ -147,20 +151,55 @@ namespace Garmetix.Billing.PageModels
             IsBusy = true;
             try
             {
-                var db = await DatabaseHelper.GetDatabaseAsync();
-
-                // Safely delete the invoice and its children in a transaction
-                await db.RunInTransactionAsync(tran =>
+                // Enabling Trnascation and Roll back concept 
+                using var transaction = await GetContext().Database.BeginTransactionAsync();
+                try
                 {
-                    tran.Table<InvoiceItem>().Delete(i => i.InvoiceId == invoice.Id);
-                    tran.Table<PaymentDetail>().Delete(p => p.InvoiceId == invoice.Id);
-                    tran.Delete(invoice);
-                });
+                    // 2. Perform bulk deletions directly on the database (EF Core 7+)
+                    // Note: Replace 'InvoiceItems', 'InvoicePayment', and 'Invoices' 
+                    // with the actual DbSet property names in your DbContext.
 
-                await Application.Current.MainPage.DisplayAlert("Deleted", "Invoice deleted successfully.", "OK");
+                    await GetContext().InvoiceItems
+                        .Where(i => i.InvoiceId == invoice.Id)
+                        .ExecuteDeleteAsync();
+
+                    await GetContext().InvoicePayments
+                        .Where(p => p.InvoiceId == invoice.Id)
+                        .ExecuteDeleteAsync();
+
+                    await GetContext().Invoices
+                        .Where(i => i.Id == invoice.Id)
+                        .ExecuteDeleteAsync();
+
+                    // 3. Commit the transaction to save changes permanently
+                    await transaction.CommitAsync();
+
+                    // If we reach here, the deletion was successful
+                    await Application.Current.Windows[0].Page!.DisplayAlertAsync("Deleted", "Invoice deleted successfully.", "OK");
+
+                    // Reload the table
+                    await LoadDataAsync();
+                }
+                catch (Exception)
+                {
+                    // 4. Roll back the transaction if any database operation fails
+                    await transaction.RollbackAsync();
+
+                    // Re-throw the exception so the outer catch block can handle the UI error display
+                    throw;
+                }
+                // Safely delete the invoice and its children in a transaction
+                //await db.RunInTransactionAsync(tran =>
+                //{
+                //    tran.Table<InvoiceItem>().Delete(i => i.InvoiceId == invoice.Id);
+                //    tran.Table<PaymentDetail>().Delete(p => p.InvoiceId == invoice.Id);
+                //    tran.Delete(invoice);
+                //});
+
+                // await Application.Current.MainPage.DisplayAlert("Deleted", "Invoice deleted successfully.", "OK");
 
                 // Reload the table
-                await LoadDataAsync();
+                //await LoadDataAsync();
             }
             catch (Exception ex)
             {
@@ -186,29 +225,44 @@ namespace Garmetix.Billing.PageModels
             if (!string.IsNullOrWhiteSpace(SearchText))
             {
                 string search = SearchText.ToLower();
-                query = query.Where(i => (i.InvoiceNo != null && i.InvoiceNo.ToLower().Contains(search)) ||
+                query = query.Where(i => (i.InvoiceNumber != null && i.InvoiceNumber.ToLower().Contains(search)) ||
                                          (i.CustomerName != null && i.CustomerName.ToLower().Contains(search)));
             }
 
             DateTime today = DateTime.Today;
             switch (SelectedDateRange)
             {
-                case "Today": query = query.Where(i => i.Date.Date == today); break;
-                case "Yesterday": query = query.Where(i => i.Date.Date == today.AddDays(-1)); break;
-                case "This Week": query = query.Where(i => i.Date.Date >= today.AddDays(-(int)today.DayOfWeek)); break;
-                case "This Month": query = query.Where(i => i.Date.Month == today.Month && i.Date.Year == today.Year); break;
+                case "Today": query = query.Where(i => i.OnDate.Date == today); break;
+                case "Yesterday": query = query.Where(i => i.OnDate.Date == today.AddDays(-1)); break;
+                case "This Week": query = query.Where(i => i.OnDate.Date >= today.AddDays(-(int)today.DayOfWeek)); break;
+                case "This Month": query = query.Where(i => i.OnDate.Month == today.Month && i.OnDate.Year == today.Year); break;
             }
+
+            //if (SelectedPaymentMode != "All Modes")
+            //{
+            //    var validIds = _allPayments.
+            //        Where(p => p.PaymentMode.Equals(SelectedPaymentMode, StringComparison.OrdinalIgnoreCase))
+            //        .Select(p => p.InvoiceId).ToHashSet();
+            //    query = query.Where(i => validIds.Contains(i.Id));
+            //}
 
             if (SelectedPaymentMode != "All Modes")
             {
-                var validIds = _allPayments.Where(p => p.Mode.Equals(SelectedPaymentMode, StringComparison.OrdinalIgnoreCase)).Select(p => p.InvoiceId).ToHashSet();
-                query = query.Where(i => validIds.Contains(i.Id));
+                if (Enum.TryParse<PaymentMode>(SelectedPaymentMode, true, out var parsedEnumMode))
+                {
+                    var validIds = _allPayments
+                         .Where(p => p.PaymentMode == parsedEnumMode)
+                         .Select(p => p.InvoiceId)
+                         .ToHashSet();
+
+                    query = query.Where(i => validIds.Contains(i.Id));
+                }
             }
 
             var finalResults = query.ToList();
             FilteredInvoices = new ObservableCollection<Invoice>(finalResults);
 
-            TotalSales = finalResults.Sum(i => i.GrandTotal);
+            TotalSales = finalResults.Sum(i => i.BillAmount);
             TotalReceived = finalResults.Sum(i => i.PaidAmount);
             TotalPending = finalResults.Sum(i => i.BalanceAmount);
         }
@@ -217,8 +271,8 @@ namespace Garmetix.Billing.PageModels
         {
             MainThread.BeginInvokeOnMainThread(async () =>
             {
-                if (Application.Current?.MainPage != null)
-                    await Application.Current.MainPage.DisplayAlert(title, message, "OK");
+                if (Application.Current?.Windows[0] != null)
+                    await Application.Current.Windows[0].Page!.DisplayAlertAsync(title, message, "OK");
             });
         }
     }
