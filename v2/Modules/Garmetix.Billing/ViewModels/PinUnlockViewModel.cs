@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Maui.Controls;
-using Garmetix.AI.Billing.Services;
+using Garmetix.Billing.Helpers;
 
 namespace Garmetix.AI.Billing.ViewModels
 {

@@ -20,7 +20,43 @@ public class LoginBehavior : Behavior<Login>
     /// Holds the save button instance.
     /// </summary>
     private SfButton? saveButton;
+    private void MaximizeOrFullScreen()
+    {
+        //var win = Application.Current.Windows[0];
+#if WINDOWS
+        // --- Windows: Maximize the Window ---
+        var window = Application.Current?.Windows[0];
+        if (window?.Handler?.PlatformView is Microsoft.UI.Xaml.Window nativeWindow)
+        {
+            var windowHandle = WinRT.Interop.WindowNative.GetWindowHandle(nativeWindow);
+            var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(windowHandle);
+            var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
 
+            if (appWindow.Presenter is Microsoft.UI.Windowing.OverlappedPresenter presenter)
+            {
+                presenter.Maximize();
+            }
+        }
+#elif ANDROID
+        // --- Android: Go into Immersive Full Screen ---
+        var activity = Platform.CurrentActivity;
+        if (activity?.Window != null)
+        {
+            // Tells Android we are handling the system windows ourselves
+            AndroidX.Core.View.WindowCompat.SetDecorFitsSystemWindows(activity.Window, false);
+
+            var windowInsetsController = AndroidX.Core.View.WindowCompat.GetInsetsController(activity.Window, activity.Window.DecorView);
+            if (windowInsetsController != null)
+            {
+                // Hide both the status bar (top) and navigation bar (bottom)
+                windowInsetsController.Hide(AndroidX.Core.View.WindowInsetsCompat.Type.SystemBars());
+
+                // Allow users to swipe from the edges to temporarily reveal the bars
+                windowInsetsController.SystemBarsBehavior = AndroidX.Core.View.WindowInsetsControllerCompat.BehaviorShowTransientBarsBySwipe;
+            }
+        }
+#endif
+    }
     protected override void OnAttachedTo(BindableObject bindable)
     {
         base.OnAttachedTo(bindable);
@@ -82,6 +118,8 @@ public class LoginBehavior : Behavior<Login>
                     DatabaseService.Instance.CurrentUser = user;
                     _ = authService.PostLogin(user, info.RememberMe);
                 });
+
+                MaximizeOrFullScreen();
                 // Fix for CS0618 and CS8602
                 var currentWindow = Application.Current?.Windows.FirstOrDefault();
                 if (currentWindow != null)

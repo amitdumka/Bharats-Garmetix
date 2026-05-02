@@ -20,7 +20,9 @@ namespace Garmetix.Authentication
     {
         private DatabaseService _dataService;
         private static AuthenticationService? _instance;
-        public static AuthenticationService Instances { get; private set; } = new AuthenticationService();
+        
+        [Obsolete]
+        public static AuthenticationService Instances => _instance ??= new AuthenticationService();
         public static AuthenticationService Instance => _instance ??= new AuthenticationService();
 
         public AppUser? CurrentUser => _dataService.CurrentUser;
@@ -41,6 +43,8 @@ namespace Garmetix.Authentication
         public bool DoLogout()
         {
             _dataService.CurrentUser = null;
+            SecureStorage.Default.Remove("ActiveUserId");
+            SecureStorage.Default.Remove("HasPin");
 
             // Simulate logout
             return true;
@@ -91,6 +95,7 @@ namespace Garmetix.Authentication
 
         public AppUser DoLogin(LoginInfo loginInfo)
         {
+            // string hashedPwd = HashString(loginInfo.Password);
             var user = _dataService.ApplicationDB.AppUsers.Where(x => x.Email == loginInfo.Email && x.Password == loginInfo.Password).FirstOrDefault();
             if (user != null)
             {
@@ -119,6 +124,7 @@ namespace Garmetix.Authentication
         {
             try
             {
+               // string hashedPwd = HashString(loginInfo.Password);
                 var user = _dataService.ApplicationDB.AppUsers.Where(x => x.Email == loginInfo.Email && x.Password == loginInfo.Password).FirstOrDefault();
 
                 return user;
@@ -209,7 +215,7 @@ namespace Garmetix.Authentication
                 var newUser = new AppUser
                 {
                     Email = registerInfo.Email,
-                    Password = registerInfo.Password,
+                    Password = HashString(registerInfo.Password),
                     Name = registerInfo.Name,
                     StoreId = storeid,
                     Admin = false,
