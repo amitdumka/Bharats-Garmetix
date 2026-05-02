@@ -24,6 +24,7 @@
   <Folder Name="/V2/Modules/">
     <Project Path="v2/Modules/Garmetix.Accounting/Garmetix.Accounting.csproj" Id="bc7eb63d-f16a-47e3-8441-ac95aa06a4b8" />
     <Project Path="v2/Modules/Garmetix.Authentication/Garmetix.Authentication.csproj" Id="c85bced0-5155-49e0-a3fd-493ec0e50cc7" />
+    <Project Path="v2/Modules/Garmetix.Billing/Garmetix.Billing.csproj" Id="b2a34a39-4eeb-4135-84d8-ee4e796cd0b1" />
     <Project Path="v2/Modules/Garmetix.Commons/Garmetix.Commons.csproj" Id="8ec1a691-79c0-42bb-9895-a34e891dff85" />
     <Project Path="v2/Modules/Garmetix.HRM/Garmetix.HRM.csproj" Id="40ffbf4c-444b-4890-967e-c9dfc7f0c5a7" />
     <Project Path="v2/Modules/Garmetix.Onboarding/Garmetix.Onboarding.csproj" />

@@ -12,6 +12,7 @@ using Garmetix.Onboarding.Pages;
 using Garmetix.Settings;
 using Garmetix.Stores;
 using System.Globalization;
+using Garmetix.Billing;
 
 
 namespace Garmetix.SRP
@@ -20,8 +21,8 @@ namespace Garmetix.SRP
     public static class GarmetixSRP
     {
         /// <summary>
-      /// Key of Synfusion
-      /// </summary>
+        /// Key of Synfusion
+        /// </summary>
         public const string SyncKey = "Ngo9BigBOggjHTQxAR8/V1JHaF1cXmhIfEx1RHxQdld5ZFRHallYTnNWUj0eQnxTdENjXX1YcXBURmVbV0x+XEleYA==";
         public static async Task InitApp()
         {
@@ -39,6 +40,7 @@ namespace Garmetix.SRP
                 .UseAccounting() // Adds the Accounting module to the application.
                 .UseBanking() // Adds the Banking module to the application.
                 .UseHRM() // Adds the HRM module to the application.
+                .UseGarmetixBilling() // Adds the Billing module to the application.
                 .UseGarmetixSettings();// Adds the Settings service to the dependency injection container.
 
 
@@ -52,7 +54,7 @@ namespace Garmetix.SRP
                 .UseCoreModule()      // Enable the Core module
                 .UsePdfServices()  // Enable the PDF Services module
                 .UseDataServices();   // Enable the Data Services module
-          
+
             return builder;
         }
         public static void RegisterGarmetixSRPRoutes()
@@ -62,6 +64,10 @@ namespace Garmetix.SRP
             AccountingModule.EnableAccountingRoutes(); // Registers the routes for the Accounting module.
             ClientModule.RegisterStoreRoutes(); // Registers the routes for the Stores module.
             GarmetixSettingsModule.RegisterSettingRoute(); // Registers the routes for the Settings module.
+            GarmetixBillingModule.RegisterBillingRoutes();
+            GarmetixCoreBaseModule.EnableCoreModulesRoutes();
+
+
         }
 
         public static async Task<Window> CreateMainWindow(IActivationState? activationState, Shell appShell)

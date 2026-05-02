@@ -3,6 +3,7 @@ using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using Garmetix.Authentication.Pages;
 using Garmetix.Base.Shells;
+using Garmetix.Core.Interfaces;
 using Garmetix.Core.Sessions;
 using Garmetix.CoreBase.Dashboard.Pages;
 using Garmetix.SRP;
@@ -15,13 +16,28 @@ namespace Garmetix
 
         public GarmetixShell()
         {
-            var currentTheme = Application.Current!.RequestedTheme;
-            //ThemeSegmentedControl.SelectedIndex = currentTheme == AppTheme.Light ? 0 : 1;
             StoreName = $"{StorageOps.GetPref("CompanyName", "Garmetix V2")}, {StorageOps.GetPref("StoreCode", "AF")}";
             // ExitCommand = new Command(CloseApp);
             BindingContext = this;
+            //Registering the routes for the application
+            GarmetixShell.RegisterRoutes();
         }
 
+        //private ISessionService SessionService => DependencyService.Get<ISessionService>()!;
+
+        /// <summary>
+        /// Registers the routes for the application. This method is called in the constructor of the shell to ensure that all routes are registered before the user navigates to any page.
+        /// </summary>
+        /// <returns></returns>
+        private static Task RegisterRoutes()
+        {
+            Garmetix.SRP.GarmetixSRP.RegisterGarmetixSRPRoutes();
+            //TODO: Check and verify all routes is defined 
+            
+            Routing.RegisterRoute("Dashboard", typeof(DashboardPage));
+            Routing.RegisterRoute("Login", typeof(Login));
+            return Task.CompletedTask;
+        }
         protected override void BuildAppSpecificMenu()
         {
             // 1. Dashboard Page
@@ -47,7 +63,7 @@ namespace Garmetix
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        protected override void UpdateTheme(object sender, System.EventArgs e)
+        protected override void UpdateTheme(object? sender, System.EventArgs e)
         {
             ICollection<ResourceDictionary> mergedDictionaries = Application.Current!.Resources.MergedDictionaries;
             if (mergedDictionaries != null)
@@ -68,10 +84,11 @@ namespace Garmetix
                 }
             }
         }
-        void CloseApp()
-        {
-            LogoutAndClose(false);
-        }
+        //void CloseApp()
+        //{
+        //    HandleQuit();
+        //    //LogoutAndClose(false);
+        //}
         private void Logout(object sender, EventArgs e)
         {
             LogoutAndClose(false);

@@ -20,10 +20,11 @@ public partial class ShellFooter : ContentView
         get => (string)GetValue(StoreNameProperty);
         set => SetValue(StoreNameProperty, value);
     }
-    public ShellFooter()
+    public ShellFooter(string storeName)
     
     {
         InitializeComponent();
+        StoreName = storeName;
         BindingContext = this;
     }
     
