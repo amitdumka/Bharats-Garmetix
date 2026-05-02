@@ -1,7 +1,4 @@
 <Solution>
-  <Folder Name="/Modules/">
-    <Project Path="Garmetix.Billing/Garmetix.Billing.csproj" Id="66e5697d-048c-4263-8e1e-30cd634b55a6" />
-  </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
   </Folder>
@@ -31,7 +28,6 @@
     <Project Path="v2/Modules/Garmetix.Stores/Garmetix.Stores.csproj" Id="8fe21b26-d1f0-44c4-bb12-565817d662b2" />
   </Folder>
   <Folder Name="/V2/Service/">
-    <Project Path="Common/Services/Bharat.GoogleService/Bharat.GoogleService.csproj" Id="c2dc83c1-688a-4e15-8929-d58b7eeab11a" />
     <Project Path="v2/ML/Services/Garmetix.CoreServices/Garmetix.Services.csproj" Id="ab9e37a5-eee2-4379-980c-2991247456b6" />
     <Project Path="v2/ML/Services/Garmetix.Reports/Garmetix.Reports.csproj" Id="b334a158-ef21-4a17-85b1-2ab078e4365c" />
   </Folder>

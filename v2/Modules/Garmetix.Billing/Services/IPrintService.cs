@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Garmetix.Billing.Services
+{
+    public interface IPrintService
+    {
+        // Your existing thermal print method
+        Task PrintReceiptAsync(byte[] receiptBytes);
+
+        // NEW: Direct HTML Print method
+        Task PrintHtmlAsync(string htmlContent, string documentName = "Invoice");
+    }
+}
