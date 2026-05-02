@@ -1,15 +1,9 @@
 <Solution>
-  <Folder Name="/Solution Items/">
-    <File Path=".editorconfig" />
-  </Folder>
-  <Folder Name="/V2/">
-    <Project Path="v2/Garmetix.SRP/Garmetix.SRP.csproj" Id="700e02d3-2898-43af-b8c0-15a872add007" />
-  </Folder>
-  <Folder Name="/V2/Data/">
+  <Folder Name="/Data/">
     <Project Path="v2/Data/Garmetix.Data/Garmetix.Data.csproj" Id="0f4f4577-b209-473a-ab1d-0766a9a71c1d" />
     <Project Path="v2/Data/Garmetix.DataServices/Garmetix.DataServices.csproj" Id="d30b58d2-2e81-4c4e-ab9b-86a4ea65d0ef" />
   </Folder>
-  <Folder Name="/V2/Library/">
+  <Folder Name="/Library/">
     <Project Path="v2/Library/Bharat.Themes/Bharat.Themes.csproj" Id="67c8b07f-22a6-4574-adee-912fa19d33d9" />
     <Project Path="v2/Library/Bharat.ToolKits.Notifications/Bharat.ToolKits.Notifications.csproj" />
     <Project Path="v2/Library/Bharat.Toolkits/Bharat.ToolKits.csproj" />
@@ -18,7 +12,7 @@
     <Project Path="v2/Library/Garmetix.Dependencies/Garmetix.Dependencies.csproj" Id="c82ece0f-2ac9-422d-a21e-fdc4821da134" />
     <Project Path="v2/Library/Garmetix.Settings/Garmetix.Settings.csproj" />
   </Folder>
-  <Folder Name="/V2/Modules/">
+  <Folder Name="/Modules/">
     <Project Path="v2/Modules/Garmetix.Accounting/Garmetix.Accounting.csproj" Id="bc7eb63d-f16a-47e3-8441-ac95aa06a4b8" />
     <Project Path="v2/Modules/Garmetix.Authentication/Garmetix.Authentication.csproj" Id="c85bced0-5155-49e0-a3fd-493ec0e50cc7" />
     <Project Path="v2/Modules/Garmetix.Billing/Garmetix.Billing.csproj" Id="b2a34a39-4eeb-4135-84d8-ee4e796cd0b1" />
@@ -27,13 +21,19 @@
     <Project Path="v2/Modules/Garmetix.Onboarding/Garmetix.Onboarding.csproj" />
     <Project Path="v2/Modules/Garmetix.Stores/Garmetix.Stores.csproj" Id="8fe21b26-d1f0-44c4-bb12-565817d662b2" />
   </Folder>
-  <Folder Name="/V2/Service/">
+  <Folder Name="/Service/">
     <Project Path="v2/ML/Services/Garmetix.CoreServices/Garmetix.Services.csproj" Id="ab9e37a5-eee2-4379-980c-2991247456b6" />
     <Project Path="v2/ML/Services/Garmetix.Reports/Garmetix.Reports.csproj" Id="b334a158-ef21-4a17-85b1-2ab078e4365c" />
   </Folder>
-  <Project Path="Dukan/Dukan.csproj" Id="d5cb4b6a-6592-49f0-a275-cb368759be07" />
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+  </Folder>
+  <Folder Name="/UIs/">
+    <Project Path="Dukan/Dukan.csproj" Id="d5cb4b6a-6592-49f0-a275-cb368759be07" />
+    <Project Path="Paggar/Paggar.csproj" Id="b19eed27-883b-45b9-8feb-cc5d2d62846a" />
+    <Project Path="v2/Garmetix.SRP/Garmetix.SRP.csproj" Id="700e02d3-2898-43af-b8c0-15a872add007" />
+  </Folder>
   <Project Path="Garmetix/Garmetix.csproj">
     <Deploy Solution="Debug|*" />
   </Project>
-  <Project Path="Paggar/Paggar.csproj" Id="b19eed27-883b-45b9-8feb-cc5d2d62846a" />
 </Solution>
