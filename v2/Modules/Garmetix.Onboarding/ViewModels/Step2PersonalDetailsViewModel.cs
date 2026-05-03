@@ -49,7 +49,7 @@ namespace Garmetix.Onboarding.ViewModels
         //    catch (ValidationException ex)
         //    {
         //        // Handle validation exceptions, e.g., display an error message
-        //        Application.Current.MainPage.DisplayAlert("Validation Error", ex.Message, "OK");
+        //        Application.Current!.Windows[0].Page!.DisplayAlertAsync("Validation Error", ex.Message, "OK");
         //        return false;
         //    }
         //    // Validate the SfDataForm
@@ -58,7 +58,7 @@ namespace Garmetix.Onboarding.ViewModels
 
         //    if (HasErrors || !result)
         //    {
-        //        Application.Current.MainPage.DisplayAlert("Validation Error", "Please correct the highlighted fields.", "OK");
+        //        Application.Current!.Windows[0].Page!.DisplayAlertAsync("Validation Error", "Please correct the highlighted fields.", "OK");
         //        return false;
         //    }
         //    return true;

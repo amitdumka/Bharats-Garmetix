@@ -97,13 +97,13 @@ namespace Garmetix.AI.Billing.ViewModels
         {
             if (SelectedAccount == null || CurrentTxn.Amount <= 0)
             {
-                await Application.Current.MainPage.DisplayAlert("Validation", "Please select an account and enter a valid amount.", "OK");
+                await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Validation", "Please select an account and enter a valid amount.", "OK");
                 return;
             }
 
             if (IsChequeMode && string.IsNullOrWhiteSpace(CurrentCheque.ChequeNumber))
             {
-                await Application.Current.MainPage.DisplayAlert("Validation", "Cheque Number is mandatory for Cheque transactions.", "OK");
+                await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Validation", "Cheque Number is mandatory for Cheque transactions.", "OK");
                 return;
             }
 
@@ -152,10 +152,10 @@ namespace Garmetix.AI.Billing.ViewModels
                     }
                 });
 
-                await Application.Current.MainPage.DisplayAlert("Success", "Bank transaction recorded securely.", "OK");
+                await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Bank transaction recorded securely.", "OK");
                 await Shell.Current.GoToAsync("..");
             }
-            catch (Exception ex) { await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK"); }
+            catch (Exception ex) { await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Error", ex.Message, "OK"); }
             finally { IsBusy = false; }
         }
 

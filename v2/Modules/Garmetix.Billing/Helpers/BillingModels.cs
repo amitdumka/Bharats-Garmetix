@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 namespace OldSystem.Models.NeedToRemoved
 {
      
-    public enum GarmentCategory { Fabric, ReadyMade, Accessories }
+    //public enum GarmentCategory { Fabric, ReadyMade, Accessories }
     public class Stock
     {
         [PrimaryKey]
@@ -120,80 +120,7 @@ namespace OldSystem.Models.NeedToRemoved
         public string DisplayText => $"{Barcode} - {Name}";
     }
 
-    public partial class Invoice : ObservableObject
-    {
-        [PrimaryKey]
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public string InvoiceNo { get; set; }
-        public DateTime Date { get; set; } = DateTime.Now;
-
-        public string CustomerName { get; set; }
-        public string MobileNo { get; set; }
-        public string Address { get; set; }
-        public string Gstin { get; set; }
-        public bool IsInterStateSale { get; set; }
-
-        [ObservableProperty][NotifyPropertyChangedFor(nameof(BalanceAmount))] private decimal subTotal;
-        [ObservableProperty][NotifyPropertyChangedFor(nameof(BalanceAmount))] private decimal totalDiscount;
-        [ObservableProperty][NotifyPropertyChangedFor(nameof(BalanceAmount))] private decimal totalTax;
-        [ObservableProperty][NotifyPropertyChangedFor(nameof(BalanceAmount))] private decimal globalDiscountAmount;
-        [ObservableProperty][NotifyPropertyChangedFor(nameof(BalanceAmount))] private decimal grandTotal;
-        [ObservableProperty][NotifyPropertyChangedFor(nameof(BalanceAmount))] private decimal paidAmount;
-        [ObservableProperty] private decimal roundOffAmount;
-
-        [Ignore] public decimal BalanceAmount => GrandTotal - PaidAmount;
-    }
-    public partial class InvoiceItem : ObservableObject
-    {
-        [PrimaryKey]
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public Guid InvoiceId { get; set; }
-        public GarmentCategory Category { get; set; }
-
-        [ObservableProperty] private string productName;
-        [ObservableProperty] private string size;
-        [ObservableProperty] private decimal rate;
-
-        // CHANGED: Quantity is now a decimal, defaulting to 1m
-        [ObservableProperty] private decimal quantity = 1m;
-
-        [ObservableProperty] private decimal discountPercentage;
-
-        [Ignore]
-        public decimal DiscountAmount => (Rate * Quantity) * (DiscountPercentage / 100m);
-
-        [Ignore]
-        public decimal GstPercentage
-        {
-            get
-            {
-                if (Category == GarmentCategory.Fabric) return 5m;
-                // Decimal division is now perfectly safe here
-                decimal unitDiscount = Quantity > 0 ? DiscountAmount / Quantity : 0;
-                decimal unitTaxableValue = Rate - unitDiscount;
-                return unitTaxableValue > 2499 ? 18m : 5m;
-            }
-        }
-
-        [Ignore] public decimal TaxableValue => (Rate * Quantity) - DiscountAmount;
-        [Ignore] public decimal TaxAmount => TaxableValue * (GstPercentage / 100m);
-        [Ignore] public decimal TotalAmount => TaxableValue + TaxAmount;
-
-        partial void OnRateChanged(decimal value) => Refresh();
-
-        // CHANGED: This must now accept a decimal instead of an int
-        partial void OnQuantityChanged(decimal value) => Refresh();
-
-        partial void OnDiscountPercentageChanged(decimal value) => Refresh();
-
-        private void Refresh()
-        {
-            OnPropertyChanged(nameof(DiscountAmount));
-            OnPropertyChanged(nameof(GstPercentage));
-            OnPropertyChanged(nameof(TaxableValue));
-            OnPropertyChanged(nameof(TaxAmount));
-            OnPropertyChanged(nameof(TotalAmount));
-        }
-    }
+    
+    
     
 }

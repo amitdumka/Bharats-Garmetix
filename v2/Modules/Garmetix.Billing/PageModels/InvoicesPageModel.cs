@@ -196,7 +196,7 @@ namespace Garmetix.Billing.PageModels
                 //    tran.Delete(invoice);
                 //});
 
-                // await Application.Current.MainPage.DisplayAlert("Deleted", "Invoice deleted successfully.", "OK");
+                // await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Deleted", "Invoice deleted successfully.", "OK");
 
                 // Reload the table
                 //await LoadDataAsync();

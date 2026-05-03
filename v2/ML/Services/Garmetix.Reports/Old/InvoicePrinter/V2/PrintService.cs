@@ -35,7 +35,7 @@
 //            {
 //                // Handle error: Could not get file from path
 //                Console.WriteLine("Error: Could not get file from path for printing on Windows.");
-//                await Application.Current.MainPage.DisplayAlert("Error", "Failed to prepare PDF for printing.", "OK");
+//                await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Error", "Failed to prepare PDF for printing.", "OK");
 //            }
 
 //#elif ANDROID
@@ -82,7 +82,7 @@
 //                    });
 //                } else {
 //                    Console.WriteLine("Error: Could not find a view to present print controller on iPad.");
-//                    await Application.Current.MainPage.DisplayAlert("Error", "Failed to present print dialog.", "OK");
+//                    await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Error", "Failed to present print dialog.", "OK");
 //                }
 //            }
 //            else
@@ -96,7 +96,7 @@
 //                });
 //            }
 //#else
-//            await Application.Current.MainPage.DisplayAlert("Not Supported", "Printing is not supported on this platform.", "OK");
+//            await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Not Supported", "Printing is not supported on this platform.", "OK");
 //#endif
 //        }
 //    }

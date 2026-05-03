@@ -77,7 +77,7 @@ namespace Garmetix.Base.PageModels
         //    {
         //        // In a real app, you would navigate to an edit page.
         //        // For this example, we'll just show an alert.
-        //        await Application.Current.MainPage.DisplayAlert("Edit", $"Editing Order: {order.OrderID}", "OK");
+        //        await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Edit", $"Editing Order: {order.OrderID}", "OK");
 
         //        // Example: Navigation.PushAsync(new EditPage(order));
         //    }
@@ -90,7 +90,7 @@ namespace Garmetix.Base.PageModels
         //{
         //    if (itemToDelete is OrderInfo order)
         //    {
-        //        bool confirmed = await Application.Current.MainPage.DisplayAlert(
+        //        bool confirmed = await Application.Current!.Windows[0].Page!.DisplayAlertAsync(
         //            "Confirm Delete",
         //            $"Are you sure you want to delete Order: {order.OrderID}?",
         //            "Yes", "No");
@@ -98,7 +98,7 @@ namespace Garmetix.Base.PageModels
         //        if (confirmed)
         //        {
         //            Entities.Remove(order);
-        //            await Application.Current.MainPage.DisplayAlert("Success", "Item Deleted", "OK");
+        //            await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Item Deleted", "OK");
         //        }
         //    }
         //}

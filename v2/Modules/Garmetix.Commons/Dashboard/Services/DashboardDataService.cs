@@ -5,10 +5,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Garmetix.Commons.Dashboard.Services
 {
+    
+
     /// <summary>
     /// Dashboard Data Service is Create handled
     /// </summary>
-    public class DashboardDataService
+    public class DashboardDataService  
     {
         // Singleton Instance Pattern
         private static DashboardDataService? _instance;
@@ -19,10 +21,11 @@ namespace Garmetix.Commons.Dashboard.Services
         // The Cache
         private DashboardDataModel? _cachedData;
 
-        private bool _isCacheValid = false;
+        private bool _isCacheValid = DatabaseService.Instance.IsCacheValid;
+       // private bool _isCacheValid = false;
         private DateTime _lastFetchTime;
 
-         
+
 
         public DatabaseContext GetContext()
         {
@@ -33,6 +36,7 @@ namespace Garmetix.Commons.Dashboard.Services
         public void InvalidateCache()
         {
             _isCacheValid = false;
+            DatabaseService.Instance.InvalidateCache();
         }
 
         public async Task<DashboardDataModel> GetDashboardDataAsync(bool forceRefresh = false)

@@ -45,7 +45,7 @@ namespace Garmetix.Onboarding.ViewModels
         //    var result = _dataForm.Validate();
         //    if (HasErrors || !result)
         //    {
-        //        _ = Application.Current.MainPage.DisplayAlert("Validation Error", "Please correct the highlighted fields.", "OK");
+        //        _ = Application.Current!.Windows[0].Page!.DisplayAlertAsync("Validation Error", "Please correct the highlighted fields.", "OK");
         //        return false;
         //    }
         //    return true;

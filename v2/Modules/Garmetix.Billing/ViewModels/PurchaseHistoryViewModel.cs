@@ -61,7 +61,7 @@ namespace Garmetix.AI.Billing.ViewModels
 
         private async Task DeletePurchaseAsync(PurchaseInvoice purchase)
         {
-            bool confirm = await Application.Current.MainPage.DisplayAlert(
+            bool confirm = await Application.Current!.Windows[0].Page!.DisplayAlertAsync(
                 "Delete Inward",
                 $"Delete {purchase.InwardNo}? This will permanently REMOVE these items from your current inventory stock.",
                 "Yes, Delete", "Cancel");
@@ -110,7 +110,7 @@ namespace Garmetix.AI.Billing.ViewModels
 
         private async Task ShowErrorAsync(string title, string msg)
         {
-            MainThread.BeginInvokeOnMainThread(async () => await Application.Current.MainPage.DisplayAlert(title, msg, "OK"));
+            MainThread.BeginInvokeOnMainThread(async () => await Application.Current!.Windows[0].Page!.DisplayAlertAsync(title, msg, "OK"));
         }
     }
 }

@@ -269,7 +269,7 @@ namespace Garmetix.AI.Billing.ViewModels
                 });
                 // Notify the dashboard that the database has changed!
                 Garmetix.AI.Billing.Services.DashboardDataService.Instance.InvalidateCache();
-                await Application.Current.MainPage.DisplayAlert("Success", "Purchase saved and Inventory updated.", "OK");
+                await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Purchase saved and Inventory updated.", "OK");
                 //await Shell.Current.GoToAsync("..");
             }
             catch (Exception ex) { await ShowErrorAsync("Save Error", ex.Message); }
@@ -281,7 +281,7 @@ namespace Garmetix.AI.Billing.ViewModels
 
         private async Task ShowErrorAsync(string title, string msg)
         {
-            MainThread.BeginInvokeOnMainThread(async () => await Application.Current.MainPage.DisplayAlert(title, msg, "OK"));
+            MainThread.BeginInvokeOnMainThread(async () => await Application.Current!.Windows[0].Page!.DisplayAlertAsync(title, msg, "OK"));
         }
     }
 }

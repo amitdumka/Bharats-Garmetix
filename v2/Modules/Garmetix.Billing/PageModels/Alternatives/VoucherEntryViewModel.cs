@@ -122,13 +122,13 @@ namespace Garmetix.AI.Billing.ViewModels
         {
             if (string.IsNullOrWhiteSpace(CurrentVoucher.PartyName) || CurrentVoucher.Amount <= 0)
             {
-                await Application.Current.MainPage.DisplayAlert("Validation", "Please enter a valid Party Name and Amount.", "OK");
+                await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Validation", "Please enter a valid Party Name and Amount.", "OK");
                 return;
             }
 
             if (IsBankMode && CurrentVoucher.AccountNumber == null)
             {
-                await Application.Current.MainPage.DisplayAlert("Validation", "Please select a Bank Account for non-cash transactions.", "OK");
+                await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Validation", "Please select a Bank Account for non-cash transactions.", "OK");
                 return;
             }
 
@@ -152,7 +152,7 @@ namespace Garmetix.AI.Billing.ViewModels
                 // --- PRINTING LOGIC ---
                 await GenerateAndPrintPdfAsync(CurrentVoucher);
             }
-            catch (Exception ex) { await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK"); }
+            catch (Exception ex) { await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Error", ex.Message, "OK"); }
             finally { IsBusy = false; }
         }
 

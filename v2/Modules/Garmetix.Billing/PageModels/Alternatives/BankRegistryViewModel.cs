@@ -29,7 +29,7 @@ namespace Garmetix.AI.Billing.ViewModels
 
                 BankAccounts = new ObservableCollection<BankAccount>(accounts);
             }
-            catch (Exception ex) { await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK"); }
+            catch (Exception ex) { await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Error", ex.Message, "OK"); }
             finally { IsBusy = false; }
         }
 
@@ -48,7 +48,7 @@ namespace Garmetix.AI.Billing.ViewModels
         {
             if (account == null) return;
 
-            bool confirm = await Application.Current.MainPage.DisplayAlert("Warning", $"Delete {account.AccountNumber}?", "Yes", "No");
+            bool confirm = await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Warning", $"Delete {account.AccountNumber}?", "Yes", "No");
             if (confirm)
             {
                 var db = await DatabaseHelper.GetDatabaseAsync();

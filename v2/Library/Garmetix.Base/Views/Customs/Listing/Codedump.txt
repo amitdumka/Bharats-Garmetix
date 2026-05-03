@@ -242,7 +242,7 @@ Ai Code
         {
             // In a real app, you would navigate to an edit page.
             // For this example, we'll just show an alert.
-            await Application.Current.MainPage.DisplayAlert("Edit", $"Editing Order: {order.OrderID}", "OK");
+            await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Edit", $"Editing Order: {order.OrderID}", "OK");
             
             // Example: Navigation.PushAsync(new EditPage(order));
         }
@@ -255,7 +255,7 @@ Ai Code
     {
         if (itemToDelete is OrderInfo order)
         {
-            bool confirmed = await Application.Current.MainPage.DisplayAlert(
+            bool confirmed = await Application.Current!.Windows[0].Page!.DisplayAlertAsync(
                 "Confirm Delete", 
                 $"Are you sure you want to delete Order: {order.OrderID}?", 
                 "Yes", "No");
@@ -263,7 +263,7 @@ Ai Code
             if (confirmed)
             {
                 Entities.Remove(order);
-                await Application.Current.MainPage.DisplayAlert("Success", "Item Deleted", "OK");
+                await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Item Deleted", "OK");
             }
         }
     }
@@ -390,7 +390,7 @@ public class EditPageViewModel : INotifyPropertyChanged
     private async Task OnSave()
     {
         // Add logic to save the changes to your data source
-        await Application.Current.MainPage.DisplayAlert("Success", "Changes Saved (simulation)", "OK");
+        await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Changes Saved (simulation)", "OK");
         await Shell.Current.GoToAsync(".."); // Navigate back
     }
 
@@ -499,7 +499,7 @@ public class DeletePageViewModel : INotifyPropertyChanged
         // Add logic here to find the item by its ID and remove it
         // from your main data source (e.g., the Entities collection
         // in the GenericDataGridViewModel).
-        await Application.Current.MainPage.DisplayAlert("Success", $"Item {ItemId} deleted (simulation)", "OK");
+        await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", $"Item {ItemId} deleted (simulation)", "OK");
         await Shell.Current.GoToAsync(".."); // Navigate back
     }
 

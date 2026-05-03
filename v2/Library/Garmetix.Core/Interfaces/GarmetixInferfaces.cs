@@ -14,6 +14,9 @@ using System.Linq.Expressions;
 
 namespace Garmetix.Core.Interfaces
 {
+
+    
+
     /// <summary>
     /// Defines an entity with a unique identifier.
     /// <version>2.0.0</version>

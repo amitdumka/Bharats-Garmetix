@@ -111,7 +111,7 @@
 //                {
 //                    if (Application.Current?.MainPage != null)
 //                    {
-//                        await Application.Current.MainPage.DisplayAlert("Database Error", $"Details: {ex.Message}", "OK");
+//                        await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Database Error", $"Details: {ex.Message}", "OK");
 //                    }
 //                });
 //            }
@@ -203,7 +203,7 @@
 //                {
 //                    if (Application.Current?.MainPage != null)
 //                    {
-//                        await Application.Current.MainPage.DisplayAlert("Database Error", $"Could not load history: {ex.Message}", "OK");
+//                        await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Database Error", $"Could not load history: {ex.Message}", "OK");
 //                    }
 //                });
 //            }

@@ -54,7 +54,7 @@ namespace Garmetix.Onboarding.ViewModels
             else
             {
                 // Handle submission failure
-                await Application.Current.MainPage.DisplayAlert("Submission Failed", "Could not submit your information. Please try again.", "OK");
+                await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Submission Failed", "Could not submit your information. Please try again.", "OK");
             }
         }
 

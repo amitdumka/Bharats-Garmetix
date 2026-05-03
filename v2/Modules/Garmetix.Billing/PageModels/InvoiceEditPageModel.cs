@@ -259,7 +259,7 @@ namespace Garmetix.Billing.PageModels
                 });
                 // Notify the dashboard that the database has changed!
                 Garmetix.AI.Billing.Services.DashboardDataService.Instance.InvalidateCache();
-                await Application.Current.MainPage.DisplayAlert("Success", "Invoice updated successfully.", "OK");
+                await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Invoice updated successfully.", "OK");
                 await Shell.Current.GoToAsync("..");
             }
             catch (Exception ex) { await ShowErrorAsync("Save Error", ex.Message); }
@@ -269,7 +269,7 @@ namespace Garmetix.Billing.PageModels
         [RelayCommand]
         public async Task CancelEditAsync()
         {
-            bool confirm = await Application.Current.MainPage.DisplayAlert("Cancel", "Discard your edits?", "Yes", "No");
+            bool confirm = await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Cancel", "Discard your edits?", "Yes", "No");
             if (confirm) await Shell.Current.GoToAsync("..");
         }
 
@@ -278,7 +278,7 @@ namespace Garmetix.Billing.PageModels
             MainThread.BeginInvokeOnMainThread(async () =>
             {
                 if (Application.Current?.MainPage != null)
-                    await Application.Current.MainPage.DisplayAlert(title, message, "OK");
+                    await Application.Current!.Windows[0].Page!.DisplayAlertAsync(title, message, "OK");
             });
         }
     }

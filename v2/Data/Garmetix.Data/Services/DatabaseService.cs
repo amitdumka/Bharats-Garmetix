@@ -5,6 +5,12 @@ using Garmetix.Databases.Seeds;
 
 namespace Garmetix.Databases.Services
 {
+
+    //public interface IDashboardDataService
+    //{
+    //    static abstract IDashboardDataService Instance { get; }
+     
+
     //TODO: need to implements neccessary  changes and additional to meet the requirements of the application
     public class DatabaseService: IDatabaseService
     {
@@ -32,6 +38,18 @@ namespace Garmetix.Databases.Services
 
         public static DatabaseService Instance
         { get { return _instance!; } }
+
+        
+        private bool _isCacheValid = false;
+        public bool IsCacheValids() { return _isCacheValid; }
+        public bool IsCacheValid {  get { return _isCacheValid; } set { _isCacheValid = value; } }
+        public void InvalidateCache()
+        {
+            _isCacheValid = false;
+        }
+
+
+
 
         public void SetCurrentUser(string userName, Guid companyId)
         {

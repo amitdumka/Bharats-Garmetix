@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using Microsoft.EntityFrameworkCore;
 using Garmetix.Core.Enums;
+using Garmetix.Billing.Models;
 
 namespace Garmetix.Billing.PageModels
 {
@@ -181,8 +182,8 @@ namespace Garmetix.Billing.PageModels
             if (SelectedProduct == null) return;
             try
             {
-                var newItem = new InvoiceItem
-                {   
+                var newItem = new InvoiceItemDTO
+                {
                     Barcode = SelectedProduct.Barcode,
                     Category = SelectedProduct.ProductType,
                     BasePrice = SelectedProduct.BasicPrice,
@@ -239,22 +240,24 @@ namespace Garmetix.Billing.PageModels
             if (Payments.Contains(payment)) { Payments.Remove(payment); CalculateInvoiceTotals(); }
         }
 
+        [Obsolete]
         public void CalculateInvoiceTotals()
         {
+            //TODO: need to reclaibrated for actual result, it has bug and it not proper
             try
             {
-                CurrentInvoice.SubTotal = InvoiceItems.Sum(i => (i.Rate * i.Quantity));
-                CurrentInvoice.TotalDiscount = InvoiceItems.Sum(i => i.DiscountAmount);
-                CurrentInvoice.TotalTax = InvoiceItems.Sum(i => i.TaxAmount);
+                CurrentInvoice.NetAmount = InvoiceItems.Sum(i => (i.BasePrice * i.BilledQuantity));
+                CurrentInvoice.DiscountAmount = InvoiceItems.Sum(i => i.DiscountAmount);
+                CurrentInvoice.TaxAmount = InvoiceItems.Sum(i => i.TaxAmount);
 
-                decimal preDiscountTotal = (CurrentInvoice.SubTotal - CurrentInvoice.TotalDiscount) + CurrentInvoice.TotalTax;
-                CurrentInvoice.GlobalDiscountAmount = GlobalDiscountTypeInput == "%" ? preDiscountTotal * (GlobalDiscountInput / 100m) : GlobalDiscountInput;
+                decimal preDiscountTotal = (CurrentInvoice.NetAmount - CurrentInvoice.DiscountAmount) + CurrentInvoice.TaxAmount;
+                CurrentInvoice.BillDiscountAmount = GlobalDiscountTypeInput == "%" ? preDiscountTotal * (GlobalDiscountInput / 100m) : GlobalDiscountInput;
 
-                decimal exactGrandTotal = preDiscountTotal - CurrentInvoice.GlobalDiscountAmount;
+                decimal exactGrandTotal = preDiscountTotal - CurrentInvoice.BillDiscountAmount;
                 if (exactGrandTotal < 0) exactGrandTotal = 0;
 
-                CurrentInvoice.GrandTotal = Math.Round(exactGrandTotal, 0, MidpointRounding.AwayFromZero);
-                CurrentInvoice.RoundOffAmount = CurrentInvoice.GrandTotal - exactGrandTotal;
+                CurrentInvoice.BillAmount = Math.Round(exactGrandTotal, 0, MidpointRounding.AwayFromZero);
+                CurrentInvoice.RoundOff = CurrentInvoice.BillAmount - exactGrandTotal;
                 CurrentInvoice.PaidAmount = Payments.Sum(p => p.Amount);
             }
             catch (Exception ex) { _ = ShowErrorAsync("Calculation Error", ex); }
@@ -263,29 +266,49 @@ namespace Garmetix.Billing.PageModels
         // --- DATABASE SAVE ENGINE ---
         private async Task<bool> SaveInvoiceToDatabaseAsync()
         {
-            if (InvoiceItems.Count == 0) { await Application.Current.MainPage.DisplayAlert("Validation", "Cannot save empty invoice.", "OK"); return false; }
+            if (InvoiceItems.Count == 0) { await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Validation", "Cannot save empty invoice.", "OK"); return false; }
             if (IsBusy) return false;
 
             try
             {
                 IsBusy = true;
                 //CurrentInvoice.InvoiceNo = "INV-" + DateTime.Now.ToString("yyyyMMdd-HHmmss");
-                CurrentInvoice.InvoiceNo = await GenerateNextInvoiceNumberAsync();
+                CurrentInvoice.InvoiceNumber = await GenerateNextInvoiceNumberAsync();
                 CalculateInvoiceTotals();
 
-                if (CurrentInvoice.PaidAmount < CurrentInvoice.GrandTotal)
+                if (CurrentInvoice.PaidAmount < CurrentInvoice.BillAmount)
                 {
-                    bool proceed = await Application.Current.MainPage.DisplayAlert("Part Payment", $"Balance of ₹ {CurrentInvoice.BalanceAmount} is unpaid. Proceed?", "Yes", "No");
+                    bool proceed = await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Part Payment", $"Balance of ₹ {CurrentInvoice.BalanceAmount} is unpaid. Proceed?", "Yes", "No");
                     if (!proceed) return false;
                 }
 
-                await _database.RunInTransactionAsync(tran =>
+                //await _database.RunInTransactionAsync(tran =>
+                //{
+                //    tran.Insert(CurrentInvoice);
+                //    foreach (var item in InvoiceItems) { item.InvoiceId = CurrentInvoice.Id; tran.Insert(item); }
+                //});
+
+                try
                 {
-                    tran.Insert(CurrentInvoice);
-                    foreach (var item in InvoiceItems) { item.InvoiceId = CurrentInvoice.Id; tran.Insert(item); }
-                });
+                    await GetContext().Database.BeginTransactionAsync();
+                    await GetContext().Invoices.AddAsync(CurrentInvoice);
+                    foreach (var item in InvoiceItems) { item.InvoiceId = CurrentInvoice.Id; GetContext().InvoiceItems.Add(item); }
+
+                    // check if this required
+                    await GetContext().SaveChangesAsync();
+                    await GetContext().Database.CommitTransactionAsync();
+
+                }
+                catch (Exception)
+                {
+
+                    await GetContext().Database.RollbackTransactionAsync();
+                    throw;
+                }
+
                 // Notify the dashboard that the database has changed!
-                Garmetix.AI.Billing.Services.DashboardDataService.Instance.InvalidateCache();
+                // DashboardDataService.Instance.InvalidateCache();
+                DatabaseService.Instance.InvalidateCache();
                 return true;
             }
             catch (Exception ex) { await ShowErrorAsync("Save Invoice Error", ex); return false; }
@@ -304,6 +327,7 @@ namespace Garmetix.Billing.PageModels
         /// four-digit sequence number.</returns>
         private async Task<string> GenerateNextInvoiceNumberAsync()
         {
+            //TODO: move to Invoice Service  even save and delete also . 
             // 1. Get Store Code from MAUI Preferences (Defaults to "AFA" if not set yet)
             string storeCode = Microsoft.Maui.Storage.Preferences.Default.Get("StoreCode", "AFA");
 
@@ -316,17 +340,17 @@ namespace Garmetix.Billing.PageModels
             try
             {
                 // 4. Find the most recent invoice in the database that matches THIS month's prefix
-                var lastInvoice = await _database.Table<Invoice>()
-                    .Where(i => i.InvoiceNo.StartsWith(prefix))
-                    .OrderByDescending(i => i.InvoiceNo)
+                var lastInvoice = await GetContext().Invoices
+                    .Where(i => i.InvoiceNumber.StartsWith(prefix))
+                    .OrderByDescending(i => i.InvoiceNumber)
                     .FirstOrDefaultAsync();
 
                 int nextSequenceNumber = 1; // Default to 1 if it's the first bill of the month
 
-                if (lastInvoice != null && !string.IsNullOrEmpty(lastInvoice.InvoiceNo))
+                if (lastInvoice != null && !string.IsNullOrEmpty(lastInvoice.InvoiceNumber))
                 {
                     // Extract the last 4 characters (the numbers) from the previous invoice
-                    string lastSequenceStr = lastInvoice.InvoiceNo.Substring(lastInvoice.InvoiceNo.Length - 4);
+                    string lastSequenceStr = lastInvoice.InvoiceNumber.Substring(lastInvoice.InvoiceNumber.Length - 4);
 
                     if (int.TryParse(lastSequenceStr, out int lastSequence))
                     {
@@ -353,25 +377,25 @@ namespace Garmetix.Billing.PageModels
         [RelayCommand]
         public async Task SaveAndWhatsAppAsync()
         {
-            if (string.IsNullOrWhiteSpace(CurrentInvoice.MobileNo))
+            if (string.IsNullOrWhiteSpace(CurrentInvoice.CustomerMobileNumber))
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "Please enter a customer mobile number.", "OK");
+                await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Error", "Please enter a customer mobile number.", "OK");
                 return;
             }
 
             if (await SaveInvoiceToDatabaseAsync())
             {
                 string pdfPath = PdfReceiptBuilder.GenerateA5Pdf(CurrentInvoice, InvoiceItems, Payments);
-                string whatsappNumber = CurrentInvoice.MobileNo.Length == 10 ? $"91{CurrentInvoice.MobileNo}" : CurrentInvoice.MobileNo;
-                string message = $"Hello {CurrentInvoice.CustomerName}, thank you for shopping at Aadwika Fashion! Your invoice amount is ₹{CurrentInvoice.GrandTotal:F2}.";
+                string whatsappNumber = CurrentInvoice.CustomerMobileNumber.Length == 10 ? $"91{CurrentInvoice.CustomerMobileNumber}" : CurrentInvoice.CustomerMobileNumber;
+                string message = $"Hello {CurrentInvoice.CustomerName}, thank you for shopping at Aadwika Fashion! Your invoice amount is ₹{CurrentInvoice.BillAmount:F2}.";
                 string url = $"https://api.whatsapp.com/send?phone={whatsappNumber}&text={Uri.EscapeDataString(message)}";
 
                 try
                 {
                     await Launcher.Default.OpenAsync(new Uri(url));
-                    await Application.Current.MainPage.DisplayAlert("WhatsApp", "Opening WhatsApp. Please tap 'Attach' to send the generated PDF.", "OK");
+                    await Application.Current!.Windows[0].Page!.DisplayAlertAsync("WhatsApp", "Opening WhatsApp. Please tap 'Attach' to send the generated PDF.", "OK");
                 }
-                catch (Exception) { await Application.Current.MainPage.DisplayAlert("Error", "Could not open WhatsApp.", "OK"); }
+                catch (Exception) { await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Error", "Could not open WhatsApp.", "OK"); }
 
                 ResetFormWithoutPrompt();
             }
@@ -395,7 +419,7 @@ namespace Garmetix.Billing.PageModels
             {
                 byte[] thermalBytes = ReceiptBuilder.GenerateThermalReceiptBytes(CurrentInvoice, InvoiceItems);
                 await _printService.PrintReceiptAsync(thermalBytes);
-                await Application.Current.MainPage.DisplayAlert("Success", "Thermal Receipt Printed.", "OK");
+                await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Thermal Receipt Printed.", "OK");
                 ResetFormWithoutPrompt();
             }
         }
@@ -409,7 +433,7 @@ namespace Garmetix.Billing.PageModels
         public async Task ClearInvoiceAsync()
         {
             if (IsBusy) return;
-            if (await Application.Current.MainPage.DisplayAlert("Clear Form", "Clear the entire invoice?", "Yes", "Cancel")) ResetFormWithoutPrompt();
+            if (await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Clear Form", "Clear the entire invoice?", "Yes", "Cancel")) ResetFormWithoutPrompt();
         }
 
         private void ResetFormWithoutPrompt()
@@ -417,12 +441,12 @@ namespace Garmetix.Billing.PageModels
             foreach (var item in InvoiceItems) item.PropertyChanged -= InvoiceItem_PropertyChanged;
             InvoiceItems.Clear(); Payments.Clear();
             GlobalDiscountInput = 0; GlobalDiscountTypeInput = "Amount";
-            PaymentAmountInput = 0; PaymentModeInput = "Cash";
+            PaymentAmountInput = 0; PaymentModeInput = PaymentMode.Cash;
             IsNewCustomer = false; SelectedProduct = null; SelectedInvoiceItem = null;
-            CurrentInvoice = new Invoice();
+            CurrentInvoice = new Invoice { InvoiceNumber = "NOTGENERATED" };
             OnPropertyChanged(nameof(CurrentInvoice));
         }
 
-        private async Task ShowErrorAsync(string title, Exception ex) => await Application.Current.MainPage.DisplayAlert(title, $"Error: {ex.Message}", "OK");
+        private async Task ShowErrorAsync(string title, Exception ex) => await Application.Current!.Windows[0].Page!.DisplayAlertAsync(title, $"Error: {ex.Message}", "OK");
     }
 }

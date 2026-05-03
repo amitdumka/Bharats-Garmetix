@@ -101,7 +101,7 @@ public partial class TimelinePageModel : ObservableObject
         {
             Console.WriteLine($"Error loading timeline: {ex.Message}");
             // In a real app, you'd show an alert to the user
-            // await Application.Current.MainPage.DisplayAlert("Error", "Failed to load timeline data.", "OK");
+            // await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Error", "Failed to load timeline data.", "OK");
         }
         finally
         {
