@@ -10,13 +10,13 @@ namespace Garmetix.Billing.Models
     {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
-        public string InvoiceNo { get; set; }=string.Empty;
-        public DateTime Date { get; set; } = DateTime.Now;
+        public string InvoiceNumber { get; set; }=string.Empty;
+        public DateTime OnDate { get; set; } = DateTime.Now;
 
         public string CustomerName { get; set; } = "Walk-in Customer";
-        public string MobileNo { get; set; }= string.Empty;
+        public string CustomerMobileNumber { get; set; }= string.Empty;
         public string Address { get; set; } = "Dumka";
-        public string? Gstin { get; set; } = string.Empty;
+        public string? CustomerGstin { get; set; } = string.Empty;
         public bool IsInterStateSale { get; set; } = false;
 
         [ObservableProperty][NotifyPropertyChangedFor(nameof(BalanceAmount))] private decimal subTotal;
@@ -43,22 +43,22 @@ namespace Garmetix.Billing.Models
         [ObservableProperty] private decimal basePrice=0m;
 
         // CHANGED: Quantity is now a decimal, defaulting to 1m
-        [ObservableProperty] private decimal billQuantity = 1m;
+        [ObservableProperty] private decimal billedQuantity = 1m;
 
         [ObservableProperty] private decimal discountPercentage=0m;
 
         [Ignore]
-        public decimal DiscountAmount => (BasePrice * BillQuantity) * (DiscountPercentage / 100m);
+        public decimal DiscountAmount => (BasePrice * BilledQuantity) * (DiscountPercentage / 100m);
 
         [Ignore]
         public decimal GstPercentage
         {
             get
             {
-                if (Category == GarmentCategory.Fabric) return 5m;
+                if (Category == ProductType.Fabric) return 5m;
                 // Decimal division is now perfectly safe here
                 decimal unitDiscount = BilledQuantity > 0 ? DiscountAmount / BilledQuantity : 0;
-                decimal unitTaxableValue = Rate - unitDiscount;
+                decimal unitTaxableValue = BasePrice - unitDiscount;
                 return unitTaxableValue > 2499 ? 18m : 5m;
             }
         }

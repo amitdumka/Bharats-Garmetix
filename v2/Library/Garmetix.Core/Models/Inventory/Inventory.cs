@@ -21,7 +21,6 @@
  * This is particularly useful for properties that are calculated or derived from other properties, ensuring that only relevant data is included in API responses or data storage.
  */
 
-using Android.Net.Wifi.Aware;
 using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Base;
 using System.ComponentModel.DataAnnotations;

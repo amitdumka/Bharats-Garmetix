@@ -9,6 +9,7 @@ using System.ComponentModel;
 using Microsoft.EntityFrameworkCore;
 using Garmetix.Core.Enums;
 using Garmetix.Billing.Models;
+using Invoice = Garmetix.Core.Models.Inventory.Invoice;
 
 namespace Garmetix.Billing.PageModels
 {
@@ -48,13 +49,13 @@ namespace Garmetix.Billing.PageModels
 
         public bool IsNotBusy => !IsBusy;
 
-        [ObservableProperty] private Invoice currentInvoice;
-        public ObservableCollection<InvoiceItem> InvoiceItems { get; set; } = new();
+        [ObservableProperty] private InvoiceDTO currentInvoice;
+        public ObservableCollection<InvoiceItemDTO> InvoiceItems { get; set; } = new();
         public ObservableCollection<InvoicePayment> Payments { get; set; } = new();
         // The UI only binds to this small filtered list to prevent lagging
 
         [ObservableProperty] private Product? selectedProduct;
-        [ObservableProperty] private InvoiceItem? selectedInvoiceItem;
+        [ObservableProperty] private InvoiceItemDTO? selectedInvoiceItem;
         [ObservableProperty] private PaymentMode paymentModeInput = PaymentMode.Cash;
         [ObservableProperty] private decimal paymentAmountInput = 0m;
         [ObservableProperty] private bool isNewCustomer = false;
@@ -73,7 +74,7 @@ namespace Garmetix.Billing.PageModels
         public InvoiceEntryPageModel(IPrintService printService)
         {
             _printService = printService;
-            CurrentInvoice = new Invoice() { InvoiceNumber = "NeedtobeGenerate" };
+            CurrentInvoice = new InvoiceDTO() ;
             searchText = ""; selectedProduct = null;
             selectedInvoiceItem = null;
 
@@ -124,7 +125,7 @@ namespace Garmetix.Billing.PageModels
                 if (customer != null)
                 {
                     CurrentInvoice.CustomerName = customer.Name;
-                    CurrentInvoice.CustomerGSTIN = customer.GSTIN;
+                    CurrentInvoice.CustomerGstin = customer.GSTIN;
                     IsNewCustomer = false;
                     OnPropertyChanged(nameof(CurrentInvoice));
                 }
@@ -144,7 +145,7 @@ namespace Garmetix.Billing.PageModels
                 var existing = await GetContext().Customers.FirstOrDefaultAsync(c => c.MobileNumber == CurrentInvoice.CustomerMobileNumber);
                 if (existing == null)
                 {
-                    await GetContext().Customers.AddAsync(new Customer { MobileNumber = CurrentInvoice.CustomerMobileNumber, Name = CurrentInvoice.CustomerName, GSTIN = CurrentInvoice.CustomerGSTIN });
+                    await GetContext().Customers.AddAsync(new Customer { MobileNumber = CurrentInvoice.CustomerMobileNumber, Name = CurrentInvoice.CustomerName, GSTIN = CurrentInvoice.CustomerGstin });
                     IsNewCustomer = false;
                     await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Customer saved.", "OK");
                 }
@@ -189,10 +190,10 @@ namespace Garmetix.Billing.PageModels
                     BasePrice = SelectedProduct.BasicPrice,
 
                     // CHANGED: Use 1m to signify 1 as a decimal
-                    ActualQuantity = 1m,
+                    
                     BilledQuantity = 1m,
 
-                    DiscountAmount = 0
+                    DiscountPercentage = 0
                 };
 
                 newItem.PropertyChanged += InvoiceItem_PropertyChanged;
@@ -203,7 +204,7 @@ namespace Garmetix.Billing.PageModels
         }
 
         [RelayCommand]
-        public void RemoveInvoiceItem(InvoiceItem item)
+        public void RemoveInvoiceItem(InvoiceItemDTO item)
         {
             if (item == null || !InvoiceItems.Contains(item)) return;
             item.PropertyChanged -= InvoiceItem_PropertyChanged;
@@ -218,7 +219,7 @@ namespace Garmetix.Billing.PageModels
 
         private void InvoiceItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName is nameof(InvoiceItem.BasePrice) or nameof(InvoiceItem.BilledQuantity) or nameof(InvoiceItem.DiscountAmount) or nameof(InvoiceItem.DiscountAmount))
+            if (e.PropertyName is nameof(InvoiceItemDTO.BasePrice) or nameof(InvoiceItemDTO.BilledQuantity) or nameof(InvoiceItemDTO.DiscountAmount) or nameof(InvoiceItemDTO.DiscountAmount))
             {
                 CalculateInvoiceTotals();
             }
@@ -246,18 +247,18 @@ namespace Garmetix.Billing.PageModels
             //TODO: need to reclaibrated for actual result, it has bug and it not proper
             try
             {
-                CurrentInvoice.NetAmount = InvoiceItems.Sum(i => (i.BasePrice * i.BilledQuantity));
-                CurrentInvoice.DiscountAmount = InvoiceItems.Sum(i => i.DiscountAmount);
-                CurrentInvoice.TaxAmount = InvoiceItems.Sum(i => i.TaxAmount);
+                CurrentInvoice.SubTotal = InvoiceItems.Sum(i => (i.BasePrice * i.BilledQuantity));
+                CurrentInvoice.TotalDiscount = InvoiceItems.Sum(i => i.DiscountAmount);
+                CurrentInvoice.TotalTax = InvoiceItems.Sum(i => i.TaxAmount);
 
-                decimal preDiscountTotal = (CurrentInvoice.NetAmount - CurrentInvoice.DiscountAmount) + CurrentInvoice.TaxAmount;
-                CurrentInvoice.BillDiscountAmount = GlobalDiscountTypeInput == "%" ? preDiscountTotal * (GlobalDiscountInput / 100m) : GlobalDiscountInput;
+                decimal preDiscountTotal = (CurrentInvoice.SubTotal - CurrentInvoice.TotalDiscount) + CurrentInvoice.TotalTax;
+                CurrentInvoice.GlobalDiscountAmount = GlobalDiscountTypeInput == "%" ? preDiscountTotal * (GlobalDiscountInput / 100m) : GlobalDiscountInput;
 
-                decimal exactGrandTotal = preDiscountTotal - CurrentInvoice.BillDiscountAmount;
+                decimal exactGrandTotal = preDiscountTotal - CurrentInvoice.GlobalDiscountAmount;
                 if (exactGrandTotal < 0) exactGrandTotal = 0;
 
-                CurrentInvoice.BillAmount = Math.Round(exactGrandTotal, 0, MidpointRounding.AwayFromZero);
-                CurrentInvoice.RoundOff = CurrentInvoice.BillAmount - exactGrandTotal;
+                CurrentInvoice.GrandTotal = Math.Round(exactGrandTotal, 0, MidpointRounding.AwayFromZero);
+                CurrentInvoice.RoundOffAmount = CurrentInvoice.GrandTotal - exactGrandTotal;
                 CurrentInvoice.PaidAmount = Payments.Sum(p => p.Amount);
             }
             catch (Exception ex) { _ = ShowErrorAsync("Calculation Error", ex); }
@@ -276,7 +277,7 @@ namespace Garmetix.Billing.PageModels
                 CurrentInvoice.InvoiceNumber = await GenerateNextInvoiceNumberAsync();
                 CalculateInvoiceTotals();
 
-                if (CurrentInvoice.PaidAmount < CurrentInvoice.BillAmount)
+                if (CurrentInvoice.PaidAmount < CurrentInvoice.GrandTotal)
                 {
                     bool proceed = await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Part Payment", $"Balance of ₹ {CurrentInvoice.BalanceAmount} is unpaid. Proceed?", "Yes", "No");
                     if (!proceed) return false;
@@ -287,6 +288,16 @@ namespace Garmetix.Billing.PageModels
                 //    tran.Insert(CurrentInvoice);
                 //    foreach (var item in InvoiceItems) { item.InvoiceId = CurrentInvoice.Id; tran.Insert(item); }
                 //});
+
+
+                var inv = new Invoice {
+                CustomerGSTIN=CurrentInvoice.CustomerGstin, ItemCount=InvoiceItems.Count,
+                
+
+                
+
+                };
+
 
                 try
                 {
@@ -387,7 +398,7 @@ namespace Garmetix.Billing.PageModels
             {
                 string pdfPath = PdfReceiptBuilder.GenerateA5Pdf(CurrentInvoice, InvoiceItems, Payments);
                 string whatsappNumber = CurrentInvoice.CustomerMobileNumber.Length == 10 ? $"91{CurrentInvoice.CustomerMobileNumber}" : CurrentInvoice.CustomerMobileNumber;
-                string message = $"Hello {CurrentInvoice.CustomerName}, thank you for shopping at Aadwika Fashion! Your invoice amount is ₹{CurrentInvoice.BillAmount:F2}.";
+                string message = $"Hello {CurrentInvoice.CustomerName}, thank you for shopping at Aadwika Fashion! Your invoice amount is ₹{CurrentInvoice.GrandTotal:F2}.";
                 string url = $"https://api.whatsapp.com/send?phone={whatsappNumber}&text={Uri.EscapeDataString(message)}";
 
                 try
@@ -443,7 +454,7 @@ namespace Garmetix.Billing.PageModels
             GlobalDiscountInput = 0; GlobalDiscountTypeInput = "Amount";
             PaymentAmountInput = 0; PaymentModeInput = PaymentMode.Cash;
             IsNewCustomer = false; SelectedProduct = null; SelectedInvoiceItem = null;
-            CurrentInvoice = new Invoice { InvoiceNumber = "NOTGENERATED" };
+            CurrentInvoice = new InvoiceDTO();
             OnPropertyChanged(nameof(CurrentInvoice));
         }
 
