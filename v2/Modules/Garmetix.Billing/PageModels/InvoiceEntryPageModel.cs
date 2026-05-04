@@ -125,7 +125,7 @@ namespace Garmetix.Billing.PageModels
                 if (customer != null)
                 {
                     CurrentInvoice.CustomerName = customer.Name;
-                    CurrentInvoice.CustomerGstin = customer.GSTIN;
+                    CurrentInvoice.CustomerGSTIN = customer.GSTIN;
                     IsNewCustomer = false;
                     OnPropertyChanged(nameof(CurrentInvoice));
                 }
@@ -145,7 +145,7 @@ namespace Garmetix.Billing.PageModels
                 var existing = await GetContext().Customers.FirstOrDefaultAsync(c => c.MobileNumber == CurrentInvoice.CustomerMobileNumber);
                 if (existing == null)
                 {
-                    await GetContext().Customers.AddAsync(new Customer { MobileNumber = CurrentInvoice.CustomerMobileNumber, Name = CurrentInvoice.CustomerName, GSTIN = CurrentInvoice.CustomerGstin });
+                    await GetContext().Customers.AddAsync(new Customer { MobileNumber = CurrentInvoice.CustomerMobileNumber, Name = CurrentInvoice.CustomerName, GSTIN = CurrentInvoice.CustomerGSTIN });
                     IsNewCustomer = false;
                     await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Customer saved.", "OK");
                 }
@@ -155,28 +155,7 @@ namespace Garmetix.Billing.PageModels
         }
 
         // --- CART LOGIC ---
-        //[RelayCommand]
-        //public void AddProductToInvoice()
-        //{
-        //    if (SelectedProduct == null) return;
-        //    try
-        //    {
-        //        var newItem = new EntryItem
-        //        {
-        //            ProductName = SelectedProduct.Name,
-        //            Category = SelectedProduct.Category,
-        //            Rate = SelectedProduct.BaseRate,
-        //            Quantity = 1,
-        //            DiscountPercentage = 0
-        //        };
-
-        //        newItem.PropertyChanged += InvoiceItem_PropertyChanged;
-        //        EntryItems.Add(newItem);
-        //        SelectedProduct = null;
-        //        CalculateInvoiceTotals();
-        //    }
-        //    catch (Exception ex) { _ = ShowErrorAsync("Add Product Error", ex); }
-        //}
+         
         [RelayCommand]
         public void AddProductToInvoice()
         {
@@ -290,19 +269,19 @@ namespace Garmetix.Billing.PageModels
                 //});
 
 
-                var inv = new InvoiceDTO {
-                CustomerGSTIN=CurrentInvoice.CustomerGstin, ItemCount=InvoiceItems.Count,
+                var inv = new Invoice {
+                CustomerGSTIN=CurrentInvoice.CustomerGSTIN, ItemCount=InvoiceItems.Count,
+                InvoiceNumber=CurrentInvoice.InvoiceNumber, ActualQuantity=CurrentInvoice.BilledQuantity,
                 
-
-                
-
+                B2BSale=currentInvoice.CustomerGSTIN!=""?true:false, BillAmount=currentInvoice.GrandTotal, 
+                CustomerMobileNumber=currentInvoice.CustomerMobileNumber, Synced=false
                 };
 
 
                 try
                 {
                     await GetContext().Database.BeginTransactionAsync();
-                    await GetContext().Invoices.AddAsync(CurrentInvoice);
+                    await GetContext().Invoices.AddAsync(inv);
                     foreach (var item in InvoiceItems) { item.InvoiceId = CurrentInvoice.Id; GetContext().InvoiceItems.Add(item); }
 
                     // check if this required

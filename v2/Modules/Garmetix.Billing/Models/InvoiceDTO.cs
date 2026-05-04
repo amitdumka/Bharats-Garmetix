@@ -50,7 +50,7 @@ namespace Garmetix.Billing.Models
         public string CustomerName { get; set; } = "Walk-in Customer";
         public string CustomerMobileNumber { get; set; } = string.Empty;
         public string Address { get; set; } = "Dumka";
-        public string? CustomerGstin { get; set; } = string.Empty;
+        public string? CustomerGSTIN { get; set; } = string.Empty;
         public bool IsInterStateSale { get; set; } = false;
 
         [ObservableProperty][NotifyPropertyChangedFor(nameof(BalanceAmount))] private decimal subTotal;
@@ -61,6 +61,8 @@ namespace Garmetix.Billing.Models
         [ObservableProperty][NotifyPropertyChangedFor(nameof(BalanceAmount))] private decimal paidAmount;
         [ObservableProperty] private decimal roundOffAmount;
 
+        // CHANGED: Quantity is now a decimal, defaulting to 1m
+        [ObservableProperty] private decimal billedQuantity = 1m;
         [Ignore] public decimal BalanceAmount => GrandTotal - PaidAmount;
     }
 
@@ -119,6 +121,8 @@ namespace Garmetix.Billing.Models
             OnPropertyChanged(nameof(TaxableValue));
             OnPropertyChanged(nameof(TaxAmount));
             OnPropertyChanged(nameof(TotalAmount));
+            OnPropertyChanged(nameof(BilledQuantity));
+            
         }
     }
 }
