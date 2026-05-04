@@ -1,9 +1,7 @@
-﻿using Garmetix.Models.Bharat.Enums;
-using Garmetix.Models.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace Garmetix.Billing.Models;
+namespace Garmetix.Billing.Models.Alternatives;
 
 
 
@@ -112,39 +110,6 @@ internal class Invoice
     public List<PaymentDetail>? Payments { get; set; } = new List<PaymentDetail>();
 }
 
-/// <summary>
-/// Represents the details of a payment associated with an invoice, including amount, date, payment mode, and related
-/// metadata.
-/// </summary>
-/// <remarks>Use this class to store or transfer information about individual payments made toward invoices. The
-/// properties capture essential payment attributes such as the invoice reference, payment amount, date, mode, and
-/// optional notes. Some properties may be relevant only for specific payment modes (for example, card details for card
-/// payments).</remarks>
-internal class PaymentDetail
-{
-    public Guid Guid { get; set; } = Guid.Empty;
-    public Guid InvoiceId { get; set; } = Guid.Empty;
-    public string? InvoiceNumber { get; set; } = string.Empty;
-    public decimal Amount { get; set; } = decimal.Zero;
-    public DateTime PaymentDate { get; set; } = DateTime.Now;
-    public PaymentMode PaymentMode { get; set; } = PaymentMode.Cash;
-    public string? PaymentNote { get; set; } = string.Empty;
-
-    public string? CardPaymentDetails { get; set; } = string.Empty;
-    public string? CardPaymentNumber { get; set; } = string.Empty;
-    public string? CardPaymentBank { get; set; } = string.Empty;
-    public CardType? Card { get; set; } = CardType.Debit;
-}
+ 
 
 
-
-internal class BillingSettings
-{
-    public Guid Guid { get; set; } = Guid.Empty;
-    public string CompanyName { get; set; } = string.Empty;
-    public string CompanyAddress { get; set; } = string.Empty;
-    public string? CompanyPhone { get; set; } = string.Empty;
-    public string? CompanyEmail { get; set; } = string.Empty;
-    public string? CompanyGSTIN { get; set; } = string.Empty;
-    public string? CompanyState { get; set; } = string.Empty;
-}

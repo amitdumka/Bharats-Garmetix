@@ -90,15 +90,7 @@ namespace OldSystem.Models.NeedToRemoved
         public string Gstin { get; set; }
     }
 
-    public class PaymentDetail
-    {
-        [PrimaryKey, AutoIncrement]
-        public Guid Id { get; set; }
-        public Guid InvoiceId { get; set; }
-        public string Mode { get; set; }
-        public decimal Amount { get; set; }
-        public DateTime? PaymentDate { get; set; }= DateTime.Now;
-    }
+    
 
     // --- MERGED & UPGRADED PRODUCT CLASS ---
     public class Product

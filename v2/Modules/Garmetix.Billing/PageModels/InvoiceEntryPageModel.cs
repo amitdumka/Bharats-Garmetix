@@ -50,12 +50,12 @@ namespace Garmetix.Billing.PageModels
         public bool IsNotBusy => !IsBusy;
 
         [ObservableProperty] private InvoiceDTO currentInvoice;
-        public ObservableCollection<InvoiceItemDTO> InvoiceItems { get; set; } = new();
+        public ObservableCollection<EntryItem> InvoiceItems { get; set; } = new();
         public ObservableCollection<InvoicePayment> Payments { get; set; } = new();
         // The UI only binds to this small filtered list to prevent lagging
 
         [ObservableProperty] private Product? selectedProduct;
-        [ObservableProperty] private InvoiceItemDTO? selectedInvoiceItem;
+        [ObservableProperty] private EntryItem? selectedInvoiceItem;
         [ObservableProperty] private PaymentMode paymentModeInput = PaymentMode.Cash;
         [ObservableProperty] private decimal paymentAmountInput = 0m;
         [ObservableProperty] private bool isNewCustomer = false;
@@ -161,7 +161,7 @@ namespace Garmetix.Billing.PageModels
         //    if (SelectedProduct == null) return;
         //    try
         //    {
-        //        var newItem = new InvoiceItem
+        //        var newItem = new EntryItem
         //        {
         //            ProductName = SelectedProduct.Name,
         //            Category = SelectedProduct.Category,
@@ -171,7 +171,7 @@ namespace Garmetix.Billing.PageModels
         //        };
 
         //        newItem.PropertyChanged += InvoiceItem_PropertyChanged;
-        //        InvoiceItems.Add(newItem);
+        //        EntryItems.Add(newItem);
         //        SelectedProduct = null;
         //        CalculateInvoiceTotals();
         //    }
@@ -183,7 +183,7 @@ namespace Garmetix.Billing.PageModels
             if (SelectedProduct == null) return;
             try
             {
-                var newItem = new InvoiceItemDTO
+                var newItem = new EntryItem
                 {
                     Barcode = SelectedProduct.Barcode,
                     Category = SelectedProduct.ProductType,
@@ -204,7 +204,7 @@ namespace Garmetix.Billing.PageModels
         }
 
         [RelayCommand]
-        public void RemoveInvoiceItem(InvoiceItemDTO item)
+        public void RemoveInvoiceItem(EntryItem item)
         {
             if (item == null || !InvoiceItems.Contains(item)) return;
             item.PropertyChanged -= InvoiceItem_PropertyChanged;
@@ -219,7 +219,7 @@ namespace Garmetix.Billing.PageModels
 
         private void InvoiceItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName is nameof(InvoiceItemDTO.BasePrice) or nameof(InvoiceItemDTO.BilledQuantity) or nameof(InvoiceItemDTO.DiscountAmount) or nameof(InvoiceItemDTO.DiscountAmount))
+            if (e.PropertyName is nameof(EntryItem.BasePrice) or nameof(EntryItem.BilledQuantity) or nameof(EntryItem.DiscountAmount) or nameof(EntryItem.DiscountAmount))
             {
                 CalculateInvoiceTotals();
             }
@@ -290,7 +290,7 @@ namespace Garmetix.Billing.PageModels
                 //});
 
 
-                var inv = new Invoice {
+                var inv = new InvoiceDTO {
                 CustomerGSTIN=CurrentInvoice.CustomerGstin, ItemCount=InvoiceItems.Count,
                 
 
