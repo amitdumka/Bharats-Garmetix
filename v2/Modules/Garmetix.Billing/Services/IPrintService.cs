@@ -1,5 +1,8 @@
 ﻿namespace Garmetix.Billing.Services
 {
+    /// <summary>
+    /// TODO: move to service moudles
+    /// </summary>
     public interface IPrintService
     {
         // Your existing thermal print method

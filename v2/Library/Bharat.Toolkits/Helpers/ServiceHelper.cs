@@ -1,5 +1,8 @@
 ﻿namespace Bharat.ToolKits.Helpers
 {
+    /// <summary>
+    /// Service Helper
+    /// </summary>
     public static class ServiceHelper
     {
         public static T GetService<T>() => Current.GetService<T>();

@@ -19,13 +19,7 @@ namespace Garmetix.Billing.Services
         public DatabaseContext GetContext()
         { return _localDb; }
 
-        //private BillingService _instance;
-        //public BillingService Instance => _instance ?? new BillingService();
-
-        //public BillingService()
-        //{
-        //    _instance = this;
-        //}
+        public static async Task ShowErrorAsync(string title, Exception ex) => await Application.Current!.Windows[0].Page!.DisplayAlertAsync(title, $"Error: {ex.Message}", "OK");
 
         public Product AddorUpxdateProduct(Product product, bool update = false)
         { return product; }
