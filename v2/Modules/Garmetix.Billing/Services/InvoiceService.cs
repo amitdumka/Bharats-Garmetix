@@ -141,6 +141,10 @@ namespace Garmetix.Billing.Services
                     Deleted=false, CreatedAt=DateTime.UtcNow,OnDate=invoicedto.OnDate,                                        
                     BillAmount = invoicedto.GrandTotal, CreditSale=invoicedto.BalanceAmount>0?true:false,
                     TaxAmount = invoicedto.TotalTax, 
+                    CGSTAmount=invoicedto.TotalTax/2m, SGSTAmount=invoicedto.TotalTax/2m , IGSTAmount=invoicedto.TotalTax, 
+                    BillDiscountAmount=invoicedto.GlobalDiscountAmount, DiscountAmount=invoicedto.TotalDiscount,
+                    BasePrice=invoicedto.SubTotal,PaidAmount=invoicedto.PaidAmount, ReturnInvoice=false, 
+                    RoundOff=invoicedto.RoundOffAmount, UpdatedAt=DateTime.UtcNow.AddMinutes(-10), 
                     
                  
                 };

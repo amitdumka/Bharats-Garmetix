@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Garmetix.Billing.Helpers;
 using Garmetix.Core.Models.Inventory;
 using Garmetix.Databases;
 using Garmetix.Databases.Services;
@@ -9,7 +8,6 @@ using System.ComponentModel;
 using Microsoft.EntityFrameworkCore;
 using Garmetix.Core.Enums;
 using Garmetix.Billing.Models;
-using Invoice = Garmetix.Core.Models.Inventory.Invoice;
 using Garmetix.Billing.Services;
 
 namespace Garmetix.Billing.PageModels
@@ -135,7 +133,7 @@ namespace Garmetix.Billing.PageModels
                 }
                 else IsNewCustomer = true;
             }
-            catch (Exception ex) { await ShowErrorAsync("Customer Search Error", ex); }
+            catch (Exception ex) { await InvoiceService.ShowErrorAsync("Customer Search Error", ex); }
             finally { IsBusy = false; }
         }
 

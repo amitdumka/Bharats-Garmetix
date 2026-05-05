@@ -1,7 +1,4 @@
-﻿
-using Garmetix.Billing.Helpers;
-using Garmetix.Billing.Models;
-using Garmetix.Core.Models.Inventory;
+﻿using Garmetix.Core.Models.Inventory;
 using Garmetix.Databases;
 using Garmetix.Databases.Services;
 using Microsoft.EntityFrameworkCore;
@@ -16,13 +13,16 @@ namespace Garmetix.Billing.Services
     {
         protected DatabaseContext _localDb => DatabaseService.Instance.LocalDB;
 
-        public DatabaseContext GetContext()
-        { return _localDb; }
-
         public static async Task ShowErrorAsync(string title, Exception ex) => await Application.Current!.Windows[0].Page!.DisplayAlertAsync(title, $"Error: {ex.Message}", "OK");
 
         public Product AddorUpxdateProduct(Product product, bool update = false)
         { return product; }
+
+        public Stock AddStock(Stock stock)
+        { return stock; }
+
+        public DatabaseContext GetContext()
+        { return _localDb; }
 
         public bool RemoveProduct(Product product, bool delete = false)
         { return product != null; }
@@ -30,21 +30,6 @@ namespace Garmetix.Billing.Services
         public bool RemoveProduct(Guid storeid, string barcode, bool delete = false)
         { return false; }
 
-        /// <summary>
-        ///  Create Stock Item when Purchase or indiredt operation
-        /// </summary>
-        /// <param name="stock"></param>
-        /// <returns></returns>
-
-        public Stock AddStock(Stock stock)
-        { return stock; }
-
-        /// <summary>
-        /// Remove or Delete Stock
-        /// </summary>
-        /// <param name="stock"></param>
-        /// <param name="permarnent"></param>
-        /// <returns></returns>
         public bool RemoveStock(Stock stock, bool delete = false)
         { return false; }
 
@@ -53,7 +38,7 @@ namespace Garmetix.Billing.Services
         /// </summary>
         /// <param name="StoreId"></param>
         /// <param name="Barcode"></param>
-        /// <param name="permarnent"></param>
+        /// <param name="delete"></param>
         /// <returns></returns>
         public bool RemoveStock(Guid StoreId, string Barcode, bool delete = false)
         { return false; }
@@ -89,7 +74,7 @@ namespace Garmetix.Billing.Services
                 GetContext().Stocks.Update(result);
                 return (await GetContext().SaveChangesAsync() > 0);
             }
-            catch (Exception ex)
+            catch (Exception )
             {
                 //Notify the error
                 return false;
