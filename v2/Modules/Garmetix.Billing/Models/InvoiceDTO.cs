@@ -23,7 +23,7 @@ namespace Garmetix.Billing.Models
     /// <summary>
     /// Payment Details is used record the payment in one go so later it can set the payment details based on the type.
     /// </summary>
-    internal class PaymentDetail
+    public class PaymentDetail
     {
         [PrimaryKey, AutoIncrement]
         public Guid Guid { get; set; } = Guid.Empty;

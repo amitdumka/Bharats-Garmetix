@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Garmetix.Billing.Services
+﻿namespace Garmetix.Billing.Services
 {
     public interface IPrintService
     {

@@ -1,4 +1,5 @@
 ﻿
+using DocumentFormat.OpenXml.Drawing;
 using Garmetix.Billing.Helpers;
 using Garmetix.Billing.Models;
 using Garmetix.Core.Models.Inventory;
@@ -7,15 +8,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Garmetix.Billing.Services
 {
-public partial class BillingService
+    public partial class BillingService
     {
         /// <summary>
         /// invoice Service is used to handle Invoice/Billing Services
         /// It will be extend Billing Service as Base Service.
         /// </summary>
-        public class InvoiceService
+        public class InvoiceService : BillingService
         {
-            private PrintService _printService;
+            private IPrintService _printService;
 
             private InvoiceService _instance;
             public InvoiceService Instance => _instance ?? new InvoiceService();
@@ -24,34 +25,51 @@ public partial class BillingService
             {
                 _instance = this;
             }
+            private bool isSaving = false;
 
 
-            public bool SaveInvoices(Invoice invoice){ return false; }
-            public bool SaveInvoices(InvoiceDTO invoice, IEnumerable<EntryItem> invoiceitems, IEnumerable<PaymentDetail> paymentDetails) { return false;}
-            public bool UpdateInvoices(Invoice invoice){ return false; }
-            public bool UpdateInvoices(InvoiceDTO invoice, IEnumerable<EntryItem> invoiceitems, IEnumerable<PaymentDetail> paymentDetails) { return false;}
+            public bool UpdateInvoices(Invoice invoice) { return false; }
+            public bool UpdateInvoices(InvoiceDTO invoice, IEnumerable<EntryItem> invoiceitems, IEnumerable<PaymentDetail> paymentDetails) { return false; }
 
 
-            public bool DeleteInvoices(Invoice invoice, bool delete=false){ return true; }
+            public bool DeleteInvoices(Invoice invoice, bool delete = false) { return true; }
 
-             
-            public Invoice FetchInvoices(Guid storeid, string invnumber) { }
-            public Invoice FetchInvoices(Guid storeid, Guid InvId) { }
+
+            public Invoice FetchInvoices(Guid storeid, string invnumber) { return new Invoice { InvoiceNumber = "" }; }
+            public Invoice FetchInvoices(Guid storeid, Guid InvId) { return new Invoice { InvoiceNumber = "" }; }
 
             // --- DATABASE SAVE ENGINE ---
-            private async Task<bool> SaveInvoiceToDatabaseAsync()
+
+            private void CalculateInvoiceTotals(Invoice inv) { }
+            public async Task<bool> SaveInvoicesAsync(Invoice invoice) { return false; }
+            public async Task<bool> SaveInvoicesAsync(InvoiceDTO invoicedto, IEnumerable<EntryItem> InvoiceItems, IEnumerable<PaymentDetail> paymentDetails)
             {
-                if (InvoiceItems.Count == 0) { await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Validation", "Cannot save empty invoice.", "OK"); return false; }
-                if (IsBusy) return false;
+                if (InvoiceItems.Count() == 0) { await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Validation", "Cannot save empty invoice.", "OK"); return false; }
+
+                if (isSaving) return false;
 
                 try
                 {
-                    IsBusy = true;
-                    //CurrentInvoice.InvoiceNo = "INV-" + DateTime.Now.ToString("yyyyMMdd-HHmmss");
-                    CurrentInvoice.InvoiceNumber = await GenerateNextInvoiceNumberAsync();
-                    CalculateInvoiceTotals();
+                    isSaving = true;
 
-                    if (CurrentInvoice.PaidAmount < CurrentInvoice.GrandTotal)
+                    var currentInvoice = new Invoice
+                    {
+                        InvoiceNumber = await GenerateNextInvoiceNumberAsync(),
+                        CustomerGSTIN = invoicedto.CustomerGSTIN,
+                        ItemCount = InvoiceItems.Count(),
+
+                        ActualQuantity = invoicedto.BilledQuantity,
+
+                        B2BSale = invoicedto.CustomerGSTIN != "" ? true : false,
+                        BillAmount = invoicedto.GrandTotal,
+                        CustomerMobileNumber = invoicedto.CustomerMobileNumber,
+                        Synced = false
+
+                    };
+
+                    CalculateInvoiceTotals(currentInvoice); //do at invoice model and re do here for verification
+
+                    if (currentInvoice.PaidAmount < currentInvoice.BillAmount)
                     {
                         bool proceed = await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Part Payment", $"Balance of ₹ {CurrentInvoice.BalanceAmount} is unpaid. Proceed?", "Yes", "No");
                         if (!proceed) return false;
@@ -64,25 +82,27 @@ public partial class BillingService
                     //});
 
 
-                    var inv = new Invoice
-                    {
-                        CustomerGSTIN = CurrentInvoice.CustomerGSTIN,
-                        ItemCount = InvoiceItems.Count,
-                        InvoiceNumber = CurrentInvoice.InvoiceNumber,
-                        ActualQuantity = CurrentInvoice.BilledQuantity,
-
-                        B2BSale = currentInvoice.CustomerGSTIN != "" ? true : false,
-                        BillAmount = currentInvoice.GrandTotal,
-                        CustomerMobileNumber = currentInvoice.CustomerMobileNumber,
-                        Synced = false
-                    };
+                     
 
 
                     try
                     {
                         await GetContext().Database.BeginTransactionAsync();
-                        await GetContext().Invoices.AddAsync(inv);
-                        foreach (var item in InvoiceItems) { item.InvoiceId = CurrentInvoice.Id; GetContext().InvoiceItems.Add(item); }
+                        await GetContext().Invoices.AddAsync(currentInvoice);
+                        foreach (var item in InvoiceItems) 
+                        { 
+                            
+                            GetContext().InvoiceItems.Add(new InvoiceItem { 
+                            Barcode = item.Barcode, Id = item.Id, 
+                            CompanyId=currentInvoice.CompanyId, BilledQuantity= item.BilledQuantity,
+                            Deleted=false, Synced = false, 
+                            ActualQuantity= invoicedto.BilledQuantity, CreatedAt=currentInvoice.CreatedAt, 
+                            UpdatedAt=currentInvoice.UpdatedAt,CreatedBy=currentInvoice.CreatedBy,
+                            Amount=item.TotalAmount, DiscountAmount=item.DiscountAmount,
+                            BasePrice=item.BasePrice, Category=item.Category,
+                            InvoiceId=currentInvoice.Id,
+                            }); 
+                        }
 
                         // check if this required
                         await GetContext().SaveChangesAsync();
@@ -102,7 +122,7 @@ public partial class BillingService
                     return true;
                 }
                 catch (Exception ex) { await ShowErrorAsync("Save Invoice Error", ex); return false; }
-                finally { IsBusy = false; }
+                finally { isSaving = false; }
             }
             /// <summary>
             /// Generates the next unique invoice number for the current store and month in the format
@@ -114,17 +134,14 @@ public partial class BillingService
             /// application preferences, defaulting to 'AFA' if not set.</remarks>
             /// <returns>A string containing the next invoice number, formatted with the store code, current year and month, and a
             /// four-digit sequence number.</returns>
-            private async Task<string> GenerateNextInvoiceNumberAsync()
+            public async Task<string> GenerateNextInvoiceNumberAsync()
             {
                 //TODO: move to Invoice Service  even save and delete also . 
                 // 1. Get Store Code from MAUI Preferences (Defaults to "AFA" if not set yet)
-                string storeCode = Microsoft.Maui.Storage.Preferences.Default.Get("StoreCode", "AFA");
 
-                // 2. Get Current Year and Month (e.g., "202604")
-                string yearMonth = DateTime.Now.ToString("yyyyMM");
-
+                string storeCode = Preferences.Default.Get("StoreCode", "AFA");
                 // 3. Define the prefix (e.g., "AFA-202604-IN-")
-                string prefix = $"{storeCode}-{yearMonth}-IN-";
+                string prefix = $"{storeCode}-{DateTime.Now.ToString("yyyyMM")}-IN-";
 
                 try
                 {
@@ -161,60 +178,108 @@ public partial class BillingService
                     return $"{prefix}{fallbackSequence}";
                 }
             }
-            public async Task SaveAndWhatsAppAsync()
+
+
+            /// <summary>
+            /// Save and Print and Can send message to customer
+            /// </summary>
+            /// <param name="currentInvoice"></param>
+            /// <param name="InvoiceItems"></param>
+            /// <param name="paymentDetails"></param>
+            /// <param name="thermal"></param>
+            /// <param name="sendOverMsg"></param>
+            /// <returns></returns>
+
+
+            public async Task SaveAndPrint(Invoice currentInvoice, IEnumerable<EntryItem> InvoiceItems, IEnumerable<PaymentDetail> paymentDetails, bool thermal = true, bool sendOverMsg = false)
             {
-                if (string.IsNullOrWhiteSpace(CurrentInvoice.CustomerMobileNumber))
+                if (await SaveInvoicesAsync(currentInvoice, InvoiceItems, paymentDetails))
                 {
-                    await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Error", "Please enter a customer mobile number.", "OK");
-                    return;
-                }
+                    if (!thermal)
+                    {// Print A5
+                        string pdfPath = PdfReceiptBuilder.GenerateA5Pdf(CurrentInvoice, InvoiceItems, Payments);
+                        await Launcher.Default.OpenAsync(new OpenFileRequest { Title = "Print Invoice", File = new ReadOnlyFile(pdfPath) });
 
-                if (await SaveInvoiceToDatabaseAsync())
-                {
-                    string pdfPath = PdfReceiptBuilder.GenerateA5Pdf(CurrentInvoice, InvoiceItems, Payments);
-                    string whatsappNumber = CurrentInvoice.CustomerMobileNumber.Length == 10 ? $"91{CurrentInvoice.CustomerMobileNumber}" : CurrentInvoice.CustomerMobileNumber;
-                    string message = $"Hello {CurrentInvoice.CustomerName}, thank you for shopping at Aadwika Fashion! Your invoice amount is ₹{CurrentInvoice.GrandTotal:F2}.";
-                    string url = $"https://api.whatsapp.com/send?phone={whatsappNumber}&text={Uri.EscapeDataString(message)}";
-
-                    try
-                    {
-                        await Launcher.Default.OpenAsync(new Uri(url));
-                        await Application.Current!.Windows[0].Page!.DisplayAlertAsync("WhatsApp", "Opening WhatsApp. Please tap 'Attach' to send the generated PDF.", "OK");
                     }
-                    catch (Exception) { await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Error", "Could not open WhatsApp.", "OK"); }
+                    if (thermal)
+                    {
+                        byte[] thermalBytes = ReceiptBuilder.GenerateThermalReceiptBytes(CurrentInvoice, InvoiceItems);
+                        await _printService.PrintReceiptAsync(thermalBytes);
+                        await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Thermal Receipt Printed.", "OK");
 
-                    ResetFormWithoutPrompt();
+                    }
+                    if (sendOverMsg)
+                    {
+                        if (string.IsNullOrWhiteSpace(CurrentInvoice.CustomerMobileNumber))
+                        {
+                            await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Error", "Please enter a customer mobile number.", "OK");
+                            return;
+                        }
+                        string pdfPath = PdfReceiptBuilder.GenerateA5Pdf(CurrentInvoice, InvoiceItems, Payments);
+                        string whatsappNumber = CurrentInvoice.CustomerMobileNumber.Length == 10 ? $"91{CurrentInvoice.CustomerMobileNumber}" : CurrentInvoice.CustomerMobileNumber;
+                        string message = $"Hello {CurrentInvoice.CustomerName}, thank you for shopping at Aadwika Fashion! Your invoice amount is ₹{CurrentInvoice.GrandTotal:F2}.";
+                        string url = $"https://api.whatsapp.com/send?phone={whatsappNumber}&text={Uri.EscapeDataString(message)}";
+
+                        try
+                        {
+                            await Launcher.Default.OpenAsync(new Uri(url));
+                            await Application.Current!.Windows[0].Page!.DisplayAlertAsync("WhatsApp", "Opening WhatsApp. Please tap 'Attach' to send the generated PDF.", "OK");
+                        }
+                        catch (Exception) { await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Error", "Could not open WhatsApp.", "OK"); }
+
+
+                    }
+                    ResetFormWithoutPrompt(); //Call at viewmodel
                 }
+
             }
-            public async Task SaveAndPrintThermalAsync(Invoice CurrentInvoice, List<InvoiceItem> InvoiceItems)
+
+
+            public async Task SaveAndPrint(InvoiceDTO currentInvoice, IEnumerable<EntryItem> InvoiceItems, IEnumerable<PaymentDetail> paymentDetails, bool thermal = true, bool sendOverMsg = false)
             {
-                if (await SaveInvoices(CurrentInvoice, Invoiceitems))
+                if (await SaveInvoicesAsync(currentInvoice, InvoiceItems, paymentDetails))
                 {
-                    byte[] thermalBytes = ReceiptBuilder.GenerateThermalReceiptBytes(CurrentInvoice, InvoiceItems);
-                    await _printService.PrintReceiptAsync(thermalBytes);
-                    await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Thermal Receipt Printed.", "OK");
-                    ResetFormWithoutPrompt();
+                    if (!thermal)
+                    {// Print A5
+                        string pdfPath = PdfReceiptBuilder.GenerateA5Pdf(CurrentInvoice, InvoiceItems, Payments);
+                        await Launcher.Default.OpenAsync(new OpenFileRequest { Title = "Print Invoice", File = new ReadOnlyFile(pdfPath) });
+
+                    }
+                    if (thermal)
+                    {
+                        byte[] thermalBytes = ReceiptBuilder.GenerateThermalReceiptBytes(CurrentInvoice, InvoiceItems);
+                        await _printService.PrintReceiptAsync(thermalBytes);
+                        await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Thermal Receipt Printed.", "OK");
+
+                    }
+                    if (sendOverMsg)
+                    {
+                        if (string.IsNullOrWhiteSpace(CurrentInvoice.CustomerMobileNumber))
+                        {
+                            await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Error", "Please enter a customer mobile number.", "OK");
+                            return;
+                        }
+                        string pdfPath = PdfReceiptBuilder.GenerateA5Pdf(CurrentInvoice, InvoiceItems, Payments);
+                        string whatsappNumber = CurrentInvoice.CustomerMobileNumber.Length == 10 ? $"91{CurrentInvoice.CustomerMobileNumber}" : CurrentInvoice.CustomerMobileNumber;
+                        string message = $"Hello {CurrentInvoice.CustomerName}, thank you for shopping at Aadwika Fashion! Your invoice amount is ₹{CurrentInvoice.GrandTotal:F2}.";
+                        string url = $"https://api.whatsapp.com/send?phone={whatsappNumber}&text={Uri.EscapeDataString(message)}";
+
+                        try
+                        {
+                            await Launcher.Default.OpenAsync(new Uri(url));
+                            await Application.Current!.Windows[0].Page!.DisplayAlertAsync("WhatsApp", "Opening WhatsApp. Please tap 'Attach' to send the generated PDF.", "OK");
+                        }
+                        catch (Exception) { await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Error", "Could not open WhatsApp.", "OK"); }
+
+
+                    }
+                    ResetFormWithoutPrompt(); //Call at viewmodel
                 }
+
             }
-            public async Task SaveAndPrintThermalAsync(InvoiceDTO CurrentInvoice, List<EntryItem> InvoiceItems)
-            {
-                if (await SaveInvoices())
-                {
-                    byte[] thermalBytes = ReceiptBuilder.GenerateThermalReceiptBytes(CurrentInvoice, InvoiceItems);
-                    await _printService.PrintReceiptAsync(thermalBytes);
-                    await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Thermal Receipt Printed.", "OK");
-                    ResetFormWithoutPrompt();
-                }
-            }
-            public async Task SaveAndPrintA5Async()
-            {
-                if (await SaveInvoiceToDatabaseAsync())
-                {
-                    string pdfPath = PdfReceiptBuilder.GenerateA5Pdf(CurrentInvoice, InvoiceItems, Payments);
-                    await Launcher.Default.OpenAsync(new OpenFileRequest { Title = "Print Invoice", File = new ReadOnlyFile(pdfPath) });
-                    ResetFormWithoutPrompt();
-                }
-            }
+
+
+
 
         }
     }

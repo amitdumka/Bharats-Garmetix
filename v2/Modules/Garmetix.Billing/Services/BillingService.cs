@@ -19,13 +19,13 @@ namespace Garmetix.Billing.Services
         public DatabaseContext GetContext()
         { return _localDb; }
 
-        private BillingService _instance;
-        public BillingService Instance => _instance ?? new BillingService();
+        //private BillingService _instance;
+        //public BillingService Instance => _instance ?? new BillingService();
 
-        public BillingService()
-        {
-            _instance = this;
-        }
+        //public BillingService()
+        //{
+        //    _instance = this;
+        //}
 
         public Product AddorUpxdateProduct(Product product, bool update = false)
         { return product; }
