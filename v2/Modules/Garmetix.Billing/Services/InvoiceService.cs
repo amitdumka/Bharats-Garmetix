@@ -1,6 +1,7 @@
 ﻿using Bharat.ToolKits.Helpers;
 using Garmetix.Billing.Helpers;
 using Garmetix.Billing.Models;
+using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Inventory;
 using Garmetix.Databases.Services;
 using Microsoft.EntityFrameworkCore;
@@ -19,35 +20,130 @@ namespace Garmetix.Billing.Services
         public InvoiceService Instance => _instance ?? new InvoiceService();
 
         // Last Invoice or Current Invoice So it can hold data
-        private Invoice _lastSavedInvoice;
+        private Invoice? _lastSavedInvoice;
 
-        private IEnumerable<InvoiceItem> _lastSaveditems;
-        private IEnumerable<InvoicePayment> _lastSavedPayments;
-        private IEnumerable<CardPayment> _lastSavedCardPayments;
-        private bool _isSaved;
+        private IEnumerable<InvoiceItem>? _lastSaveditems;
+        private IEnumerable<InvoicePayment>? _lastSavedPayments;
+        private IEnumerable<CardPayment>? _lastSavedCardPayments;
+        private bool _isSaved = false;
+        private bool isSaving = false;
 
         public InvoiceService()
         {
             _instance = this;
-
-            // getting service from logal
             _printService = ServiceHelper.GetService<IPrintService>();
-            if (_printService == null)
-            {
-            }
+            isSaving = false;
+            _isSaved = false;
+
         }
 
-        private bool isSaving = false;
 
-        public bool UpdateInvoices(Invoice invoice)
+        public bool UpdateInvoices(Invoice invoice, IEnumerable<InvoiceItem> invoiceitems, IEnumerable<InvoicePayment> paymentDetails, IEnumerable<CardPayment> cardPayments)
         { return false; }
 
         public bool UpdateInvoices(InvoiceDTO invoice, IEnumerable<EntryItem> invoiceitems, IEnumerable<PaymentDetail> paymentDetails)
         { return false; }
 
-        public bool DeleteInvoices(Invoice invoice, bool delete = false)
-        { return true; }
 
+
+        /// <summary>
+        /// Delete invoice
+        /// </summary>
+        /// <param name="invoice"></param>
+        /// <param name="delete"></param>
+        /// <returns></returns>
+        public async Task<bool> DeleteInvoicesAsync(Invoice invoice, bool delete = false)
+        {
+            if (invoice == null) return false;
+
+            // Use a 'using' block for the transaction to ensure it disposes correctly
+            using var transaction = await GetContext().Database.BeginTransactionAsync();
+
+            try
+            {
+                if (delete) // Hard Delete
+                {
+                    // 1. Remove related items
+                    GetContext().InvoiceItems.RemoveRange(invoice.InvoiceItems);
+
+                    var payments = GetContext().InvoicePayments.Where(c => c.InvoiceId == invoice.Id).ToList();
+                    if (payments.Any())
+                        GetContext().InvoicePayments.RemoveRange(payments);
+
+                    if (invoice.PaymentMode == PaymentMode.Card)
+                    {
+                        var cpayments = GetContext().CardPayments.Where(c => c.InvoiceId == invoice.Id).ToList();
+                        if (cpayments.Any())
+                            GetContext().CardPayments.RemoveRange(cpayments);
+                    }
+
+                    // 2. IMPORTANT: You forgot to remove the invoice itself!
+                    GetContext().Invoices.Remove(invoice);
+                }
+                else // Soft Delete
+                {
+                    invoice.Deleted = true;
+                    invoice.UpdatedAt = DateTime.UtcNow;
+
+                    foreach (var item in invoice.InvoiceItems)
+                    {
+                        item.Deleted = true;
+                        item.UpdatedAt = DateTime.UtcNow;
+                    }
+
+                    var payments = GetContext().InvoicePayments.Where(c => c.InvoiceId == invoice.Id).ToList();
+                    foreach (var item in payments)
+                    {
+                        item.Deleted = true;
+                        item.UpdatedAt = DateTime.UtcNow;
+                    }
+
+                    if (invoice.PaymentMode == PaymentMode.Card)
+                    {
+                        var cpayments = GetContext().CardPayments.Where(c => c.InvoiceId == invoice.Id).ToList();
+                        foreach (var item in cpayments)
+                        {
+                            item.Deleted = true;
+                            item.UpdatedAt = DateTime.UtcNow;
+                        }
+                        GetContext().CardPayments.UpdateRange(cpayments);
+                    }
+
+                    GetContext().InvoiceItems.UpdateRange(invoice.InvoiceItems);
+                    GetContext().InvoicePayments.UpdateRange(payments);
+                    GetContext().Invoices.Update(invoice);
+                }
+
+                await GetContext().SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Log the error (ex) here
+                await transaction.RollbackAsync();
+                return false;
+            }
+        }
+       
+        /// <summary>
+        /// Delete invoice
+        /// </summary>
+        /// <param name="companyId"></param>
+        /// <param name="invId"></param>
+        /// <param name="invno"></param>
+        /// <param name="delete"></param>
+        /// <returns></returns>
+        public async Task<bool> DeleteInvoicesAsync(Guid companyId, Guid? invId, string? invno, bool delete = false)
+        {
+
+            var invoice = await GetContext().Invoices.Include(x => x.InvoiceItems).FirstOrDefaultAsync(x => x.CompanyId == companyId && (x.Id == invId || x.InvoiceNumber == invno));
+            if (invoice == null) return false;
+
+            return await DeleteInvoicesAsync(invoice, delete);
+
+        }
         public Invoice FetchInvoices(Guid storeid, string invnumber)
         { return new Invoice { InvoiceNumber = "" }; }
 
@@ -57,7 +153,7 @@ namespace Garmetix.Billing.Services
         // --- DATABASE SAVE ENGINE ---
 
         private void CalculateInvoiceTotals(Invoice inv)
-        { 
+        {
 
         }
 
@@ -116,9 +212,11 @@ namespace Garmetix.Billing.Services
         /// <returns></returns>
         public async Task<bool> SaveInvoicesAsync(InvoiceDTO invoicedto, IEnumerable<EntryItem> InvoiceItems, IEnumerable<PaymentDetail> paymentDetails)
         {
-            if (InvoiceItems.Count() == 0) { 
+            if (InvoiceItems.Count() == 0)
+            {
                 await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Validation", "Cannot save empty invoice.", "OK");
-                return false; }
+                return false;
+            }
 
             if (isSaving) return false;
 
@@ -136,17 +234,27 @@ namespace Garmetix.Billing.Services
                     ItemCount = InvoiceItems.Count(),
                     ActualQuantity = invoicedto.BilledQuantity,
                     BilledQuantity = invoicedto.BilledQuantity,
-                    Id = invoicedto.Id, CustomerName = invoicedto.CustomerName,
-                    InterState=invoicedto.IsInterStateSale, 
-                    Deleted=false, CreatedAt=DateTime.UtcNow,OnDate=invoicedto.OnDate,                                        
-                    BillAmount = invoicedto.GrandTotal, CreditSale=invoicedto.BalanceAmount>0?true:false,
-                    TaxAmount = invoicedto.TotalTax, 
-                    CGSTAmount=invoicedto.TotalTax/2m, SGSTAmount=invoicedto.TotalTax/2m , IGSTAmount=invoicedto.TotalTax, 
-                    BillDiscountAmount=invoicedto.GlobalDiscountAmount, DiscountAmount=invoicedto.TotalDiscount,
-                    BasePrice=invoicedto.SubTotal,PaidAmount=invoicedto.PaidAmount, ReturnInvoice=false, 
-                    RoundOff=invoicedto.RoundOffAmount, UpdatedAt=DateTime.UtcNow.AddMinutes(-10), 
-                    
-                 
+                    Id = invoicedto.Id,
+                    CustomerName = invoicedto.CustomerName,
+                    InterState = invoicedto.IsInterStateSale,
+                    Deleted = false,
+                    CreatedAt = DateTime.UtcNow,
+                    OnDate = invoicedto.OnDate,
+                    BillAmount = invoicedto.GrandTotal,
+                    CreditSale = invoicedto.BalanceAmount > 0 ? true : false,
+                    TaxAmount = invoicedto.TotalTax,
+                    CGSTAmount = invoicedto.TotalTax / 2m,
+                    SGSTAmount = invoicedto.TotalTax / 2m,
+                    IGSTAmount = invoicedto.TotalTax,
+                    BillDiscountAmount = invoicedto.GlobalDiscountAmount,
+                    DiscountAmount = invoicedto.TotalDiscount,
+                    BasePrice = invoicedto.SubTotal,
+                    PaidAmount = invoicedto.PaidAmount,
+                    ReturnInvoice = false,
+                    RoundOff = invoicedto.RoundOffAmount,
+                    UpdatedAt = DateTime.UtcNow.AddMinutes(-10),
+
+
                 };
 
                 CalculateInvoiceTotals(currentInvoice); //do at invoice model and re do here for verification
@@ -157,10 +265,10 @@ namespace Garmetix.Billing.Services
                     if (!proceed) return false;
                 }
 
-                
+
                 try
                 {
-                   
+
                     foreach (var item in InvoiceItems)
                     {
                         GetContext().InvoiceItems.Add(new InvoiceItem
@@ -183,8 +291,8 @@ namespace Garmetix.Billing.Services
                         });
                     }
 
-                    
-                    
+
+
                 }
                 catch (Exception ex)
                 {
