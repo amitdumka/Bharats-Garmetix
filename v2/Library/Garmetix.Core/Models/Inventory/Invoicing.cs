@@ -144,6 +144,8 @@ namespace Garmetix.Core.Models.Inventory
         [Display(Name = "Salesman", AutoGenerateField = false)] public virtual Salesman? Saleman { get; set; }
         [Display(Name = "Customer", AutoGenerateField = false)] public virtual Customer? Customer { get; set; }
         [Display(Name = "Invoice Items", AutoGenerateField = false)] public virtual ICollection<InvoiceItem> InvoiceItems { get; set; } = new List<InvoiceItem>();
+        [Display(Name = "Invoice Payments", AutoGenerateField = false)] public virtual ICollection<InvoicePayment>? Payments { get; set; } = new List<InvoicePayment>();
+        [Display(Name = "Card Payment", AutoGenerateField = false)] public virtual ICollection<CardPayment>? CardPayments { get; set; } = null;
 
         [Display(Name = "Paid Amount", AutoGenerateField = false)]
         public decimal PaidAmount { get; set; }

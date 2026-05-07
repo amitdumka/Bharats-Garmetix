@@ -126,7 +126,7 @@ namespace Garmetix.Billing.Services
                 return false;
             }
         }
-       
+
         /// <summary>
         /// Delete invoice
         /// </summary>
@@ -147,8 +147,25 @@ namespace Garmetix.Billing.Services
         public Invoice FetchInvoices(Guid storeid, string invnumber)
         { return new Invoice { InvoiceNumber = "" }; }
 
-        public Invoice FetchInvoices(Guid storeid, Guid InvId)
-        { return new Invoice { InvoiceNumber = "" }; }
+        public Invoice? FetchInvoices(Guid storeid, Guid InvId)
+        {
+            if (storeid == null || InvId == null) return null;
+
+            var invoice = GetContext().Invoices.Where(c => c.CompanyId == storeid && c.Id == InvId).FirstOrDefault();
+            if (invoice != null)
+            {
+                invoice.InvoiceItems = (ICollection<InvoiceItem>)GetContext().InvoiceItems.Where(c => c.CompanyId == storeid && c.Id == InvId).ToAsyncEnumerable();
+                invoice.Payments = (ICollection<InvoicePayment>)GetContext().InvoicePayments.Where(c => c.CompanyId == storeid && c.Id == InvId).ToAsyncEnumerable();
+                if (invoice.PaymentMode == PaymentMode.Card)
+                {
+                    invoice.CardPayments = (ICollection<CardPayment>)GetContext().CardPayments.Where(c => c.CompanyId == storeid && c.Id == InvId).ToAsyncEnumerable();
+
+                }
+                return invoice;
+            }
+            return new Invoice { InvoiceNumber = "" };
+
+        }
 
         // --- DATABASE SAVE ENGINE ---
 
