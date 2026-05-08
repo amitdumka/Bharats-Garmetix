@@ -28,6 +28,10 @@ namespace Garmetix.Billing.Services
         private bool _isSaved = false;
         private bool isSaving = false;
 
+        /// <summary>
+        /// Default Constructor  
+        ///     It initilized the instance , print Sercice, and context
+        /// </summary>
         public InvoiceService()
         {
             _instance = this;
@@ -38,11 +42,7 @@ namespace Garmetix.Billing.Services
         }
 
 
-        public bool UpdateInvoices(Invoice invoice, IEnumerable<InvoiceItem> invoiceitems, IEnumerable<InvoicePayment> paymentDetails, IEnumerable<CardPayment> cardPayments)
-        { return false; }
-
-        public bool UpdateInvoices(InvoiceDTO invoice, IEnumerable<EntryItem> invoiceitems, IEnumerable<PaymentDetail> paymentDetails)
-        { return false; }
+       
 
 
 
@@ -144,10 +144,38 @@ namespace Garmetix.Billing.Services
             return await DeleteInvoicesAsync(invoice, delete);
 
         }
-        public Invoice FetchInvoices(Guid storeid, string invnumber)
-        { return new Invoice { InvoiceNumber = "" }; }
+        /// <summary>
+        /// Fetch invoice from Company/StoreId and Invoice Number
+        /// </summary>
+        /// <param name="storeid"></param>
+        /// <param name="invnumber"></param>
+        /// <returns></returns>
+        public Invoice? FetchInvoices(Guid? storeid, string invnumber)
+        {
+            if (storeid == null || string.IsNullOrEmpty(invnumber)) return null;
 
-        public Invoice? FetchInvoices(Guid storeid, Guid InvId)
+            var invoice = GetContext().Invoices.Where(c => c.CompanyId == storeid && c.InvoiceNumber == invnumber).FirstOrDefault();
+            if (invoice != null)
+            {
+                invoice.InvoiceItems = (ICollection<InvoiceItem>)GetContext().InvoiceItems.Where(c => c.CompanyId == storeid && c.Id == invoice.Id).ToAsyncEnumerable();
+                invoice.Payments = (ICollection<InvoicePayment>)GetContext().InvoicePayments.Where(c => c.CompanyId == storeid && c.Id == invoice.Id).ToAsyncEnumerable();
+                if (invoice.PaymentMode == PaymentMode.Card)
+                {
+                    invoice.CardPayments = (ICollection<CardPayment>)GetContext().CardPayments.Where(c => c.CompanyId == storeid && c.Id == invoice.Id).ToAsyncEnumerable();
+
+                }
+                return invoice;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Fetch Invoices using Company or Store id and Invoice Id
+        /// </summary>
+        /// <param name="storeid"></param>
+        /// <param name="InvId"></param>
+        /// <returns></returns>
+        public Invoice? FetchInvoices(Guid? storeid, Guid? InvId)
         {
             if (storeid == null || InvId == null) return null;
 
@@ -163,7 +191,7 @@ namespace Garmetix.Billing.Services
                 }
                 return invoice;
             }
-            return new Invoice { InvoiceNumber = "" };
+            return null;
 
         }
 
@@ -171,7 +199,8 @@ namespace Garmetix.Billing.Services
 
         private void CalculateInvoiceTotals(Invoice inv)
         {
-
+            //TODO: need to be impletemented
+             throw new NotImplementedException();
         }
 
         /// <summary>
@@ -207,6 +236,8 @@ namespace Garmetix.Billing.Services
                     _isSaved = true;
 
                     return true;
+
+                    //
                 }
             }
             catch (Exception ex)
@@ -467,5 +498,11 @@ namespace Garmetix.Billing.Services
             else
                 return false;
         }
+
+        public bool UpdateInvoices(Invoice invoice, IEnumerable<InvoiceItem> invoiceitems, IEnumerable<InvoicePayment> paymentDetails, IEnumerable<CardPayment> cardPayments)
+        { return false; }
+
+        public bool UpdateInvoices(InvoiceDTO invoice, IEnumerable<EntryItem> invoiceitems, IEnumerable<PaymentDetail> paymentDetails)
+        { return false; }
     }
 }
