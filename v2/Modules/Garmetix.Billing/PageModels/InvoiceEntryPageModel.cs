@@ -152,7 +152,7 @@ namespace Garmetix.Billing.PageModels
                     await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Customer saved.", "OK");
                 }
             }
-            catch (Exception ex) { await ShowErrorAsync("Save Customer Error", ex); }
+            catch (Exception ex) { await InvoiceService.ShowErrorAsync("Save Customer Error", ex); }
             finally { IsBusy = false; }
         }
 
@@ -181,7 +181,7 @@ namespace Garmetix.Billing.PageModels
                 InvoiceItems.Add(newItem);
                 CalculateInvoiceTotals();
             }
-            catch (Exception ex) { _ = ShowErrorAsync("Add Product Error", ex); }
+            catch (Exception ex) { _ =InvoiceService.ShowErrorAsync("Add Product Error", ex); }
         }
 
         [RelayCommand]
@@ -194,7 +194,7 @@ namespace Garmetix.Billing.PageModels
             Application.Current.Dispatcher.Dispatch(() =>
             {
                 try { InvoiceItems.Remove(item); CalculateInvoiceTotals(); }
-                catch (Exception ex) { _ = ShowErrorAsync("Remove Item Error", ex); }
+                catch (Exception ex) { _ = InvoiceService.ShowErrorAsync("Remove Item Error", ex); }
             });
         }
 
@@ -247,7 +247,7 @@ namespace Garmetix.Billing.PageModels
                 CurrentInvoice.RoundOffAmount = CurrentInvoice.GrandTotal - exactGrandTotal;
                 CurrentInvoice.PaidAmount = Payments.Sum(p => p.Amount);
             }
-            catch (Exception ex) { _ = ShowErrorAsync("Calculation Error", ex); }
+            catch (Exception ex) { _ = InvoiceService.ShowErrorAsync("Calculation Error", ex); }
         }
 
 

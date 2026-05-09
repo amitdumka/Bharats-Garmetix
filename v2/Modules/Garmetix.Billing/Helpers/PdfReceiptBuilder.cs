@@ -20,11 +20,11 @@ namespace Garmetix.Billing.Helpers
             QuestPDF.Settings.License = LicenseType.Community;
         }
 
-        public static string GenerateA5Pdf(Invoice invoice, IEnumerable<InvoiceItem> items, IEnumerable<InvoicePayment> payments)
+        public static string GenerateA5Pdf(Invoice? invoice, IEnumerable<InvoiceItem>? items, IEnumerable<InvoicePayment>? payments)
         {
             Initialize();
-
-            string fileName = $"{invoice.InvoiceNumber}.pdf";
+            //TODO: Check for null  and handle it
+            string fileName = $"{invoice?.InvoiceNumber}.pdf";
             string filePath = Path.Combine(Microsoft.Maui.Storage.FileSystem.CacheDirectory, fileName);
 
             string instagramUrl = "https://instagram.com/aadwikafashion";

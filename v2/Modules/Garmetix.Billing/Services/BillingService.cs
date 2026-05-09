@@ -43,6 +43,73 @@ namespace Garmetix.Billing.Services
         public bool RemoveStock(Guid StoreId, string Barcode, bool delete = false)
         { return false; }
 
+
+        public async Task<bool> UpdateStockRangeAsync(List<InvoiceItem> items)
+        {
+            //TODO: add Try Catch final block in the code
+            //TODO: Update the price value of sold amount
+            var count = 0;
+            var trans = await GetContext().Database.BeginTransactionAsync();
+            foreach (var item in items)
+            {
+                var result = await GetContext().Stocks.Where(x => x.StoreId == item.CompanyId && x.Barcode == item.Barcode).FirstOrDefaultAsync();
+                if (result != null)
+                {
+                    count++;
+                    result.SoldQty += item.BilledQuantity;
+                    GetContext().Stocks.Update(result);
+                }
+            }
+            if (count == items.Count)
+            {
+
+                count = await GetContext().SaveChangesAsync();
+                if (count == items.Count)
+                {
+                    await trans.CommitAsync();
+                    return true;
+                }
+                else
+                {
+                    await trans.RollbackAsync();
+                    return false;
+                }
+            }
+            else return false;
+        }
+        public async Task<bool> UpdateStockRangeAsync(List<PurchaseInvoiceItem> items)
+        {
+            //TODO: add Try Catch final block in the code
+            //TODO: Update the average Price  of Cost price.
+            var count = 0;
+            var trans = await GetContext().Database.BeginTransactionAsync();
+            foreach (var item in items)
+            {
+                var result = await GetContext().Stocks.Where(x => x.StoreId == item.CompanyId && x.Barcode == item.Barcode).FirstOrDefaultAsync();
+                if (result != null)
+                {
+                    count++;
+                    result.PurchaseQty += item.BilledQuantity;
+                    GetContext().Stocks.Update(result);
+                }
+            }
+            if (count == items.Count)
+            {
+
+                count = await GetContext().SaveChangesAsync();
+                if (count == items.Count)
+                {
+                    await trans.CommitAsync();
+                    return true;
+                }
+                else
+                {
+                    await trans.RollbackAsync();
+                    return false;
+                }
+            }
+            else return false;
+        }
         /// <summary>
         /// Update the stock while purchase or Sale
         /// </summary>
@@ -74,7 +141,7 @@ namespace Garmetix.Billing.Services
                 GetContext().Stocks.Update(result);
                 return (await GetContext().SaveChangesAsync() > 0);
             }
-            catch (Exception )
+            catch (Exception)
             {
                 //Notify the error
                 return false;

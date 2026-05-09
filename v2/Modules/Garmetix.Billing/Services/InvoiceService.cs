@@ -5,6 +5,8 @@ using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Inventory;
 using Garmetix.Databases.Services;
 using Microsoft.EntityFrameworkCore;
+using Bharat.ToolKits.Notifications;
+using Bharat.Toolkits;
 
 namespace Garmetix.Billing.Services
 {
@@ -42,7 +44,7 @@ namespace Garmetix.Billing.Services
         }
 
 
-       
+
 
 
 
@@ -200,7 +202,7 @@ namespace Garmetix.Billing.Services
         private void CalculateInvoiceTotals(Invoice inv)
         {
             //TODO: need to be impletemented
-             throw new NotImplementedException();
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -235,9 +237,14 @@ namespace Garmetix.Billing.Services
                     if (cardPayments != null) _lastSavedCardPayments = cardPayments;
                     _isSaved = true;
 
-                    return true;
+                    //update the stock
+                    if (!await UpdateStockRangeAsync(invoice.InvoiceItems.ToList()))
+                    {
+                        await Notify.DisplaySnackbarAsync("Failded to update the stock. Kindly report admin to check the log");
+                        //TODO: Add Log 
 
-                    //
+                    }
+                    return true;
                 }
             }
             catch (Exception ex)
@@ -342,7 +349,7 @@ namespace Garmetix.Billing.Services
 
 
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     throw;
                 }
@@ -352,8 +359,14 @@ namespace Garmetix.Billing.Services
                 DatabaseService.Instance.InvalidateCache();
                 return true;
             }
-            catch (Exception ex) { await ShowErrorAsync("Save Invoice Error", ex); return false; }
-            finally { isSaving = false; }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync("Save Invoice Error", ex); return false;
+            }
+            finally
+            {
+                isSaving = false;
+            }
         }
 
         /// <summary>
@@ -421,7 +434,7 @@ namespace Garmetix.Billing.Services
         /// <param name="sendOverMsg"></param>
         /// <returns></returns>
 
-        public async Task<bool> SaveAndPrint(Invoice currentInvoice, IEnumerable<InvoiceItem> InvoiceItems, IEnumerable<InvoicePayment> paymentDetails, bool print = true, bool thermal = true, bool sendOverMsg = false)
+        public async Task<bool> SaveAndPrint(Invoice? currentInvoice, IEnumerable<InvoiceItem>? InvoiceItems, IEnumerable<InvoicePayment>? paymentDetails, IEnumerable<CardPayment>? cardPayments, bool print = true, bool thermal = true, bool sendOverMsg = false)
         {
             string pdfPath = null;
             bool result = false;
@@ -430,7 +443,9 @@ namespace Garmetix.Billing.Services
             {
                 result = true;
             }
-            result = await SaveInvoicesAsync(currentInvoice, InvoiceItems, paymentDetails);
+            //TODO: Check for null and handle it and implement the null handli
+            result = await SaveInvoicesAsync(currentInvoice, InvoiceItems, paymentDetails, cardPayments);
+          
             if (result)
             {
                 if (!thermal)
@@ -448,7 +463,7 @@ namespace Garmetix.Billing.Services
                 }
                 if (sendOverMsg)
                 {
-                    if (string.IsNullOrWhiteSpace(_lastSavedInvoice.CustomerMobileNumber))
+                    if (string.IsNullOrWhiteSpace(_lastSavedInvoice?.CustomerMobileNumber))
                     {
                         await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Error", "Please enter a customer mobile number.", "OK");
                         return false;
@@ -493,7 +508,7 @@ namespace Garmetix.Billing.Services
         {
             if (await SaveInvoicesAsync(currentInvoice, InvoiceItems, paymentDetails))
             {
-                return await SaveAndPrint(_lastSavedInvoice, _lastSaveditems, _lastSavedPayments, print, thermal, sendOverMsg);
+                return await SaveAndPrint(_lastSavedInvoice, _lastSaveditems, _lastSavedPayments, _lastSavedCardPayments, print, thermal, sendOverMsg);
             }
             else
                 return false;

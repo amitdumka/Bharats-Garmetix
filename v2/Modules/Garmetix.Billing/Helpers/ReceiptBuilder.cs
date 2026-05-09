@@ -10,8 +10,9 @@ namespace Garmetix.Billing.Helpers
         // ====================================================================================
         // 1. THERMAL PRINTER FORMAT (ESC/POS RAW BYTES)
         // ====================================================================================
-        public static byte[] GenerateThermalReceiptBytes(Invoice invoice, IEnumerable<InvoiceItem> items)
+        public static byte[] GenerateThermalReceiptBytes(Invoice? invoice, IEnumerable<InvoiceItem>? items)
         {
+            //TODO: check for null and implment the logic for handling
             List<byte> bytes = new List<byte>();
 
             // ESC/POS Commands
