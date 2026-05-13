@@ -1,7 +1,7 @@
 ﻿ 
-using Garmetix.Accounting.Pages;
-using Garmetix.AI.Billing.Views;
-using Garmetix.Base.Shells; 
+using Garmetix.Accounting.Pages; 
+using Garmetix.Base.Shells;
+using Garmetix.Billing.Pages;
 using Garmetix.Core.Sessions;
 using Garmetix.CoreBase.DayOperations.Pages;
 using Garmetix.CoreBase.Stores.Pages.Desktop;

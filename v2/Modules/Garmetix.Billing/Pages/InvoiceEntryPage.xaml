@@ -4,7 +4,7 @@
              xmlns:inputs="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
              xmlns:datagrid="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
-             x:Class="Garmetix.AI.Billing.Views.InvoiceEntryPage"
+             x:Class="Garmetix.Billing.Pages.InvoiceEntryPage"
              BackgroundColor="#F4F6F9"
              Title="Point of Sale">
 

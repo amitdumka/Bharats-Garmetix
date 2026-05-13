@@ -1,6 +1,6 @@
 using Garmetix.Billing.PageModels;
 
-namespace Garmetix.AI.Billing.Views
+namespace Garmetix.Billing.Pages
 {
     public partial class InvoiceEntryPage : ContentPage
     {

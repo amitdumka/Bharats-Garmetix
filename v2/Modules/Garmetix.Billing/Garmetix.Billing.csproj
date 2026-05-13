@@ -38,19 +38,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="Pages\Alternatives\BankRegistryPage.xaml">
+	  <MauiXaml Update="Alternatives\BankRegistryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\Alternatives\BankTransactionEntryPage.xaml">
+	  <MauiXaml Update="Alternatives\BankTransactionEntryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\Alternatives\InvoiceEntryPage.xaml">
+	  <MauiXaml Update="Alternatives\VoucherEntryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\Alternatives\VoucherEntryPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\Alternatives\VoucherRegistryPage.xaml">
+	  <MauiXaml Update="Alternatives\VoucherRegistryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\EditInvoicePage.xaml">

@@ -1,4 +1,9 @@
-﻿namespace Garmetix.Billing
+﻿using CommunityToolkit.Maui;
+using Garmetix.Billing.PageModels;
+using Garmetix.Billing.Pages;
+using Garmetix.Billing.Services;
+
+namespace Garmetix.Billing
 {
     // All the code in this file is included in all platforms.
     public static class GarmetixBillingModule
@@ -13,6 +18,12 @@
             // Register services, handlers, etc. here.
             // For example:
             // builder.Services.AddSingleton<IGarmetixBillingService, GarmetixBillingService>();
+            builder.Services.AddTransient<InvoiceEntryPage>();
+            builder.Services.AddTransient<InvoiceHistoryPage>();
+            builder.Services.AddTransient<InvoicesPageModel>();
+            builder.Services.AddTransient<InvoiceEntryPageModel>();
+            builder.Services.AddTransient<SaleInvoicePageModel>();
+            builder.Services.AddSingleton<InvoiceService>();
             return builder;
         }
 

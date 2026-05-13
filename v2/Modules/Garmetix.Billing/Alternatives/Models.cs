@@ -1,8 +1,9 @@
-﻿using Garmetix.Core.Enums;
+﻿using Garmetix.Billing.Models;
+using Garmetix.Core.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace Garmetix.Billing.Models.Alternatives;
+namespace Garmetix.Billing.Alternatives;
 
 
 

@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
              xmlns:sfgrid="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
-             x:Class="Garmetix.AI.Billing.Views.InvoiceHistoryPage"
+             x:Class="Garmetix.Billing.Pages.InvoiceHistoryPage"
              Title="Sales &amp; Financial Dashboard"
              BackgroundColor="#F4F6F9">
 
