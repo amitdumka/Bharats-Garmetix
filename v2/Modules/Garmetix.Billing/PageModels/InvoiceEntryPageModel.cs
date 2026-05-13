@@ -50,7 +50,8 @@ namespace Garmetix.Billing.PageModels
 
         [ObservableProperty] private InvoiceDTO currentInvoice;
         public ObservableCollection<EntryItem> InvoiceItems { get; set; } = new();
-        public ObservableCollection<InvoicePayment> Payments { get; set; } = new();
+        public ObservableCollection<PaymentDetail> Payments { get; set; } = new();
+
         // The UI only binds to this small filtered list to prevent lagging
 
         [ObservableProperty] private Product? selectedProduct;
@@ -212,13 +213,13 @@ namespace Garmetix.Billing.PageModels
         public void AddPayment()
         {
             if (PaymentAmountInput <= 0) return;
-            Payments.Add(new InvoicePayment { PaymentMode = PaymentModeInput, Amount = PaymentAmountInput });
+            Payments.Add(new PaymentDetail { PaymentMode = PaymentModeInput, Amount = PaymentAmountInput });
             PaymentAmountInput = 0;
             CalculateInvoiceTotals();
         }
 
         [RelayCommand]
-        public void RemovePayment(InvoicePayment payment)
+        public void RemovePayment(PaymentDetail payment)
         {
             if (Payments.Contains(payment))
             {
@@ -257,7 +258,7 @@ namespace Garmetix.Billing.PageModels
         [RelayCommand]
         public async Task SaveAndWhatsAppAsync()
         {
-            if (_invoiceService.SaveAndPrint(CurrentInvoice, InvoiceItems, Payments, print: false, sendOverMsg: true))
+            if (await _invoiceService.SaveAndPrint(CurrentInvoice, InvoiceItems, Payments, print: false, sendOverMsg: true))
             {
                 ResetFormWithoutPrompt();
             }
@@ -266,7 +267,7 @@ namespace Garmetix.Billing.PageModels
         [RelayCommand]
         public async Task SaveAndPrintA5Async()
         {
-            if (_invoiceService.SaveAndPrint(CurrentInvoice, InvoiceItems, Payments, print: true, thermal: false sendOverMsg: false))
+            if (await _invoiceService.SaveAndPrint(CurrentInvoice, InvoiceItems, Payments, print: true, thermal: false, sendOverMsg: false))
             {
                 ResetFormWithoutPrompt();
             }
@@ -275,7 +276,7 @@ namespace Garmetix.Billing.PageModels
         [RelayCommand]
         public async Task SaveAndPrintThermalAsync()
         {
-            if (_invoiceService.SaveAndPrint(CurrentInvoice, InvoiceItems, Payments, print: true, thermal: true sendOverMsg: false))
+            if (await _invoiceService.SaveAndPrint(CurrentInvoice, InvoiceItems, Payments, print: true, thermal: true, sendOverMsg: false))
             {
                 ResetFormWithoutPrompt();
             }

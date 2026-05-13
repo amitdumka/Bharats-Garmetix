@@ -1,9 +1,9 @@
-namespace Garmetix.AI.Billing.Views;
+//namespace Garmetix.AI.Billing.Views;
 
-public partial class PurchaseHistoryPage : ContentPage
-{
-	public PurchaseHistoryPage()
-	{
-		InitializeComponent();
-	}
-}
+//public partial class PurchaseHistoryPage : ContentPage
+//{
+//	public PurchaseHistoryPage()
+//	{
+//		InitializeComponent();
+//	}
+//}

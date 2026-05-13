@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<!--<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Garmetix.AI.Billing.Views.BankRegistryPage"
@@ -52,4 +52,4 @@
             <Button.Shadow><Shadow Brush="#0EA5E9" Offset="0,4" Radius="10" Opacity="0.4" /></Button.Shadow>
         </Button>
     </Grid>
-</ContentPage>
+</ContentPage>-->

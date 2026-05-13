@@ -1,9 +1,9 @@
-﻿namespace Garmetix.AI.Billing.Views;
+﻿//namespace Garmetix.AI.Billing.Views;
 
-public partial class BankRegistryPage : ContentPage
-{
-    public BankRegistryPage()
-    {
-        InitializeComponent();
-    }
-}
+//public partial class BankRegistryPage : ContentPage
+//{
+//    public BankRegistryPage()
+//    {
+//        InitializeComponent();
+//    }
+//}

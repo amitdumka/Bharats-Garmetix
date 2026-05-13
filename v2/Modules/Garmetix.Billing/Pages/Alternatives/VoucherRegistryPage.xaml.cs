@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Text;
 
-namespace Garmetix.AI.Billing.Views
-{
-    public partial class VoucherRegistryPage : ContentPage
-    {
-        public VoucherRegistryPage()
-        {
-            InitializeComponent();
-        }
-    }
-}
+//namespace Garmetix.AI.Billing.Views
+//{
+//    public partial class VoucherRegistryPage : ContentPage
+//    {
+//        public VoucherRegistryPage()
+//        {
+//            InitializeComponent();
+//        }
+//    }
+//}
