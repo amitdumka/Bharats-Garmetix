@@ -1,7 +1,7 @@
 using Android.Bluetooth;
 using Android.Content;
 using Android.Print;
-using Garmetix.Billing.AIBased.Services;
+using Garmetix.Billing.Services;
 using Java.Util;
 using Application = Android.App.Application;
 // 1. ADD THESE TWO ALIASES USING "global::"
@@ -45,10 +45,10 @@ namespace Garmetix.AI.Billing.Platforms.Android
                 var printAdapter = view.CreatePrintDocumentAdapter(_documentName);
 
                 var printAttributes = new PrintAttributes.Builder()
-                    .SetMediaSize(PrintAttributes.MediaSize.IsoA5)
+                    .SetMediaSize(mediaSize: PrintAttributes.MediaSize.IsoA5)
                     .Build();
 
-                printManager.Print(_documentName, printAdapter, printAttributes);
+                _ = printManager?.Print(_documentName, printAdapter, printAttributes);
             }
         }
         public async Task PrintReceiptAsync(byte[] receiptData)

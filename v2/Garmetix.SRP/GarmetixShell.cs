@@ -51,11 +51,14 @@ namespace Garmetix
 
             //// 2. Inject your pre-built XAML Flyout Items!
             Items.Add(new AccountingMenu());  //Accouting Menu
+            Items.Add(new BillingMenu());  //Billing  Menu
+
+
             Items.Add(new AccountsMenu());    // Accounts Menu
             Items.Add(new LedgerMenu());      //Ledger Menu
             Items.Add(new HRMMenu());         //HRM Menu
             Items.Add(new BankingMenu());     //Banking Menu
-            Items.Add(new CompanyMenu());  
+            Items.Add(new CompanyMenu());     //Company Menu 
         }
 
         /// <summary>

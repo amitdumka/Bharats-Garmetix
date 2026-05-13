@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 namespace OldSystem.Models.NeedToRemoved
 {
      
-    //public enum GarmentCategory { Fabric, ReadyMade, Accessories }
+    public enum GarmentCategory { Fabric, ReadyMade, Accessories }
     public class Stock
     {
         [PrimaryKey]

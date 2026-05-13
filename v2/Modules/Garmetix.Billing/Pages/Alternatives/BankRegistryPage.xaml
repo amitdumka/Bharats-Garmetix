@@ -1,9 +1,11 @@
-<!--<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
+
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Garmetix.AI.Billing.Views.BankRegistryPage"
-             Title="Company Bank Accounts" BackgroundColor="#F4F6F9">
-
+             
+    
+             Title="Company Bank Accounts" BackgroundColor="#F4F6F9"></ContentPage>
+<!--
     <Grid RowDefinitions="Auto, *">
         <Label Grid.Row="0" Text="Active Accounts" FontSize="18" FontAttributes="Bold" TextColor="#1E293B" Margin="20,20,20,10"/>
 

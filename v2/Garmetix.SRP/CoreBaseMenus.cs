@@ -1,5 +1,7 @@
-﻿using Garmetix.Accounting.Pages;
-using Garmetix.Base.Shells;
+﻿ 
+using Garmetix.Accounting.Pages;
+using Garmetix.AI.Billing.Views;
+using Garmetix.Base.Shells; 
 using Garmetix.Core.Sessions;
 using Garmetix.CoreBase.DayOperations.Pages;
 using Garmetix.CoreBase.Stores.Pages.Desktop;
@@ -9,6 +11,14 @@ using HrmPages = Garmetix.HRM.Pages.Desktop;
 using MobileHrmPages = Garmetix.HRM.Pages.Mobile;
 namespace Garmetix.SRP
 {
+    public partial class BillingMenu: BaseFlyoutMenu
+    {
+        public BillingMenu():base("Billing")
+        {
+            AddPageTab("Sale Invoice", "rain_icon.png", "SaleInvoice", typeof(InvoiceHistoryPage));
+            AddPageTab("Add Sale Invoice", "rain_icon.png", "AddSaleInvoice", typeof(InvoiceEntryPage));
+        }
+    }
     public partial class CompanyMenu : BaseFlyoutMenu
     {
         public CompanyMenu() : base("Stores")

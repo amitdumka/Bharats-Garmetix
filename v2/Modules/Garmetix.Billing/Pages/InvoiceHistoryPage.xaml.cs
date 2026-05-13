@@ -1,16 +1,17 @@
-using Garmetix.AI.Billing.ViewModels; 
+using Garmetix.AI.Billing.ViewModels;
+using Garmetix.Billing.PageModels;
 using Microsoft.Maui.Controls;
 
 namespace Garmetix.AI.Billing.Views
 {
     public partial class InvoiceHistoryPage : ContentPage
     {
-        private readonly InvoiceHistoryViewModel _viewModel;
+        private readonly InvoicesPageModel _viewModel;
 
         public InvoiceHistoryPage()
         {
             InitializeComponent();
-            _viewModel = new InvoiceHistoryViewModel();
+            _viewModel = new InvoicesPageModel();
             BindingContext = _viewModel;
         }
 

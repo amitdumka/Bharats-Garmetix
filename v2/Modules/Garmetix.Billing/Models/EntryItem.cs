@@ -46,10 +46,10 @@ namespace Garmetix.Billing.Models
         [Ignore] public decimal TaxAmount => TaxableValue * (GstPercentage / 100m);
         [Ignore] public decimal TotalAmount => TaxableValue + TaxAmount;
 
-        partial void OnRateChanged(decimal value) => Refresh();
+        partial void OnBasePriceChanged(decimal value) => Refresh();
 
         // CHANGED: This must now accept a decimal instead of an int
-        partial void OnQuantityChanged(decimal value) => Refresh();
+        partial void OnBilledQuantityChanged(decimal value) => Refresh();
 
         partial void OnDiscountPercentageChanged(decimal value) => Refresh();
 

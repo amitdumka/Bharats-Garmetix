@@ -1,8 +1,6 @@
-﻿using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Maui.Controls;
-using Garmetix.Billing.Helpers;
+using Garmetix.Authentication;
 
 namespace Garmetix.AI.Billing.ViewModels
 {
@@ -51,7 +49,8 @@ namespace Garmetix.AI.Billing.ViewModels
 
         private async Task ValidatePinAsync()
         {
-            bool isValid = await AuthService.Instance.ValidatePinAsync(PinEntry);
+           // bool isValid = await AuthService.Instance.ValidatePinAsync(PinEntry);
+            bool isValid = await AuthenticationService.Instance.ValidatePinAsync(PinEntry);
 
             if (isValid)
             {
@@ -76,7 +75,7 @@ namespace Garmetix.AI.Billing.ViewModels
         [RelayCommand]
         public async Task SwitchUserAsync()
         {
-            AuthService.Instance.Logout();
+            AuthenticationService.Instance.Logout();
             await Shell.Current.GoToAsync("//LoginPage");
         }
     }

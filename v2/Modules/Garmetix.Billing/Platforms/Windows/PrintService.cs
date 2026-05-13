@@ -1,10 +1,7 @@
-using Garmetix.Billing.AIBased.Services;
+using Garmetix.Billing.Services;
 using Microsoft.UI.Xaml.Controls;
-using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
-using Microsoft.UI.Xaml.Controls;
 
 namespace Garmetix.AI.Billing.Platforms.Windows
 {

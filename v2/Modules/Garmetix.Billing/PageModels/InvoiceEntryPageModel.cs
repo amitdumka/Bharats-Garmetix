@@ -12,7 +12,7 @@ using Garmetix.Billing.Services;
 
 namespace Garmetix.Billing.PageModels
 {
-    internal partial class InvoiceEntryPageModel : ObservableObject
+    public partial class InvoiceEntryPageModel : ObservableObject
     {
         private InvoiceService _invoiceService;
 
@@ -20,21 +20,6 @@ namespace Garmetix.Billing.PageModels
         [ObservableProperty]
         private string searchText;
 
-        // This automatically fires the moment you type a letter in the UI
-        private partial void OnSearchTextChanged(string value)
-        {
-            UpdateFilteredProducts(value);
-        }
-
-        // NEW: This automatically fires the moment you click an item in the search list
-        private partial void OnSelectedProductChanged(Product? value)
-        {
-            if (value != null)
-            {
-                AddProductToInvoice();     // Instantly adds to the cart
-                SearchText = string.Empty; // Clears the search box for the next item
-            }
-        }
 
         // --- HIGH PERFORMANCE CACHING ---
         private Dictionary<string, Product> _productBarcodeCache = new();
@@ -62,12 +47,29 @@ namespace Garmetix.Billing.PageModels
 
         // --- GLOBAL DISCOUNT INPUTS ---
         [ObservableProperty] private decimal globalDiscountInput;
-
-        private partial void OnGlobalDiscountInputChanged(decimal value) => CalculateInvoiceTotals();
-
         [ObservableProperty] private string globalDiscountTypeInput = "Amount";
 
-        private partial void OnGlobalDiscountTypeInputChanged(string value) => CalculateInvoiceTotals();
+
+        // This automatically fires the moment you type a letter in the UI
+        partial void OnSearchTextChanged(string value)
+        {
+            UpdateFilteredProducts(value);
+        }
+
+        // NEW: This automatically fires the moment you click an item in the search list
+        partial void OnSelectedProductChanged(Product? value)
+        {
+            if (value != null)
+            {
+                AddProductToInvoice();     // Instantly adds to the cart
+                SearchText = string.Empty; // Clears the search box for the next item
+            }
+        }
+
+        partial void OnGlobalDiscountInputChanged(decimal value) => CalculateInvoiceTotals();
+
+
+        partial void OnGlobalDiscountTypeInputChanged(string value) => CalculateInvoiceTotals();
 
         private DatabaseContext _localDb = DatabaseService.Instance.LocalDB;
 
@@ -182,7 +184,7 @@ namespace Garmetix.Billing.PageModels
                 InvoiceItems.Add(newItem);
                 CalculateInvoiceTotals();
             }
-            catch (Exception ex) { _ =InvoiceService.ShowErrorAsync("Add Product Error", ex); }
+            catch (Exception ex) { _ = InvoiceService.ShowErrorAsync("Add Product Error", ex); }
         }
 
         [RelayCommand]
