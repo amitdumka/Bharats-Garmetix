@@ -10,26 +10,29 @@ using System.Collections.ObjectModel;
 
 namespace Garmetix.Billing.PageModels
 {
-
     public partial class InvoicesPageModel : ObservableObject
     {
-
         //Database Context
         private DatabaseContext _localdb = DatabaseService.Instance.LocalDB;
-        public DatabaseContext GetContext() { return _localdb; }
 
+        public DatabaseContext GetContext()
+        { return _localdb; }
+
+        // Invoice Service
         private InvoiceService _invoiceService;
 
         //Invoice Details
         private List<Invoice> _allInvoices = new();
+
         private List<InvoicePayment> _allPayments = new();
         private List<CardPayment> _allCards = new();
 
         //Operation
         [ObservableProperty] private bool isBusy;
-        
+
         //Sale Information and Payments
         [ObservableProperty] private decimal totalSales;
+
         [ObservableProperty] private decimal totalReceived;
         [ObservableProperty] private decimal totalPending;
 
@@ -69,7 +72,6 @@ namespace Garmetix.Billing.PageModels
             }
         }
 
-
         public InvoicesPageModel(InvoiceService invoiceService)
         {
             _invoiceService = invoiceService;
@@ -78,17 +80,18 @@ namespace Garmetix.Billing.PageModels
         //Loading Inital Data
         public async Task LoadDataAsync()
         {
-
             if (IsBusy) return;
-            
+
             IsBusy = true;
             try
             {
                 //var rawInvoices = await GetContext().Invoices.ToListAsync();
                 //_allInvoices = rawInvoices.OrderByDescending(i => i.OnDate).ToList();
-                
+                //TODO: instead in view model it should be there in invoice service
+
                 _allInvoices = await _invoiceService.GetInvoicesAsync();
-                _allPayments = await GetContext().InvoicePayments.ToListAsync();
+                _allPayments = await _invoiceService.GetPaymentsAsync();
+                _allCards = await _invoiceService.GetCardPaymentsAsync();
 
                 MainThread.BeginInvokeOnMainThread(() => ApplyFilters());
             }
@@ -102,6 +105,63 @@ namespace Garmetix.Billing.PageModels
             }
         }
 
+        /// <summary>
+        /// Apply filters
+        /// </summary>
+        private async void ApplyFilters()
+        {
+            //var query = _allInvoices.AsEnumerable();
+            var query = (await _invoiceService.GetInvoicesAsync()).AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(SearchText))
+            {
+                string search = SearchText.ToLower();
+                query = query.Where(i => (i.InvoiceNumber != null && i.InvoiceNumber.ToLower().Contains(search)) ||
+                                         (i.CustomerName != null && i.CustomerName.ToLower().Contains(search)));
+            }
+
+            DateTime today = DateTime.Today;
+
+            switch (SelectedDateRange)
+            {
+                case "Today": query = query.Where(i => i.OnDate.Date == today); break;
+                case "Yesterday": query = query.Where(i => i.OnDate.Date == today.AddDays(-1)); break;
+                case "This Week": query = query.Where(i => i.OnDate.Date >= today.AddDays(-(int)today.DayOfWeek)); break;
+                case "This Month": query = query.Where(i => i.OnDate.Month == today.Month && i.OnDate.Year == today.Year); break;
+            }
+
+            if (SelectedPaymentMode != "All Modes")
+            {
+                if (Enum.TryParse<PaymentMode>(SelectedPaymentMode, true, out var parsedEnumMode))
+                {
+                    var validIds = await _invoiceService.GetPayments(parsedEnumMode);
+
+                    query = query.Where(i => validIds.Contains(i.Id));
+                }
+                //if (Enum.TryParse<PaymentMode>(SelectedPaymentMode, true, out var parsedEnumMode))
+                //{
+                //    var validIds = _allPayments
+                //         .Where(p => p.PaymentMode == parsedEnumMode)
+                //         .Select(p => p.InvoiceId)
+                //         .ToHashSet();
+
+                //    query = query.Where(i => validIds.Contains(i.Id));
+                //}
+            }
+
+            var finalResults = query.ToList();
+            FilteredInvoices = new ObservableCollection<Invoice>(finalResults);
+
+            TotalSales = finalResults.Sum(i => i.BillAmount);
+            TotalReceived = finalResults.Sum(i => i.PaidAmount);
+            TotalPending = finalResults.Sum(i => i.BalanceAmount);
+        }
+
+        /// <summary>
+        ///  Handle Invoice Select
+        /// </summary>
+        /// <param name="invoice"></param>
+        /// <returns></returns>
         private async Task HandleInvoiceSelectionAsync(Invoice invoice)
         {
             // 1. Show the native Action Sheet
@@ -131,8 +191,8 @@ namespace Garmetix.Billing.PageModels
             IsBusy = true;
             try
             {
-
-                var items = await GetContext().InvoiceItems.Where(i => i.InvoiceId == invoice.Id).ToListAsync();
+                //var items = await GetContext().InvoiceItems.Where(i => i.InvoiceId == invoice.Id).ToListAsync();
+                var items = await _invoiceService.GetInvoiceItemByInvoiceId(invoice.Id);
 
                 ModalInvoiceDetails = invoice;
                 ModalItems = new ObservableCollection<InvoiceItem>(items);
@@ -170,12 +230,12 @@ namespace Garmetix.Billing.PageModels
             IsBusy = true;
             try
             {
-                // Enabling Trnascation and Roll back concept 
+                // Enabling Trnascation and Roll back concept
                 using var transaction = await GetContext().Database.BeginTransactionAsync();
                 try
                 {
                     // 2. Perform bulk deletions directly on the database (EF Core 7+)
-                    // Note: Replace 'InvoiceItems', 'InvoicePayment', and 'Invoices' 
+                    // Note: Replace 'InvoiceItems', 'InvoicePayment', and 'Invoices'
                     // with the actual DbSet property names in your DbContext.
 
                     await GetContext().InvoiceItems
@@ -235,55 +295,6 @@ namespace Garmetix.Billing.PageModels
         {
             // Jumps directly to the Billing page using the Shell route defined in AppShell.xaml
             await Shell.Current.GoToAsync("InvoiceEntryPage");
-        }
-
-        private void ApplyFilters()
-        {
-            var query = _allInvoices.AsEnumerable();
-
-            if (!string.IsNullOrWhiteSpace(SearchText))
-            {
-                string search = SearchText.ToLower();
-                query = query.Where(i => (i.InvoiceNumber != null && i.InvoiceNumber.ToLower().Contains(search)) ||
-                                         (i.CustomerName != null && i.CustomerName.ToLower().Contains(search)));
-            }
-
-            DateTime today = DateTime.Today;
-            switch (SelectedDateRange)
-            {
-                case "Today": query = query.Where(i => i.OnDate.Date == today); break;
-                case "Yesterday": query = query.Where(i => i.OnDate.Date == today.AddDays(-1)); break;
-                case "This Week": query = query.Where(i => i.OnDate.Date >= today.AddDays(-(int)today.DayOfWeek)); break;
-                case "This Month": query = query.Where(i => i.OnDate.Month == today.Month && i.OnDate.Year == today.Year); break;
-            }
-
-            //if (SelectedPaymentMode != "All Modes")
-            //{
-            //    var validIds = _allPayments.
-            //        Where(p => p.PaymentMode.Equals(SelectedPaymentMode, StringComparison.OrdinalIgnoreCase))
-            //        .Select(p => p.InvoiceId).ToHashSet();
-            //    query = query.Where(i => validIds.Contains(i.Id));
-            //}
-
-            if (SelectedPaymentMode != "All Modes")
-            {
-                if (Enum.TryParse<PaymentMode>(SelectedPaymentMode, true, out var parsedEnumMode))
-                {
-                    var validIds = _allPayments
-                         .Where(p => p.PaymentMode == parsedEnumMode)
-                         .Select(p => p.InvoiceId)
-                         .ToHashSet();
-
-                    query = query.Where(i => validIds.Contains(i.Id));
-                }
-            }
-
-            var finalResults = query.ToList();
-            FilteredInvoices = new ObservableCollection<Invoice>(finalResults);
-
-            TotalSales = finalResults.Sum(i => i.BillAmount);
-            TotalReceived = finalResults.Sum(i => i.PaidAmount);
-            TotalPending = finalResults.Sum(i => i.BalanceAmount);
         }
 
         private async Task ShowErrorAsync(string title, string message)

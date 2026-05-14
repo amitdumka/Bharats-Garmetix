@@ -16,7 +16,7 @@ namespace Garmetix.SRP
         public BillingMenu():base("Billing")
         {
             AddPageTab("Sale Invoice", "rain_icon.png", "SaleInvoice", typeof(InvoiceHistoryPage));
-            AddPageTab("Add Sale Invoice", "rain_icon.png", "AddSaleInvoice", typeof(InvoiceEntryPage));
+            //AddPageTab("Add Sale Invoice", "rain_icon.png", "AddSaleInvoice", typeof(InvoiceEntryPage));
         }
     }
     public partial class CompanyMenu : BaseFlyoutMenu

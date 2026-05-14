@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Maui;
+﻿using Bharat.ToolKits.Helpers;
+using CommunityToolkit.Maui;
 using Garmetix.Billing.PageModels;
 using Garmetix.Billing.Pages;
 using Garmetix.Billing.Services;
@@ -36,6 +37,8 @@ namespace Garmetix.Billing
             // Register any routes related to billing here.
             // For example:
             // Routing.RegisterRoute("billing", typeof(BillingPage));
+            RouterHelper.AddRoute(typeof(InvoiceEntryPage));
+            //RouterHelper.AddRoute(typeof(EditInvoicePage));
         }
     }
 }

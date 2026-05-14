@@ -1,4 +1,5 @@
 using Garmetix.Billing.PageModels;
+using Garmetix.Billing.Services;
 
 namespace Garmetix.Billing.Pages
 {
@@ -6,10 +7,10 @@ namespace Garmetix.Billing.Pages
     {
         private readonly InvoicesPageModel _viewModel;
 
-        public InvoiceHistoryPage()
+        public InvoiceHistoryPage(InvoiceService invoiceService)
         {
             InitializeComponent();
-            _viewModel = new InvoicesPageModel();
+            _viewModel = new InvoicesPageModel(invoiceService);
             BindingContext = _viewModel;
         }
 

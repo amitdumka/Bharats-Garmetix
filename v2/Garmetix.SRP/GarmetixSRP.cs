@@ -66,7 +66,7 @@ namespace Garmetix.SRP
             GarmetixSettingsModule.RegisterSettingRoute(); // Registers the routes for the Settings module.
             GarmetixBillingModule.RegisterBillingRoutes();
             GarmetixCoreBaseModule.EnableCoreModulesRoutes();
-
+            GarmetixBillingModule.RegisterBillingRoutes();
 
         }
 

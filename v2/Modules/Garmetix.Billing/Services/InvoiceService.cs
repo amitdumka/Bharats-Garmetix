@@ -1,13 +1,14 @@
-﻿using Bharat.ToolKits.Helpers;
+﻿using Bharat.Toolkits;
+using Bharat.ToolKits.Helpers;
+using Bharat.ToolKits.Notifications; 
 using Garmetix.Billing.Helpers;
 using Garmetix.Billing.Models;
 using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Inventory;
 using Garmetix.Databases.Services;
 using Microsoft.EntityFrameworkCore;
-using Bharat.ToolKits.Notifications;
-using Bharat.Toolkits;
 using SQLitePCL;
+using Invoice = Garmetix.Core.Models.Inventory.Invoice;
 
 namespace Garmetix.Billing.Services
 {
@@ -22,7 +23,7 @@ namespace Garmetix.Billing.Services
         private InvoiceService _instance;
         public InvoiceService Instance => _instance ?? new InvoiceService();
 
-        //Invoice Caching  so no need to requery or fetch again 
+        //Invoice Caching  so no need to requery or fetch again
 
         private List<Invoice> _allInvoices = new();
         private List<InvoicePayment> _allPayments = new();
@@ -41,7 +42,7 @@ namespace Garmetix.Billing.Services
         private bool isSaving = false;
 
         /// <summary>
-        /// Default Constructor  
+        /// Default Constructor
         ///     It initilized the instance , print Sercice, and context
         /// </summary>
         public InvoiceService()
@@ -50,19 +51,14 @@ namespace Garmetix.Billing.Services
             _printService = ServiceHelper.GetService<IPrintService>();
             isSaving = false;
             _isSaved = false;
-
         }
 
         // -------------Fetching and Query Invoice and other record  //
-
-
-
 
         public async Task<List<Invoice>> GetInvoicesAsync()
         {
             if (_allInvoices.Any() && !invalidateCache)
             {
-
                 return _allInvoices;
             }
 
@@ -71,13 +67,10 @@ namespace Garmetix.Billing.Services
             return _allInvoices;
         }
 
-
         public async Task<List<InvoicePayment>> GetPaymentsAsync()
         {
-
             if (_allPayments.Any() && !invalidateCache)
             {
-
                 return _allPayments;
             }
 
@@ -86,10 +79,34 @@ namespace Garmetix.Billing.Services
             return _allPayments;
         }
 
+        public async Task<List<CardPayment>> GetCardPaymentsAsync()
+        {
+            if (_allCards.Any() && !invalidateCache)
+            {
+                return _allCards;
+            }
+
+            _allCards.Clear();
+            _allCards = await GetContext().CardPayments.Where(static x => x.OnDate.Month == DateTime.Now.Month && x.OnDate.Year == DateTime.Now.Year).OrderByDescending(c => c.OnDate.Date).ToListAsync();
+            return _allCards;
+        }
+
+        public async Task<HashSet<Guid>> GetPayments(PaymentMode mode)
+        {
+            var validIds = _allPayments
+                 .Where(p => p.PaymentMode == mode)
+                 .Select(p => p.InvoiceId)
+                 .ToHashSet();
+
+            return validIds;
+        }
+
+
+        public async Task<List<Core.Models.Inventory.InvoiceItem>> GetInvoiceItemByInvoiceId(Guid id)
+        {
+            return await GetContext().InvoiceItems.Where(i => i.InvoiceId == id).ToListAsync();
+        }
         //---------------End of Fetching-----------------------------//
-
-
-
 
         /// <summary>
         /// Delete invoice
@@ -182,13 +199,12 @@ namespace Garmetix.Billing.Services
         /// <returns></returns>
         public async Task<bool> DeleteInvoicesAsync(Guid companyId, Guid? invId, string? invno, bool delete = false)
         {
-
             var invoice = await GetContext().Invoices.Include(x => x.InvoiceItems).FirstOrDefaultAsync(x => x.CompanyId == companyId && (x.Id == invId || x.InvoiceNumber == invno));
             if (invoice == null) return false;
 
             return await DeleteInvoicesAsync(invoice, delete);
-
         }
+
         /// <summary>
         /// Fetch invoice from Company/StoreId and Invoice Number
         /// </summary>
@@ -207,7 +223,6 @@ namespace Garmetix.Billing.Services
                 if (invoice.PaymentMode == PaymentMode.Card)
                 {
                     invoice.CardPayments = (ICollection<CardPayment>)GetContext().CardPayments.Where(c => c.CompanyId == storeid && c.Id == invoice.Id).ToAsyncEnumerable();
-
                 }
                 return invoice;
             }
@@ -232,12 +247,10 @@ namespace Garmetix.Billing.Services
                 if (invoice.PaymentMode == PaymentMode.Card)
                 {
                     invoice.CardPayments = (ICollection<CardPayment>)GetContext().CardPayments.Where(c => c.CompanyId == storeid && c.Id == InvId).ToAsyncEnumerable();
-
                 }
                 return invoice;
             }
             return null;
-
         }
 
         // --- DATABASE SAVE ENGINE ---
@@ -249,7 +262,7 @@ namespace Garmetix.Billing.Services
         }
 
         /// <summary>
-        /// Save Invoice 
+        /// Save Invoice
         /// </summary>
         /// <param name="invoice"></param>
         /// <param name="invoiceItems"></param>
@@ -284,8 +297,7 @@ namespace Garmetix.Billing.Services
                     if (!await UpdateStockRangeAsync(invoice.InvoiceItems.ToList()))
                     {
                         await Notify.DisplaySnackbarAsync("Failded to update the stock. Kindly report admin to check the log");
-                        //TODO: Add Log 
-
+                        //TODO: Add Log
                     }
                     return true;
                 }
@@ -351,8 +363,6 @@ namespace Garmetix.Billing.Services
                     ReturnInvoice = false,
                     RoundOff = invoicedto.RoundOffAmount,
                     UpdatedAt = DateTime.UtcNow.AddMinutes(-10),
-
-
                 };
 
                 CalculateInvoiceTotals(currentInvoice); //do at invoice model and re do here for verification
@@ -363,10 +373,8 @@ namespace Garmetix.Billing.Services
                     if (!proceed) return false;
                 }
 
-
                 try
                 {
-
                     foreach (var item in InvoiceItems)
                     {
                         GetContext().InvoiceItems.Add(new InvoiceItem
@@ -388,9 +396,6 @@ namespace Garmetix.Billing.Services
                             InvoiceId = currentInvoice.Id,
                         });
                     }
-
-
-
                 }
                 catch (Exception)
                 {
