@@ -7,6 +7,7 @@ using Garmetix.Databases.Services;
 using Microsoft.EntityFrameworkCore;
 using Bharat.ToolKits.Notifications;
 using Bharat.Toolkits;
+using SQLitePCL;
 
 namespace Garmetix.Billing.Services
 {
@@ -21,12 +22,21 @@ namespace Garmetix.Billing.Services
         private InvoiceService _instance;
         public InvoiceService Instance => _instance ?? new InvoiceService();
 
+        //Invoice Caching  so no need to requery or fetch again 
+
+        private List<Invoice> _allInvoices = new();
+        private List<InvoicePayment> _allPayments = new();
+        private List<CardPayment> _allCards = new();
+
+        private bool invalidateCache = false;
+
         // Last Invoice or Current Invoice So it can hold data
         private Invoice? _lastSavedInvoice;
 
         private IEnumerable<InvoiceItem>? _lastSaveditems;
         private IEnumerable<InvoicePayment>? _lastSavedPayments;
         private IEnumerable<CardPayment>? _lastSavedCardPayments;
+
         private bool _isSaved = false;
         private bool isSaving = false;
 
@@ -43,7 +53,40 @@ namespace Garmetix.Billing.Services
 
         }
 
+        // -------------Fetching and Query Invoice and other record  //
 
+
+
+
+        public async Task<List<Invoice>> GetInvoicesAsync()
+        {
+            if (_allInvoices.Any() && !invalidateCache)
+            {
+
+                return _allInvoices;
+            }
+
+            _allInvoices.Clear();
+            _allInvoices = await GetContext().Invoices.Where(x => x.OnDate.Month == DateTime.Now.Month && x.OnDate.Year == DateTime.Now.Year).OrderByDescending(c => c.OnDate.Date).ToListAsync();
+            return _allInvoices;
+        }
+
+
+        public async Task<List<InvoicePayment>> GetPaymentsAsync()
+        {
+
+            if (_allPayments.Any() && !invalidateCache)
+            {
+
+                return _allPayments;
+            }
+
+            _allPayments.Clear();
+            _allPayments = await GetContext().InvoicePayments.Where(static x => x.OnDate.Month == DateTime.Now.Month && x.OnDate.Year == DateTime.Now.Year).OrderByDescending(c => c.OnDate.Date).ToListAsync();
+            return _allPayments;
+        }
+
+        //---------------End of Fetching-----------------------------//
 
 
 
@@ -445,7 +488,7 @@ namespace Garmetix.Billing.Services
             }
             //TODO: Check for null and handle it and implement the null handli
             result = await SaveInvoicesAsync(currentInvoice, InvoiceItems, paymentDetails, cardPayments);
-          
+
             if (result)
             {
                 if (!thermal)

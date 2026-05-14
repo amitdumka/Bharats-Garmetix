@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Garmetix.Billing.Services;
 using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Inventory;
 using Garmetix.Databases;
@@ -10,20 +11,29 @@ using System.Collections.ObjectModel;
 namespace Garmetix.Billing.PageModels
 {
 
-    public partial class InvoicesPageModel : ObservableObject// public partial class InvoiceHistoryViewModel
+    public partial class InvoicesPageModel : ObservableObject
     {
 
+        //Database Context
         private DatabaseContext _localdb = DatabaseService.Instance.LocalDB;
         public DatabaseContext GetContext() { return _localdb; }
 
+        private InvoiceService _invoiceService;
+
+        //Invoice Details
         private List<Invoice> _allInvoices = new();
         private List<InvoicePayment> _allPayments = new();
+        private List<CardPayment> _allCards = new();
 
+        //Operation
         [ObservableProperty] private bool isBusy;
+        
+        //Sale Information and Payments
         [ObservableProperty] private decimal totalSales;
         [ObservableProperty] private decimal totalReceived;
         [ObservableProperty] private decimal totalPending;
 
+        //Filtered Invoice
         [ObservableProperty] private ObservableCollection<Invoice> filteredInvoices = new();
 
         // --- SELECTION & MODAL STATE ---
@@ -59,16 +69,25 @@ namespace Garmetix.Billing.PageModels
             }
         }
 
+
+        public InvoicesPageModel(InvoiceService invoiceService)
+        {
+            _invoiceService = invoiceService;
+        }
+
+        //Loading Inital Data
         public async Task LoadDataAsync()
         {
+
             if (IsBusy) return;
+            
             IsBusy = true;
             try
             {
-
-
-                var rawInvoices = await GetContext().Invoices.ToListAsync();
-                _allInvoices = rawInvoices.OrderByDescending(i => i.OnDate).ToList();
+                //var rawInvoices = await GetContext().Invoices.ToListAsync();
+                //_allInvoices = rawInvoices.OrderByDescending(i => i.OnDate).ToList();
+                
+                _allInvoices = await _invoiceService.GetInvoicesAsync();
                 _allPayments = await GetContext().InvoicePayments.ToListAsync();
 
                 MainThread.BeginInvokeOnMainThread(() => ApplyFilters());
