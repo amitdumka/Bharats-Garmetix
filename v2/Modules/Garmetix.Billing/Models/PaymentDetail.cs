@@ -1,4 +1,5 @@
-﻿using Garmetix.Core.Enums;
+﻿
+using Garmetix.Core.Enums;
 using SQLite;
 
 namespace Garmetix.Billing.Models
@@ -17,9 +18,10 @@ namespace Garmetix.Billing.Models
         public PaymentMode PaymentMode { get; set; } = PaymentMode.Cash;
         public string? PaymentNote { get; set; } = string.Empty;
 
-        public string? CardPaymentDetails { get; set; } = string.Empty;
-        public string? CardPaymentNumber { get; set; } = string.Empty;
+        public int? AuthCode { get; set; } = null;
+        public int? CardPaymentNumber { get; set; } = null;
         public string? CardPaymentBank { get; set; } = string.Empty;
-        public CardType? Card { get; set; } = CardType.Debit;
+        public Card? Card { get; set; } = Garmetix.Core.Enums.Card.DebitCard;
+        public CardType? CardType { get; set; } = CardType.Rupay;
     }
 }

@@ -293,7 +293,7 @@ namespace Garmetix.Billing.PageModels
             try
             {
 
-              var result=    _invoiceService.UpdateInvoices(CurrentInvoice, EditItems, Payments);
+              var result=    _invoiceService.UpdateInvoicesAsync(CurrentInvoice, EditItems, Payments);
                 //var db = await DatabaseHelper.GetDatabaseAsync();
 
                 // Run everything in an atomic transaction

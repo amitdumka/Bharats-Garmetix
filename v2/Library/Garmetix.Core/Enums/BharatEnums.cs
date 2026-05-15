@@ -36,9 +36,11 @@ namespace Garmetix.Core.Enums
     public enum AttendanceStatus { Present, Absent, HalfDay, Sunday, Holiday, StoreClosed, SundayHoliday, SickLeave, PaidLeave, CasualLeave, OnLeave, Leave, WorkFromHome } 
     public enum AttUnit { Present, Absent, HalfDay, Sunday, Holiday, StoreClosed, SundayHoliday, SickLeave, PaidLeave, CasualLeave, OnLeave, Leave, WorkFromHome }
 
- public enum CARD { DebitCard, CreditCard, AmexCard, GiftCard, Other }
+    public enum Card { DebitCard, CreditCard, AmexCard, GiftCard, Other }
     //TODO: this is not complete, need to add more card types and abstract this to a separate class if needed in future
-    public enum CardType { Debit, Credit, Prepaid, Other }  public enum CARDType { Visa, MasterCard, Maestro, AmexCard, Dinners, Rupay, RupayCredit, Others, }  
+    //public enum CardType { Debit, Credit, Prepaid, Other }  
+    public enum CardType { Visa, MasterCard, Maestro, AmexCard, Dinners, Rupay, RupayCredit, Others, }  
+
     public enum CompanyType { Proprietorship,   Partnership, PrivateLimited, PublicLimited, LLP,  Others } 
     public enum DebitCredit { In, Out, } 
     public enum EmployeeCategory { Salesman, StoreManager, HouseKeeping, Owner, Accounts, TailorMaster, Tailors, TailoringAssistance, Others, }

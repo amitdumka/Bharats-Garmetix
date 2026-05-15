@@ -176,8 +176,9 @@ namespace Garmetix.Core.Models.Inventory
         [Display(Name = "Date")] public DateTime OnDate { get; set; }
         [Display(Name = "Auth Code")] public int AuthCode { get; set; }
         [Display(Name = "Card Number")] public int CardNumber { get; set; }
-        [Display(Name = "Card Type")] public CARDType CardType { get; set; }
-        [Display(Name = "Card")] public CARD Card { get; set; }
+        [Display(Name = "Card")] public Card Card { get; set; } = Card.DebitCard;
+        [Display(Name = "Card Type")] public CardType CardType { get; set; } = CardType.Rupay;
+        
         [Display(Name = "Bank Name")] public string? BankName { get; set; }
     }
 

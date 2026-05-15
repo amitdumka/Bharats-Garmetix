@@ -635,7 +635,7 @@ namespace Garmetix.Billing.Services
                 await GetContext().InvoicePayments.AddRangeAsync(paymentDetails);
                 await GetContext().CardPayments.AddRangeAsync(cardPayments);
 
-                await tran.CommitAsync(); 
+                await tran.CommitAsync();
                 return true;
             }
             catch (Exception)
@@ -650,10 +650,154 @@ namespace Garmetix.Billing.Services
 
         }
 
-        public bool UpdateInvoices(InvoiceDTO invoice, IEnumerable<EntryItem> invoiceitems, IEnumerable<PaymentDetail> paymentDetails)
+
+
+        public async Task<bool> UpdateInvoicesAsync(InvoiceDTO invoicedto, IEnumerable<EntryItem> InvoiceItems, IEnumerable<PaymentDetail> paymentDetails)
         {
 
+            if (InvoiceItems.Count() == 0)
+            {
+                await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Validation", "Cannot update empty invoice.", "OK");
+                return false;
+            }
 
+            if (isSaving) return false;
+
+            try
+            {
+                isSaving = true;
+
+                var currentInvoice = new Invoice
+                {
+                    InvoiceNumber = invoicedto.InvoiceNumber,
+                    CustomerGSTIN = invoicedto.CustomerGSTIN,
+                    B2BSale = invoicedto.IsB2BSale,
+                    Synced = false,
+                    CustomerMobileNumber = invoicedto.CustomerMobileNumber,
+                    ItemCount = InvoiceItems.Count(),
+                    ActualQuantity = invoicedto.BilledQuantity,
+                    BilledQuantity = invoicedto.BilledQuantity,
+                    Id = invoicedto.Id,
+                    CustomerName = invoicedto.CustomerName,
+                    InterState = invoicedto.IsInterStateSale,
+                    Deleted = false,
+                    CreatedAt = DateTime.UtcNow,
+                    OnDate = invoicedto.OnDate,
+                    BillAmount = invoicedto.GrandTotal,
+                    CreditSale = invoicedto.BalanceAmount > 0 ? true : false,
+                    TaxAmount = invoicedto.TotalTax,
+                    CGSTAmount = invoicedto.TotalTax / 2m,
+                    SGSTAmount = invoicedto.TotalTax / 2m,
+                    IGSTAmount = invoicedto.TotalTax,
+                    BillDiscountAmount = invoicedto.GlobalDiscountAmount,
+                    DiscountAmount = invoicedto.TotalDiscount,
+                    BasePrice = invoicedto.SubTotal,
+                    PaidAmount = invoicedto.PaidAmount,
+                    ReturnInvoice = false,
+                    RoundOff = invoicedto.RoundOffAmount,
+                    UpdatedAt = DateTime.UtcNow.AddMinutes(-10),
+                };
+
+                CalculateInvoiceTotals(currentInvoice); //do at invoice model and re do here for verification
+
+                if (currentInvoice.PaidAmount < currentInvoice.BillAmount)
+                {
+                    bool proceed = await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Part Payment", $"Balance of ₹ {invoicedto.BalanceAmount} is unpaid. Proceed?", "Yes", "No");
+                    if (!proceed) return false;
+                }
+
+                var invoiceItemList = new List<InvoiceItem>();
+                try
+                {
+                    foreach (var item in InvoiceItems)
+                    {
+                        invoiceItemList.Add(new InvoiceItem
+                        {
+                            Barcode = item.Barcode,
+                            Id = item.Id,
+                            CompanyId = currentInvoice.CompanyId,
+                            BilledQuantity = item.BilledQuantity,
+                            Deleted = false,
+                            Synced = false,
+                            ActualQuantity = invoicedto.BilledQuantity,
+                            CreatedAt = currentInvoice.CreatedAt,
+                            UpdatedAt = currentInvoice.UpdatedAt,
+                            CreatedBy = currentInvoice.CreatedBy,
+                            Amount = item.TotalAmount,
+                            DiscountAmount = item.DiscountAmount,
+                            BasePrice = item.BasePrice,
+                            Category = item.Category,
+                            InvoiceId = currentInvoice.Id,
+                        });
+                    }
+
+
+                    var invoicePaymentList = new List<InvoicePayment>();
+                    var cardpaymentList = new List<CardPayment>();
+                    foreach (var item in paymentDetails)
+                    {
+                        if (item.PaymentMode == PaymentMode.Card)
+                        {
+                            cardpaymentList.Add(new CardPayment
+                            {
+                                InvoiceId = item.InvoiceId,
+                                Amount = item.Amount,
+                                UpdatedAt = DateTime.UtcNow,
+                                CreatedAt = DateTime.UtcNow,
+                                Deleted = false,
+                                CreatedBy = "AutoAdmin",
+                                Id = item.Guid,
+                                OnDate = item.PaymentDate,
+                                Synced = false,
+                                CardNumber = item.CardPaymentNumber.Value,
+                                CardType = item.CardType.Value,
+                                Card = item.Card.Value,
+                                BankName = item.CardPaymentBank,
+                                AuthCode = item.AuthCode.Value,
+                                CompanyId = currentInvoice.CompanyId,
+
+
+                            });
+                        }
+
+                        invoicePaymentList.Add(new InvoicePayment
+                        {
+                            Amount = item.Amount,
+                            CompanyId = currentInvoice.CompanyId,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow,
+                            CreatedBy = "AutoAdmin",
+                            Id = item.Guid,
+                            Deleted = false,
+                            OnDate = item.PaymentDate,
+                            InvoiceId = currentInvoice.Id,
+                            PaymentMode = item.PaymentMode,
+                            Synced = false,
+                            ReferenceNumber = item.PaymentNote
+
+                        });
+                    }
+
+
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+
+                // Notify the dashboard that the database has changed!
+                // DashboardDataService.Instance.InvalidateCache();
+                DatabaseService.Instance.InvalidateCache();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync("Save Invoice Error", ex); return false;
+            }
+            finally
+            {
+                isSaving = false;
+            }
 
 
             return false;
