@@ -4,42 +4,46 @@ using Garmetix.Billing.Models;
 using Garmetix.Billing.Services;
 using Garmetix.Core.Models.Inventory;
 using System.Collections.ObjectModel;
+using Microsoft.EntityFrameworkCore;  
+using EntryItem = Garmetix.Billing.Models.EntryItem;
 
 namespace Garmetix.Billing.PageModels
 {
     [QueryProperty(nameof(InvoiceId), "InvoiceId")]
-    internal partial class InvoiceEditPageModel : ObservableObject
+    public partial class InvoiceEditPageModel : ObservableObject
     {
 
+        //Invoice Service
         private readonly InvoiceService _invoiceService;
+
         [ObservableProperty] private bool isBusy;
-        [ObservableProperty] private string invoiceId = string.Empty;
+        [ObservableProperty] private string invoiceId = string.Empty; //Seleted Invoice Id For Ref
 
         // --- CORE INVOICE DATA ---
-        [ObservableProperty] private InvoiceDTO currentInvoice;
+        [ObservableProperty] private InvoiceDTO currentInvoice;  // DTO of Invoice to edit the object
 
-        [ObservableProperty] private ObservableCollection<InvoiceItem> editItems = new();
+        [ObservableProperty] private ObservableCollection<EntryItem> editItems = new(); // Invoice item 
 
         // --- PAYMENT SPLITTING ---
-        [ObservableProperty] private ObservableCollection<Models.PaymentDetail> payments = new();
+        [ObservableProperty] private ObservableCollection<Models.PaymentDetail> payments = new(); // Payment details
 
-        [ObservableProperty] private string paymentModeInput = "Cash";
-        [ObservableProperty] private string paymentAmountInput = string.Empty;
+        [ObservableProperty] private string paymentModeInput = "Cash"; // Payment Mode
+        [ObservableProperty] private string paymentAmountInput = string.Empty; // Payment Amount
 
         // --- GLOBAL DISCOUNTS ---
-        [ObservableProperty] private decimal globalDiscountInput;
+        [ObservableProperty] private decimal globalDiscountInput;  // Global Discount input
 
         [ObservableProperty] private string globalDiscountTypeInput = "Amount";
 
         // --- UI TOTALS BINDINGS ---
-        [ObservableProperty] private decimal subTotal;
+        [ObservableProperty] private decimal subTotal;  //Sub Total
 
-        [ObservableProperty] private decimal totalTax;
-        [ObservableProperty] private decimal totalDiscount;
-        [ObservableProperty] private decimal roundOffAmount;
-        [ObservableProperty] private decimal grandTotal;
-        [ObservableProperty] private decimal paidAmount;
-        [ObservableProperty] private decimal balanceAmount;
+        [ObservableProperty] private decimal totalTax; //Total Tax
+        [ObservableProperty] private decimal totalDiscount; // Total Discount 
+        [ObservableProperty] private decimal roundOffAmount; //roundofAmount
+        [ObservableProperty] private decimal grandTotal; //Grand Total
+        [ObservableProperty] private decimal paidAmount; //paid amt
+        [ObservableProperty] private decimal balanceAmount; // Balance Amt
 
         // --- AUTOCOMPLETE SEARCH ---
         [ObservableProperty] private string searchText = string.Empty;
@@ -87,36 +91,45 @@ namespace Garmetix.Billing.PageModels
                 _ = LoadInvoiceDataAsync(Guid.Parse(value));
         }
 
+        
+
+
         private async Task LoadInvoiceDataAsync(Guid id)
         {
             IsBusy = true;
             try
             {
-                var db = await DatabaseHelper.GetDatabaseAsync();
+               
 
                 // 1. Load Caches
-                _productCache = await db.Table<Product>().ToListAsync();
+              //  _productCache = await db.Table<Product>().ToListAsync();
+                _productCache = await _invoiceService.GetContext().Products.ToListAsync();
 
                 // 2. Load the Master Invoice
-                CurrentInvoice = await db.Table<Invoice>().Where(i => i.Id == id).FirstOrDefaultAsync();
+               // CurrentInvoice = await db.Table<Invoice>().Where(i => i.Id == id).FirstOrDefaultAsync();
+                CurrentInvoice=await _invoiceService.GetInvoiceDTOById(id);
 
                 // Set the UI Discount Inputs
-                if (CurrentInvoice.GlobalDiscountAmount > 0)
+                if (CurrentInvoice.GlobalDiscountAmount > 0
                 {
                     GlobalDiscountInput = CurrentInvoice.GlobalDiscountAmount;
                     GlobalDiscountTypeInput = "Amount";
                 }
 
                 // 3. Load Items
-                var items = await db.Table<InvoiceItem>().Where(i => i.InvoiceId == id).ToListAsync();
-                EditItems = new ObservableCollection<InvoiceItem>(items);
+                //var items = await db.Table<InvoiceItem>().Where(i => i.InvoiceId == id).ToListAsync();
+                var items = await _invoiceService.ToEntryItemListAsync(id);
+                
+
+                EditItems = new ObservableCollection<EntryItem>(items);
                 foreach (var item in EditItems)
                 {
                     item.PropertyChanged += (s, e) => CalculateTotals();
                 }
 
                 // 4. Load Split Payments
-                var paymentList = await db.Table<PaymentDetail>().Where(p => p.InvoiceId == id).ToListAsync();
+                //var paymentList = await db.Table<PaymentDetail>().Where(p => p.InvoiceId == id).ToListAsync();
+                var paymentList=currentInvoice.PaymentDetails;
                 Payments = new ObservableCollection<PaymentDetail>(paymentList);
 
                 CalculateTotals();

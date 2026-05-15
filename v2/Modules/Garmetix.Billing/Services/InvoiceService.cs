@@ -1,13 +1,11 @@
-﻿using Bharat.Toolkits;
-using Bharat.ToolKits.Helpers;
-using Bharat.ToolKits.Notifications; 
+﻿using Bharat.ToolKits.Helpers;
+using Bharat.ToolKits.Notifications;
 using Garmetix.Billing.Helpers;
 using Garmetix.Billing.Models;
 using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Inventory;
 using Garmetix.Databases.Services;
 using Microsoft.EntityFrameworkCore;
-using SQLitePCL;
 using Invoice = Garmetix.Core.Models.Inventory.Invoice;
 
 namespace Garmetix.Billing.Services
@@ -106,6 +104,50 @@ namespace Garmetix.Billing.Services
         {
             return await GetContext().InvoiceItems.Where(i => i.InvoiceId == id).ToListAsync();
         }
+
+        /// <summary>
+        /// Fetch Invoice by Id
+        /// </summary>
+        /// <param name="InvId"> Invoice Id , Type is Guid</param>
+        /// <returns>Invoice Object or Null</returns>
+        public async Task<Invoice?> GetInvoiceByIdAsync(Guid? InvId)
+        {
+            if (InvId == null) return null;
+
+            var invoice = await GetContext().Invoices.Where(c => c.Id == InvId).FirstOrDefaultAsync();
+            if (invoice != null)
+            {
+                invoice.InvoiceItems = (ICollection<InvoiceItem>)GetContext().InvoiceItems.Where(c => c.Id == InvId).ToAsyncEnumerable();
+                invoice.Payments = (ICollection<InvoicePayment>)GetContext().InvoicePayments.Where(c => c.Id == InvId).ToAsyncEnumerable();
+                if (invoice.PaymentMode == PaymentMode.Card)
+                {
+                    invoice.CardPayments = (ICollection<CardPayment>)GetContext().CardPayments.Where(c => c.Id == InvId).ToAsyncEnumerable();
+                }
+                return invoice;
+            }
+            return null;
+        }
+
+        public async Task<InvoiceDTO?> GetInvoiceDTOById( Guid id)
+        {
+
+            var inv =await GetInvoiceByIdAsync(id);
+            return inv.ToInvoiceDto();
+        }
+
+        public async Task<List<EntryItem>> ToEntryItemListAsync(Guid id)
+        {
+            var items = await GetInvoiceItemByInvoiceId(id);
+            var entryItemList = new List< EntryItem>();
+            foreach (var item in items) {
+
+
+                entryItemList.Add(item.ToEntryItem()??new EntryItem());
+
+            } 
+            return entryItemList;
+        }
+
         //---------------End of Fetching-----------------------------//
 
         /// <summary>
