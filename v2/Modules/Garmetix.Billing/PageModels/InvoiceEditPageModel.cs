@@ -4,7 +4,7 @@ using Garmetix.Billing.Models;
 using Garmetix.Billing.Services;
 using Garmetix.Core.Models.Inventory;
 using System.Collections.ObjectModel;
-using Microsoft.EntityFrameworkCore;  
+using Microsoft.EntityFrameworkCore;
 using EntryItem = Garmetix.Billing.Models.EntryItem;
 
 namespace Garmetix.Billing.PageModels
@@ -85,13 +85,14 @@ namespace Garmetix.Billing.PageModels
         // ---------------------------------------------------------
         // INITIALIZATION & LOADING
         // ---------------------------------------------------------
-         partial void OnInvoiceIdChanged(string value)
+        partial void OnInvoiceIdChanged(string value)
         {
             if (!string.IsNullOrEmpty(value))
                 _ = LoadInvoiceDataAsync(Guid.Parse(value));
         }
 
-        
+
+
 
 
         private async Task LoadInvoiceDataAsync(Guid id)
@@ -99,18 +100,18 @@ namespace Garmetix.Billing.PageModels
             IsBusy = true;
             try
             {
-               
+
 
                 // 1. Load Caches
-              //  _productCache = await db.Table<Product>().ToListAsync();
+                //  _productCache = await db.Table<Product>().ToListAsync();
                 _productCache = await _invoiceService.GetContext().Products.ToListAsync();
 
                 // 2. Load the Master Invoice
-               // CurrentInvoice = await db.Table<Invoice>().Where(i => i.Id == id).FirstOrDefaultAsync();
-                CurrentInvoice=await _invoiceService.GetInvoiceDTOById(id);
+                // CurrentInvoice = await db.Table<Invoice>().Where(i => i.Id == id).FirstOrDefaultAsync();
+                CurrentInvoice = await _invoiceService.GetInvoiceDTOById(id);
 
                 // Set the UI Discount Inputs
-                if (CurrentInvoice.GlobalDiscountAmount > 0
+                if (CurrentInvoice.GlobalDiscountAmount > 0)
                 {
                     GlobalDiscountInput = CurrentInvoice.GlobalDiscountAmount;
                     GlobalDiscountTypeInput = "Amount";
@@ -118,8 +119,8 @@ namespace Garmetix.Billing.PageModels
 
                 // 3. Load Items
                 //var items = await db.Table<InvoiceItem>().Where(i => i.InvoiceId == id).ToListAsync();
-                var items = await _invoiceService.ToEntryItemListAsync(id);
-                
+                var items = await _invoiceService.GetEntryItemListAsync(id);
+
 
                 EditItems = new ObservableCollection<EntryItem>(items);
                 foreach (var item in EditItems)
@@ -129,7 +130,7 @@ namespace Garmetix.Billing.PageModels
 
                 // 4. Load Split Payments
                 //var paymentList = await db.Table<PaymentDetail>().Where(p => p.InvoiceId == id).ToListAsync();
-                var paymentList=currentInvoice.PaymentDetails;
+                var paymentList = await _invoiceService.GetPaymentDetailsAsync(id);
                 Payments = new ObservableCollection<PaymentDetail>(paymentList);
 
                 CalculateTotals();
@@ -161,16 +162,15 @@ namespace Garmetix.Billing.PageModels
         {
             if (value != null)
             {
-                var newItem = new InvoiceItem
+                var newItem = new EntryItem
                 {
                     InvoiceId = CurrentInvoice.Id,
                     ProductName = value.Name,
-                    Category = value.Category,
-                    Rate = value.BaseRate,
-                    Quantity = 1m,
+                    Category = value.ProductType,
+                    BasePrice = value.BasicPrice,
+                    BilledQuantity = 1m,
                     DiscountPercentage = 0
                 };
-
                 newItem.PropertyChanged += (s, e) => CalculateTotals();
                 EditItems.Add(newItem);
 
@@ -180,7 +180,7 @@ namespace Garmetix.Billing.PageModels
         }
 
         [RelayCommand]
-        public void RemoveItem(InvoiceItem item)
+        public void RemoveItem(EntryItem item)
         {
             if (item != null && EditItems.Contains(item))
             {
@@ -200,7 +200,7 @@ namespace Garmetix.Billing.PageModels
                 Payments.Add(new PaymentDetail
                 {
                     InvoiceId = CurrentInvoice.Id,
-                    Mode = PaymentModeInput,
+                    PaymentMode = PaymentModeInput,
                     Amount = amount,
                     PaymentDate = DateTime.Now
                 });
@@ -232,7 +232,7 @@ namespace Garmetix.Billing.PageModels
             if (CurrentInvoice == null) return;
 
             // 1. Sum up item base values
-            decimal itemSubTotal = EditItems.Sum(i => i.Rate * i.Quantity);
+            decimal itemSubTotal = EditItems.Sum(i => i.BasePrice * i.BilledQuantity);
             decimal itemDiscounts = EditItems.Sum(i => i.DiscountAmount);
             decimal itemTaxes = EditItems.Sum(i => i.TaxAmount);
 
@@ -292,21 +292,23 @@ namespace Garmetix.Billing.PageModels
             IsBusy = true;
             try
             {
-                var db = await DatabaseHelper.GetDatabaseAsync();
+
+              var result=    _invoiceService.UpdateInvoices(CurrentInvoice, EditItems, Payments);
+                //var db = await DatabaseHelper.GetDatabaseAsync();
 
                 // Run everything in an atomic transaction
-                await db.RunInTransactionAsync(tran =>
-                {
-                    tran.Update(CurrentInvoice);
+                //await db.RunInTransactionAsync(tran =>
+                //{
+                //    tran.Update(CurrentInvoice);
 
-                    tran.Table<InvoiceItem>().Delete(i => i.InvoiceId == CurrentInvoice.Id);
-                    foreach (var item in EditItems) tran.Insert(item);
+                //    tran.Table<InvoiceItem>().Delete(i => i.InvoiceId == CurrentInvoice.Id);
+                //    foreach (var item in EditItems) tran.Insert(item);
 
-                    tran.Table<PaymentDetail>().Delete(p => p.InvoiceId == CurrentInvoice.Id);
-                    foreach (var pay in Payments) tran.Insert(pay);
-                });
+                //    tran.Table<PaymentDetail>().Delete(p => p.InvoiceId == CurrentInvoice.Id);
+                //    foreach (var pay in Payments) tran.Insert(pay);
+                //});
                 // Notify the dashboard that the database has changed!
-                Garmetix.AI.Billing.Services.DashboardDataService.Instance.InvalidateCache();
+               // Garmetix.AI.Billing.Services.DashboardDataService.Instance.InvalidateCache();
                 await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Invoice updated successfully.", "OK");
                 await Shell.Current.GoToAsync("..");
             }

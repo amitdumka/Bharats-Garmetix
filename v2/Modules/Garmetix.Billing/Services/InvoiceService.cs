@@ -128,24 +128,36 @@ namespace Garmetix.Billing.Services
             return null;
         }
 
-        public async Task<InvoiceDTO?> GetInvoiceDTOById( Guid id)
+        public async Task<InvoiceDTO?> GetInvoiceDTOById(Guid id)
         {
 
-            var inv =await GetInvoiceByIdAsync(id);
+            var inv = await GetInvoiceByIdAsync(id);
             return inv.ToInvoiceDto();
         }
 
-        public async Task<List<EntryItem>> ToEntryItemListAsync(Guid id)
+        public async Task<List<EntryItem>> GetEntryItemListAsync(Guid id)
         {
             var items = await GetInvoiceItemByInvoiceId(id);
-            var entryItemList = new List< EntryItem>();
-            foreach (var item in items) {
+            var entryItemList = new List<EntryItem>();
+            foreach (var item in items)
+            {
 
 
-                entryItemList.Add(item.ToEntryItem()??new EntryItem());
+                entryItemList.Add(item.ToEntryItem() ?? new EntryItem());
 
-            } 
+            }
             return entryItemList;
+        }
+        public async Task<List<PaymentDetail>> GetPaymentDetailsAsync(Guid id)
+        {
+            var items = await GetContext().InvoicePayments.Where(c => c.InvoiceId == id).ToListAsync();
+            var paymentList = new List<PaymentDetail>();
+            foreach (var item in items)
+            {
+                paymentList.Add(item.ToPaymentDetail() ?? new PaymentDetail());
+
+            }
+            return paymentList;
         }
 
         //---------------End of Fetching-----------------------------//
@@ -604,10 +616,48 @@ namespace Garmetix.Billing.Services
                 return false;
         }
 
-        public bool UpdateInvoices(Invoice invoice, IEnumerable<InvoiceItem> invoiceitems, IEnumerable<InvoicePayment> paymentDetails, IEnumerable<CardPayment> cardPayments)
-        { return false; }
+
+
+        public async Task<bool> UpdateInvoicesAsync(Invoice invoice, IEnumerable<InvoiceItem> invoiceitems, IEnumerable<InvoicePayment> paymentDetails, IEnumerable<CardPayment> cardPayments)
+        {
+            using var tran = await GetContext().Database.BeginTransactionAsync();
+
+            try
+            {
+                GetContext().Invoices.Update(invoice);
+
+                GetContext().InvoiceItems.RemoveRange(await GetContext().InvoiceItems.Where(i => i.InvoiceId == invoice.Id).ToListAsync());
+                GetContext().InvoicePayments.RemoveRange(await GetContext().InvoicePayments.Where(i => i.InvoiceId == invoice.Id).ToListAsync());
+                GetContext().CardPayments.RemoveRange(await GetContext().CardPayments.Where(i => i.InvoiceId == invoice.Id).ToListAsync());
+
+
+                await GetContext().InvoiceItems.AddRangeAsync(invoiceitems);
+                await GetContext().InvoicePayments.AddRangeAsync(paymentDetails);
+                await GetContext().CardPayments.AddRangeAsync(cardPayments);
+
+                await tran.CommitAsync(); 
+                return true;
+            }
+            catch (Exception)
+            {
+                await tran.RollbackAsync();
+                throw;
+            }
+
+
+            return false;
+
+
+        }
 
         public bool UpdateInvoices(InvoiceDTO invoice, IEnumerable<EntryItem> invoiceitems, IEnumerable<PaymentDetail> paymentDetails)
-        { return false; }
+        {
+
+
+
+
+            return false;
+
+        }
     }
 }
