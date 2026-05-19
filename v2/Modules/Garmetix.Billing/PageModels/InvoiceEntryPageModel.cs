@@ -21,6 +21,9 @@ namespace Garmetix.Billing.PageModels
         private string searchText;
 
 
+        // NEW: Expose the enum values as a list for the ComboBox ItemsSource
+        public IList<PaymentMode> PaymentModes { get; } = Enum.GetValues(typeof(PaymentMode)).Cast<PaymentMode>().ToList();
+
         // --- HIGH PERFORMANCE CACHING ---
         private Dictionary<string, Product> _productBarcodeCache = new();
 
@@ -43,19 +46,15 @@ namespace Garmetix.Billing.PageModels
         [ObservableProperty] private EntryItem? selectedInvoiceItem;
         [ObservableProperty] private PaymentMode paymentModeInput = PaymentMode.Cash;
         [ObservableProperty] private decimal paymentAmountInput = 0m;
-        [ObservableProperty] private bool isNewCustomer = false;
+
+        [ObservableProperty] private bool isNewCustomer = false;  //TODO: Handle this
 
         // --- GLOBAL DISCOUNT INPUTS ---
         [ObservableProperty] private decimal globalDiscountInput;
         [ObservableProperty] private string globalDiscountTypeInput = "Amount";
 
-
-        // This automatically fires the moment you type a letter in the UI
-        partial void OnSearchTextChanged(string value)
-        {
-            UpdateFilteredProducts(value);
-        }
-
+        [ObservableProperty] private string customerMobile = "";
+        partial void OnSearchTextChanged(string value) => _ = UpdateFilteredProductsAsync(value);
         // NEW: This automatically fires the moment you click an item in the search list
         partial void OnSelectedProductChanged(Product? value)
         {
@@ -65,7 +64,7 @@ namespace Garmetix.Billing.PageModels
                 SearchText = string.Empty; // Clears the search box for the next item
             }
         }
-
+        partial void OnCustomerMobileChanged(string value) => SearchCustomerAsync();
         partial void OnGlobalDiscountInputChanged(decimal value) => CalculateInvoiceTotals();
 
 
@@ -86,6 +85,7 @@ namespace Garmetix.Billing.PageModels
         }
 
         // Called when the user types in the search box
+        [Obsolete]
         public void UpdateFilteredProducts_old(string searchText)
         {
             FilteredProducts.Clear();
@@ -96,8 +96,8 @@ namespace Garmetix.Billing.PageModels
 
             foreach (var p in results) FilteredProducts.Add(p);
         }
-
-        public void UpdateFilteredProducts(string searchText)
+        [Obsolete]
+        public void UpdateFilteredProducts_old2(string searchText)
         {
             // Run the LINQ query in memory
             var results = string.IsNullOrWhiteSpace(searchText)
@@ -117,11 +117,32 @@ namespace Garmetix.Billing.PageModels
                 }
             });
         }
+        // OPTIMIZED: Direct Database Search for Autocomplete
+        private async Task UpdateFilteredProductsAsync(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text) || text.Length<5)
+            {
+                //TODO: check for use
+                //MainThread.BeginInvokeOnMainThread(() => FilteredProducts.Clear());
+                return;
+            }
 
+            var results = await GetContext().Products
+                .Where(p => EF.Functions.Like(p.Name, $"%{text}%") || EF.Functions.Like(p.Barcode, $"%{text}%"))
+                .Take(20)
+                .ToListAsync();
+
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                FilteredProducts.Clear();
+                foreach (var p in results) FilteredProducts.Add(p);
+            });
+        }
         // --- CUSTOMER LOGIC ---
         [RelayCommand]
         public async Task SearchCustomerAsync()
         {
+            //TODO: Mobile number is empty check for error 
             if (string.IsNullOrWhiteSpace(CurrentInvoice.CustomerMobileNumber) || IsBusy) return;
             try
             {
@@ -134,7 +155,8 @@ namespace Garmetix.Billing.PageModels
                     IsNewCustomer = false;
                     OnPropertyChanged(nameof(CurrentInvoice));
                 }
-                else IsNewCustomer = true;
+                else 
+                    IsNewCustomer = true;
             }
             catch (Exception ex) { await InvoiceService.ShowErrorAsync("Customer Search Error", ex); }
             finally { IsBusy = false; }
@@ -151,8 +173,15 @@ namespace Garmetix.Billing.PageModels
                 if (existing == null)
                 {
                     await GetContext().Customers.AddAsync(new Customer { MobileNumber = CurrentInvoice.CustomerMobileNumber, Name = CurrentInvoice.CustomerName, GSTIN = CurrentInvoice.CustomerGSTIN });
-                    IsNewCustomer = false;
-                    await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Customer saved.", "OK");
+                    IsNewCustomer = (await GetContext().SaveChangesAsync())>0;
+                    if (IsNewCustomer)
+                    { await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Customer saved.", "OK");
+                        IsNewCustomer = false;
+                    }
+                    else
+                    {
+                        await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Failed to Customer save.", "OK");
+                    }
                 }
             }
             catch (Exception ex) { await InvoiceService.ShowErrorAsync("Save Customer Error", ex); }
@@ -199,6 +228,7 @@ namespace Garmetix.Billing.PageModels
                 try { InvoiceItems.Remove(item); CalculateInvoiceTotals(); }
                 catch (Exception ex) { _ = InvoiceService.ShowErrorAsync("Remove Item Error", ex); }
             });
+           
         }
 
         private void InvoiceItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -319,5 +349,6 @@ namespace Garmetix.Billing.PageModels
             CurrentInvoice = new InvoiceDTO();
             OnPropertyChanged(nameof(CurrentInvoice));
         }
+         
     }
 }

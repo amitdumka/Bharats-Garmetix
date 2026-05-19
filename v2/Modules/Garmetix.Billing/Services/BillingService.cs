@@ -14,6 +14,7 @@ namespace Garmetix.Billing.Services
         protected DatabaseContext _localDb => DatabaseService.Instance.LocalDB;
 
         public static async Task ShowErrorAsync(string title, Exception ex) => await Application.Current!.Windows[0].Page!.DisplayAlertAsync(title, $"Error: {ex.Message}", "OK");
+        public static async Task ShowErrorAsync(string title, string message) => await Application.Current!.Windows[0].Page!.DisplayAlertAsync(title, $"Error: {message}", "OK");
 
         public Product AddorUpxdateProduct(Product product, bool update = false)
         { return product; }

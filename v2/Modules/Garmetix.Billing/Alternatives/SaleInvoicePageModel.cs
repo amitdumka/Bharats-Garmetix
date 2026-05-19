@@ -28,7 +28,7 @@ namespace Garmetix.Billing.PageModels
                 AddGridColumns(nameof(Invoice.TaxAmount)),
                 AddGridColumns(nameof(Invoice.DiscountAmount)),
                 AddGridColumns(nameof(Invoice.BillAmount)),
-                AddGridColumns(nameof(Invoice.BilledQuantity)),
+                AddGridColumns(nameof(Invoice.Quantity)),
                 AddGridColumns(nameof(Invoice.PaymentMode)),
                 AddGridColumns(nameof(Invoice.PaidAmount)),
                 AddGridColumns(nameof(Invoice.BalanceAmount)),

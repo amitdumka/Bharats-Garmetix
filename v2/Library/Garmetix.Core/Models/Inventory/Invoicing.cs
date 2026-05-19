@@ -54,8 +54,8 @@ namespace Garmetix.Core.Models.Inventory
         [Display(Name = "Bill Amount")] public decimal BillAmount { get; set; }
 
         [Display(Name = "Quantity")] public decimal Quantity { get; set; }
-        [Display(Name = "Actual Quantity")] public decimal ActualQuantity { get; set; } = 0;
-        [Display(Name = "Billed Quantity")] public decimal BilledQuantity { get; set; } = 0;
+       // [Display(Name = "Actual Quantity")] public decimal ActualQuantity { get; set; } = 0;
+       // [Display(Name = "Billed Quantity")] public decimal BilledQuantity { get; set; } = 0;
         [Display(Name = "Item Count")] public int ItemCount { get; set; }
         [Display(Name = "Payment Mode")] public PaymentMode? PaymentMode { get; set; }
         //Handling GST System and Vat System as well
@@ -213,7 +213,7 @@ namespace Garmetix.Core.Models.Inventory
         [Display(Name = "Tax", AutoGenerateField = false)] public Guid TaxId { get; set; }
         [Display(Name = "Tax", AutoGenerateField = false)] public virtual Tax? Tax { get; set; }
         [Display(Name = "Billed Quantity")] public decimal BilledQuantity { get; set; }
-        [Display(Name = "Actual Quantity")] public decimal ActualQuantity { get; set; }
+        //[Display(Name = "Actual Quantity")] public decimal ActualQuantity { get; set; }
 
         [JsonIgnore]
         [Display(Name = "Product", AutoGenerateField = false)] public virtual Product? Product { get; set; }

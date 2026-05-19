@@ -32,10 +32,15 @@ namespace Garmetix.Billing.Models
                 RoundOffAmount = inv.RoundOff,
 
                 // Quantities
-                BilledQuantity = inv.BilledQuantity
+                BilledQuantity = inv.Quantity, 
+                Address= "" // Address is not present in the domain model, so we set it to an empty string or could be mapped from another source if needed
+                
+                
+
             };
         }
 
+        [Obsolete("This method is deprecated. Use ToInvoice(InvoiceDTO dto) instead for better handling of nullability and default values.")]
         public static Invoice? ToInvoice(this InvoiceDTO? dto)
         {
             if (dto == null) return null;
@@ -57,8 +62,9 @@ namespace Garmetix.Billing.Models
                 BillAmount = dto.GrandTotal,
                 RoundOff = dto.RoundOffAmount,
 
-                BilledQuantity = dto.BilledQuantity,
+                //BilledQuantity = dto.BilledQuantity,
                 Quantity = dto.BilledQuantity, // Assuming base quantity matches billed quantity on DTO conversion
+                //ActualQuantity= dto.BilledQuantity, // Assuming actual quantity matches billed quantity on DTO conversion
 
                 // Invoice specific properties
                 CustomerName = dto.CustomerName,
@@ -66,7 +72,9 @@ namespace Garmetix.Billing.Models
                 CustomerGSTIN = dto.CustomerGSTIN,
                 B2BSale = dto.IsB2BSale,
                 BillDiscountAmount = dto.GlobalDiscountAmount,
-                PaidAmount = dto.PaidAmount
+                PaidAmount = dto.PaidAmount, 
+                Deleted = false // New invoices created from DTO are not deleted
+               , ItemCount=0, Synced=false, CreatedAt= DateTime.UtcNow, ReturnInvoice=false
             };
         }
     }

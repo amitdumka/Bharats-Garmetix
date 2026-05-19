@@ -44,7 +44,7 @@ namespace Garmetix.Billing.Models
                 Barcode = dto.Barcode,
                 BasePrice = dto.BasePrice,
                 BilledQuantity = dto.BilledQuantity,
-                ActualQuantity = dto.BilledQuantity, // Assuming actual matched billed at entry
+                //ActualQuantity = dto.BilledQuantity, // Assuming actual matched billed at entry
 
                 // Re-calculating from the DTO's live calculated fields
                 DiscountAmount = dto.DiscountAmount,

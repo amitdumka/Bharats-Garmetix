@@ -132,7 +132,7 @@ namespace Garmetix.Billing.Helpers
                         table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).Text(sNo++.ToString());
                         table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).Text(item.Product?.Name??item.Barcode).SemiBold();
                         table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).AlignRight().Text(item.BilledQuantity.ToString("0.##"));
-                        table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).AlignRight().Text(item.ActualQuantity.ToString("0.##"));
+                        //table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).AlignRight().Text(item.ActualQuantity.ToString("0.##"));
                         table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).AlignRight().Text($"₹ {item.BasePrice:F2}");
                         table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).AlignRight().Text($"{item.TaxPercentage}%");
                         table.Cell().BorderBottom(1).BorderColor(BorderColor).PaddingVertical(5).AlignRight().Text($"₹ {item.LineTotal:F2}").SemiBold();

@@ -55,7 +55,7 @@
 
                         <Grid ColumnDefinitions="*, *, *, Auto" RowSpacing="15" ColumnSpacing="15">
                             <core:SfTextInputLayout Hint="Mobile Number" ContainerType="None" Grid.Column="0">
-                                <Entry Text="{Binding CurrentInvoice.MobileNo}" Keyboard="Numeric" MaxLength="10" Unfocused="MobileNoEntry_Unfocused"/>
+                                <Entry Text="{Binding CurrentInvoice.CustomerMobileNumber}" Keyboard="Numeric" MaxLength="10" Unfocused="MobileNoEntry_Unfocused"/>
                             </core:SfTextInputLayout>
 
                             <core:SfTextInputLayout Hint="Customer Name" ContainerType="None" Grid.Column="1">
@@ -63,10 +63,10 @@
                             </core:SfTextInputLayout>
 
                             <core:SfTextInputLayout Hint="GSTIN (Optional)" ContainerType="None" Grid.Column="2">
-                                <Entry Text="{Binding CurrentInvoice.Gstin}" />
+                                <Entry Text="{Binding CurrentInvoice.GSTIN}" />
                             </core:SfTextInputLayout>
 
-                            <Button Text="Save New" Command="{Binding SaveCustomerCommand}" IsVisible="{Binding IsNewCustomer}" 
+                            <Button Text="Save" Command="{Binding SaveCustomerCommand}" IsVisible="{Binding IsNewCustomer}" 
                                     Grid.Column="3" BackgroundColor="#28A745" TextColor="White" CornerRadius="6" WidthRequest="100" HeightRequest="45"/>
                         </Grid>
                     </VerticalStackLayout>
@@ -74,7 +74,7 @@
 
                 <Border Style="{StaticResource CardStyle}">
                     <VerticalStackLayout Spacing="15">
-                        <Label Text="Cart Details" Style="{StaticResource HeaderLabelStyle}" />
+                        <Label Text="Item Details" Style="{StaticResource HeaderLabelStyle}" />
 
                         <HorizontalStackLayout Spacing="15">
                             <!--<inputs:SfAutocomplete 
@@ -82,16 +82,16 @@
                                 ItemsSource="{Binding AvailableProducts}" DisplayMemberPath="Name" TextMemberPath="Barcode"
                                 SelectedItem="{Binding SelectedProduct}" HeightRequest="45" DropDownBackground="#FFFFFF"/>-->
                             <inputs:SfAutocomplete 
-    WidthRequest="350" 
-    Placeholder="Scan Barcode or Type Product Name..."
-    ItemsSource="{Binding FilteredProducts}" 
-    DisplayMemberPath="DisplayText" 
-    TextMemberPath="DisplayText"
-    TextSearchMode="Contains"
-    Text="{Binding SearchText, Mode=TwoWay}"
-    SelectedItem="{Binding SelectedProduct}" 
-    HeightRequest="45" 
-    DropDownBackground="#FFFFFF"/>
+                                        WidthRequest="350" 
+                                        Placeholder="Scan Barcode or Type Product Name..."
+                                        ItemsSource="{Binding FilteredProducts}" 
+                                        DisplayMemberPath="DisplayText" 
+                                        TextMemberPath="DisplayText"
+                                        TextSearchMode="Contains"
+                                        Text="{Binding SearchText, Mode=TwoWay}"
+                                        SelectedItem="{Binding SelectedProduct}" 
+                                        HeightRequest="45" 
+                                        DropDownBackground="#FFFFFF"/>      
 
                             <Button Text="+ Add Item" Command="{Binding AddProductToInvoiceCommand}" Style="{StaticResource PrimaryActionStyle}" WidthRequest="120" HeightRequest="45" />
                         </HorizontalStackLayout>
@@ -102,7 +102,6 @@
                             <datagrid:SfDataGrid.Columns>
                                 <datagrid:DataGridTextColumn MappingName="ProductName" HeaderText="Item Description" Width="200" AllowEditing="False"/>
                                 <datagrid:DataGridNumericColumn MappingName="Rate" HeaderText="Rate (₹)" Format="N2" AllowEditing="True"/>
-                                <!--<datagrid:DataGridNumericColumn MappingName="Quantity" HeaderText="Qty" AllowEditing="True"/>-->
                                 <datagrid:DataGridNumericColumn MappingName="Quantity" HeaderText="Qty" Format="0.##" AllowEditing="True"/>
                                 <datagrid:DataGridNumericColumn MappingName="DiscountPercentage" HeaderText="Disc %" Format="N2" AllowEditing="True"/>
                                 <datagrid:DataGridNumericColumn MappingName="DiscountAmount" HeaderText="Disc (₹)" Format="N2" AllowEditing="False"/>
@@ -127,10 +126,10 @@
                     <Grid ColumnDefinitions="3.5*,3.5*, 4.5*" ColumnSpacing="30">
 
                         <VerticalStackLayout Grid.Column="0" Spacing="10">
-                            <Label Text="Payment Splitting" Style="{StaticResource HeaderLabelStyle}" FontSize="14"/>
+                            <Label Text="Payment Details" Style="{StaticResource HeaderLabelStyle}" FontSize="14"/>
 
                             <Grid ColumnDefinitions="*, *, Auto" ColumnSpacing="10">
-                                <inputs:SfComboBox Grid.Column="0" SelectedItem="{Binding PaymentModeInput}" HeightRequest="40">
+                                <!--<inputs:SfComboBox Grid.Column="0" SelectedItem="{Binding PaymentModeInput}" HeightRequest="40">
                                     <inputs:SfComboBox.ItemsSource>
                                         <x:Array Type="{x:Type x:String}">
                                             <x:String>Cash</x:String>
@@ -138,7 +137,14 @@
                                             <x:String>Credit Card</x:String>
                                         </x:Array>
                                     </inputs:SfComboBox.ItemsSource>
-                                </inputs:SfComboBox>
+                                </inputs:SfComboBox>-->
+                                <!-- Updated ComboBox -->
+                                
+                                <inputs:SfComboBox Grid.Column="0" 
+                                      ItemsSource="{Binding PaymentModes}"
+                                      SelectedItem="{Binding PaymentModeInput}" 
+                                      HeightRequest="40" />
+                                
                                 <Entry Grid.Column="1" Placeholder="Amount (₹)" Text="{Binding PaymentAmountInput}" Keyboard="Numeric" HeightRequest="40" BackgroundColor="#F8F9FA"/>
                                 <Button Grid.Column="2" Text="Add" Command="{Binding AddPaymentCommand}" HeightRequest="40" BackgroundColor="#6C757D" TextColor="White" CornerRadius="4"/>
                             </Grid>
@@ -148,7 +154,7 @@
                                     <DataTemplate>
                                         <Border Stroke="#E0E0E0" StrokeThickness="1" Padding="10,5" Margin="0,0,0,5" StrokeShape="RoundRectangle 4" BackgroundColor="#FCFCFC">
                                             <Grid ColumnDefinitions="*, *, Auto">
-                                                <Label Text="{Binding Mode}" Grid.Column="0" FontSize="13" VerticalOptions="Center" TextColor="#495057"/>
+                                                <Label Text="{Binding PaymentMode}" Grid.Column="0" FontSize="13" VerticalOptions="Center" TextColor="#495057"/>
                                                 <Label Text="{Binding Amount, StringFormat='₹ {0:F2}'}" Grid.Column="1" FontSize="13" VerticalOptions="Center" FontAttributes="Bold" TextColor="#212529"/>
                                                 <Button Text="✖" Grid.Column="2" WidthRequest="25" HeightRequest="25" Padding="0" BackgroundColor="Transparent" TextColor="#D32F2F" FontSize="12" FontAttributes="Bold"
                                                         Command="{Binding BindingContext.RemovePaymentCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
@@ -228,8 +234,8 @@
                             BackgroundColor="#17A2B8" TextColor="White" HeightRequest="50" FontSize="14" CornerRadius="6"
                             FontAttributes="Bold" Command="{Binding SaveAndShareCommand}"/>
                         <Button Text="Save &amp; WhatsApp" Grid.Column="2"
-    BackgroundColor="#17A2B8" TextColor="White" HeightRequest="50" FontSize="14" CornerRadius="6"
-    FontAttributes="Bold" Command="{Binding SaveAndWhatsAppCommand}"/>
+                                         BackgroundColor="#17A2B8" TextColor="White" HeightRequest="50" FontSize="14" CornerRadius="6"
+                                             FontAttributes="Bold" Command="{Binding SaveAndWhatsAppCommand}"/>
 
                         <Button Text="Print A5" Grid.Column="3"
                             BackgroundColor="#005A9C" TextColor="White" HeightRequest="50" FontSize="14" CornerRadius="6"
