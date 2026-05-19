@@ -12,7 +12,6 @@ namespace Garmetix.Billing.PageModels
     [QueryProperty(nameof(InvoiceId), "InvoiceId")]
     public partial class InvoiceEditPageModel : ObservableObject
     {
-
         //Invoice Service
         private readonly InvoiceService _invoiceService;
 
@@ -22,7 +21,7 @@ namespace Garmetix.Billing.PageModels
         // --- CORE INVOICE DATA ---
         [ObservableProperty] private InvoiceDTO currentInvoice;  // DTO of Invoice to edit the object
 
-        [ObservableProperty] private ObservableCollection<EntryItem> editItems = new(); // Invoice item 
+        [ObservableProperty] private ObservableCollection<EntryItem> editItems = new(); // Invoice item
 
         // --- PAYMENT SPLITTING ---
         [ObservableProperty] private ObservableCollection<Models.PaymentDetail> payments = new(); // Payment details
@@ -39,7 +38,7 @@ namespace Garmetix.Billing.PageModels
         [ObservableProperty] private decimal subTotal;  //Sub Total
 
         [ObservableProperty] private decimal totalTax; //Total Tax
-        [ObservableProperty] private decimal totalDiscount; // Total Discount 
+        [ObservableProperty] private decimal totalDiscount; // Total Discount
         [ObservableProperty] private decimal roundOffAmount; //roundofAmount
         [ObservableProperty] private decimal grandTotal; //Grand Total
         [ObservableProperty] private decimal paidAmount; //paid amt
@@ -52,56 +51,26 @@ namespace Garmetix.Billing.PageModels
         [ObservableProperty] private Product selectedProduct;
         private List<Product> _productCache = new();
 
-
-
         public InvoiceEditPageModel(InvoiceService invoiceService)//, bool isBusy, string invoiceId, InvoiceDTO currentInvoice, ObservableCollection<InvoiceItem> editItems, ObservableCollection<PaymentDetail> payments, string paymentModeInput, string paymentAmountInput, decimal globalDiscountInput, string globalDiscountTypeInput, decimal subTotal, decimal totalTax, decimal totalDiscount, decimal roundOffAmount, decimal grandTotal, decimal paidAmount, decimal balanceAmount, string searchText, ObservableCollection<Product> filteredProducts, Product selectedProduct, List<Product> productCache)
         {
             _invoiceService = invoiceService;
-            //this.isBusy = isBusy;
-            //this.invoiceId = invoiceId;
-            //this.currentInvoice = currentInvoice;
-            //this.editItems = editItems;
-            //this.payments = payments;
-            //this.paymentModeInput = paymentModeInput;
-            //this.paymentAmountInput = paymentAmountInput;
-            //this.globalDiscountInput = globalDiscountInput;
-            //this.globalDiscountTypeInput = globalDiscountTypeInput;
-            //this.subTotal = subTotal;
-            //this.totalTax = totalTax;
-            //this.totalDiscount = totalDiscount;
-            //this.roundOffAmount = roundOffAmount;
-            //this.grandTotal = grandTotal;
-            //this.paidAmount = paidAmount;
-            //this.balanceAmount = balanceAmount;
-            //this.searchText = searchText;
-            //this.filteredProducts = filteredProducts;
-            //this.selectedProduct = selectedProduct;
-            //_productCache = productCache;
+             
         }
-
-
-
 
         // ---------------------------------------------------------
         // INITIALIZATION & LOADING
         // ---------------------------------------------------------
-        partial void OnInvoiceIdChanged(string value)
+        private partial void OnInvoiceIdChanged(string value)
         {
             if (!string.IsNullOrEmpty(value))
                 _ = LoadInvoiceDataAsync(Guid.Parse(value));
         }
-
-
-
-
 
         private async Task LoadInvoiceDataAsync(Guid id)
         {
             IsBusy = true;
             try
             {
-
-
                 // 1. Load Caches
                 //  _productCache = await db.Table<Product>().ToListAsync();
                 _productCache = await _invoiceService.GetContext().Products.ToListAsync();
@@ -120,7 +89,6 @@ namespace Garmetix.Billing.PageModels
                 // 3. Load Items
                 //var items = await db.Table<InvoiceItem>().Where(i => i.InvoiceId == id).ToListAsync();
                 var items = await _invoiceService.GetEntryItemListAsync(id);
-
 
                 EditItems = new ObservableCollection<EntryItem>(items);
                 foreach (var item in EditItems)
@@ -292,23 +260,9 @@ namespace Garmetix.Billing.PageModels
             IsBusy = true;
             try
             {
-
-              var result=    _invoiceService.UpdateInvoicesAsync(CurrentInvoice, EditItems, Payments);
-                //var db = await DatabaseHelper.GetDatabaseAsync();
-
-                // Run everything in an atomic transaction
-                //await db.RunInTransactionAsync(tran =>
-                //{
-                //    tran.Update(CurrentInvoice);
-
-                //    tran.Table<InvoiceItem>().Delete(i => i.InvoiceId == CurrentInvoice.Id);
-                //    foreach (var item in EditItems) tran.Insert(item);
-
-                //    tran.Table<PaymentDetail>().Delete(p => p.InvoiceId == CurrentInvoice.Id);
-                //    foreach (var pay in Payments) tran.Insert(pay);
-                //});
+                var result = _invoiceService.UpdateInvoicesAsync(CurrentInvoice, EditItems, Payments);
                 // Notify the dashboard that the database has changed!
-               // Garmetix.AI.Billing.Services.DashboardDataService.Instance.InvalidateCache();
+                // Garmetix.AI.Billing.Services.DashboardDataService.Instance.InvalidateCache();
                 await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Invoice updated successfully.", "OK");
                 await Shell.Current.GoToAsync("..");
             }

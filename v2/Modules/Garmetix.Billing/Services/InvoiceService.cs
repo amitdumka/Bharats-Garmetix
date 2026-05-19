@@ -99,7 +99,6 @@ namespace Garmetix.Billing.Services
             return validIds;
         }
 
-
         public async Task<List<Core.Models.Inventory.InvoiceItem>> GetInvoiceItemByInvoiceId(Guid id)
         {
             return await GetContext().InvoiceItems.Where(i => i.InvoiceId == id).ToListAsync();
@@ -130,7 +129,6 @@ namespace Garmetix.Billing.Services
 
         public async Task<InvoiceDTO?> GetInvoiceDTOById(Guid id)
         {
-
             var inv = await GetInvoiceByIdAsync(id);
             return inv.ToInvoiceDto();
         }
@@ -141,13 +139,11 @@ namespace Garmetix.Billing.Services
             var entryItemList = new List<EntryItem>();
             foreach (var item in items)
             {
-
-
                 entryItemList.Add(item.ToEntryItem() ?? new EntryItem());
-
             }
             return entryItemList;
         }
+
         public async Task<List<PaymentDetail>> GetPaymentDetailsAsync(Guid id)
         {
             var items = await GetContext().InvoicePayments.Where(c => c.InvoiceId == id).ToListAsync();
@@ -155,7 +151,6 @@ namespace Garmetix.Billing.Services
             foreach (var item in items)
             {
                 paymentList.Add(item.ToPaymentDetail() ?? new PaymentDetail());
-
             }
             return paymentList;
         }
@@ -616,8 +611,6 @@ namespace Garmetix.Billing.Services
                 return false;
         }
 
-
-
         public async Task<bool> UpdateInvoicesAsync(Invoice invoice, IEnumerable<InvoiceItem> invoiceitems, IEnumerable<InvoicePayment> paymentDetails, IEnumerable<CardPayment> cardPayments)
         {
             using var tran = await GetContext().Database.BeginTransactionAsync();
@@ -629,7 +622,6 @@ namespace Garmetix.Billing.Services
                 GetContext().InvoiceItems.RemoveRange(await GetContext().InvoiceItems.Where(i => i.InvoiceId == invoice.Id).ToListAsync());
                 GetContext().InvoicePayments.RemoveRange(await GetContext().InvoicePayments.Where(i => i.InvoiceId == invoice.Id).ToListAsync());
                 GetContext().CardPayments.RemoveRange(await GetContext().CardPayments.Where(i => i.InvoiceId == invoice.Id).ToListAsync());
-
 
                 await GetContext().InvoiceItems.AddRangeAsync(invoiceitems);
                 await GetContext().InvoicePayments.AddRangeAsync(paymentDetails);
@@ -643,18 +635,11 @@ namespace Garmetix.Billing.Services
                 await tran.RollbackAsync();
                 throw;
             }
-
-
             return false;
-
-
         }
-
-
 
         public async Task<bool> UpdateInvoicesAsync(InvoiceDTO invoicedto, IEnumerable<EntryItem> InvoiceItems, IEnumerable<PaymentDetail> paymentDetails)
         {
-
             if (InvoiceItems.Count() == 0)
             {
                 await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Validation", "Cannot update empty invoice.", "OK");
@@ -695,7 +680,7 @@ namespace Garmetix.Billing.Services
                     PaidAmount = invoicedto.PaidAmount,
                     ReturnInvoice = false,
                     RoundOff = invoicedto.RoundOffAmount,
-                    UpdatedAt = DateTime.UtcNow.AddMinutes(-10),
+                    UpdatedAt = DateTime.UtcNow.AddMinutes(-10), CreatedBy= "AutoAdmin", 
                 };
 
                 CalculateInvoiceTotals(currentInvoice); //do at invoice model and re do here for verification
@@ -731,7 +716,6 @@ namespace Garmetix.Billing.Services
                         });
                     }
 
-
                     var invoicePaymentList = new List<InvoicePayment>();
                     var cardpaymentList = new List<CardPayment>();
                     foreach (var item in paymentDetails)
@@ -755,8 +739,6 @@ namespace Garmetix.Billing.Services
                                 BankName = item.CardPaymentBank,
                                 AuthCode = item.AuthCode.Value,
                                 CompanyId = currentInvoice.CompanyId,
-
-
                             });
                         }
 
@@ -774,11 +756,8 @@ namespace Garmetix.Billing.Services
                             PaymentMode = item.PaymentMode,
                             Synced = false,
                             ReferenceNumber = item.PaymentNote
-
                         });
                     }
-
-
                 }
                 catch (Exception)
                 {
@@ -799,9 +778,7 @@ namespace Garmetix.Billing.Services
                 isSaving = false;
             }
 
-
             return false;
-
         }
     }
 }

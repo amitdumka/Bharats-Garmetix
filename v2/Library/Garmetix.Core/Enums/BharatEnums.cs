@@ -22,6 +22,7 @@
 // Base of all Enums used in Garmetix. This file is included in all platforms.
 namespace Garmetix.Core.Enums
 {
+    public enum GarmentCategory { Fabric, ReadyMade, Accessories }
     public enum AccountType { Saving, Current, CashCredit, OverDraft, Others, Loan, CF, }
 
     public enum AppMode
