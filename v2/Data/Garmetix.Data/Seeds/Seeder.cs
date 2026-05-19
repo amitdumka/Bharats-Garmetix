@@ -9,6 +9,7 @@ using Garmetix.Core.Models.Inventory;
 using Garmetix.Core.Models.Onboarding;
 using Garmetix.Core.Models.Stores;
 using Garmetix.Data.Databases;
+using ProductCategory = Garmetix.Core.Models.Inventory.ProductCategory;
 
 namespace Garmetix.Databases.Seeds;
 //ToDO: Move Database Services
@@ -18,6 +19,52 @@ public class Seeder
     private readonly ApplicationDatabaseContext appDb = ApplicationDatabaseContext.Instance??new ApplicationDatabaseContext();
     private int count = 0;
     private int saved = 0;
+
+    //TEMP
+    private bool SeedProducts(Company company, Store store, StoreGroup group)
+    {
+        Product _productItem= new Product
+        {
+            Name = "Product 1",
+            Barcode = "1234567890123",
+            MRP = 100,
+            TaxRate = 5,
+            Unit = Unit.Pcs,
+            TaxType = TaxType.GST,
+            ProductType = ProductType.Clothing,
+            ProductCategoryId = Guid.NewGuid(),
+            ProductSubCategoryId = Guid.NewGuid(),
+            CompanyId = company.Id, Id = Guid.NewGuid(), 
+            CreatedAt = DateTime.Now, CreatedBy= "AutoAdmin", Deleted = false, Synced = false, 
+            Descriptions = "Sample Product 1",  StoreGroupId=group.Id, UpdatedAt= DateTime.Now,
+            ProductCategory= new ProductCategory { Id = Guid.NewGuid(), Name = "Category 1", CompanyId = company.Id, Deleted = false, Synced = false, CreatedAt = DateTime.Now, CreatedBy = "AutoAdmin", UpdatedAt = DateTime.Now },
+            ProductSubCategory= new ProductSubCategory { Id = Guid.NewGuid(), Name = "SubCategory 1", CompanyId = company.Id, Deleted = false, Synced = false, CreatedAt = DateTime.Now, CreatedBy = "AutoAdmin", UpdatedAt = DateTime.Now }
+
+        };
+        Stock _stockItem = new Stock
+        {
+            CompanyId = company.Id,
+            StoreId = store.Id,
+            StoreGroupId = group.Id,
+            ProductId = _productItem.Id,
+            PurchaseQty = 100,
+            Barcode= _productItem.Barcode,
+            Id = Guid.NewGuid(),
+            CreatedAt = DateTime.Now,
+            CreatedBy = "AutoAdmin",
+            Deleted = false,
+            Synced = false,
+            UpdatedAt = DateTime.Now, CostPrice = 100,
+            HSNCode="qewew", MRP=100, TaxRate=5, TaxType=TaxType.GST, Unit=Unit.Pcs, BrandedProduct= false, 
+            SoldQty=0, 
+            Tax = new Tax { Id = Guid.NewGuid(), Name = "GST 5%", CompositeRate = 5, TaxType = TaxType.GST,   Deleted = false, Synced = false }
+        };
+
+        db.Products.Add(_productItem);
+        db.Stocks.Add(_stockItem);
+        return db.SaveChanges() >0;
+    }
+
 
     public string SeedDatabase(Store store, Company company, StoreGroup group, KeyPersonalInfo keyPersonalInfo, string baseCompanyUrl)
     {
@@ -41,6 +88,7 @@ public class Seeder
         message += AddingEmployees(store, keyPersonalInfo);
         //Adding Users
         message += InitialUsers(store, baseCompanyUrl);
+        message += SeedProducts(company, store, group) ? "Products Seeded Successfully" : "Products Not Seeded";
 
         return message + " Completed Successfully.";
     }
