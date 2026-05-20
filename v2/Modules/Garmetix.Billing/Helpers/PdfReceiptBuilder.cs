@@ -1,11 +1,21 @@
 ﻿using Garmetix.Core.Models.Inventory;
-using QuestPDF.Infrastructure;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
+using Syncfusion.Maui.Inputs;
 using Colors = QuestPDF.Helpers.Colors;
 using IContainer = QuestPDF.Infrastructure.IContainer;
 namespace Garmetix.Billing.Helpers
 {
+    public class NoFilterBehavior : IAutocompleteFilterBehavior
+    {
+        public Task<object> GetMatchingItemsAsync(SfAutocomplete source, AutocompleteFilterInfo filterInfo)
+        {
+            // Bypass Syncfusion's internal filtering entirely.
+            // Just return the exact list your database query just populated.
+            return Task.FromResult<object>(source.ItemsSource);
+        }
+    }
     public static class PdfReceiptBuilder
     {
         // Premium Brand Colors

@@ -109,6 +109,10 @@ namespace Garmetix.Core.Models.Inventory
         [Display(Name = "Product Category", AutoGenerateField = false)] public virtual ProductCategory? ProductCategory { get; set; }
         [Display(Name = "Product Sub Category", AutoGenerateField = false)] public virtual ProductSubCategory? ProductSubCategory { get; set; }
         [Display(Name = "Stocks", AutoGenerateField = false)] public virtual ICollection<Stock>? Stocks { get; set; } = null;
+        
+        // NEW: Add this so the SfAutocomplete has a property to bind to
+        [NotMapped]
+        public string DisplayText => $"{Name} ({Barcode})";
 
     }
 

@@ -54,7 +54,14 @@ namespace Garmetix.Billing.PageModels
         [ObservableProperty] private string globalDiscountTypeInput = "Amount";
 
         [ObservableProperty] private string customerMobile = "";
-        partial void OnSearchTextChanged(string value) => _ = UpdateFilteredProductsAsync(value);
+        // partial void OnSearchTextChanged(string value) => _ = UpdateFilteredProductsAsync(value);
+        partial void OnSearchTextChanged(string value)
+        {
+            // If a product was just selected, DO NOT run another search
+            if (SelectedProduct != null) return;
+
+            _ = UpdateFilteredProductsAsync(value);
+        }
         // NEW: This automatically fires the moment you click an item in the search list
         partial void OnSelectedProductChanged(Product? value)
         {
@@ -117,27 +124,80 @@ namespace Garmetix.Billing.PageModels
                 }
             });
         }
-        // OPTIMIZED: Direct Database Search for Autocomplete
+        // Add this field to your ViewModel to track ongoing searches
+        private CancellationTokenSource _searchCts;
         private async Task UpdateFilteredProductsAsync(string text)
         {
-            if (string.IsNullOrWhiteSpace(text) || text.Length<5)
+            // 1. Cancel any ongoing database queries because the user kept typing
+            _searchCts?.Cancel();
+            _searchCts = new CancellationTokenSource();
+            var token = _searchCts.Token;
+
+            // 2. You MUST clear the UI if the text is invalid
+            if (string.IsNullOrWhiteSpace(text) || text.Length < 5)
             {
-                //TODO: check for use
-                //MainThread.BeginInvokeOnMainThread(() => FilteredProducts.Clear());
+                MainThread.BeginInvokeOnMainThread(() => FilteredProducts.Clear());
                 return;
             }
 
-            var results = await GetContext().Products
-                .Where(p => EF.Functions.Like(p.Name, $"%{text}%") || EF.Functions.Like(p.Barcode, $"%{text}%"))
-                .Take(20)
-                .ToListAsync();
-
-            MainThread.BeginInvokeOnMainThread(() =>
+            try
             {
-                FilteredProducts.Clear();
-                foreach (var p in results) FilteredProducts.Add(p);
-            });
+                // 3. Debounce: Wait 300ms to see if the user is still typing before hitting the DB
+                await Task.Delay(300, token);
+
+                // Pass the token to ToListAsync so it cancels safely
+                // Inside UpdateFilteredProductsAsync...
+
+                var results = await GetContext().Products
+                    .Where(p => EF.Functions.Like(p.Name, $"%{text}%") || EF.Functions.Like(p.Barcode, $"%{text}%"))
+                    .Take(20)
+                    .ToListAsync(token);
+
+                if (token.IsCancellationRequested) return;
+
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    // 1. Clear the EXISTING collection that the UI is already bound to
+                    FilteredProducts.Clear();
+
+                    // 2. Add the new items one by one
+                    foreach (var p in results)
+                    {
+                        FilteredProducts.Add(p);
+                    }
+                });
+            }
+            catch (TaskCanceledException)
+            {
+                // This is expected and harmless — it means the user kept typing
+            }
+            catch (Exception ex)
+            {
+                // Handle unexpected DB errors
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+            }
         }
+        // OPTIMIZED: Direct Database Search for Autocomplete
+        //private async Task UpdateFilteredProductsAsync(string text)
+        //{
+        //    if (string.IsNullOrWhiteSpace(text) || text.Length<5)
+        //    {
+        //        //TODO: check for use
+        //        //MainThread.BeginInvokeOnMainThread(() => FilteredProducts.Clear());
+        //        return;
+        //    }
+
+        //    var results = await GetContext().Products
+        //        .Where(p => EF.Functions.Like(p.Name, $"%{text}%") || EF.Functions.Like(p.Barcode, $"%{text}%"))
+        //        .Take(20)
+        //        .ToListAsync();
+
+        //    MainThread.BeginInvokeOnMainThread(() =>
+        //    {
+        //        FilteredProducts.Clear();
+        //        foreach (var p in results) FilteredProducts.Add(p);
+        //    });
+        //}
         // --- CUSTOMER LOGIC ---
         [RelayCommand]
         public async Task SearchCustomerAsync()

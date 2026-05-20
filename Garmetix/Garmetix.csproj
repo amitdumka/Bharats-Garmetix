@@ -46,6 +46,11 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+		<AssemblyTitle>Garmetix</AssemblyTitle>
+		<SignAssembly>False</SignAssembly>
+		<Title>Garmetix</Title>
+		<Description>A Garment Store SRP</Description>
+		<Copyright>Amit Kumar(AKS Labs(India)</Copyright>
 	</PropertyGroup>
 
 	<ItemGroup>

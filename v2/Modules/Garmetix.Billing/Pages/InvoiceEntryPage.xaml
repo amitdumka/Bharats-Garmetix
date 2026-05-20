@@ -4,6 +4,7 @@
              xmlns:inputs="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
              xmlns:datagrid="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
+             xmlns:helpers="clr-namespace:Garmetix.Billing.Helpers"
              x:Class="Garmetix.Billing.Pages.InvoiceEntryPage"
              BackgroundColor="#F4F6F9"
              Title="Point of Sale">
@@ -42,11 +43,11 @@
             <VerticalStackLayout Padding="20" Spacing="10" IsEnabled="{Binding IsNotBusy}">
 
                 <!--<HorizontalStackLayout Spacing="10" Margin="0,0,0,10">
-                    <Button Text="← Back" BackgroundColor="Transparent" TextColor="#005A9C" 
-                            FontAttributes="Bold" FontSize="16" Padding="5,0" 
-                            Command="{Binding GoBackCommand}"/>
-                    <Label Text="Create New Invoice" FontSize="20" FontAttributes="Bold" 
-                           VerticalOptions="Center" TextColor="#2C3E50" Margin="10,0,0,0"/>
+                    <Button Text="← Back" BackgroundColor="Transparent" TextColor="#005A9C"
+                            FontAttributes="Bold" FontSize="16" Padding="5,0"
+                            Command="{Binding GoBackCommand}" />
+                    <Label Text="Create New Invoice" FontSize="20" FontAttributes="Bold"
+                           VerticalOptions="Center" TextColor="#2C3E50" Margin="10,0,0,0" />
                 </HorizontalStackLayout>-->
 
                 <Border Style="{StaticResource CardStyle}">
@@ -55,7 +56,7 @@
 
                         <Grid ColumnDefinitions="*, *, *, Auto" RowSpacing="15" ColumnSpacing="15">
                             <core:SfTextInputLayout Hint="Mobile Number" ContainerType="None" Grid.Column="0">
-                                <Entry Text="{Binding CurrentInvoice.CustomerMobileNumber}" Keyboard="Numeric" MaxLength="10" Unfocused="MobileNoEntry_Unfocused"/>
+                                <Entry Text="{Binding CurrentInvoice.CustomerMobileNumber}" Keyboard="Numeric" MaxLength="10" Unfocused="MobileNoEntry_Unfocused" />
                             </core:SfTextInputLayout>
 
                             <core:SfTextInputLayout Hint="Customer Name" ContainerType="None" Grid.Column="1">
@@ -66,8 +67,8 @@
                                 <Entry Text="{Binding CurrentInvoice.GSTIN}" />
                             </core:SfTextInputLayout>
 
-                            <Button Text="Save" Command="{Binding SaveCustomerCommand}" IsVisible="{Binding IsNewCustomer}" 
-                                    Grid.Column="3" BackgroundColor="#28A745" TextColor="White" CornerRadius="6" WidthRequest="100" HeightRequest="45"/>
+                            <Button Text="Save" Command="{Binding SaveCustomerCommand}" IsVisible="{Binding IsNewCustomer}"
+                                    Grid.Column="3" BackgroundColor="#28A745" TextColor="White" CornerRadius="6" WidthRequest="100" HeightRequest="45" />
                         </Grid>
                     </VerticalStackLayout>
                 </Border>
@@ -77,21 +78,27 @@
                         <Label Text="Item Details" Style="{StaticResource HeaderLabelStyle}" />
 
                         <HorizontalStackLayout Spacing="15">
-                            <!--<inputs:SfAutocomplete 
+                            <!--<inputs:SfAutocomplete
                                 WidthRequest="350" Placeholder="Scan Barcode or Type Product Name..."
                                 ItemsSource="{Binding AvailableProducts}" DisplayMemberPath="Name" TextMemberPath="Barcode"
-                                SelectedItem="{Binding SelectedProduct}" HeightRequest="45" DropDownBackground="#FFFFFF"/>-->
-                            <inputs:SfAutocomplete 
-                                        WidthRequest="350" 
-                                        Placeholder="Scan Barcode or Type Product Name..."
-                                        ItemsSource="{Binding FilteredProducts}" 
-                                        DisplayMemberPath="DisplayText" 
-                                        TextMemberPath="DisplayText"
-                                        TextSearchMode="Contains"
-                                        Text="{Binding SearchText, Mode=TwoWay}"
-                                        SelectedItem="{Binding SelectedProduct}" 
-                                        HeightRequest="45" 
-                                        DropDownBackground="#FFFFFF"/>      
+                                SelectedItem="{Binding SelectedProduct}" HeightRequest="45" DropDownBackground="#FFFFFF" />-->
+
+                            <inputs:SfAutocomplete WidthRequest="350" Placeholder="Scan Barcode or Type Product Name..." 
+                                                   ItemsSource="{Binding FilteredProducts}" 
+                                                   TextMemberPath="DisplayText" 
+                                                   DisplayMemberPath="DisplayText" 
+                                                   TextSearchMode="Contains" 
+                                                   Text="{Binding SearchText, Mode=TwoWay}" 
+                                                   SelectedItem="{Binding SelectedProduct}" 
+                                                   HeightRequest="45" 
+                                                   NoResultsFoundText="No products found" 
+                                                   DropDownBackground="#FFFFFF" >
+
+                                <!-- Tell Syncfusion to use our custom pass-through filter -->
+                                <inputs:SfAutocomplete.FilterBehavior>
+                                    <helpers:NoFilterBehavior />
+                                </inputs:SfAutocomplete.FilterBehavior>
+                            </inputs:SfAutocomplete>
 
                             <Button Text="+ Add Item" Command="{Binding AddProductToInvoiceCommand}" Style="{StaticResource PrimaryActionStyle}" WidthRequest="120" HeightRequest="45" />
                         </HorizontalStackLayout>
@@ -100,20 +107,20 @@
                                              SelectedRow="{Binding SelectedInvoiceItem}" HeaderRowHeight="45" RowHeight="50"
                                              AutoGenerateColumnsMode="None" HeightRequest="300" ItemsSource="{Binding InvoiceItems}" ColumnWidthMode="Fill">
                             <datagrid:SfDataGrid.Columns>
-                                <datagrid:DataGridTextColumn MappingName="ProductName" HeaderText="Item Description" Width="200" AllowEditing="False"/>
-                                <datagrid:DataGridNumericColumn MappingName="Rate" HeaderText="Rate (₹)" Format="N2" AllowEditing="True"/>
-                                <datagrid:DataGridNumericColumn MappingName="Quantity" HeaderText="Qty" Format="0.##" AllowEditing="True"/>
-                                <datagrid:DataGridNumericColumn MappingName="DiscountPercentage" HeaderText="Disc %" Format="N2" AllowEditing="True"/>
-                                <datagrid:DataGridNumericColumn MappingName="DiscountAmount" HeaderText="Disc (₹)" Format="N2" AllowEditing="False"/>
-                                <datagrid:DataGridNumericColumn MappingName="GstPercentage" HeaderText="GST %" Format="N0" AllowEditing="False"/>
-                                <datagrid:DataGridNumericColumn MappingName="TotalAmount" HeaderText="Amount" Format="N0" AllowEditing="False"/>
+                                <datagrid:DataGridTextColumn MappingName="ProductName" HeaderText="Item Description" Width="200" AllowEditing="False" />
+                                <datagrid:DataGridNumericColumn MappingName="Rate" HeaderText="Rate (₹)" Format="N2" AllowEditing="True" />
+                                <datagrid:DataGridNumericColumn MappingName="Quantity" HeaderText="Qty" Format="0.##" AllowEditing="True" />
+                                <datagrid:DataGridNumericColumn MappingName="DiscountPercentage" HeaderText="Disc %" Format="N2" AllowEditing="True" />
+                                <datagrid:DataGridNumericColumn MappingName="DiscountAmount" HeaderText="Disc (₹)" Format="N2" AllowEditing="False" />
+                                <datagrid:DataGridNumericColumn MappingName="GstPercentage" HeaderText="GST %" Format="N0" AllowEditing="False" />
+                                <datagrid:DataGridNumericColumn MappingName="TotalAmount" HeaderText="Amount" Format="N0" AllowEditing="False" />
 
                                 <datagrid:DataGridTemplateColumn MappingName="Id" HeaderText="Action" Width="100">
                                     <datagrid:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Button Text="✖" BackgroundColor="#FFF1F0" TextColor="#D32F2F" Padding="0" 
-                                                    Command="{Binding BindingContext.RemoveInvoiceItemCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}" 
-                                                    CommandParameter="{Binding .}" HeightRequest="35" WidthRequest="35" CornerRadius="4"/>
+                                            <Button Text="✖" BackgroundColor="#FFF1F0" TextColor="#D32F2F" Padding="0"
+                                                    Command="{Binding BindingContext.RemoveInvoiceItemCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                    CommandParameter="{Binding .}" HeightRequest="35" WidthRequest="35" CornerRadius="4" />
                                         </DataTemplate>
                                     </datagrid:DataGridTemplateColumn.CellTemplate>
                                 </datagrid:DataGridTemplateColumn>
@@ -126,7 +133,7 @@
                     <Grid ColumnDefinitions="3.5*,3.5*, 4.5*" ColumnSpacing="30">
 
                         <VerticalStackLayout Grid.Column="0" Spacing="10">
-                            <Label Text="Payment Details" Style="{StaticResource HeaderLabelStyle}" FontSize="14"/>
+                            <Label Text="Payment Details" Style="{StaticResource HeaderLabelStyle}" FontSize="14" />
 
                             <Grid ColumnDefinitions="*, *, Auto" ColumnSpacing="10">
                                 <!--<inputs:SfComboBox Grid.Column="0" SelectedItem="{Binding PaymentModeInput}" HeightRequest="40">
@@ -139,14 +146,14 @@
                                     </inputs:SfComboBox.ItemsSource>
                                 </inputs:SfComboBox>-->
                                 <!-- Updated ComboBox -->
-                                
-                                <inputs:SfComboBox Grid.Column="0" 
+
+                                <inputs:SfComboBox Grid.Column="0"
                                       ItemsSource="{Binding PaymentModes}"
-                                      SelectedItem="{Binding PaymentModeInput}" 
+                                      SelectedItem="{Binding PaymentModeInput}"
                                       HeightRequest="40" />
-                                
-                                <Entry Grid.Column="1" Placeholder="Amount (₹)" Text="{Binding PaymentAmountInput}" Keyboard="Numeric" HeightRequest="40" BackgroundColor="#F8F9FA"/>
-                                <Button Grid.Column="2" Text="Add" Command="{Binding AddPaymentCommand}" HeightRequest="40" BackgroundColor="#6C757D" TextColor="White" CornerRadius="4"/>
+
+                                <Entry Grid.Column="1" Placeholder="Amount (₹)" Text="{Binding PaymentAmountInput}" Keyboard="Numeric" HeightRequest="40" BackgroundColor="#F8F9FA" />
+                                <Button Grid.Column="2" Text="Add" Command="{Binding AddPaymentCommand}" HeightRequest="40" BackgroundColor="#6C757D" TextColor="White" CornerRadius="4" />
                             </Grid>
 
                             <CollectionView ItemsSource="{Binding Payments}" HeightRequest="90" Margin="0,5,0,0">
@@ -154,8 +161,8 @@
                                     <DataTemplate>
                                         <Border Stroke="#E0E0E0" StrokeThickness="1" Padding="10,5" Margin="0,0,0,5" StrokeShape="RoundRectangle 4" BackgroundColor="#FCFCFC">
                                             <Grid ColumnDefinitions="*, *, Auto">
-                                                <Label Text="{Binding PaymentMode}" Grid.Column="0" FontSize="13" VerticalOptions="Center" TextColor="#495057"/>
-                                                <Label Text="{Binding Amount, StringFormat='₹ {0:F2}'}" Grid.Column="1" FontSize="13" VerticalOptions="Center" FontAttributes="Bold" TextColor="#212529"/>
+                                                <Label Text="{Binding PaymentMode}" Grid.Column="0" FontSize="13" VerticalOptions="Center" TextColor="#495057" />
+                                                <Label Text="{Binding Amount, StringFormat='₹ {0:F2}'}" Grid.Column="1" FontSize="13" VerticalOptions="Center" FontAttributes="Bold" TextColor="#212529" />
                                                 <Button Text="✖" Grid.Column="2" WidthRequest="25" HeightRequest="25" Padding="0" BackgroundColor="Transparent" TextColor="#D32F2F" FontSize="12" FontAttributes="Bold"
                                                         Command="{Binding BindingContext.RemovePaymentCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
                                                         CommandParameter="{Binding .}" />
@@ -165,24 +172,24 @@
                                 </CollectionView.ItemTemplate>
                             </CollectionView>
 
-                            <Label Text="{Binding CurrentInvoice.BalanceAmount, StringFormat='Pending Balance: ₹ {0:F2}'}" TextColor="#D32F2F" FontAttributes="Bold" FontSize="14"/>
+                            <Label Text="{Binding CurrentInvoice.BalanceAmount, StringFormat='Pending Balance: ₹ {0:F2}'}" TextColor="#D32F2F" FontAttributes="Bold" FontSize="14" />
                         </VerticalStackLayout>
 
                         <VerticalStackLayout Grid.Column="2" Spacing="4" HorizontalOptions="Fill" VerticalOptions="End">
                             <Grid ColumnDefinitions="*, Auto" Margin="0,2">
-                                <Label Text="Sub Total:" FontSize="13" TextColor="#6C757D" VerticalOptions="Center"/>
-                                <Label Text="{Binding CurrentInvoice.SubTotal, StringFormat='₹ {0:F2}'}" FontSize="13" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center"/>
+                                <Label Text="Sub Total:" FontSize="13" TextColor="#6C757D" VerticalOptions="Center" />
+                                <Label Text="{Binding CurrentInvoice.SubTotal, StringFormat='₹ {0:F2}'}" FontSize="13" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center" />
                             </Grid>
 
                             <Grid ColumnDefinitions="*, Auto" Margin="0,2">
-                                <Label Text="Total GST:" FontSize="13" TextColor="#6C757D" VerticalOptions="Center"/>
-                                <Label Text="{Binding CurrentInvoice.TotalTax, StringFormat='₹ {0:F2}'}" FontSize="13" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center"/>
+                                <Label Text="Total GST:" FontSize="13" TextColor="#6C757D" VerticalOptions="Center" />
+                                <Label Text="{Binding CurrentInvoice.TotalTax, StringFormat='₹ {0:F2}'}" FontSize="13" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center" />
                             </Grid>
 
                             <Grid ColumnDefinitions="*, Auto" Margin="0,8">
-                                <Label Text="Bill Discount:" FontSize="13" TextColor="#2C3E50" FontAttributes="Bold" VerticalOptions="Center"/>
+                                <Label Text="Bill Discount:" FontSize="13" TextColor="#2C3E50" FontAttributes="Bold" VerticalOptions="Center" />
                                 <HorizontalStackLayout Grid.Column="1" Spacing="5" HorizontalOptions="End">
-                                    <Entry Text="{Binding GlobalDiscountInput}" Keyboard="Numeric" WidthRequest="70" HeightRequest="35" FontSize="13" BackgroundColor="#F4F6F9"/>
+                                    <Entry Text="{Binding GlobalDiscountInput}" Keyboard="Numeric" WidthRequest="70" HeightRequest="35" FontSize="13" BackgroundColor="#F4F6F9" />
                                     <inputs:SfComboBox SelectedItem="{Binding GlobalDiscountTypeInput}" WidthRequest="125" HeightRequest="35">
                                         <inputs:SfComboBox.ItemsSource>
                                             <x:Array Type="{x:Type x:String}">
@@ -195,28 +202,28 @@
                             </Grid>
 
                             <Grid ColumnDefinitions="*, Auto" Margin="0,2">
-                                <Label Text="Total Discount:" FontSize="13" TextColor="#6C757D" VerticalOptions="Center"/>
+                                <Label Text="Total Discount:" FontSize="13" TextColor="#6C757D" VerticalOptions="Center" />
                                 <HorizontalStackLayout Grid.Column="1" Spacing="2" HorizontalOptions="End">
-                                    <Label Text="-" TextColor="#FD7E14" FontSize="13"/>
+                                    <Label Text="-" TextColor="#FD7E14" FontSize="13" />
                                     <Label Text="{Binding CurrentInvoice.GlobalDiscountAmount, StringFormat='₹ {0:F2}'}" TextColor="#FD7E14" FontSize="13" />
                                 </HorizontalStackLayout>
                             </Grid>
 
                             <Grid ColumnDefinitions="*, Auto" Margin="0,2">
-                                <Label Text="Round Off:" FontSize="13" TextColor="#6C757D" VerticalOptions="Center"/>
-                                <Label Text="{Binding CurrentInvoice.RoundOffAmount, StringFormat='₹ {0:F2}'}" FontSize="13" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center"/>
+                                <Label Text="Round Off:" FontSize="13" TextColor="#6C757D" VerticalOptions="Center" />
+                                <Label Text="{Binding CurrentInvoice.RoundOffAmount, StringFormat='₹ {0:F2}'}" FontSize="13" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center" />
                             </Grid>
 
                             <BoxView HeightRequest="1" Color="#DEE2E6" Margin="0,8" />
 
                             <Grid ColumnDefinitions="*, Auto" Margin="0,2">
-                                <Label Text="Grand Total:" FontSize="18" FontAttributes="Bold" TextColor="#212529" VerticalOptions="Center"/>
-                                <Label Text="{Binding CurrentInvoice.GrandTotal, StringFormat='₹ {0:F2}'}" FontSize="20" FontAttributes="Bold" TextColor="#005A9C" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center"/>
+                                <Label Text="Grand Total:" FontSize="18" FontAttributes="Bold" TextColor="#212529" VerticalOptions="Center" />
+                                <Label Text="{Binding CurrentInvoice.GrandTotal, StringFormat='₹ {0:F2}'}" FontSize="20" FontAttributes="Bold" TextColor="#005A9C" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center" />
                             </Grid>
 
                             <Grid ColumnDefinitions="*, Auto" Margin="0,2">
-                                <Label Text="Total Paid:" FontSize="14" FontAttributes="Bold" TextColor="#6C757D" VerticalOptions="Center"/>
-                                <Label Text="{Binding CurrentInvoice.PaidAmount, StringFormat='₹ {0:F2}'}" FontSize="16" FontAttributes="Bold" TextColor="#28A745" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center"/>
+                                <Label Text="Total Paid:" FontSize="14" FontAttributes="Bold" TextColor="#6C757D" VerticalOptions="Center" />
+                                <Label Text="{Binding CurrentInvoice.PaidAmount, StringFormat='₹ {0:F2}'}" FontSize="16" FontAttributes="Bold" TextColor="#28A745" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center" />
                             </Grid>
                         </VerticalStackLayout>
                     </Grid>
@@ -226,36 +233,33 @@
 
                     <Grid ColumnDefinitions="Auto, *, *, *" ColumnSpacing="10" Margin="0,10,0,30">
 
-                        <Button Text="Clear" BackgroundColor="#E9ECEF" TextColor="#495057" 
-                            Grid.Column="0" WidthRequest="80" HeightRequest="50" FontSize="14" CornerRadius="6" 
-                            FontAttributes="Bold" Command="{Binding ClearInvoiceCommand}"/>
+                        <Button Text="Clear" BackgroundColor="#E9ECEF" TextColor="#495057"
+                            Grid.Column="0" WidthRequest="80" HeightRequest="50" FontSize="14" CornerRadius="6"
+                            FontAttributes="Bold" Command="{Binding ClearInvoiceCommand}" />
 
                         <Button Text="Save &amp; Share" Grid.Column="1"
                             BackgroundColor="#17A2B8" TextColor="White" HeightRequest="50" FontSize="14" CornerRadius="6"
-                            FontAttributes="Bold" Command="{Binding SaveAndShareCommand}"/>
+                            FontAttributes="Bold" Command="{Binding SaveAndShareCommand}" />
                         <Button Text="Save &amp; WhatsApp" Grid.Column="2"
                                          BackgroundColor="#17A2B8" TextColor="White" HeightRequest="50" FontSize="14" CornerRadius="6"
-                                             FontAttributes="Bold" Command="{Binding SaveAndWhatsAppCommand}"/>
+                                             FontAttributes="Bold" Command="{Binding SaveAndWhatsAppCommand}" />
 
                         <Button Text="Print A5" Grid.Column="3"
                             BackgroundColor="#005A9C" TextColor="White" HeightRequest="50" FontSize="14" CornerRadius="6"
-                            FontAttributes="Bold" Command="{Binding SaveAndPrintA5Command}"/>
+                            FontAttributes="Bold" Command="{Binding SaveAndPrintA5Command}" />
 
                         <Button Text="Print Thermal" Grid.Column="4"
                             BackgroundColor="#343A40" TextColor="White" HeightRequest="50" FontSize="14" CornerRadius="6"
-                            FontAttributes="Bold" Command="{Binding SaveAndPrintThermalCommand}"/>
-
+                            FontAttributes="Bold" Command="{Binding SaveAndPrintThermalCommand}" />
                     </Grid>
-
                 </HorizontalStackLayout>
-
             </VerticalStackLayout>
         </ScrollView>
 
         <ContentView BackgroundColor="#80FFFFFF" IsVisible="{Binding IsBusy}" VerticalOptions="Fill" HorizontalOptions="Fill">
             <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="15">
-                <ActivityIndicator IsRunning="{Binding IsBusy}" Color="#005A9C" WidthRequest="60" HeightRequest="60"/>
-                <Label Text="Processing..." FontAttributes="Bold" TextColor="#005A9C" FontSize="16" HorizontalOptions="Center"/>
+                <ActivityIndicator IsRunning="{Binding IsBusy}" Color="#005A9C" WidthRequest="60" HeightRequest="60" />
+                <Label Text="Processing..." FontAttributes="Bold" TextColor="#005A9C" FontSize="16" HorizontalOptions="Center" />
             </VerticalStackLayout>
         </ContentView>
     </Grid>
