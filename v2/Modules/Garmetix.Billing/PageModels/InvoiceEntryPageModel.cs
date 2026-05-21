@@ -390,7 +390,7 @@ namespace Garmetix.Billing.PageModels
         /// Clear the invoice
         /// </summary>
         /// <returns></returns>
-        [RelayCommand]
+        [RelayCommand] //Working
         public async Task ClearInvoiceAsync()
         {
             if (IsBusy) return;

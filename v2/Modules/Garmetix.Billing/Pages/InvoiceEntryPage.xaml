@@ -136,18 +136,7 @@
                             <Label Text="Payment Details" Style="{StaticResource HeaderLabelStyle}" FontSize="14" />
 
                             <Grid ColumnDefinitions="*, *, Auto" ColumnSpacing="10">
-                                <!--<inputs:SfComboBox Grid.Column="0" SelectedItem="{Binding PaymentModeInput}" HeightRequest="40">
-                                    <inputs:SfComboBox.ItemsSource>
-                                        <x:Array Type="{x:Type x:String}">
-                                            <x:String>Cash</x:String>
-                                            <x:String>UPI</x:String>
-                                            <x:String>Credit Card</x:String>
-                                        </x:Array>
-                                    </inputs:SfComboBox.ItemsSource>
-                                </inputs:SfComboBox>-->
-                                <!-- Updated ComboBox -->
-
-                                <inputs:SfComboBox Grid.Column="0"
+                               <inputs:SfComboBox Grid.Column="0"
                                       ItemsSource="{Binding PaymentModes}"
                                       SelectedItem="{Binding PaymentModeInput}"
                                       HeightRequest="40" />
