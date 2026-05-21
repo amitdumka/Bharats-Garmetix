@@ -585,7 +585,7 @@ public class Seeder
             Id = Guid.NewGuid(),
         };
 
-
+        //TODO: handle this properly input or ouput
         var taxcgst = new Tax
         {
             Id = Guid.NewGuid(),

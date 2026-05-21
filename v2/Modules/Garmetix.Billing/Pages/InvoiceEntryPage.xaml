@@ -226,9 +226,9 @@
                             Grid.Column="0" WidthRequest="80" HeightRequest="50" FontSize="14" CornerRadius="6"
                             FontAttributes="Bold" Command="{Binding ClearInvoiceCommand}" />
 
-                        <Button Text="Save &amp; Share" Grid.Column="1"
+                        <Button Text="Save &amp; Print" Grid.Column="1"
                             BackgroundColor="#17A2B8" TextColor="White" HeightRequest="50" FontSize="14" CornerRadius="6"
-                            FontAttributes="Bold" Command="{Binding SaveAndShareCommand}" />
+                            FontAttributes="Bold" Command="{Binding SaveAndPrintA5Command}" />
                         <Button Text="Save &amp; WhatsApp" Grid.Column="2"
                                          BackgroundColor="#17A2B8" TextColor="White" HeightRequest="50" FontSize="14" CornerRadius="6"
                                              FontAttributes="Bold" Command="{Binding SaveAndWhatsAppCommand}" />

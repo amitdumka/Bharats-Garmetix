@@ -1,4 +1,5 @@
-﻿using Garmetix.Core.Models.Inventory;
+﻿using Garmetix.Core.Enums;
+using Garmetix.Core.Models.Inventory;
 using Garmetix.Databases;
 using Garmetix.Databases.Services;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +35,24 @@ namespace Garmetix.Billing.Services
         public bool RemoveStock(Stock stock, bool delete = false)
         { return false; }
 
+
+        public Guid GetTaxIdByType(TaxType type, decimal percentage, bool output=true)
+        {
+            if (output)
+            {
+                var tax = GetContext().Taxes.Where(x => x.TaxType == type && x.CompositeRate == percentage).FirstOrDefault();
+                return tax != null ? tax.Id : Guid.Empty;
+            }
+
+            else
+            {
+
+
+                var tax = GetContext().Taxes.Where(x => x.TaxType == type && x.CompositeRate == percentage).FirstOrDefault();
+                return tax != null ? tax.Id : Guid.Empty;
+            }
+        }
+
         /// <summary>
         /// Remove or delete stock
         /// </summary>
@@ -53,7 +72,8 @@ namespace Garmetix.Billing.Services
             var trans = await GetContext().Database.BeginTransactionAsync();
             foreach (var item in items)
             {
-                var result = await GetContext().Stocks.Where(x => x.StoreId == item.CompanyId && x.Barcode == item.Barcode).FirstOrDefaultAsync();
+                //TODO: handle this store id and company id in better way
+                var result = await GetContext().Stocks.Where(x => x.StoreId == DatabaseService.StoreId && x.Barcode == item.Barcode).FirstOrDefaultAsync();
                 if (result != null)
                 {
                     count++;
@@ -123,7 +143,8 @@ namespace Garmetix.Billing.Services
         {
             try
             {
-                var result = await GetContext().Stocks.Where(x => x.StoreId == storeid && x.Barcode == barcode).FirstOrDefaultAsync();
+                //TODO: handle this store id and company id in better way
+                var result = await GetContext().Stocks.Where(x => x.StoreId == DatabaseService.StoreId && x.Barcode == barcode).FirstOrDefaultAsync();
 
                 if (result == null) return false;
 

@@ -5,10 +5,10 @@ using Garmetix.Billing.Services;
 using Java.Util;
 using Application = Android.App.Application;
 // 1. ADD THESE TWO ALIASES USING "global::"
-using NativeWebView = global::Android.Webkit.WebView;
-using NativeWebViewClient = global::Android.Webkit.WebViewClient;
+using NativeWebView = Android.Webkit.WebView;
+using NativeWebViewClient = Android.Webkit.WebViewClient;
 
-namespace Garmetix.AI.Billing.Platforms.Android
+namespace Garmetix.Billing.Platforms.Android
 {
     public class PrintService : IPrintService
     {

@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Garmetix.AI.Billing.Platforms.Windows
+namespace Garmetix.Billing.Platforms.Windows
 {
     public class PrintService : IPrintService
     {

@@ -71,16 +71,17 @@
                 <Grid>
                     <sfgrid:SfDataGrid ItemsSource="{Binding FilteredInvoices}"  
                                        SelectedRow="{Binding SelectedInvoice, Mode=TwoWay}"
-                                       SelectionMode="Single" 
+                                       SelectionMode="Single"   ColumnWidthMode="LastColumnFill"
                                        HeaderGridLinesVisibility="Horizontal"
                                        GridLinesVisibility="Horizontal" 
                                        HeaderRowHeight="55" RowHeight="60" 
                                        AutoGenerateColumnsMode="None">
                         <sfgrid:SfDataGrid.Columns>
-                            <sfgrid:DataGridDateColumn MappingName="Date" HeaderText="Date" Format="dd-MMM-yyyy" Width="110"/>
-                            <sfgrid:DataGridTextColumn MappingName="InvoiceNo" HeaderText="Invoice No" Width="170"/>
+                            <sfgrid:DataGridDateColumn MappingName="OnDate" HeaderText="Date" Format="dd-MMM-yyyy" Width="110"/>
+                            <sfgrid:DataGridTextColumn MappingName="InvoiceNumber" HeaderText="Invoice No" Width="170"/>
                             <sfgrid:DataGridTextColumn MappingName="CustomerName" HeaderText="Customer Name" />
-                            <sfgrid:DataGridNumericColumn MappingName="GrandTotal" HeaderText="Bill Amount" Format="N2" />
+                            <sfgrid:DataGridTextColumn MappingName="CustomerMobileNumber" HeaderText="Mobile" />
+                            <sfgrid:DataGridNumericColumn MappingName="BillAmount" HeaderText="Bill Amount" Format="N2" />
                             <sfgrid:DataGridNumericColumn MappingName="BalanceAmount" HeaderText="Balance Due" Format="N2" />
                         </sfgrid:SfDataGrid.Columns>
                     </sfgrid:SfDataGrid>

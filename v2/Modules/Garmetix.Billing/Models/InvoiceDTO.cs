@@ -40,6 +40,8 @@ namespace Garmetix.Billing.Models
         public Guid Id { get; set; } = Guid.NewGuid();
         public Guid InvoiceId { get; set; }
         public ProductType Category { get; set; }
+        public Guid ProductId { get; set; }
+        public decimal MRP { get; set; }
 
         [ObservableProperty] private string productName = string.Empty;
         [ObservableProperty] private string barcode = string.Empty;
@@ -47,6 +49,7 @@ namespace Garmetix.Billing.Models
         [ObservableProperty] private decimal basePrice = 0m;
         [ObservableProperty] private decimal billedQuantity = 1m;
         [ObservableProperty] private decimal discountPercentage = 0m;
+        [ObservableProperty] private Unit unit = Unit.Pcs;  //Unit is required for display purposes, not for calculations
 
         [NotMapped]
         public decimal DiscountAmount => Math.Round((BasePrice * BilledQuantity) * (DiscountPercentage / 100m), 2);

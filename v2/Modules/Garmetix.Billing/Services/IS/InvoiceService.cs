@@ -50,53 +50,64 @@ namespace Garmetix.Billing.Services
             {
                 result = true;
             }
-            //TODO: Check for null and handle it and implement the null handli
-            result = await SaveInvoicesAsync(currentInvoice, InvoiceItems, paymentDetails, cardPayments);
+            else //TODO: Check for null and handle it and implement the null handli
+                result = await SaveInvoicesAsync(currentInvoice, InvoiceItems, paymentDetails, cardPayments);
 
-            if (result)
+            try
             {
-                if (!thermal)
-                {// Print A5
-                    pdfPath = PdfReceiptBuilder.GenerateA5Pdf(_lastSavedInvoice, _lastSaveditems, _lastSavedPayments);
-                    await Launcher.Default.OpenAsync(new OpenFileRequest { Title = "Print Invoice", File = new ReadOnlyFile(pdfPath) });
-                    result = true;
-                }
-                if (thermal)
-                {
-                    byte[] thermalBytes = ReceiptBuilder.GenerateThermalReceiptBytes(_lastSavedInvoice, _lastSaveditems);
-                    await _printService.PrintReceiptAsync(thermalBytes);
-                    await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Thermal Receipt Printed.", "OK");
-                    result = true;
-                }
-                if (sendOverMsg)
-                {
-                    if (string.IsNullOrWhiteSpace(_lastSavedInvoice?.CustomerMobileNumber))
-                    {
-                        await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Error", "Please enter a customer mobile number.", "OK");
-                        return false;
-                    }
 
-                    if (pdfPath == null)
-                    {
+
+
+                if (result)
+                {
+                    if (!thermal)
+                    {// Print A5
                         pdfPath = PdfReceiptBuilder.GenerateA5Pdf(_lastSavedInvoice, _lastSaveditems, _lastSavedPayments);
-                    }
-
-                    string whatsappNumber = _lastSavedInvoice.CustomerMobileNumber.Length == 10 ? $"91{_lastSavedInvoice.CustomerMobileNumber}" : _lastSavedInvoice.CustomerMobileNumber;
-                    string message = $"Hello {_lastSavedInvoice.CustomerName}, thank you for shopping at Aadwika Fashion! Your invoice amount is ₹{_lastSavedInvoice.BillAmount:F2}.";
-                    string url = $"https://api.whatsapp.com/send?phone={whatsappNumber}&text={Uri.EscapeDataString(message)}";
-
-                    try
-                    {
-                        await Launcher.Default.OpenAsync(new Uri(url));
-                        await Application.Current!.Windows[0].Page!.DisplayAlertAsync("WhatsApp", "Opening WhatsApp. Please tap 'Attach' to send the generated PDF.", "OK");
+                        await Launcher.Default.OpenAsync(new OpenFileRequest { Title = "Print Invoice", File = new ReadOnlyFile(pdfPath) });
                         result = true;
                     }
-                    catch (Exception)
+                    if (thermal)
                     {
-                        await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Error", "Could not open WhatsApp.", "OK");
-                        result = false;
+                        byte[] thermalBytes = ReceiptBuilder.GenerateThermalReceiptBytes(_lastSavedInvoice, _lastSaveditems);
+                        await _printService.PrintReceiptAsync(thermalBytes);
+                        await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Thermal Receipt Printed.", "OK");
+                        result = true;
+                    }
+                    if (sendOverMsg)
+                    {
+                        if (string.IsNullOrWhiteSpace(_lastSavedInvoice?.CustomerMobileNumber))
+                        {
+                            await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Error", "Please enter a customer mobile number.", "OK");
+                            return false;
+                        }
+
+                        if (pdfPath == null)
+                        {
+                            pdfPath = PdfReceiptBuilder.GenerateA5Pdf(_lastSavedInvoice, _lastSaveditems, _lastSavedPayments);
+                        }
+
+                        string whatsappNumber = _lastSavedInvoice.CustomerMobileNumber.Length == 10 ? $"91{_lastSavedInvoice.CustomerMobileNumber}" : _lastSavedInvoice.CustomerMobileNumber;
+                        string message = $"Hello {_lastSavedInvoice.CustomerName}, thank you for shopping at Aadwika Fashion! Your invoice amount is ₹{_lastSavedInvoice.BillAmount:F2}.";
+                        string url = $"https://api.whatsapp.com/send?phone={whatsappNumber}&text={Uri.EscapeDataString(message)}";
+
+                        try
+                        {
+                            await Launcher.Default.OpenAsync(new Uri(url));
+                            await Application.Current!.Windows[0].Page!.DisplayAlertAsync("WhatsApp", "Opening WhatsApp. Please tap 'Attach' to send the generated PDF.", "OK");
+                            result = true;
+                        }
+                        catch (Exception)
+                        {
+                            await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Error", "Could not open WhatsApp.", "OK");
+                            result = false;
+                        }
                     }
                 }
+            }
+            catch (Exception)
+            {
+
+                throw;
             }
             return result;
         }
@@ -115,12 +126,26 @@ namespace Garmetix.Billing.Services
 
             try
             {
+                //Handling few check for FK  integrity and other DB related issues before saving the invoice
+
+                //Customer 
+                invoice.CustomerId = await GetContext().Customers.Where(c => c.MobileNumber == invoice.CustomerMobileNumber).Select(c => c.Id).FirstOrDefaultAsync();
+                //TODO: if still customer id not found then move to walkin customer  
+
+                //Handlinh Salesman 
+                invoice.SalemanId = await GetContext().Salesmen.Where(s => s.Name == invoice.CreatedBy).Select(s => s.Id).FirstOrDefaultAsync();
+
+                if (invoice.SalemanId == Guid.Empty)
+                {
+                    invoice.SalemanId = await GetContext().Salesmen.Select(s => s.Id).FirstOrDefaultAsync();
+                }
+
                 await GetContext().Database.BeginTransactionAsync();
 
                 await GetContext().Invoices.AddAsync(invoice);
                 await GetContext().InvoiceItems.AddRangeAsync(invoiceItems);
                 await GetContext().InvoicePayments.AddRangeAsync(paymentDetails);
-                if (cardPayments != null)
+                if (cardPayments != null && cardPayments.Count() > 0)
                     await GetContext().CardPayments.AddRangeAsync(cardPayments);
 
                 var count = await GetContext().SaveChangesAsync();
@@ -147,6 +172,10 @@ namespace Garmetix.Billing.Services
                 // Show alter for error
                 await ShowErrorAsync("Save Invoice", ex);
                 await GetContext().Database.RollbackTransactionAsync();
+                // FASTEST & SAFEST FIX: Clear the change tracker.
+                // This instantly detaches all entities that failed to save, 
+                // preventing the "already tracking one entity" error on the next try.
+                GetContext().ChangeTracker.Clear();
                 return false;
             }
 
@@ -214,8 +243,12 @@ namespace Garmetix.Billing.Services
                     BillAmount = invoicedto.GrandTotal,
 
                     PaidAmount = invoicedto.PaidAmount,
+
                     CreditSale = invoicedto.BalanceAmount > 0 ? true : false,
-                    CreatedBy = "AutoAdmin",
+                    CreatedBy = DatabaseService.Instance.CurrentUser.Name,
+                    CompanyId = DatabaseService.CompanyId
+                    , //TODO: Handle this properly
+                    MRP = invoicedto.GrandTotal + invoicedto.GlobalDiscountAmount + invoicedto.TotalDiscount
 
                 };
 
@@ -234,6 +267,7 @@ namespace Garmetix.Billing.Services
                         {
                             Deleted = false,
                             Synced = false,
+
                             CreatedAt = currentInvoice.CreatedAt,
                             UpdatedAt = currentInvoice.UpdatedAt,
                             CreatedBy = currentInvoice.CreatedBy,
@@ -252,11 +286,12 @@ namespace Garmetix.Billing.Services
                             Category = item.Category,
                             TaxAmount = item.TaxAmount,
 
-                            //ProductId= item.ProductId,
-                            //MRP= item.MRP, 
-                            //TaxPercentage = item.TaxPercentage,
-                            //TaxType = item.TaxType,
-                            //TaxId= item.TaxId,
+                            ProductId = item.ProductId,
+
+                            MRP = item.MRP,
+                            TaxPercentage = item.GstPercentage,
+                            TaxType = currentInvoice.InterState ? TaxType.IGST : TaxType.GST,
+                            TaxId = GetTaxIdByType(currentInvoice.InterState ? TaxType.IGST : TaxType.GST, item.GstPercentage),
 
                         });
                     }
@@ -280,7 +315,7 @@ namespace Garmetix.Billing.Services
                                 UpdatedAt = DateTime.UtcNow,
                                 CreatedAt = DateTime.UtcNow,
                                 Deleted = false,
-                                CreatedBy = "AutoAdmin",
+                                CreatedBy = DatabaseService.Instance.CurrentUser.Name,
                                 Synced = false,
                                 CompanyId = currentInvoice.CompanyId,
 
@@ -306,7 +341,7 @@ namespace Garmetix.Billing.Services
                             CompanyId = currentInvoice.CompanyId,
                             CreatedAt = DateTime.UtcNow,
                             UpdatedAt = DateTime.UtcNow,
-                            CreatedBy = "AutoAdmin",
+                            CreatedBy = DatabaseService.Instance.CurrentUser.Name,
                             Deleted = false,
                             Synced = false,
 

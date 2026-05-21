@@ -225,6 +225,8 @@ namespace Garmetix.Billing.PageModels
         [RelayCommand]
         public async Task SaveCustomerAsync()
         {
+            //TODO: move the save logic to service and also add update logic for existing customer, currently it only adds new customer, it does not update existing customer details
+            //TODO: Mobile number is empty check for error and also check for existing customer with same mobile number
             if (IsBusy || string.IsNullOrWhiteSpace(CurrentInvoice.CustomerMobileNumber) || string.IsNullOrWhiteSpace(CurrentInvoice.CustomerName)) return;
             try
             {
@@ -232,7 +234,7 @@ namespace Garmetix.Billing.PageModels
                 var existing = await GetContext().Customers.FirstOrDefaultAsync(c => c.MobileNumber == CurrentInvoice.CustomerMobileNumber);
                 if (existing == null)
                 {
-                    await GetContext().Customers.AddAsync(new Customer { MobileNumber = CurrentInvoice.CustomerMobileNumber, Name = CurrentInvoice.CustomerName, GSTIN = CurrentInvoice.CustomerGSTIN });
+                    await GetContext().Customers.AddAsync(new Customer { MobileNumber = CurrentInvoice.CustomerMobileNumber, Name = CurrentInvoice.CustomerName, GSTIN = CurrentInvoice.CustomerGSTIN, CompanyId=DatabaseService.CompanyId });
                     IsNewCustomer = (await GetContext().SaveChangesAsync())>0;
                     if (IsNewCustomer)
                     { await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Customer saved.", "OK");
@@ -262,7 +264,12 @@ namespace Garmetix.Billing.PageModels
                     Category = SelectedProduct.ProductType,
                     BasePrice = SelectedProduct.BasicPrice,
                     ProductName=SelectedProduct.Name,
-                   
+                    ProductId = SelectedProduct.Id, //Setting Product Id
+                    MRP = SelectedProduct.MRP,
+                    Unit = SelectedProduct.Unit,
+                    //TODO: need to check for avialble QTY  in stock, 
+                    //TOOD: instead of product need to call data from stock table , and make a stock service 
+                    //TODO: for handling purchase , sale  , stock out and stock in logic, currently it is not handled and it is just taking product qty as 1 for billing which is not correct
 
                     // CHANGED: Use 1m to signify 1 as a decimal
 

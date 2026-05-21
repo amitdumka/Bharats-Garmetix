@@ -21,8 +21,6 @@ namespace Garmetix.Authentication
         private DatabaseService _dataService;
         private static AuthenticationService? _instance;
         
-        [Obsolete]
-        public static AuthenticationService Instances => _instance ??= new AuthenticationService();
         public static AuthenticationService Instance => _instance ??= new AuthenticationService();
 
         public AppUser? CurrentUser => _dataService.CurrentUser;
@@ -169,6 +167,7 @@ namespace Garmetix.Authentication
                     if (store != null)
                     {
                         session.CompanyDatabaseFileName = $"{store.Company?.Code}{Constants.DatabaseFilename}";
+                       
                         if (user.EmployeeId != Guid.Empty && user.EmployeeId != null)
                         {
                             session.EmployeeId = user.EmployeeId;
@@ -177,10 +176,11 @@ namespace Garmetix.Authentication
                     }
                     else
                     {
-
                         await Notify.DisplayNotificationAsync("Company/Store Not found, Do Bussiness Registration", speak: true);
                     }
+                    
                     _ = SessionService.StartSessionAsync(session);
+                    
                     _ = Task.Run(delegate
                     {
                         if (store != null)
@@ -193,6 +193,7 @@ namespace Garmetix.Authentication
                         DatabaseService.StoreGroupId = store?.StoreGroupId ?? user.StoreGroupId!.Value;
                         _dataService.LocalDB.Reconfigure(session.CompanyDatabaseFileName!);
                         DatabaseService.StoreId = store!.Id;
+
                     });
                 }
                 catch (Exception ex)

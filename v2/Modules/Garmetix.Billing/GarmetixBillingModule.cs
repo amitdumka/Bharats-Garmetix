@@ -19,6 +19,13 @@ namespace Garmetix.Billing
             // Register services, handlers, etc. here.
             // For example:
             // builder.Services.AddSingleton<IGarmetixBillingService, GarmetixBillingService>();
+
+#if ANDROID
+            builder.Services.AddSingleton<IPrintService, Garmetix.Billing.Platforms.Android.PrintService>();
+#elif WINDOWS
+            builder.Services.AddSingleton<IPrintService, Garmetix.Billing.Platforms.Windows.PrintService>();
+#endif
+
             builder.Services.AddTransient<InvoiceEntryPage>();
             builder.Services.AddTransient<InvoiceHistoryPage>();
             builder.Services.AddTransient<InvoicesPageModel>();
