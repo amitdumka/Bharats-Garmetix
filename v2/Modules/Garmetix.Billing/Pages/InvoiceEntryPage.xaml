@@ -108,8 +108,8 @@
                                              AutoGenerateColumnsMode="None" HeightRequest="300" ItemsSource="{Binding InvoiceItems}" ColumnWidthMode="Fill">
                             <datagrid:SfDataGrid.Columns>
                                 <datagrid:DataGridTextColumn MappingName="ProductName" HeaderText="Item Description" Width="200" AllowEditing="False" />
-                                <datagrid:DataGridNumericColumn MappingName="Rate" HeaderText="Rate (₹)" Format="N2" AllowEditing="True" />
-                                <datagrid:DataGridNumericColumn MappingName="Quantity" HeaderText="Qty" Format="0.##" AllowEditing="True" />
+                                <datagrid:DataGridNumericColumn MappingName="BasePrice" HeaderText="Rate (₹)" Format="N2" AllowEditing="True" />
+                                <datagrid:DataGridNumericColumn MappingName="BilledQuantity" HeaderText="Qty" Format="0.##" AllowEditing="True" />
                                 <datagrid:DataGridNumericColumn MappingName="DiscountPercentage" HeaderText="Disc %" Format="N2" AllowEditing="True" />
                                 <datagrid:DataGridNumericColumn MappingName="DiscountAmount" HeaderText="Disc (₹)" Format="N2" AllowEditing="False" />
                                 <datagrid:DataGridNumericColumn MappingName="GstPercentage" HeaderText="GST %" Format="N0" AllowEditing="False" />

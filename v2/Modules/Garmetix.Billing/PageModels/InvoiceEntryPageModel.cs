@@ -261,6 +261,8 @@ namespace Garmetix.Billing.PageModels
                     Barcode = SelectedProduct.Barcode,
                     Category = SelectedProduct.ProductType,
                     BasePrice = SelectedProduct.BasicPrice,
+                    ProductName=SelectedProduct.Name,
+                   
 
                     // CHANGED: Use 1m to signify 1 as a decimal
 
