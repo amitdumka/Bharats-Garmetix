@@ -329,7 +329,7 @@ namespace Garmetix.Billing.PageModels
             }
         }
 
-        [Obsolete]
+        
         public void CalculateInvoiceTotals()
         {
             //TODO: need to reclaibrated for actual result, it has bug and it not proper

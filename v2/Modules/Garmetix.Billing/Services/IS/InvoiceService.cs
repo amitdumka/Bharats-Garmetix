@@ -43,35 +43,29 @@ namespace Garmetix.Billing.Services
 
         public async Task<bool> SaveAndPrint(Invoice? currentInvoice, IEnumerable<InvoiceItem>? InvoiceItems, IEnumerable<InvoicePayment>? paymentDetails, IEnumerable<CardPayment>? cardPayments, bool print = true, bool thermal = true, bool sendOverMsg = false)
         {
-            string pdfPath = null;
-            bool result = false;
-
-            if (_isSaved)
-            {
-                result = true;
-            }
-            else //TODO: Check for null and handle it and implement the null handli
-                result = await SaveInvoicesAsync(currentInvoice, InvoiceItems, paymentDetails, cardPayments);
-
+            string pdfPath = string.Empty;
+            bool result = _isSaved || await SaveInvoicesAsync(currentInvoice, InvoiceItems, paymentDetails, cardPayments);
             try
             {
-
-
-
                 if (result)
                 {
-                    if (!thermal)
-                    {// Print A5
-                        pdfPath = PdfReceiptBuilder.GenerateA5Pdf(_lastSavedInvoice, _lastSaveditems, _lastSavedPayments);
-                        await Launcher.Default.OpenAsync(new OpenFileRequest { Title = "Print Invoice", File = new ReadOnlyFile(pdfPath) });
-                        result = true;
-                    }
-                    if (thermal)
+                    if (print)
                     {
-                        byte[] thermalBytes = ReceiptBuilder.GenerateThermalReceiptBytes(_lastSavedInvoice, _lastSaveditems);
-                        await _printService.PrintReceiptAsync(thermalBytes);
-                        await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Thermal Receipt Printed.", "OK");
-                        result = true;
+                        if (!thermal)
+                        {
+                            // Print A5
+                            pdfPath = PdfReceiptBuilder.GenerateA5Pdf(_lastSavedInvoice, _lastSaveditems, _lastSavedPayments);
+                            await Launcher.Default.OpenAsync(new OpenFileRequest { Title = "Print Invoice", File = new ReadOnlyFile(pdfPath) });
+                            result = true;
+                        }
+
+                        else // if (thermal)
+                        {
+                            byte[] thermalBytes = ReceiptBuilder.GenerateThermalReceiptBytes(_lastSavedInvoice, _lastSaveditems);
+                            await _printService.PrintReceiptAsync(thermalBytes);
+                            await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Thermal Receipt Printed.", "OK");
+                            result = true;
+                        }
                     }
                     if (sendOverMsg)
                     {
@@ -81,10 +75,7 @@ namespace Garmetix.Billing.Services
                             return false;
                         }
 
-                        if (pdfPath == null)
-                        {
-                            pdfPath = PdfReceiptBuilder.GenerateA5Pdf(_lastSavedInvoice, _lastSaveditems, _lastSavedPayments);
-                        }
+                        pdfPath ??= PdfReceiptBuilder.GenerateA5Pdf(_lastSavedInvoice, _lastSaveditems, _lastSavedPayments);
 
                         string whatsappNumber = _lastSavedInvoice.CustomerMobileNumber.Length == 10 ? $"91{_lastSavedInvoice.CustomerMobileNumber}" : _lastSavedInvoice.CustomerMobileNumber;
                         string message = $"Hello {_lastSavedInvoice.CustomerName}, thank you for shopping at Aadwika Fashion! Your invoice amount is ₹{_lastSavedInvoice.BillAmount:F2}.";
@@ -106,7 +97,6 @@ namespace Garmetix.Billing.Services
             }
             catch (Exception)
             {
-
                 throw;
             }
             return result;
@@ -128,16 +118,36 @@ namespace Garmetix.Billing.Services
             {
                 //Handling few check for FK  integrity and other DB related issues before saving the invoice
 
-                //Customer 
-                invoice.CustomerId = await GetContext().Customers.Where(c => c.MobileNumber == invoice.CustomerMobileNumber).Select(c => c.Id).FirstOrDefaultAsync();
-                //TODO: if still customer id not found then move to walkin customer  
+                //Customer
+                invoice.CustomerId = await GetCustomerIdOrDefaultAsync(invoice.CustomerMobileNumber);
+                //GetContext().Customers.Where(c => c.MobileNumber == invoice.CustomerMobileNumber).Select(c => c.Id).FirstOrDefaultAsync();
 
-                //Handlinh Salesman 
+                //Handlinh Salesman
                 invoice.SalemanId = await GetContext().Salesmen.Where(s => s.Name == invoice.CreatedBy).Select(s => s.Id).FirstOrDefaultAsync();
 
                 if (invoice.SalemanId == Guid.Empty)
                 {
                     invoice.SalemanId = await GetContext().Salesmen.Select(s => s.Id).FirstOrDefaultAsync();
+                }
+
+                // handling GST
+                if (!invoice.B2BSale && invoice.CustomerGSTIN != null && invoice.CustomerGSTIN.Length == 15)
+                {
+                    invoice.B2BSale = true;
+                }
+
+                if (invoice.B2BSale)
+                {
+                    var statecode = invoice.CustomerGSTIN?.Substring(0, 2);
+                    //var localcode=
+                    if (StoreInfo.StateCode == invoice.CustomerGSTIN?.Substring(0, 2))
+                    {
+                        invoice.InterState = false;
+                    }
+                    else
+                    {
+                        invoice.InterState = true;
+                    }
                 }
 
                 await GetContext().Database.BeginTransactionAsync();
@@ -173,7 +183,7 @@ namespace Garmetix.Billing.Services
                 await ShowErrorAsync("Save Invoice", ex);
                 await GetContext().Database.RollbackTransactionAsync();
                 // FASTEST & SAFEST FIX: Clear the change tracker.
-                // This instantly detaches all entities that failed to save, 
+                // This instantly detaches all entities that failed to save,
                 // preventing the "already tracking one entity" error on the next try.
                 GetContext().ChangeTracker.Clear();
                 return false;
@@ -181,7 +191,6 @@ namespace Garmetix.Billing.Services
 
             return false;
         }
-
 
         /// <summary>
         /// Save invoice using DTO
@@ -209,7 +218,6 @@ namespace Garmetix.Billing.Services
                 var currentInvoiceItemsList = new List<InvoiceItem>();
                 var currentInvoice = new Invoice
                 {
-
                     Id = invoicedto.Id,
                     Synced = false,
                     Deleted = false,
@@ -249,9 +257,7 @@ namespace Garmetix.Billing.Services
                     CompanyId = DatabaseService.CompanyId
                     , //TODO: Handle this properly
                     MRP = invoicedto.GrandTotal + invoicedto.GlobalDiscountAmount + invoicedto.TotalDiscount
-
                 };
-
 
                 if (currentInvoice.PaidAmount < currentInvoice.BillAmount)
                 {
@@ -292,10 +298,8 @@ namespace Garmetix.Billing.Services
                             TaxPercentage = item.GstPercentage,
                             TaxType = currentInvoice.InterState ? TaxType.IGST : TaxType.GST,
                             TaxId = GetTaxIdByType(currentInvoice.InterState ? TaxType.IGST : TaxType.GST, item.GstPercentage),
-
                         });
                     }
-
 
                     // 1. Identify distinct payment modes in the current transaction
                     var distinctModes = paymentDetails.Select(p => p.PaymentMode).Distinct().ToList();
@@ -309,7 +313,6 @@ namespace Garmetix.Billing.Services
                     {
                         if (item.PaymentMode == PaymentMode.Card)
                         {
-
                             cardpaymentList.Add(new CardPayment
                             {
                                 UpdatedAt = DateTime.UtcNow,
@@ -318,7 +321,6 @@ namespace Garmetix.Billing.Services
                                 CreatedBy = DatabaseService.Instance.CurrentUser.Name,
                                 Synced = false,
                                 CompanyId = currentInvoice.CompanyId,
-
 
                                 InvoiceId = item.InvoiceId,
 
@@ -332,7 +334,6 @@ namespace Garmetix.Billing.Services
                                 Card = item.Card.Value,
                                 BankName = item.CardPaymentBank,
                                 AuthCode = item.AuthCode.Value,
-
                             });
                         }
 
@@ -357,8 +358,6 @@ namespace Garmetix.Billing.Services
                             ReferenceNumber = item.PaymentNote
                         });
                     }
-
-
                 }
                 catch (Exception)
                 {
@@ -370,7 +369,6 @@ namespace Garmetix.Billing.Services
                 DatabaseService.Instance.InvalidateCache();
 
                 return await SaveInvoicesAsync(currentInvoice, currentInvoiceItemsList, invoicePaymentList, cardpaymentList);
-
             }
             catch (Exception ex)
             {
@@ -384,12 +382,9 @@ namespace Garmetix.Billing.Services
 
         public async Task<bool> UpdateInvoicesAsync(Invoice invoice, IEnumerable<InvoiceItem> invoiceitems, IEnumerable<InvoicePayment> paymentDetails, IEnumerable<CardPayment> cardPayments)
         {
-
-
             using var tran = await GetContext().Database.BeginTransactionAsync();
             try
             {
-
                 GetContext().Invoices.Update(invoice);
 
                 GetContext().InvoiceItems.RemoveRange(await GetContext().InvoiceItems.Where(i => i.InvoiceId == invoice.Id).ToListAsync());
@@ -408,14 +403,10 @@ namespace Garmetix.Billing.Services
                 // Show alter for error
                 await ShowErrorAsync("Save Invoice", ex);
 
-
                 await tran.RollbackAsync();
                 // throw;
                 return false;
             }
-
-
         }
-
     }
 }

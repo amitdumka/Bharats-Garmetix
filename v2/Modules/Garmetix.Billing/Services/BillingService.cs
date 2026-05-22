@@ -15,6 +15,7 @@ namespace Garmetix.Billing.Services
         protected DatabaseContext _localDb => DatabaseService.Instance.LocalDB;
 
         public static async Task ShowErrorAsync(string title, Exception ex) => await Application.Current!.Windows[0].Page!.DisplayAlertAsync(title, $"Error: {ex.Message}", "OK");
+
         public static async Task ShowErrorAsync(string title, string message) => await Application.Current!.Windows[0].Page!.DisplayAlertAsync(title, $"Error: {message}", "OK");
 
         public Product AddorUpxdateProduct(Product product, bool update = false)
@@ -35,22 +36,99 @@ namespace Garmetix.Billing.Services
         public bool RemoveStock(Stock stock, bool delete = false)
         { return false; }
 
-
-        public Guid GetTaxIdByType(TaxType type, decimal percentage, bool output=true)
+        public Guid GetTaxIdByType(TaxType type, decimal percentage, bool output = true)
         {
             if (output)
             {
                 var tax = GetContext().Taxes.Where(x => x.TaxType == type && x.CompositeRate == percentage).FirstOrDefault();
                 return tax != null ? tax.Id : Guid.Empty;
             }
-
             else
             {
-
-
                 var tax = GetContext().Taxes.Where(x => x.TaxType == type && x.CompositeRate == percentage).FirstOrDefault();
                 return tax != null ? tax.Id : Guid.Empty;
             }
+        }
+
+        public Tax AddOrUpdateTax(Tax tax, bool update = false)
+        {
+            if (update)
+            {
+                var existingTax = GetContext().Taxes.Where(x => x.Id == tax.Id).FirstOrDefault();
+                if (existingTax != null)
+                {
+                    existingTax.TaxType = tax.TaxType;
+                    existingTax.CompositeRate = tax.CompositeRate;
+                    GetContext().Taxes.Update(existingTax);
+                    GetContext().SaveChanges();
+                    return existingTax;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                GetContext().Taxes.Add(tax);
+                GetContext().SaveChanges();
+                return tax;
+            }
+        }
+
+        /// <summary>
+        /// Get Customer Guid
+        /// </summary>
+        /// <param name="customerMobile"></param>
+        /// <returns></returns>
+
+        public async Task<Guid> GetCustomerIdOrDefaultAsync(string customerMobile)
+        {
+            var customer = await GetContext().Customers.Where(x => x.MobileNumber == customerMobile).FirstOrDefaultAsync();
+            if (customer != null)
+            {
+                return customer.Id;
+            }
+            else
+            {
+                return await GetDefaultCustomerAsync();
+            }
+        }
+
+        /// <summary>
+        /// Get Default Customer for walk in customer
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Guid> GetDefaultCustomerAsync()
+        {
+            var customer = await GetContext().Customers.Where(x => x.Name == "Walkin Customer").FirstOrDefaultAsync();
+            if (customer == null)
+            {
+                customer = new Customer
+                {
+                    Name = "Walkin Customer",
+                    MobileNumber = "0000000000",
+                    Registred = false,
+                    Amount = 0,
+                    CompanyId = DatabaseService.CompanyId,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = DatabaseService.Instance.CurrentUser.UserName,
+                    Deleted = false,
+                    Email = "amit.dumka@gmail.com",
+                    Id = Guid.NewGuid(),
+                    State = "Jharkhand",
+                    Synced = false,
+                    UpdatedAt = DateTime.UtcNow,
+                    BillCount = 0,
+                    Address = "Dumka",
+                    City = "Dumka",
+                    Country = "India",
+                    ZipCode = "814101",
+                };
+                await GetContext().Customers.AddAsync(customer);
+                await GetContext().SaveChangesAsync();
+            }
+            return customer.Id;
         }
 
         /// <summary>
@@ -62,7 +140,6 @@ namespace Garmetix.Billing.Services
         /// <returns></returns>
         public bool RemoveStock(Guid StoreId, string Barcode, bool delete = false)
         { return false; }
-
 
         public async Task<bool> UpdateStockRangeAsync(List<InvoiceItem> items)
         {
@@ -83,7 +160,6 @@ namespace Garmetix.Billing.Services
             }
             if (count == items.Count)
             {
-
                 count = await GetContext().SaveChangesAsync();
                 if (count == items.Count)
                 {
@@ -98,6 +174,7 @@ namespace Garmetix.Billing.Services
             }
             else return false;
         }
+
         public async Task<bool> UpdateStockRangeAsync(List<PurchaseInvoiceItem> items)
         {
             //TODO: add Try Catch final block in the code
@@ -116,7 +193,6 @@ namespace Garmetix.Billing.Services
             }
             if (count == items.Count)
             {
-
                 count = await GetContext().SaveChangesAsync();
                 if (count == items.Count)
                 {
@@ -131,6 +207,7 @@ namespace Garmetix.Billing.Services
             }
             else return false;
         }
+
         /// <summary>
         /// Update the stock while purchase or Sale
         /// </summary>

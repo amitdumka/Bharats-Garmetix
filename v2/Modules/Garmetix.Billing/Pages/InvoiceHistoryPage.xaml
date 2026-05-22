@@ -119,7 +119,7 @@
                     <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
                         <VerticalStackLayout>
                             <Label Text="INVOICE DETAILS" FontSize="12" FontAttributes="Bold" TextColor="#6C757D" />
-                            <Label Text="{Binding ModalInvoiceDetails.InvoiceNo}" FontSize="18" FontAttributes="Bold" TextColor="#2C3E50" />
+                            <Label Text="{Binding ModalInvoiceDetails.InvoiceNumber}" FontSize="18" FontAttributes="Bold" TextColor="#2C3E50" />
                         </VerticalStackLayout>
                         <Button Grid.Column="1" Text="✕" Command="{Binding CloseModalCommand}" 
                                 BackgroundColor="Transparent" TextColor="#6C757D" FontSize="20" FontAttributes="Bold" WidthRequest="40" />
@@ -138,9 +138,9 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <Grid ColumnDefinitions="3*, 1*, 1.5*" Padding="0,8">
-                                    <Label Grid.Column="0" Text="{Binding ProductName}" FontSize="14" FontAttributes="Bold" TextColor="#2C3E50"/>
-                                    <Label Grid.Column="1" Text="{Binding Quantity, StringFormat='{0:0.##}'}" FontSize="14" TextColor="#6C757D" HorizontalOptions="End"/>
-                                    <Label Grid.Column="2" Text="{Binding TotalAmount, StringFormat='₹ {0:N2}'}" FontSize="14" FontAttributes="Bold" TextColor="#2C3E50" HorizontalOptions="End"/>
+                                    <Label Grid.Column="0" Text="{Binding Barcode}" FontSize="14" FontAttributes="Bold" TextColor="#2C3E50"/>
+                                    <Label Grid.Column="1" Text="{Binding BilledQuantity, StringFormat='{0:0.##}'}" FontSize="14" TextColor="#6C757D" HorizontalOptions="End"/>
+                                    <Label Grid.Column="2" Text="{Binding LineTotal, StringFormat='₹ {0:N2}'}" FontSize="14" FontAttributes="Bold" TextColor="#2C3E50" HorizontalOptions="End"/>
                                 </Grid>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
@@ -150,15 +150,15 @@
                         <BoxView HeightRequest="1" Color="#E2E8F0" Margin="0,0,0,10" />
                         <Grid ColumnDefinitions="*, Auto">
                             <Label Grid.Column="0" Text="SubTotal" TextColor="#6C757D" />
-                            <Label Grid.Column="1" Text="{Binding ModalInvoiceDetails.SubTotal, StringFormat='₹ {0:N2}'}" FontAttributes="Bold" TextColor="#2C3E50" />
+                            <Label Grid.Column="1" Text="{Binding ModalInvoiceDetails.BasePrice, StringFormat='₹ {0:N2}'}" FontAttributes="Bold" TextColor="#2C3E50" />
                         </Grid>
                         <Grid ColumnDefinitions="*, Auto">
                             <Label Grid.Column="0" Text="Discount" TextColor="#6C757D" />
-                            <Label Grid.Column="1" Text="{Binding ModalInvoiceDetails.TotalDiscount, StringFormat='- ₹ {0:N2}'}" FontAttributes="Bold" TextColor="#10B981" />
+                            <Label Grid.Column="1" Text="{Binding ModalInvoiceDetails.DiscountAmount, StringFormat='- ₹ {0:N2}'}" FontAttributes="Bold" TextColor="#10B981" />
                         </Grid>
                         <Grid ColumnDefinitions="*, Auto" Margin="0,5,0,0">
                             <Label Grid.Column="0" Text="GRAND TOTAL" FontSize="16" FontAttributes="Bold" TextColor="#0F172A" />
-                            <Label Grid.Column="1" Text="{Binding ModalInvoiceDetails.GrandTotal, StringFormat='₹ {0:N2}'}" FontSize="16" FontAttributes="Bold" TextColor="#4F46E5" />
+                            <Label Grid.Column="1" Text="{Binding ModalInvoiceDetails.BillAmount, StringFormat='₹ {0:N2}'}" FontSize="16" FontAttributes="Bold" TextColor="#4F46E5" />
                         </Grid>
                     </VerticalStackLayout>
                 </Grid>

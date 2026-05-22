@@ -64,7 +64,7 @@
                             </core:SfTextInputLayout>
 
                             <core:SfTextInputLayout Hint="GSTIN (Optional)" ContainerType="None" Grid.Column="2">
-                                <Entry Text="{Binding CurrentInvoice.GSTIN}" />
+                                <Entry Text="{Binding CurrentInvoice.CustomerGSTIN}" />
                             </core:SfTextInputLayout>
 
                             <Button Text="Save" Command="{Binding SaveCustomerCommand}" IsVisible="{Binding IsNewCustomer}"
@@ -78,10 +78,6 @@
                         <Label Text="Item Details" Style="{StaticResource HeaderLabelStyle}" />
 
                         <HorizontalStackLayout Spacing="15">
-                            <!--<inputs:SfAutocomplete
-                                WidthRequest="350" Placeholder="Scan Barcode or Type Product Name..."
-                                ItemsSource="{Binding AvailableProducts}" DisplayMemberPath="Name" TextMemberPath="Barcode"
-                                SelectedItem="{Binding SelectedProduct}" HeightRequest="45" DropDownBackground="#FFFFFF" />-->
 
                             <inputs:SfAutocomplete WidthRequest="350" Placeholder="Scan Barcode or Type Product Name..." 
                                                    ItemsSource="{Binding FilteredProducts}" 
@@ -103,13 +99,18 @@
                             <Button Text="+ Add Item" Command="{Binding AddProductToInvoiceCommand}" Style="{StaticResource PrimaryActionStyle}" WidthRequest="120" HeightRequest="45" />
                         </HorizontalStackLayout>
 
-                        <datagrid:SfDataGrid  BackgroundColor="AliceBlue" AllowSelectionOnSecondaryTap="True"  AllowEditing="True" SelectionMode="Single" NavigationMode="Cell"
+                        <datagrid:SfDataGrid  BackgroundColor="AliceBlue" 
+                                              AllowSelectionOnSecondaryTap="True"  AllowEditing="True" SelectionMode="Single" NavigationMode="Cell"
                                              SelectedRow="{Binding SelectedInvoiceItem}" HeaderRowHeight="45" RowHeight="50"
-                                             AutoGenerateColumnsMode="None" HeightRequest="300" ItemsSource="{Binding InvoiceItems}" ColumnWidthMode="Fill">
+                                             AutoGenerateColumnsMode="None"
+                                              HeightRequest="300" ItemsSource="{Binding InvoiceItems}" 
+                                              AllowResizingColumns="True"  ColumnWidthMode="Fill">
                             <datagrid:SfDataGrid.Columns>
                                 <datagrid:DataGridTextColumn MappingName="ProductName" HeaderText="Item Description" Width="200" AllowEditing="False" />
+                                <datagrid:DataGridNumericColumn MappingName="MRP" HeaderText="MRP(₹)" Format="N2" AllowEditing="False" />
                                 <datagrid:DataGridNumericColumn MappingName="BasePrice" HeaderText="Rate (₹)" Format="N2" AllowEditing="True" />
                                 <datagrid:DataGridNumericColumn MappingName="BilledQuantity" HeaderText="Qty" Format="0.##" AllowEditing="True" />
+                                <datagrid:DataGridComboBoxColumn MappingName="Unit" HeaderText="Unit(s)" AllowEditing="False" CellTextAlignment="Center"/>
                                 <datagrid:DataGridNumericColumn MappingName="DiscountPercentage" HeaderText="Disc %" Format="N2" AllowEditing="True" />
                                 <datagrid:DataGridNumericColumn MappingName="DiscountAmount" HeaderText="Disc (₹)" Format="N2" AllowEditing="False" />
                                 <datagrid:DataGridNumericColumn MappingName="GstPercentage" HeaderText="GST %" Format="N0" AllowEditing="False" />
@@ -136,7 +137,7 @@
                             <Label Text="Payment Details" Style="{StaticResource HeaderLabelStyle}" FontSize="14" />
 
                             <Grid ColumnDefinitions="*, *, Auto" ColumnSpacing="10">
-                               <inputs:SfComboBox Grid.Column="0"
+                                <inputs:SfComboBox Grid.Column="0"
                                       ItemsSource="{Binding PaymentModes}"
                                       SelectedItem="{Binding PaymentModeInput}"
                                       HeightRequest="40" />
