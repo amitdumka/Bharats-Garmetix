@@ -9,6 +9,7 @@ namespace Garmetix.Billing.Pages
         {
             InitializeComponent();
             BindingContext = viewModel;
+            //Title = $"Edit Invoice [{viewModel.InvoiceId}]";
         }
     }
 }
