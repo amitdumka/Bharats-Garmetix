@@ -8,7 +8,7 @@ namespace Garmetix.Accounting.Pages
     {
         public EntryDueRecoveryPage(DueRecoveryFormModel fvm)
         {
-            var efv = new EntryFormView { Title = "DueRecovery New", ColumnCount = 2 };
+            var efv = new EntryFormView { Title = "Due Recovery New", ColumnCount = 2 };
 
             Content = new VerticalStackLayout
             {
@@ -16,7 +16,7 @@ namespace Garmetix.Accounting.Pages
             };
 
             fvm.InitFormViewModel();
-            Title = "DueRecovery[New]";
+            Title = "Due Recovery [New]";
             efv.BindingContext = fvm;
             efv.DataForm.ItemsSourceProvider = fvm;
             efv.DataForm.RegisterEditor("Company", DataFormEditorType.ComboBox);
@@ -24,7 +24,7 @@ namespace Garmetix.Accounting.Pages
             efv.DataForm.RegisterEditor("Store", DataFormEditorType.ComboBox);
             efv.DataForm.RegisterEditor("Bank", DataFormEditorType.ComboBox);
             efv.DataForm.RegisterEditor("DueInvoiceNumber", DataFormEditorType.ComboBox);
-
+          
 
             efv.DataForm.GenerateDataFormItem += fvm.OnGenerateDataFormItem;
         }

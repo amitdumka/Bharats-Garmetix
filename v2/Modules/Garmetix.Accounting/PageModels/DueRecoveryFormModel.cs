@@ -25,6 +25,12 @@ namespace Garmetix.Accounting.FormModels
 
         public override void OnGenerateDataFormItem(object sender, GenerateDataFormItemEventArgs e)
         {
+            // Check if the current item being generated is the Payment Details field
+            if (e.DataFormItem != null && e.DataFormItem.FieldName == nameof(DueRecoveryEntry.PaymentDetails))
+            {
+                // Bind the IsVisible property to our computed boolean
+                e.DataFormItem.SetBinding(DataFormItem.IsVisibleProperty, nameof(DueRecoveryEntry.IsPaymentDetailsVisible));
+            }
             this.GeneratedFormItems(sender, e);
         }
 

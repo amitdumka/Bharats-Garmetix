@@ -1,5 +1,7 @@
-﻿using Garmetix.Core.Enums;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Base;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -47,8 +49,14 @@ namespace Garmetix.Accounting.Models
         public Guid Company { get; set; }
     }
 
-    public class DueRecoveryEntry : CEntity
+    [INotifyPropertyChanged]
+    public partial class DueRecoveryEntry : CEntity
+    //public class DueRecoveryEntry : CEntity
     {
+       // [Key]
+       // [Display(AutoGenerateField = false)]
+       // public Guid Id { get; set; } = Guid.NewGuid();
+
         [Display(Name = "Invoice Number"), Required]
         public required string DueInvoiceNumber { get; set; }
 
@@ -64,8 +72,24 @@ namespace Garmetix.Accounting.Models
         [Display(Name = "Fully Paid")]
         public bool Paid { get; set; } = false;
 
-        [Display(Name = "Payment Mode")] public PaymentMode PaymentMode { get; set; } = PaymentMode.Cash;
-        [Display(Name = "Payment Details")] public string? PaymentDetails { get; set; }= string.Empty;
+        //[Display(Name = "Payment Mode")] public PaymentMode PaymentMode { get; set; } = PaymentMode.Cash;
+        //[Display(Name = "Payment Details")] public string? PaymentDetails { get; set; }= string.Empty;
+
+        // The [property: ...] syntax ensures Syncfusion sees the Display name on the generated property
+        [ObservableProperty]
+        [property: Display(Name = "Payment Mode")]
+        [NotifyPropertyChangedFor(nameof(IsPaymentDetailsVisible))]
+        private PaymentMode _paymentMode = PaymentMode.Cash;
+
+        [ObservableProperty]
+        [property: Display(Name = "Payment Details")]
+        private string? _paymentDetails = string.Empty;
+        //TODO: not working  need to check why Syncfusion is not updating the visibility of payment details field when payment mode is changed from card to cash or vice versa
+        // Computed property to control visibility
+        [NotMapped] // Ensures EF Core ignores this
+        [Display(AutoGenerateField = false)] // Ensures DataForm ignores this
+        public bool IsPaymentDetailsVisible =>   PaymentMode != PaymentMode.Card; // Adjust logic to match your enum
+
         [NotMapped]
         public Guid Company { get; set; }
         [NotMapped]
@@ -73,6 +97,7 @@ namespace Garmetix.Accounting.Models
         [NotMapped]
         public Guid Store { get; set; }
 
+        
     }
 
     //Banking
