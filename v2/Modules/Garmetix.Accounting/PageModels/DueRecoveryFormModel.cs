@@ -1,6 +1,7 @@
 ﻿using Garmetix.Core.Interfaces;
 using Garmetix.CoreServices.Accounting;
 using Syncfusion.Maui.DataForm;
+using System.ComponentModel;
 
 namespace Garmetix.Accounting.FormModels
 {
@@ -25,15 +26,46 @@ namespace Garmetix.Accounting.FormModels
 
         public override void OnGenerateDataFormItem(object sender, GenerateDataFormItemEventArgs e)
         {
-            // Check if the current item being generated is the Payment Details field
+            //// Check if the current item being generated is the Payment Details field
+            //if (e.DataFormItem != null && e.DataFormItem.FieldName == nameof(DueRecoveryEntry.PaymentDetails))
+            //{
+            //    // Bind the IsVisible property to our computed boolean
+            //    e.DataFormItem.SetBinding(DataFormItem.IsVisibleProperty, nameof(DueRecoveryEntry.IsPaymentDetailsVisible));
+            //}
+
+            // 1. Safely subscribe to the model's PropertyChanged event.
+            // (We unsubscribe first to ensure we don't accidentally subscribe multiple times)
+            Entity.PropertyChanged -= OnModelPropertyChanged;
+            Entity.PropertyChanged += OnModelPropertyChanged;
+
+            // 2. Set the INITIAL visibility when the form is drawn
             if (e.DataFormItem != null && e.DataFormItem.FieldName == nameof(DueRecoveryEntry.PaymentDetails))
             {
-                // Bind the IsVisible property to our computed boolean
-                e.DataFormItem.SetBinding(DataFormItem.IsVisibleProperty, nameof(DueRecoveryEntry.IsPaymentDetailsVisible));
+                e.DataFormItem.IsVisible = Entity.IsPaymentDetailsVisible;
             }
             this.GeneratedFormItems(sender, e);
         }
+        private void OnModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            // 3. Set the DYNAMIC visibility when the user changes the Payment Mode
 
+            // The CommunityToolkit automatically fires this notification because we used 
+            // [NotifyPropertyChangedFor(nameof(IsPaymentDetailsVisible))] on the PaymentMode property.
+            if (e.PropertyName == nameof(DueRecoveryEntry.IsPaymentDetailsVisible))
+            {
+                if (sender is DueRecoveryEntry model)
+                {
+                    // Grab the specific UI field from Syncfusion
+                    var paymentDetailsItem = EntryForm?.GetDataFormItem(nameof(DueRecoveryEntry.PaymentDetails));
+
+                    if (paymentDetailsItem != null)
+                    {
+                        // Explicitly set the visibility, which forces Syncfusion to update the layout
+                        paymentDetailsItem.IsVisible = model.IsPaymentDetailsVisible;
+                    }
+                }
+            }
+        }
         protected override async void SaveButton()
         {
             var newData = new DueRecovery
