@@ -19,7 +19,7 @@ namespace Garmetix.Accounting.FormModels
                 OnDate = DateTime.Now,
                 Company = DatabaseService.CompanyId,
                 StoreGroup = DatabaseService.StoreGroupId,
-                Store = DatabaseService.StoreId
+                Store = DatabaseService.StoreId, PaymentMode= PaymentMode.Cash
             };
         }
 
@@ -40,6 +40,9 @@ namespace Garmetix.Accounting.FormModels
                 CompanyId = Entity.Company,
                 StoreGroupId = Entity.StoreGroup,
                 StoreId = Entity.Store,
+                PaymentMode = Entity.PaymentMode,
+                PaymentDetails = Entity.PaymentDetails,
+                // ClearingDate = Entity.Paid ? DateTime.Now : null,
                 CreatedBy = DatabaseService.Instance.CurrentUser.Name,
                 Synced = false,
                 CreatedAt = DateTime.Now,
@@ -47,9 +50,13 @@ namespace Garmetix.Accounting.FormModels
                 UpdatedAt = DateTime.Now,
             };
             var result = await DataModel.SaveAsync(newData, IsNew);
+
+            //TODO : if payment option is  Card then we need to ask card details and save it in database and also need to update the due invoice as paid and clear the due amount from customer ledger
+
             if (result != null)
             {
-                await AccountingServices.ClearCustomerDue(newData.InvoiceNumber, newData.OnDate);
+               // await AccountingServices.ClearCustomerDue(newData.InvoiceNumber, newData.OnDate);
+                await AccountingServices.UpdateDueInvoice(newData.InvoiceNumber, newData);
             }
             Save(result != null);
         }

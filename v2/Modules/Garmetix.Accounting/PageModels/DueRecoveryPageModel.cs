@@ -1,6 +1,4 @@
-﻿using Garmetix.Base.PageModels;
-using Garmetix.Core.Models.Accounting;
-using Syncfusion.Maui.DataGrid;
+﻿using Syncfusion.Maui.DataGrid;
 
 namespace Garmetix.Accounting.PageModels
 {
@@ -19,15 +17,10 @@ namespace Garmetix.Accounting.PageModels
                 AddGridColumns(nameof(DueRecovery.Amount)),
                 AddGridColumns(nameof(DueRecovery.Paid)),
                 AddDateGridColumns(nameof(DueRecovery.OnDate)),
-                AddDateGridColumns(nameof(DueRecovery.ClearingDate)),
+                AddGridColumns(nameof(DueRecovery.PaymentMode)),
+                AddGridColumns(nameof(DueRecovery.PaymentDetails)),
 
-                //new DataGridTextColumn { MappingName = "Id", HeaderText = "ID" },
-                //new DataGridTextColumn() { HeaderText = nameof(DueRecovery.InvoiceNumber), MappingName = nameof(DueRecovery.InvoiceNumber) } ,
-                //new DataGridTextColumn() { HeaderText = nameof(DueRecovery.Amount), MappingName = nameof(DueRecovery.Amount) } ,
-                //new DataGridTextColumn() { HeaderText = nameof(DueRecovery.Paid), MappingName = nameof(DueRecovery.Paid) },
-                //new DataGridTextColumn() { HeaderText = nameof(DueRecovery.OnDate), MappingName = nameof(DueRecovery.OnDate), Format = "dd/MMM/yyyy" },
-                //new DataGridTextColumn() { HeaderText = nameof(DueRecovery.ClearingDate), MappingName = nameof(DueRecovery.ClearingDate), Format = "dd/MMM/yyyy" },
-            ];
+ ];
             return GridColumns;
         }
     }

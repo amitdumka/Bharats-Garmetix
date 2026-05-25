@@ -63,6 +63,9 @@ namespace Garmetix.Accounting.Models
 
         [Display(Name = "Fully Paid")]
         public bool Paid { get; set; } = false;
+
+        [Display(Name = "Payment Mode")] public PaymentMode PaymentMode { get; set; } = PaymentMode.Cash;
+        [Display(Name = "Payment Details")] public string? PaymentDetails { get; set; }= string.Empty;
         [NotMapped]
         public Guid Company { get; set; }
         [NotMapped]

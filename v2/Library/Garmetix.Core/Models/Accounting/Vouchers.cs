@@ -25,7 +25,9 @@ namespace Garmetix.Core.Models.Accounting
         [Display(Name = "Date")] public DateTime OnDate { get; set; }
         [Display(Name = "Amount")] public decimal Amount { get; set; }
         [Display(Name = "Paid")] public bool Paid { get; set; } = false;
-        [Display(Name = "Clearing Date")] public DateTime? ClearingDate { get; set; }
+         
+        [Display(Name = "Payment Mode")] public PaymentMode PaymentMode { get; set; } =  PaymentMode.Cash;
+        [Display(Name = "Payment Details")] public string? PaymentDetails { get; set; }= string.Empty;
     }
     public class CustomerDue : StoreBase
     {

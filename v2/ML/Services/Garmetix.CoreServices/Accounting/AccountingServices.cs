@@ -1,7 +1,10 @@
-﻿using Bharat.ToolKits.Helpers;
+﻿using Bharat.ToolKits.Extensions;
+using Bharat.ToolKits.Helpers;
 using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Accounting;
+using Garmetix.Core.Models.Inventory;
 using Garmetix.Core.Sessions;
+using Garmetix.Databases.Services;
 using Garmetix.Models.Reports;
 using Garmetix.Services;
 using Garmetix.Services.Interfaces;
@@ -202,16 +205,48 @@ namespace Garmetix.CoreServices.Accounting
 
         #endregion PrintVouchers
 
+
+        public static async Task<bool> UpdateDueInvoice(string InvoiceNumber, DueRecovery recovery)
+        {
+            if (recovery == null) return false;
+            var invoice = Db.Invoices.Where(x => x.InvoiceNumber == InvoiceNumber).FirstOrDefault();
+
+            if (invoice == null) return false;
+
+            invoice.PaidAmount += recovery.Amount;
+
+            var invpayyment = new InvoicePayment
+            {
+                Id = Guid.NewGuid(),
+                CompanyId = invoice.CompanyId,
+                Amount = recovery.Amount,
+                OnDate = recovery.OnDate,
+                PaymentMode = recovery.PaymentMode,
+                CreatedBy = DatabaseService.Instance.CurrentUser.UserName,
+                Deleted = false,
+                Synced = false,
+                InvoiceId = invoice.Id,
+                ReferenceNumber = recovery.PaymentDetails ?? "",
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow, 
+            };
+            Db.InvoicePayments.Add(invpayyment);
+
+
+            var result = (await Db.SaveChangesAsync()) > 0;
+
+            if (invoice.BalanceAmount <= 0)
+            {
+                result = await ClearCustomerDue(InvoiceNumber, recovery.OnDate);
+
+            }
+
+            return result;
+        }
         public static async Task<bool> ClearCustomerDue(string InvoiceNumber, DateTime payingDate)
         {
-            //var invoice = Db.Invoices.Where(x => x.InvoiceNumber == InvoiceNumber).FirstOrDefault();
-            //if (invoice != null)
-            //{
-            //    invoice. = payingDate;
-            //    invoice.DueAmount = 0;
-            //    Db.SaveChanges();
-            //}
 
+            //TODO : Clear Customer Due when invoice is fully paid and update the due table with clearing date and paid status
             var due = Db.CustomerDues.Where(x => x.InvoiceNumber == InvoiceNumber).FirstOrDefault();
             if (due != null)
             {
@@ -299,7 +334,7 @@ namespace Garmetix.CoreServices.Accounting
         /// <param name="partyType"></param>
         /// <returns></returns>
 
-        public static async  Task<Guid> GetLedgerGroupForPartyAsync(PartyType partyType)
+        public static async Task<Guid> GetLedgerGroupForPartyAsync(PartyType partyType)
         {
             //TODO : Move to Service and make it async as well return Task.Run(async delegate=>{});
 
@@ -309,7 +344,7 @@ namespace Garmetix.CoreServices.Accounting
 
             id = partyType switch
             {
-                PartyType.Customer =>((await Db.LedgerGroups.FirstOrDefaultAsync(static x => x.Name == "Customers"))?.Id) ?? Guid.Empty,
+                PartyType.Customer => ((await Db.LedgerGroups.FirstOrDefaultAsync(static x => x.Name == "Customers"))?.Id) ?? Guid.Empty,
                 PartyType.Supplier => (await Db.LedgerGroups.FirstOrDefaultAsync(x => x.Name == "Vendors"))?.Id ?? Guid.Empty,
                 PartyType.Employee => (await Db.LedgerGroups.FirstOrDefaultAsync(x => x.Name == "Employees"))?.Id ?? Guid.Empty,
                 PartyType.Vendor => (await Db.LedgerGroups.FirstOrDefaultAsync(x => x.Name == "Vendors"))?.Id ?? Guid.Empty,

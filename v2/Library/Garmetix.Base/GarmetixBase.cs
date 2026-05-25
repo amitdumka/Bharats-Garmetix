@@ -1,16 +1,25 @@
-﻿namespace Garmetix.Base
-{
+﻿using Garmetix.Base.Views;
 
-    //this will be  core and core based UI libraries, and will be used by all the other libraries
-    // All the code in this file is included in all platforms.
-    public  static class GarmetixBase
+namespace Garmetix.Base
+{
+    public static class GarmetixBase
     {
-        
+
+        // List of Static Route name
+        public const string RouteMainPage = "MainPage";
+        public const string RouteSettingsPage = "SettingsPage";
+        public const string DashboardPage = "DashboardPage";
+
+        public const string RouteLoginPage = "LoginPage";
+        public const string ErrorPage = "ErrorPage";
+
         public static MauiAppBuilder UseGarmetixBase(this MauiAppBuilder builder)
         {
-            // Register services, handlers, etc. here
-            // For example:
-            // builder.Services.AddSingleton<IMyService, MyService>();
+
+
+            builder.Services.AddTransient<AboutUsPage>();
+            builder.Services.AddTransient<ContactUsPage>();
+
             return builder;
         }
     }

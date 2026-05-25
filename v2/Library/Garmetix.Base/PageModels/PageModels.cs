@@ -22,7 +22,6 @@ using Bharat.ToolKits.Helpers;
 using Bharat.ToolKits.Notifications;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Garmetix.Base.PageModels;
 using Garmetix.Core.DataModels;
 using Garmetix.Core.Enums;
 using Garmetix.Core.Interfaces;

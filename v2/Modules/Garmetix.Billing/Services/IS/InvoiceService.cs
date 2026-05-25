@@ -2,6 +2,7 @@
 using Garmetix.Billing.Helpers;
 using Garmetix.Billing.Models;
 using Garmetix.Core.Enums;
+using Garmetix.Core.Models.Accounting;
 using Garmetix.Core.Models.Inventory;
 using Garmetix.Databases.Services;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,85 @@ namespace Garmetix.Billing.Services
     // Add and update record
     public partial class InvoiceService : BaseInvoiceService
     {
+
+        /// <summary>
+        /// Add or update customer due based on the invoice balance amount. If balance amount is zero or less, it will remove the due record if exists. If balance amount is greater than zero, it will add or update the due record.
+        /// </summary>
+        /// <param name="invoice">The invoice for which to add or update customer due</param>
+        /// <returns>true if the customer due was added or updated successfully, false otherwise</returns>
+        public async Task<bool> AddOrUpdateCustomerDue(Invoice invoice)
+        {
+
+            if (invoice is null) return false;
+
+
+            var existingDue = await GetContext().CustomerDues.FirstOrDefaultAsync(d => d.Id == invoice.Id);
+
+            // Remove due if balance amount is zero or less. 
+            if (existingDue != null && invoice.BalanceAmount <= 0)
+            {
+                GetContext().CustomerDues.Remove(existingDue);
+                //TODO: Add log for this action
+                return await GetContext().SaveChangesAsync() > 0;
+            }
+
+            if (existingDue != null)
+            {
+                // Update existing due
+                existingDue.Amount = invoice.BalanceAmount;
+                existingDue.UpdatedAt = DateTime.UtcNow;
+                existingDue.CreatedBy = DatabaseService.Instance.CurrentUser.Name;
+                GetContext().CustomerDues.Update(existingDue);
+            }
+            else
+            {
+                // Create new due and add
+                var due = new CustomerDue
+                {
+                    Id = invoice.Id,
+                    InvoiceNumber = invoice.InvoiceNumber,
+                    OnDate = invoice.OnDate,
+                    Amount = invoice.BalanceAmount,
+                    Paid = false,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                    CreatedBy = DatabaseService.Instance.CurrentUser.Name,
+                    CompanyId = DatabaseService.CompanyId,
+                    ClearingDate = null,
+                    Deleted = false,
+                    Synced = false,
+                    StoreId = DatabaseService.StoreId,
+                    StoreGroupId = DatabaseService.StoreGroupId,
+
+                };
+                // Add new due
+                await GetContext().CustomerDues.AddAsync(due);
+            }
+            return await GetContext().SaveChangesAsync() > 0;
+        }
+
+        /// <summary>
+        /// Dispose the object and clean up
+        /// </summary>
+        public void Dispose()
+        {
+            GetContext().Dispose();
+        }
+
+        /// <summary>
+        /// Clear the last saved invoice data from memory. This is useful when we want to clear the cache after printing or when we want to save a new invoice without using the last saved data.
+        /// </summary>
+        public void ClearLastSavedData()
+        {
+            _lastSavedInvoice = null;
+            _lastSaveditems = null;
+            _lastSavedPayments = null;
+            _lastSavedCardPayments = null;
+            _isSaved = false;
+        }
+
+
+
         /// <summary>
         /// Save the invoice and print and can send over message
         /// </summary>
@@ -168,12 +248,28 @@ namespace Garmetix.Billing.Services
                     if (cardPayments != null) _lastSavedCardPayments = cardPayments;
                     _isSaved = true;
 
-                    //update the stock
-                    if (!await UpdateStockRangeAsync(invoice.InvoiceItems.ToList()))
+                    DatabaseService.Instance.InvalidateCache();
+                    invalidateCache = true;
+                    //Update the Customer Due 
+
+                    if (invoice.BalanceAmount > 0)
+                    {
+                        if (!await AddOrUpdateCustomerDue(invoice))
+                        {
+                            await Notify.DisplaySnackbarAsync("Failed to update customer due. Kindly report admin to check the log");
+                        }
+                    }
+                    
+                        //update the stock
+
+
+                        if (!await UpdateStockRangeAsync(invoice.InvoiceItems.ToList()))
                     {
                         await Notify.DisplaySnackbarAsync("Failded to update the stock. Kindly report admin to check the log");
                         //TODO: Add Log
                     }
+
+
                     return true;
                 }
             }
@@ -366,7 +462,7 @@ namespace Garmetix.Billing.Services
 
                 // Notify the dashboard that the database has changed!
                 //TODO: Enable this DashboardDataService.Instance.InvalidateCache();
-                DatabaseService.Instance.InvalidateCache();
+
 
                 return await SaveInvoicesAsync(currentInvoice, currentInvoiceItemsList, invoicePaymentList, cardpaymentList);
             }
@@ -396,6 +492,8 @@ namespace Garmetix.Billing.Services
                 await GetContext().CardPayments.AddRangeAsync(cardPayments);
 
                 await tran.CommitAsync();
+                DatabaseService.Instance.InvalidateCache();
+                invalidateCache = true;
                 return true;
             }
             catch (Exception ex)
