@@ -1,13 +1,14 @@
-//using Microsoft.Maui.Controls;
+using Garmetix.Billing.PageModels;
+using Microsoft.Maui.Controls;
 
-//namespace Garmetix.AI.Billing.Views
-//{
-//    public partial class EditInvoicePage : ContentPage
-//    {
-//        public EditInvoicePage(ViewModels.EditInvoiceViewModel viewModel)
-//        {
-//            InitializeComponent();
-//            BindingContext = viewModel;
-//        }
-//    }
-//}
+namespace Garmetix.Billing.Pages
+{
+    public partial class EditInvoicePage : ContentPage
+    {
+        public EditInvoicePage(InvoiceEditPageModel viewModel)
+        {
+            InitializeComponent();
+            BindingContext = viewModel;
+        }
+    }
+}

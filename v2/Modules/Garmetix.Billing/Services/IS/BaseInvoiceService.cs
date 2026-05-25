@@ -1,13 +1,12 @@
 ﻿using Bharat.ToolKits.Helpers;
 using Garmetix.Core.Models.Inventory;
 using Microsoft.EntityFrameworkCore;
- 
+
 namespace Garmetix.Billing.Services
 {
     public partial class BaseInvoiceService : BillingService
     {
         protected IPrintService _printService;
-
 
         //Invoice Caching  so no need to requery or fetch again
 
@@ -86,7 +85,5 @@ namespace Garmetix.Billing.Services
                 return $"{prefix}{fallbackSequence}";
             }
         }
-
-
     }
 }

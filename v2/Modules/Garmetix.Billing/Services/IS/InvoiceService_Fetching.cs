@@ -8,8 +8,8 @@ namespace Garmetix.Billing.Services
     // Fetching and Querying Invoice and other record and base constructor and instance
     public partial class InvoiceService : BaseInvoiceService
     {
-        private InvoiceService _instance;
-        public InvoiceService Instance => _instance ?? new InvoiceService();
+        private static InvoiceService? _instance;
+        public static InvoiceService Instance => _instance ?? new InvoiceService();
         /// <summary>
         /// Default Constructor
         ///     It initilized the instance , print Sercice, and context
@@ -83,48 +83,103 @@ namespace Garmetix.Billing.Services
         /// <returns>Invoice Object or Null</returns>
         public async Task<Invoice?> GetInvoiceByIdAsync(Guid? InvId)
         {
-            if (InvId == null) return null;
+            // Fail fast if ID is null or empty
+            if (InvId == null || InvId == Guid.Empty)
+                return null;
 
-            var invoice = await GetContext().Invoices.Where(c => c.Id == InvId).FirstOrDefaultAsync();
-            if (invoice != null)
+            try
             {
-                invoice.InvoiceItems = (ICollection<InvoiceItem>)GetContext().InvoiceItems.Where(c => c.Id == InvId).ToAsyncEnumerable();
-                invoice.Payments = (ICollection<InvoicePayment>)GetContext().InvoicePayments.Where(c => c.Id == InvId).ToAsyncEnumerable();
-                if (invoice.PaymentMode == PaymentMode.Card)
+                var context = GetContext(); // Call this once to reduce overhead
+                var invoice = await context.Invoices.FirstOrDefaultAsync(c => c.Id == InvId);
+
+                if (invoice != null)
                 {
-                    invoice.CardPayments = (ICollection<CardPayment>)GetContext().CardPayments.Where(c => c.Id == InvId).ToAsyncEnumerable();
+                    // FIX: Use InvoiceId for child records and ToListAsync() to populate collections safely
+                    invoice.InvoiceItems = await context.InvoiceItems
+                        .Where(c => c.InvoiceId == InvId)
+                        .ToListAsync();
+
+                    invoice.Payments = await context.InvoicePayments
+                        .Where(c => c.InvoiceId == InvId)
+                        .ToListAsync();
+
+                    if (invoice.PaymentMode == PaymentMode.Card)
+                    {
+                        invoice.CardPayments = await context.CardPayments
+                            .Where(c => c.InvoiceId == InvId)
+                            .ToListAsync();
+                    }
                 }
+
                 return invoice;
             }
-            return null;
+            catch (Exception ex)
+            {
+                // Log the exception (replace Debug with your actual logging mechanism)
+                System.Diagnostics.Debug.WriteLine($"Exception in GetInvoiceByIdAsync: {ex.Message}");
+                return null;
+            }
         }
 
         public async Task<InvoiceDTO?> GetInvoiceDTOById(Guid id)
         {
-            var inv = await GetInvoiceByIdAsync(id);
-            return inv.ToInvoiceDto();
+            try
+            {
+                var inv = await GetInvoiceByIdAsync(id);
+
+                // FIX: Prevent NullReferenceException if the invoice does not exist
+                if (inv == null)
+                    return null;
+
+                return inv.ToInvoiceDto();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Exception in GetInvoiceDTOById: {ex.Message}");
+                return null;
+            }
         }
 
         public async Task<List<EntryItem>> GetEntryItemListAsync(Guid id)
         {
-            var items = await GetInvoiceItemByInvoiceId(id);
-            var entryItemList = new List<EntryItem>();
-            foreach (var item in items)
+            try
             {
-                entryItemList.Add(item.ToEntryItem() ?? new EntryItem());
+                var items = await GetInvoiceItemByInvoiceId(id);
+
+                // Safely handle null results from the database fetch
+                if (items == null || !items.Any())
+                    return new List<EntryItem>();
+
+                // Optimized using LINQ instead of a foreach loop
+                return items.Select(item => item.ToEntryItem() ?? new EntryItem()).ToList();
             }
-            return entryItemList;
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Exception in GetEntryItemListAsync: {ex.Message}");
+                return new List<EntryItem>(); // Returning an empty list is safer for UIs than returning null
+            }
         }
 
         public async Task<List<PaymentDetail>> GetPaymentDetailsAsync(Guid id)
         {
-            var items = await GetContext().InvoicePayments.Where(c => c.InvoiceId == id).ToListAsync();
-            var paymentList = new List<PaymentDetail>();
-            foreach (var item in items)
+            try
             {
-                paymentList.Add(item.ToPaymentDetail() ?? new PaymentDetail());
+                
+                var items = await GetContext().InvoicePayments
+                    .Where(c => c.InvoiceId == id)
+                    .ToListAsync();
+
+                if (items == null || !items.Any())
+                    return new List<PaymentDetail>();
+
+                // Optimized using LINQ
+                return items.Select(item => item.ToPaymentDetail() ?? new PaymentDetail()).ToList();
             }
-            return paymentList;
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Exception in GetPaymentDetailsAsync: {ex.Message}");
+                return new List<PaymentDetail>(); // Prevents UI crashes if binding to a list
+            }
         }
 
         //---------------End of Fetching-----------------------------//

@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             
-    
-             Title="Company Bank Accounts" BackgroundColor="#F4F6F9"></ContentPage>
-<!--<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:inputs="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
              xmlns:core="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
              xmlns:datagrid="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
-             x:Class="Garmetix.AI.Billing.Views.EditInvoicePage"
+             x:Class="Garmetix.Billing.Pages.EditInvoicePage"
              BackgroundColor="#F4F6F9"
              Title="Edit Invoice">
 
@@ -46,7 +40,7 @@
 
                         <Grid ColumnDefinitions="*, *, *" RowSpacing="15" ColumnSpacing="15">
                             <core:SfTextInputLayout Hint="Invoice Number" ContainerType="None" Grid.Column="0">
-                                <Entry Text="{Binding CurrentInvoice.InvoiceNo}" IsReadOnly="True" TextColor="#6C757D" FontAttributes="Bold"/>
+                                <Entry Text="{Binding CurrentInvoice.InvoiceNumber}" IsReadOnly="True" TextColor="#6C757D" FontAttributes="Bold"/>
                             </core:SfTextInputLayout>
 
                             <core:SfTextInputLayout Hint="Customer Name" ContainerType="None" Grid.Column="1">
@@ -54,7 +48,7 @@
                             </core:SfTextInputLayout>
 
                             <core:SfTextInputLayout Hint="Invoice Date" ContainerType="None" Grid.Column="2">
-                                <Entry Text="{Binding CurrentInvoice.Date, StringFormat='{0:dd-MMM-yyyy}'}" IsReadOnly="True" TextColor="#6C757D"/>
+                                <Entry Text="{Binding CurrentInvoice.OnDate, StringFormat='{0:dd-MMM-yyyy}'}" IsReadOnly="True" TextColor="#6C757D"/>
                             </core:SfTextInputLayout>
                         </Grid>
                     </VerticalStackLayout>
@@ -62,7 +56,7 @@
 
                 <Border Style="{StaticResource CardStyle}">
                     <VerticalStackLayout Spacing="15">
-                        <Label Text="Cart Details (Modifying)" Style="{StaticResource HeaderLabelStyle}" />
+                        <Label Text="Item Details (Modifying)" Style="{StaticResource HeaderLabelStyle}" />
 
                         <HorizontalStackLayout Spacing="15">
                             <inputs:SfAutocomplete 
@@ -83,9 +77,9 @@
                                              HeaderRowHeight="45" RowHeight="50" AutoGenerateColumnsMode="None" 
                                              HeightRequest="300" ItemsSource="{Binding EditItems}" ColumnWidthMode="Fill">
                             <datagrid:SfDataGrid.Columns>
-                                <datagrid:DataGridTextColumn MappingName="ProductName" HeaderText="Item Description" Width="200" AllowEditing="False"/>
-                                <datagrid:DataGridNumericColumn MappingName="Rate" HeaderText="Rate (₹)" Format="N2" AllowEditing="False"/>
-                                <datagrid:DataGridNumericColumn MappingName="Quantity" HeaderText="Qty" Format="0.##" AllowEditing="True"/>
+                                <datagrid:DataGridTextColumn MappingName="Barcode" HeaderText="Item Description" Width="200" AllowEditing="False"/>
+                                <datagrid:DataGridNumericColumn MappingName="BasePrice" HeaderText="Rate (₹)" Format="N2" AllowEditing="False"/>
+                                <datagrid:DataGridNumericColumn MappingName="BilledQuantity" HeaderText="Qty" Format="0.##" AllowEditing="True"/>
                                 <datagrid:DataGridNumericColumn MappingName="DiscountPercentage" HeaderText="Disc %" Format="N2" AllowEditing="True"/>
                                 <datagrid:DataGridNumericColumn MappingName="DiscountAmount" HeaderText="Disc (₹)" Format="N2" AllowEditing="False"/>
                                 <datagrid:DataGridNumericColumn MappingName="GstPercentage" HeaderText="GST %" Format="N0" AllowEditing="False"/>
@@ -224,4 +218,4 @@
             </VerticalStackLayout>
         </ContentView>
     </Grid>
-</ContentPage>-->
+</ContentPage>

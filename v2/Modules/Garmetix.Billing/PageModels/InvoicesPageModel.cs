@@ -178,13 +178,38 @@ namespace Garmetix.Billing.PageModels
             }
             else if (action == "Edit Invoice")
             {
-                // Navigate to the Edit Page and pass the unique Invoice ID securely
-                await Shell.Current.GoToAsync($"EditInvoicePage?InvoiceId={invoice.Id}");
+                await OpenEditPage(invoice);
             }
 
             // Deselect the row so it can be clicked again
             SelectedInvoice = null;
         }
+
+        private async Task OpenEditPage(Invoice invoice)
+        {
+            if (invoice == null) return;
+
+            try
+            {
+                // Force the navigation onto the Main UI Thread
+                MainThread.BeginInvokeOnMainThread(async () =>
+                {
+                    try
+                    {
+                        await Shell.Current.GoToAsync($"EditInvoicePage?InvoiceId={invoice.Id}");
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Navigation failed: {ex.Message}");
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Thread dispatch failed: {ex.Message}");
+            }
+        }
+
 
         private async Task OpenInvoiceDetailsModalAsync(Invoice invoice)
         {

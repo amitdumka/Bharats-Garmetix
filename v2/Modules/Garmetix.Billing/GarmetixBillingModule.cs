@@ -1,5 +1,6 @@
 ﻿using Bharat.ToolKits.Helpers;
 using CommunityToolkit.Maui;
+using DocumentFormat.OpenXml.Drawing;
 using Garmetix.Billing.PageModels;
 using Garmetix.Billing.Pages;
 using Garmetix.Billing.Services;
@@ -27,6 +28,8 @@ namespace Garmetix.Billing
 #endif
 
             builder.Services.AddTransient<InvoiceEntryPage>();
+            builder.Services.AddTransient<EditInvoicePage>();
+            builder.Services.AddTransient<InvoiceEditPageModel>();
             builder.Services.AddTransient<InvoiceHistoryPage>();
             builder.Services.AddTransient<InvoicesPageModel>();
             builder.Services.AddTransient<InvoiceEntryPageModel>();
@@ -46,6 +49,8 @@ namespace Garmetix.Billing
             // Routing.RegisterRoute("billing", typeof(BillingPage));
             RouterHelper.AddRoute(typeof(InvoiceEntryPage));
             //RouterHelper.AddRoute(typeof(EditInvoicePage));
+            // Explicitly map the exact string "EditInvoicePage" to the page type
+            Routing.RegisterRoute("EditInvoicePage", typeof(EditInvoicePage));
         }
     }
 }

@@ -4,8 +4,6 @@ using Garmetix.Billing.Models;
 using Garmetix.Billing.Services;
 using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Inventory;
-using Garmetix.Databases.Services;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 
 namespace Garmetix.Billing.PageModels
@@ -57,9 +55,12 @@ namespace Garmetix.Billing.PageModels
 
         private List<Product> _productCache = new();  // Use this to cache products for faster research during autocomplete
 
-        public InvoiceEditPageModel(InvoiceService invoiceService)//, bool isBusy, string invoiceId, InvoiceDTO currentInvoice, ObservableCollection<InvoiceItem> editItems, ObservableCollection<PaymentDetail> payments, string paymentModeInput, string paymentAmountInput, decimal globalDiscountInput, string globalDiscountTypeInput, decimal subTotal, decimal totalTax, decimal totalDiscount, decimal roundOffAmount, decimal grandTotal, decimal paidAmount, decimal balanceAmount, string searchText, ObservableCollection<Product> filteredProducts, Product selectedProduct, List<Product> productCache)
+        public InvoiceEditPageModel()//, bool isBusy, string invoiceId, InvoiceDTO currentInvoice, ObservableCollection<InvoiceItem> editItems, ObservableCollection<PaymentDetail> payments, string paymentModeInput, string paymentAmountInput, decimal globalDiscountInput, string globalDiscountTypeInput, decimal subTotal, decimal totalTax, decimal totalDiscount, decimal roundOffAmount, decimal grandTotal, decimal paidAmount, decimal balanceAmount, string searchText, ObservableCollection<Product> filteredProducts, Product selectedProduct, List<Product> productCache)
         {
-            _invoiceService = invoiceService;
+
+            _invoiceService = InvoiceService.Instance;
+
+            //_invoiceService = invoiceService;
         }
 
         // ---------------------------------------------------------
