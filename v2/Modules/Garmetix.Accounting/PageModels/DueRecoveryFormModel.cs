@@ -20,13 +20,14 @@ namespace Garmetix.Accounting.FormModels
                 OnDate = DateTime.Now,
                 Company = DatabaseService.CompanyId,
                 StoreGroup = DatabaseService.StoreGroupId,
-                Store = DatabaseService.StoreId, PaymentMode= PaymentMode.Cash
+                Store = DatabaseService.StoreId,
+                PaymentMode = PaymentMode.Cash
             };
         }
 
         public override void OnGenerateDataFormItem(object sender, GenerateDataFormItemEventArgs e)
         {
-        https://www.syncfusion.com/blogs/post/ai-powered-smart-net-maui-data-forms
+            //https://www.syncfusion.com/blogs/post/ai-powered-smart-net-maui-data-forms
 
             //// Check if the current item being generated is the Payment Details field
             //if (e.DataFormItem != null && e.DataFormItem.FieldName == nameof(DueRecoveryEntry.PaymentDetails))
@@ -82,9 +83,13 @@ namespace Garmetix.Accounting.FormModels
             //        e.DataFormItem.SetBinding(DataFormItem.IsVisibleProperty, visibilityBinding);
             //    }
             ////}
-            
+
         }
-        [Obsolete]
+        /// <summary>
+        /// Handles property changes on the model.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The event arguments.</param>
         private void OnModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
 
@@ -148,7 +153,7 @@ namespace Garmetix.Accounting.FormModels
 
             if (result != null)
             {
-               // await AccountingServices.ClearCustomerDue(newData.InvoiceNumber, newData.OnDate);
+                // await AccountingServices.ClearCustomerDue(newData.InvoiceNumber, newData.OnDate);
                 await AccountingServices.UpdateDueInvoice(newData.InvoiceNumber, newData);
             }
             Save(result != null);
