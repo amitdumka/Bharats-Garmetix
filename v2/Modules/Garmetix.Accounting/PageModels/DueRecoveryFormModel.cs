@@ -26,6 +26,8 @@ namespace Garmetix.Accounting.FormModels
 
         public override void OnGenerateDataFormItem(object sender, GenerateDataFormItemEventArgs e)
         {
+        https://www.syncfusion.com/blogs/post/ai-powered-smart-net-maui-data-forms
+
             //// Check if the current item being generated is the Payment Details field
             //if (e.DataFormItem != null && e.DataFormItem.FieldName == nameof(DueRecoveryEntry.PaymentDetails))
             //{
@@ -35,16 +37,35 @@ namespace Garmetix.Accounting.FormModels
 
             // 1. Safely subscribe to the model's PropertyChanged event.
             // (We unsubscribe first to ensure we don't accidentally subscribe multiple times)
-            Entity.PropertyChanged -= OnModelPropertyChanged;
-            Entity.PropertyChanged += OnModelPropertyChanged;
+            //Entity.PropertyChanged -= OnModelPropertyChanged;
+            //Entity.PropertyChanged += OnModelPropertyChanged;
 
-            // 2. Set the INITIAL visibility when the form is drawn
+            //// 2. Set the INITIAL visibility when the form is drawn
+            //if (e.DataFormItem != null && e.DataFormItem.FieldName == nameof(DueRecoveryEntry.PaymentDetails))
+            //{
+            //    e.DataFormItem.IsVisible = Entity.IsPaymentDetailsVisible;
+            //}
+
+            // 1. Check if we are generating the PaymentDetails field
+            this.GeneratedFormItems(sender, e);
             if (e.DataFormItem != null && e.DataFormItem.FieldName == nameof(DueRecoveryEntry.PaymentDetails))
             {
-                e.DataFormItem.IsVisible = Entity.IsPaymentDetailsVisible;
+                // 2. Safely grab the current DataObject (your model)
+                if (EntryForm!=null && EntryForm.DataObject is DueRecoveryEntry model)
+                {
+                    // 3. Create a binding that EXPLICITLY points to the model as the Source
+                    var visibilityBinding = new Binding(
+                        path: nameof(DueRecoveryEntry.IsPaymentDetailsVisible),
+                        source: model
+                    );
+
+                    // 4. Apply the binding to the DataFormItem
+                    e.DataFormItem.SetBinding(DataFormItem.IsVisibleProperty, visibilityBinding);
+                }
             }
-            this.GeneratedFormItems(sender, e);
+            
         }
+        [Obsolete]
         private void OnModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             // 3. Set the DYNAMIC visibility when the user changes the Payment Mode
