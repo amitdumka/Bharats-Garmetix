@@ -8,7 +8,7 @@ namespace Garmetix.Accounting.FormModels
     public class DueRecoveryFormModel : FormModel<DueRecoveryEntry>
     {
         private readonly IDataModel<DueRecovery> DataModel = new DataModel<DueRecovery>();
-
+        private DataFormItem? _paymentDetailsItem;
         public override void InitFormViewModel()
         {
             Entity = new DueRecoveryEntry
@@ -48,44 +48,78 @@ namespace Garmetix.Accounting.FormModels
 
             // 1. Check if we are generating the PaymentDetails field
             this.GeneratedFormItems(sender, e);
-            if (e.DataFormItem != null && e.DataFormItem.FieldName == nameof(DueRecoveryEntry.PaymentDetails))
-            {
-                // 2. Safely grab the current DataObject (your model)
-                if (EntryForm!=null && EntryForm.DataObject is DueRecoveryEntry model)
-                {
-                    // 3. Create a binding that EXPLICITLY points to the model as the Source
-                    var visibilityBinding = new Binding(
-                        path: nameof(DueRecoveryEntry.IsPaymentDetailsVisible),
-                        source: model
-                    );
 
-                    // 4. Apply the binding to the DataFormItem
-                    e.DataFormItem.SetBinding(DataFormItem.IsVisibleProperty, visibilityBinding);
+            if (EntryForm?.DataObject is DueRecoveryEntry model)
+            {
+                // Safely subscribe to the model's changes (unsubscribing first prevents duplicates)
+                model.PropertyChanged -= OnModelPropertyChanged;
+                model.PropertyChanged += OnModelPropertyChanged;
+
+                // 2. Catch the field EXACTLY when Syncfusion creates it
+                if (e.DataFormItem != null && e.DataFormItem.FieldName == nameof(DueRecoveryEntry.PaymentDetails))
+                {
+                    // Store the reference. Now it will NEVER be null.
+                    _paymentDetailsItem = e.DataFormItem;
+
+                    // Set initial visibility when the form loads
+                    _paymentDetailsItem.IsVisible = model.IsPaymentDetailsVisible;
                 }
             }
+
+            //if (e.DataFormItem != null && e.DataFormItem.FieldName == nameof(DueRecoveryEntry.PaymentDetails))
+            //{
+
+            //    // 2. Safely grab the current DataObject (your model)
+            //    if (EntryForm!=null && EntryForm.DataObject is DueRecoveryEntry model)
+            //    {
+            //        // 3. Create a binding that EXPLICITLY points to the model as the Source
+            //        var visibilityBinding = new Binding(
+            //            path: nameof(DueRecoveryEntry.IsPaymentDetailsVisible),
+            //            source: model
+            //        );
+
+            //        // 4. Apply the binding to the DataFormItem
+            //        e.DataFormItem.SetBinding(DataFormItem.IsVisibleProperty, visibilityBinding);
+            //    }
+            ////}
             
         }
         [Obsolete]
         private void OnModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
+
+            // 3. Listen for the CommunityToolkit notification
+            if (e.PropertyName == nameof(DueRecoveryEntry.IsPaymentDetailsVisible))
+            {
+                if (sender is DueRecoveryEntry model && _paymentDetailsItem != null)
+                {
+                    // 4. Force the UI update on the Main Thread to guarantee MAUI redraws it
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        _paymentDetailsItem.IsVisible = model.IsPaymentDetailsVisible;
+                    });
+                }
+            }
+
+
             // 3. Set the DYNAMIC visibility when the user changes the Payment Mode
 
             // The CommunityToolkit automatically fires this notification because we used 
             // [NotifyPropertyChangedFor(nameof(IsPaymentDetailsVisible))] on the PaymentMode property.
-            if (e.PropertyName == nameof(DueRecoveryEntry.IsPaymentDetailsVisible))
-            {
-                if (sender is DueRecoveryEntry model)
-                {
-                    // Grab the specific UI field from Syncfusion
-                    var paymentDetailsItem = EntryForm?.GetDataFormItem(nameof(DueRecoveryEntry.PaymentDetails));
+            //if (e.PropertyName == nameof(DueRecoveryEntry.IsPaymentDetailsVisible))
+            //{
+            //    if (sender is DueRecoveryEntry model)
+            //    {
+            //        // Grab the specific UI field from Syncfusion
+            //        var paymentDetailsItem = EntryForm?.GetDataFormItem(nameof(DueRecoveryEntry.PaymentDetails));
 
-                    if (paymentDetailsItem != null)
-                    {
-                        // Explicitly set the visibility, which forces Syncfusion to update the layout
-                        paymentDetailsItem.IsVisible = model.IsPaymentDetailsVisible;
-                    }
-                }
-            }
+            //        if (paymentDetailsItem != null)
+            //        {
+            //            // Explicitly set the visibility, which forces Syncfusion to update the layout
+            //            paymentDetailsItem.IsVisible = model.IsPaymentDetailsVisible;
+            //        }
+            //    }
+            //}
         }
         protected override async void SaveButton()
         {
