@@ -49,8 +49,8 @@ namespace Garmetix.Accounting.Models
         public Guid Company { get; set; }
     }
 
-    [INotifyPropertyChanged]
-    public partial class DueRecoveryEntry : CEntity
+    ////[INotifyPropertyChanged]
+    public class DueRecoveryEntry : CEntity
     {
 
 
@@ -69,32 +69,32 @@ namespace Garmetix.Accounting.Models
         [Display(Name = "Fully Paid")]
         public bool Paid { get; set; } = false;
 
-        //[Display(Name = "Payment Mode")] public PaymentMode PaymentMode { get; set; } = PaymentMode.Cash;
-        //[Display(Name = "Payment Details")] public string? PaymentDetails { get; set; }= string.Empty;
+        [Display(Name = "Payment Mode")] public PaymentMode PaymentMode { get; set; } = Core.Enums.PaymentMode.Cash;
+        [Display(Name = "Payment Details")] public string? PaymentDetails { get; set; }= string.Empty;
 
         // The [property: ...] syntax ensures Syncfusion sees the Display name on the generated property
-        [ObservableProperty]
-        [property: Display(Name = "Payment Mode")]
-        [NotifyPropertyChangedFor(nameof(IsPaymentDetailsVisible))]
-        private PaymentMode _paymentMode = PaymentMode.Cash;
+        //[ObservableProperty]
+        //[property: Display(Name = "Payment Mode")]
+        //[NotifyPropertyChangedFor(nameof(IsPaymentDetailsVisible))]
+        //private PaymentMode _paymentMode = PaymentMode.Cash;
 
-        [ObservableProperty]
-        [property: Display(Name = "Payment Details")]
-        private string? _paymentDetails = string.Empty;
-        //TODO: not working  need to check why Syncfusion is not updating the visibility of payment details field when payment mode is changed from card to cash or vice versa
-        // Computed property to control visibility
-        [NotMapped] // Ensures EF Core ignores this
-        [Display(AutoGenerateField = false)] // Ensures DataForm ignores this
-        public bool IsPaymentDetailsVisible => PaymentMode != PaymentMode.Card; // Adjust logic to match your enum
+        //[ObservableProperty]
+        //[property: Display(Name = "Payment Details")]
+        //private string? _paymentDetails = string.Empty;
+        ////TODO: not working  need to check why Syncfusion is not updating the visibility of payment details field when payment mode is changed from card to cash or vice versa
+        //// Computed property to control visibility
+        //[NotMapped] // Ensures EF Core ignores this
+        //[Display(AutoGenerateField = false)] // Ensures DataForm ignores this
+        //public bool IsPaymentDetailsVisible => PaymentMode != PaymentMode.Card; // Adjust logic to match your enum
 
 
         //Card Details 
         //[Display(AutoGenerateField = false)]
 
         [Display(Name = "Card Number")] public int? CardNumber { get; set; }
-        [Display(Name = "Card")] public Card? Card { get; set; }
+        [Display(Name = "Card")] public Card Card { get; set; } = Card.DebitCard;
         [Display(Name = "Bank Name")] public string? BankName { get; set; }
-        [Display(Name = "Card Type")] public CardType? CardType { get; set; }
+        [Display(Name = "Card Type")] public CardType CardType { get; set; } = CardType.Rupay;
         [Display(Name = "Auth Code")] public int? AuthCode { get; set; }
 
 

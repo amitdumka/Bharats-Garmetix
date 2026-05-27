@@ -10,6 +10,7 @@ namespace Garmetix.Accounting.FormModels
     {
         private readonly IDataModel<DueRecovery> DataModel = new DataModel<DueRecovery>();
         private DataFormItem? _paymentDetailsItem;
+
         public override void InitFormViewModel()
         {
             Entity = new DueRecoveryEntry
@@ -51,26 +52,25 @@ namespace Garmetix.Accounting.FormModels
             // 1. Check if we are generating the PaymentDetails field
             this.GeneratedFormItems(sender, e);
 
-            if (EntryForm?.DataObject is DueRecoveryEntry model)
-            {
-                // Safely subscribe to the model's changes (unsubscribing first prevents duplicates)
-                model.PropertyChanged -= OnModelPropertyChanged;
-                model.PropertyChanged += OnModelPropertyChanged;
+            //if (EntryForm?.DataObject is DueRecoveryEntry model)
+            //{
+            //    // Safely subscribe to the model's changes (unsubscribing first prevents duplicates)
+            //    model.PropertyChanged -= OnModelPropertyChanged;
+            //    model.PropertyChanged += OnModelPropertyChanged;
 
-                // 2. Catch the field EXACTLY when Syncfusion creates it
-                if (e.DataFormItem != null && e.DataFormItem.FieldName == nameof(DueRecoveryEntry.PaymentDetails))
-                {
-                    // Store the reference. Now it will NEVER be null.
-                    _paymentDetailsItem = e.DataFormItem;
+            //    // 2. Catch the field EXACTLY when Syncfusion creates it
+            //    if (e.DataFormItem != null && e.DataFormItem.FieldName == nameof(DueRecoveryEntry.PaymentDetails))
+            //    {
+            //        // Store the reference. Now it will NEVER be null.
+            //        _paymentDetailsItem = e.DataFormItem;
 
-                    // Set initial visibility when the form loads
-                    _paymentDetailsItem.IsVisible = model.IsPaymentDetailsVisible;
-                }
-            }
+            //        // Set initial visibility when the form loads
+            //        _paymentDetailsItem.IsVisible = model.IsPaymentDetailsVisible;
+            //    }
+            //}
 
             //if (e.DataFormItem != null && e.DataFormItem.FieldName == nameof(DueRecoveryEntry.PaymentDetails))
             //{
-
             //    // 2. Safely grab the current DataObject (your model)
             //    if (EntryForm!=null && EntryForm.DataObject is DueRecoveryEntry model)
             //    {
@@ -84,8 +84,8 @@ namespace Garmetix.Accounting.FormModels
             //        e.DataFormItem.SetBinding(DataFormItem.IsVisibleProperty, visibilityBinding);
             //    }
             ////}
-
         }
+
         /// <summary>
         /// Handles property changes on the model.
         /// </summary>
@@ -93,24 +93,22 @@ namespace Garmetix.Accounting.FormModels
         /// <param name="e">The event arguments.</param>
         private void OnModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-
             // 3. Listen for the CommunityToolkit notification
-            if (e.PropertyName == nameof(DueRecoveryEntry.IsPaymentDetailsVisible))
-            {
-                if (sender is DueRecoveryEntry model && _paymentDetailsItem != null)
-                {
-                    // 4. Force the UI update on the Main Thread to guarantee MAUI redraws it
-                    MainThread.BeginInvokeOnMainThread(() =>
-                    {
-                        _paymentDetailsItem.IsVisible = model.IsPaymentDetailsVisible;
-                    });
-                }
-            }
-
+            //if (e.PropertyName == nameof(DueRecoveryEntry.IsPaymentDetailsVisible))
+            //{
+            //    if (sender is DueRecoveryEntry model && _paymentDetailsItem != null)
+            //    {
+            //        // 4. Force the UI update on the Main Thread to guarantee MAUI redraws it
+            //        MainThread.BeginInvokeOnMainThread(() =>
+            //        {
+            //            _paymentDetailsItem.IsVisible = model.IsPaymentDetailsVisible;
+            //        });
+            //    }
+            //}
 
             // 3. Set the DYNAMIC visibility when the user changes the Payment Mode
 
-            // The CommunityToolkit automatically fires this notification because we used 
+            // The CommunityToolkit automatically fires this notification because we used
             // [NotifyPropertyChangedFor(nameof(IsPaymentDetailsVisible))] on the PaymentMode property.
             //if (e.PropertyName == nameof(DueRecoveryEntry.IsPaymentDetailsVisible))
             //{
@@ -127,6 +125,7 @@ namespace Garmetix.Accounting.FormModels
             //    }
             //}
         }
+
         protected override async void SaveButton()
         {
             var newData = new DueRecovery
@@ -159,22 +158,25 @@ namespace Garmetix.Accounting.FormModels
                     var cardPayment = new CardPayment
                     {
                         Id = newData.Id,
-                        Amount= newData.Amount, AuthCode=Entity.AuthCode.Value,
-                        Card=Entity.Card.Value, CardNumber = Entity.CardNumber.Value,
-                        CardType = Entity.CardType.Value,
-                        BankName = Entity.BankName, CompanyId = newData.CompanyId,
-                        CreatedAt= DateTime.UtcNow,
+                        Amount = newData.Amount,
+                        AuthCode = Entity.AuthCode.Value,
+                        Card = Entity.Card,
+                        CardNumber = Entity.CardNumber.Value,
+                        CardType = Entity.CardType,
+                        BankName = Entity.BankName,
+                        CompanyId = newData.CompanyId,
+                        CreatedAt = DateTime.UtcNow,
                         CreatedBy = newData.CreatedBy,
-                        Deleted = false, OnDate = newData.OnDate, Synced = false,
-                         UpdatedAt= DateTime.UtcNow,
-
-
+                        Deleted = false,
+                        OnDate = newData.OnDate,
+                        Synced = false,
+                        UpdatedAt = DateTime.UtcNow,
                     };
-                    await AccountingServices.UpdateDueInvoiceAsync(  newData, cardPayment);
 
+                    await AccountingServices.UpdateDueInvoiceAsync(newData, cardPayment);
                 }
                 else
-                await AccountingServices.UpdateDueInvoiceAsync(  newData);
+                    await AccountingServices.UpdateDueInvoiceAsync(newData);
             }
             Save(result != null);
         }
