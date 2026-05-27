@@ -33,6 +33,7 @@
 using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Accounting;
 using Garmetix.Core.Models.Base;
+using Garmetix.Core.Models.Stores;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
@@ -157,6 +158,10 @@ namespace Garmetix.Core.Models.Inventory
         [JsonIgnore]
         public bool IsAmountDue { get { return BalanceAmount > 0; } }
 
+
+        [Display(Name = "Store", AutoGenerateField = false)]
+        public Guid StoreId {  get; set; } 
+        public virtual Store? Store { get; set; }
     }
 
     public class InvoicePayment : CompanyBase

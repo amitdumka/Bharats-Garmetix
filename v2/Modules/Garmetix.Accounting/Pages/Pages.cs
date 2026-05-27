@@ -6,12 +6,7 @@ namespace Garmetix.Accounting.Pages
     public class LedgerPage : BaseListingPage
     {
         private readonly LedgerPageModel _viewModel;
-        //protected override async void OnAppearing()
-        //{
-        //    //base.OnAppearing();
-        //    //TODO: await _viewModel.HandleOnOnAppearing();
-
-        //}
+       
         public LedgerPage(LedgerPageModel vm)
         {
             // Set the Title to the class name without the "Page" suffix

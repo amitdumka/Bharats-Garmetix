@@ -203,8 +203,10 @@ namespace Garmetix.Databases
         public DbSet<BankAccountDetail> BankAccountDetails { get; set; }
         public DbSet<VendorBankAccount> VendorBankAccounts { get; set; }
         public DbSet<BankAccountList> BankAccountLists { get; set; }
-        //public DbSet<BankTransaction> BankTransactions { get; set; }
-        //public DbSet<ChequeLog> ChequeLogs { get; set; }
+        public DbSet<BankTransaction> BankTransactions { get; set; }
+
+        public DbSet<ChequeLog> ChequeLogs { get; set; }
+        public DbSet<BankCashTranscation> BankCashTranscations { get; set; }
 
         //HRM
         public DbSet<Employee> Employees { get; set; }

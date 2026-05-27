@@ -81,7 +81,9 @@ namespace Garmetix.SRP
             // Remaining Tabs
             AddPageTab("Account List", "rain_icon.png", "AccountList", typeof(BankAccountListPage));
             AddPageTab("Vendor Accounts", "rain_icon.png", "VendorAccounts", typeof(VendorBankAccountPage));
+
             AddPageTab("Transactions", "rain_icon.png", "BankTransactions", typeof(BankTransactionPage));
+            AddPageTab("Deposit/Withdrawal", "rain_icon.png", "BankCashTransactions", typeof(BankCashTransactionPage));
             AddPageTab("Cheque Logs", "rain_icon.png", "ChequeLogs", typeof(ChequeLogPage));
         }
 

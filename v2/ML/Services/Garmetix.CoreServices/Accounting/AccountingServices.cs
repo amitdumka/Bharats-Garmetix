@@ -1,11 +1,10 @@
-﻿using Bharat.ToolKits.Extensions;
-using Bharat.ToolKits.Helpers;
-using DocumentFormat.OpenXml.InkML;
+﻿using Bharat.ToolKits.Helpers;
 using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Accounting;
 using Garmetix.Core.Models.Inventory;
 using Garmetix.Core.Sessions;
 using Garmetix.Databases.Services;
+using Garmetix.Models.DayOperations;
 using Garmetix.Models.Reports;
 using Garmetix.Services;
 using Garmetix.Services.Interfaces;
@@ -206,10 +205,10 @@ namespace Garmetix.CoreServices.Accounting
 
         #endregion PrintVouchers
 
-        //TODO: implements 
+        //TODO: implements
 
         /// <summary>
-        /// Verify and Update the payment History 
+        /// Verify and Update the payment History
         /// </summary>
         /// <param name="invId"></param>
         /// <returns></returns>
@@ -241,7 +240,6 @@ namespace Garmetix.CoreServices.Accounting
             return false;
         }
 
-
         /// <summary>
         /// Get due amount after verifying the invoice with invoice number and also check for payment history and return the due amount, if invoice is not found then return -999 as due amount, this method is used in due recovery to get the due amount of the invoice
         /// </summary>
@@ -256,14 +254,14 @@ namespace Garmetix.CoreServices.Accounting
             var totalPaid = await Db.InvoicePayments.Where(x => x.InvoiceId == invoice.Id).SumAsync(x => x.Amount);
             var dueAmount = invoice.BillAmount - totalPaid;
             return dueAmount;
-
         }
+
         /// <summary>
         /// Get Invoice Due Amount after verifying the invoice with invoice id and also check for payment history and return the due amount, if invoice is not found then return -999 as due amount, this method is used in due recovery to get the due amount of the invoice
         /// </summary>
         /// <param name="invId"></param>
         /// <returns></returns>
-        public static async Task<decimal> GetInvoiceDueAmount(Guid  invId)
+        public static async Task<decimal> GetInvoiceDueAmount(Guid invId)
         {
             var invoice = await Db.Invoices.FirstOrDefaultAsync(x => x.Id == invId);
             if (invoice == null)
@@ -272,9 +270,7 @@ namespace Garmetix.CoreServices.Accounting
             var totalPaid = await Db.InvoicePayments.Where(x => x.InvoiceId == invoice.Id).SumAsync(x => x.Amount);
             var dueAmount = invoice.BillAmount - totalPaid;
             return dueAmount;
-
         }
-
 
         /// <summary>
         /// Update Due Invoice Based on Due Recovery and also update the Customer Due if invoice is fully paid, also add entry in Invoice Payment and Card Payment if payment mode is card payment
@@ -394,7 +390,7 @@ namespace Garmetix.CoreServices.Accounting
                 invoice.PaidAmount += amountDifference;
 
                 // Assuming BalanceAmount is a property you manage manually (if computed, ignore this line)
-                // invoice.BalanceAmount = invoice.TotalAmount - invoice.PaidAmount; 
+                // invoice.BalanceAmount = invoice.TotalAmount - invoice.PaidAmount;
 
                 Db.Invoices.Update(invoice);
 
@@ -404,17 +400,16 @@ namespace Garmetix.CoreServices.Accounting
 
                 if (dueRecord != null)
                 {
-
-                    //TODO:  Handle  for case invoice is due but due entry is paid, 
+                    //TODO:  Handle  for case invoice is due but due entry is paid,
                     //then just update that
                     // If fully paid, clear the due
-                    //TODO: check with accountservice for Invoice Number payment and due 
-                    if(dueRecord.Amount==recovery.Amount || recovery.Paid)
+                    //TODO: check with accountservice for Invoice Number payment and due
+                    if (dueRecord.Amount == recovery.Amount || recovery.Paid)
                     {
                         dueRecord.ClearingDate = recovery.OnDate;
                         dueRecord.Paid = true;
                         dueRecord.UpdatedAt = DateTime.UtcNow;
-                    } 
+                    }
                     else if (invoice.BalanceAmount <= 0)
                     {
                         dueRecord.ClearingDate = recovery.OnDate;
@@ -457,77 +452,6 @@ namespace Garmetix.CoreServices.Accounting
                 return false;
             }
         }
-
-
-        //public static async Task<bool> UpdateDueInvoice( DueRecovery recovery, CardPayment? cardPayment=null)
-        //{
-        //    //TODO: Condition to remove or add need to handle. 
-
-        //    //Condition 1: Add , all the relevent Amounts, 
-        //    //Condition 2: Update, update all relvent amount and models 
-        //    //Condition 3: Payment mode is changed  then updare, add or remove relevent models, 
-
-        //    //TODO: rewirite the code to handle all the condition and move to service and make it async as well return Task.Run(async delegate=>{});
-
-        //    // Return false if recovery is null or invoice is null
-        //    if (recovery == null) return false;
-
-
-        //    var invoice = Db.Invoices.Where(x => x.InvoiceNumber == recovery.InvoiceNumber).FirstOrDefault();
-
-        //    if (invoice == null) return false;
-
-        //    invoice.PaidAmount += recovery.Amount;
-
-        //    var invpayyment = new InvoicePayment
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        CompanyId = invoice.CompanyId,
-        //        Amount = recovery.Amount,
-        //        OnDate = recovery.OnDate,
-        //        PaymentMode = recovery.PaymentMode,
-        //        CreatedBy = DatabaseService.Instance.CurrentUser.UserName,
-        //        Deleted = false,
-        //        Synced = false,
-        //        InvoiceId = invoice.Id,
-        //        ReferenceNumber = recovery.PaymentDetails ?? "",
-        //        CreatedAt = DateTime.UtcNow,
-        //        UpdatedAt = DateTime.UtcNow, 
-        //    };
-        //    Db.InvoicePayments.Add(invpayyment);
-
-        //    if (cardPayment != null) { 
-
-        //        cardPayment.InvoiceId= invpayyment.InvoiceId;
-        //        Db.CardPayments.Add(cardPayment);
-        //    }
-
-
-        //    var result = (await Db.SaveChangesAsync()) > 0;
-
-        //    if (invoice.BalanceAmount <= 0)
-        //    {
-        //        result = await ClearCustomerDue(recovery.InvoiceNumber, recovery.OnDate);
-
-        //    }
-
-        //    return result;
-        //}
-        //public static async Task<bool> ClearCustomerDue(string InvoiceNumber, DateTime payingDate)
-        //{
-
-        //    //TODO : Clear Customer Due when invoice is fully paid and update the due table with clearing date and paid status
-        //    var due = Db.CustomerDues.Where(x => x.InvoiceNumber == InvoiceNumber).FirstOrDefault();
-        //    if (due != null)
-        //    {
-        //        due.ClearingDate = payingDate;
-        //        due.Paid = true;
-        //        due.UpdatedAt = DateTime.UtcNow;
-        //        Db.CustomerDues.Update(due);
-        //    }
-
-        //    return await Db.SaveChangesAsync() > 0;
-        //}
 
         public static async Task<Guid?> GetPartyId(Guid? ledgerId)
         {
@@ -624,6 +548,48 @@ namespace Garmetix.CoreServices.Accounting
                 _ => (await Db.LedgerGroups.FirstOrDefaultAsync(x => x.Name == "No Group"))?.Id ?? Guid.Empty,
             };
             return id;
+        }
+
+        public static async Task<PettyCashSheet> GetTodayPettyCashSheetPreCalculatedDaata(DateTime date, bool saveit = false)
+        {
+           
+            var pettyCashSheet = new PettyCashSheet
+            {
+                BankDeposit = await Db.BankCashTranscations.Where(x => x.OnDate.Date == date.Date && x.StoreId == DatabaseService.StoreId && x.TransactionType == TransactionType.Deposit).SumAsync(x => x.Amount),
+                BankWithdrawal = await Db.BankCashTranscations.Where(x => x.OnDate.Date == date.Date && x.StoreId == DatabaseService.StoreId && x.TransactionType == TransactionType.Withdraw).SumAsync(x => x.Amount),
+                
+                CashInHand = 0, // This will be calculated based on the above values
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = DatabaseService.Instance.CurrentUser.UserName,
+                CustomerDue = await Db.CustomerDues.Where(x => x.OnDate.Date == date.Date && x.StoreId == DatabaseService.StoreId && !x.Paid).SumAsync(x => x.Amount),
+                Deleted = false,
+                DueReceipts = await Db.DueRecovery.Where(x => x.OnDate.Date == date.Date && x.StoreId == DatabaseService.StoreId).SumAsync(x => x.Amount),
+                Expenses = await Db.Vouchers.Where(x => x.OnDate.Date == date.Date && x.StoreId == DatabaseService.StoreId && x.VoucherType == VoucherType.Expense).SumAsync(x => x.Amount),
+                Id = Guid.NewGuid(),
+                NonCashSale = await Db.Invoices.Where(x => x.OnDate.Date == date.Date && x.StoreId == DatabaseService.StoreId && x.PaymentMode != PaymentMode.Cash).SumAsync(x => x.BillAmount),
+                OnDate = date,
+                OpeningBalance = await Db.PettyCashSheets.Where(x => x.OnDate.Date == date.AddDays(-1).Date && x.StoreId == DatabaseService.StoreId).Select(x => x.CashInHand).FirstOrDefaultAsync(),
+                Payments = await Db.Vouchers.Where(x => x.OnDate.Date == date.Date && x.StoreId == DatabaseService.StoreId && x.VoucherType == VoucherType.Payment).SumAsync(x => x.Amount),
+                Receipts = await Db.Vouchers.Where(x => x.OnDate.Date == date.Date && x.StoreId == DatabaseService.StoreId && x.VoucherType == VoucherType.Receipt).SumAsync(x => x.Amount),
+                Sales = await Db.Invoices.Where(x => x.OnDate.Date == date.Date && x.StoreId == DatabaseService.StoreId).SumAsync(x => x.BillAmount),
+                StoreId = DatabaseService.StoreId,
+                Synced = false,
+                UpdatedAt = DateTime.UtcNow,
+            };
+
+            pettyCashSheet.CashInHand = pettyCashSheet.OpeningBalance + pettyCashSheet.Sales + pettyCashSheet.CustomerDue + pettyCashSheet.DueReceipts + pettyCashSheet.BankDeposit - pettyCashSheet.BankWithdrawal - pettyCashSheet.Expenses - pettyCashSheet.Payments + pettyCashSheet.Receipts - pettyCashSheet.NonCashSale;
+
+            if (saveit)
+            {
+                await Db.PettyCashSheets.AddAsync(pettyCashSheet);
+                await Db.SaveChangesAsync();
+                //Add Log for this operation
+                //Write the code this 
+                
+
+            }
+
+            return pettyCashSheet;
         }
     }
 }

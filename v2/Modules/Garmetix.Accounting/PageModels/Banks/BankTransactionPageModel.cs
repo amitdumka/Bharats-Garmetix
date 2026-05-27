@@ -27,4 +27,28 @@ namespace Garmetix.Accounting.PageModels
             return GridColumns;
         }
     }
+    public class BankCashTransactionPageModel : PageModel<BankCashTranscation>
+    {
+        public BankCashTransactionPageModel() : base()
+        {
+            DefaultSortedColName = nameof(BankCashTranscation.OnDate);
+            DefaultSortedOrder = Descending;
+        }
+
+        protected override ColumnCollection SetGridColumns()
+        {
+            GridColumns =
+            [
+                 
+                new DataGridTextColumn() { HeaderText = nameof(BankCashTranscation.OnDate), MappingName = nameof(BankCashTranscation.OnDate) },
+                new DataGridTextColumn() { HeaderText = nameof(BankCashTranscation.TransactionType), MappingName = nameof(BankCashTranscation.TransactionType) },
+                new DataGridTextColumn() { HeaderText = nameof(BankCashTranscation.Naration), MappingName = nameof(BankCashTranscation.Naration) },
+                new DataGridTextColumn() { HeaderText = nameof(BankCashTranscation.Reference), MappingName = nameof(BankCashTranscation.Reference) },
+                new DataGridTextColumn() { HeaderText = nameof(BankCashTranscation.BankAccountId), MappingName = nameof(BankCashTranscation.BankAccountId) },
+                new DataGridTextColumn() { HeaderText = nameof(BankCashTranscation.Amount), MappingName = nameof(BankCashTranscation.Amount) },
+            ];
+
+            return GridColumns;
+        }
+    }
 }

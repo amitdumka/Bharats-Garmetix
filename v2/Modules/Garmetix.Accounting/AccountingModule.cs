@@ -30,6 +30,7 @@ namespace Garmetix.Accounting
             RouterHelper.AddRoute(typeof(EntryDueRecoveryPage));
             RouterHelper.AddRoute(typeof(EntryCustomerDuePage));
             RouterHelper.AddRoute(typeof(EntryTransactionPage));
+            RouterHelper.AddRoute(typeof(EntryBankCashTransactionPage));
 
             RouterHelper.AddRoute(typeof(EntryBankPage));
             RouterHelper.AddRoute(typeof(EntryBankAccountDetailPage));
@@ -73,6 +74,7 @@ namespace Garmetix.Accounting
             builder.Services.AddTransient<EntryBankAccountDetailPage>();
             builder.Services.AddTransient<EntryVendorBankAccountPage>();
             builder.Services.AddTransient<EntryBankTransactionPage>();
+            builder.Services.AddTransient<EntryBankCashTransactionPage>();
             builder.Services.AddTransient<EntryChequeLogPage>();
 
             builder.Services.AddTransient<BankFormModel>();
@@ -81,13 +83,16 @@ namespace Garmetix.Accounting
             builder.Services.AddTransient<VendorBankAccountFormModel>();
             builder.Services.AddTransient<BankAccountListFormModel>();
             builder.Services.AddTransient<BankTransactionFormModel>();
+            builder.Services.AddTransient<BankCashTransactionFormModel>();
             builder.Services.AddTransient<ChequeLogFormModel>();
 
             //Bank Transcations ..
             //TODO:no Mobile page Enabled, Create mobile and enable it
             builder.Services.AddSingleton<BankTransactionPageModel>();
+            builder.Services.AddSingleton<BankCashTransactionPageModel>();
             builder.Services.AddSingleton<ChequeLogPageModel>();
             builder.Services.AddSingleton<BankTransactionPage>();
+            builder.Services.AddSingleton<BankCashTransactionPage>();
             builder.Services.AddSingleton<ChequeLogPage>();
 
             return builder;

@@ -196,4 +196,10 @@ namespace Garmetix.Accounting.Models
         [NotMapped]
         public Guid Company { get; set; }
     }
+
+
+    
+
+
+
 }

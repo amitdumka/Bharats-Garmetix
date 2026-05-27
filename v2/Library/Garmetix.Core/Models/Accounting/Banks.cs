@@ -11,10 +11,10 @@
 using Garmetix.Core.Models.Base;
 using Garmetix.Core.Enums;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Garmetix.Core.Models.Accounting
 {
-
     public class Bank : CEntity
     {
         public string Name { get; set; } = string.Empty;
@@ -32,7 +32,6 @@ namespace Garmetix.Core.Models.Accounting
         [Display(Name = "Opening Date")] public DateTime OpeningDate { get; set; } = DateTime.Now;
         [Display(Name = "Active")] public bool Active { get; set; } = true;
         [Display(Name = "Closing Date")] public DateTime? ClosingDate { get; set; } = null;
-
 
         [Display(Name = "Opening Balance")] public decimal OpeningBalance { get; set; } = 0;
         [Display(Name = "Closing Balance")] public decimal ClosingBalance { get; set; } = 0;
@@ -90,21 +89,19 @@ namespace Garmetix.Core.Models.Accounting
         [Display(Name = "Account Type")] public AccountType AccountType { get; set; }
     }
 
-    
-
     public class BankTransaction : CompanyBase
     {
-     [Display(Name = "Bank Account", AutoGenerateField = false)] public Guid BankAccountId { get; set; }
-      [Display(Name = "Bank Account", AutoGenerateField = false)] public virtual BankAccount? BankAccount { get; set; }
-     [Display(Name = "On Date")] public DateTime OnDate { get; set; } = DateTime.Now;
+        [Display(Name = "Bank Account")] public Guid BankAccountId { get; set; }
+        [Display(Name = "Bank Account", AutoGenerateField = false)] public virtual BankAccount? BankAccount { get; set; }
+        [Display(Name = "On Date")] public DateTime OnDate { get; set; } = DateTime.Now;
         [Display(Name = "Transaction Type")] public TransactionType TransactionType { get; set; } = TransactionType.Deposit;
         [Display(Name = "Transaction Mode")] public TransactionMode TransactionMode { get; set; } = TransactionMode.Cash;
         [Display(Name = "Narration")] public string? Narration { get; set; } = string.Empty;
         [Display(Name = "Reference")] public string? Reference { get; set; } = string.Empty;
         [Display(Name = "Amount")] public decimal Amount { get; set; } = decimal.Zero;
         [Display(Name = "Person Name")] public string? PersonName { get; set; } = string.Empty;
-
     }
+
     public class ChequeLog : CompanyBase
     {
         [Display(Name = "Bank Account", AutoGenerateField = false)] public Guid BankAccountId { get; set; }
@@ -119,5 +116,35 @@ namespace Garmetix.Core.Models.Accounting
         [Display(Name = "Cheque Number")] public string CheequeNumber { get; set; } = string.Empty;
         [Display(Name = "Status")] public string? Status { get; set; } = string.Empty;
         [Display(Name = "In House")] public bool InHouse { get; set; } = false;
+    }
+
+    public class BankCashTranscation : StoreBase
+    {
+        [Display(Name = "Bank Account")]
+        public Guid BankAccountId { get; set; }
+
+        [Display(Name = "Bank Account")]
+        public string BankAccountNumber { get; set; } = string.Empty;
+
+        [Display(Name = "Date")]
+        public DateTime OnDate { get; set; } = DateTime.Now;
+
+        [Display(Name = "Narration")]
+        public string Naration { get; set; } = string.Empty;
+
+        [Display(Name = "Reference")]
+        public string Reference { get; set; } = string.Empty;
+
+        [Display(Name = "Amount")]
+        public decimal Amount { get; set; } = decimal.Zero;
+
+        [Display(Name = "Cheque Number")]
+        public string? ChequeNumber { get; set; } = string.Empty;
+
+        [Display(Name = "Transaction Type")]
+        public TransactionType TransactionType { get; set; } = TransactionType.Deposit;
+
+        [Display(Name = "Bank Account", AutoGenerateField = false)]
+        public virtual BankAccount? BankAccount { get; set; }
     }
 }
