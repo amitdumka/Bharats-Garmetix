@@ -51,11 +51,8 @@ namespace Garmetix.Accounting.Models
 
     [INotifyPropertyChanged]
     public partial class DueRecoveryEntry : CEntity
-    //public class DueRecoveryEntry : CEntity
     {
-       // [Key]
-       // [Display(AutoGenerateField = false)]
-       // public Guid Id { get; set; } = Guid.NewGuid();
+
 
         [Display(Name = "Invoice Number"), Required]
         public required string DueInvoiceNumber { get; set; }
@@ -88,7 +85,19 @@ namespace Garmetix.Accounting.Models
         // Computed property to control visibility
         [NotMapped] // Ensures EF Core ignores this
         [Display(AutoGenerateField = false)] // Ensures DataForm ignores this
-        public bool IsPaymentDetailsVisible =>   PaymentMode != PaymentMode.Card; // Adjust logic to match your enum
+        public bool IsPaymentDetailsVisible => PaymentMode != PaymentMode.Card; // Adjust logic to match your enum
+
+
+        //Card Details 
+        //[Display(AutoGenerateField = false)]
+
+        [Display(Name = "Card Number")] public int? CardNumber { get; set; }
+        [Display(Name = "Card")] public Card? Card { get; set; }
+        [Display(Name = "Bank Name")] public string? BankName { get; set; }
+        [Display(Name = "Card Type")] public CardType? CardType { get; set; }
+        [Display(Name = "Auth Code")] public int? AuthCode { get; set; }
+
+
 
         [NotMapped]
         public Guid Company { get; set; }
@@ -97,7 +106,7 @@ namespace Garmetix.Accounting.Models
         [NotMapped]
         public Guid Store { get; set; }
 
-        
+
     }
 
     //Banking
@@ -170,16 +179,16 @@ namespace Garmetix.Accounting.Models
         [Display(Name = "Account Holder Name"), StringLength(100), MinLength(3), MaxLength(100)]
         [Required(ErrorMessage = "Account Holder Name is required")]
         [RegularExpression(@"^[a-zA-Z0-9\s.,#-]+$", ErrorMessage = "Invalid account holder name format")]
-        public string AccountHolderName { get; set; }= string.Empty;
+        public string AccountHolderName { get; set; } = string.Empty;
 
         [Display(Name = "Bank"), Required(ErrorMessage = "Bank is required")]
-        public string BankName { get; set; }=string.Empty;
+        public string BankName { get; set; } = string.Empty;
         [Display(Name = "Branch")]
         [RegularExpression(@"^[a-zA-Z0-9\s.,#-]+$", ErrorMessage = "Invalid branch format")]
-        public string Branch { get; set; }= string.Empty;
+        public string Branch { get; set; } = string.Empty;
         [Display(Name = "IFS Code")]
         [RegularExpression(@"^[a-zA-Z0-9\s.,#-]+$", ErrorMessage = "Invalid IFS code format")]
-        public string IFSCode { get; set; }= string.Empty;
+        public string IFSCode { get; set; } = string.Empty;
 
         [Display(Name = "Account Type"), Required(ErrorMessage = "Account Type is required")]
         public AccountType AccountType { get; set; }

@@ -1,5 +1,6 @@
 ﻿using Bharat.ToolKits.Extensions;
 using Bharat.ToolKits.Helpers;
+using DocumentFormat.OpenXml.InkML;
 using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Accounting;
 using Garmetix.Core.Models.Inventory;
@@ -205,59 +206,328 @@ namespace Garmetix.CoreServices.Accounting
 
         #endregion PrintVouchers
 
+        //TODO: implements 
 
-        public static async Task<bool> UpdateDueInvoice(string InvoiceNumber, DueRecovery recovery)
+        /// <summary>
+        /// Verify and Update the payment History 
+        /// </summary>
+        /// <param name="invId"></param>
+        /// <returns></returns>
+        public static async Task<bool> VerifyAndUpdateInvoicePayment(Guid invId)
         {
-            if (recovery == null) return false;
-            var invoice = Db.Invoices.Where(x => x.InvoiceNumber == InvoiceNumber).FirstOrDefault();
-
-            if (invoice == null) return false;
-
-            invoice.PaidAmount += recovery.Amount;
-
-            var invpayyment = new InvoicePayment
+            var invoice = await Db.Invoices.FirstOrDefaultAsync(x => x.Id == invId);
+            if (invoice == null)
+                return false;
+            //For Check for Payment History
+            var totalPaid = await Db.InvoicePayments.Where(x => x.InvoiceId == invoice.Id).SumAsync(x => x.Amount);
+            var dueAmount = invoice.BillAmount - totalPaid;
+            if (dueAmount <= 0)
             {
-                Id = Guid.NewGuid(),
-                CompanyId = invoice.CompanyId,
-                Amount = recovery.Amount,
-                OnDate = recovery.OnDate,
-                PaymentMode = recovery.PaymentMode,
-                CreatedBy = DatabaseService.Instance.CurrentUser.UserName,
-                Deleted = false,
-                Synced = false,
-                InvoiceId = invoice.Id,
-                ReferenceNumber = recovery.PaymentDetails ?? "",
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow, 
-            };
-            Db.InvoicePayments.Add(invpayyment);
-
-
-            var result = (await Db.SaveChangesAsync()) > 0;
-
-            if (invoice.BalanceAmount <= 0)
-            {
-                result = await ClearCustomerDue(InvoiceNumber, recovery.OnDate);
-
+                // Update Invoice as Paid
+                invoice.PaidAmount = invoice.BillAmount;
+                Db.Invoices.Update(invoice);
+                // Clear Customer Due
+                var dueRecord = await Db.CustomerDues.FirstOrDefaultAsync(x => x.InvoiceNumber == invoice.InvoiceNumber);
+                if (dueRecord != null)
+                {
+                    dueRecord.ClearingDate = DateTime.UtcNow;
+                    dueRecord.Paid = true;
+                    dueRecord.UpdatedAt = DateTime.UtcNow;
+                    Db.CustomerDues.Update(dueRecord);
+                }
+                await Db.SaveChangesAsync();
+                return true;
             }
-
-            return result;
+            return false;
         }
-        public static async Task<bool> ClearCustomerDue(string InvoiceNumber, DateTime payingDate)
+
+
+        /// <summary>
+        /// Get due amount after verifying the invoice with invoice number and also check for payment history and return the due amount, if invoice is not found then return -999 as due amount, this method is used in due recovery to get the due amount of the invoice
+        /// </summary>
+        /// <param name="invoiceNumber"></param>
+        /// <returns></returns>
+        public static async Task<decimal> GetInvoiceDueAmount(string invoiceNumber)
         {
+            var invoice = await Db.Invoices.FirstOrDefaultAsync(x => x.InvoiceNumber == invoiceNumber);
+            if (invoice == null)
+                return -999;
+            //For Check for Payment History
+            var totalPaid = await Db.InvoicePayments.Where(x => x.InvoiceId == invoice.Id).SumAsync(x => x.Amount);
+            var dueAmount = invoice.BillAmount - totalPaid;
+            return dueAmount;
 
-            //TODO : Clear Customer Due when invoice is fully paid and update the due table with clearing date and paid status
-            var due = Db.CustomerDues.Where(x => x.InvoiceNumber == InvoiceNumber).FirstOrDefault();
-            if (due != null)
-            {
-                due.ClearingDate = payingDate;
-                due.Paid = true;
-                due.UpdatedAt = DateTime.UtcNow;
-                Db.CustomerDues.Update(due);
-            }
-
-            return await Db.SaveChangesAsync() > 0;
         }
+        /// <summary>
+        /// Get Invoice Due Amount after verifying the invoice with invoice id and also check for payment history and return the due amount, if invoice is not found then return -999 as due amount, this method is used in due recovery to get the due amount of the invoice
+        /// </summary>
+        /// <param name="invId"></param>
+        /// <returns></returns>
+        public static async Task<decimal> GetInvoiceDueAmount(Guid  invId)
+        {
+            var invoice = await Db.Invoices.FirstOrDefaultAsync(x => x.Id == invId);
+            if (invoice == null)
+                return -999;
+            //For Check for Payment History
+            var totalPaid = await Db.InvoicePayments.Where(x => x.InvoiceId == invoice.Id).SumAsync(x => x.Amount);
+            var dueAmount = invoice.BillAmount - totalPaid;
+            return dueAmount;
+
+        }
+
+
+        /// <summary>
+        /// Update Due Invoice Based on Due Recovery and also update the Customer Due if invoice is fully paid, also add entry in Invoice Payment and Card Payment if payment mode is card payment
+        /// </summary>
+        /// <param name="recovery">DueRecoveryEntry type </param>
+        /// <param name="cardPayment">CardPayment </param>
+        /// <returns>returns true or false </returns>
+
+        public static async Task<bool> UpdateDueInvoiceAsync(DueRecovery recovery, CardPayment? cardPayment = null)
+        {
+            // Fail fast on invalid inputs
+            if (recovery == null || string.IsNullOrWhiteSpace(recovery.InvoiceNumber))
+                return false;
+
+            // Wrap the entire multi-table operation in an atomic transaction
+            using var transaction = await Db.Database.BeginTransactionAsync();
+
+            try
+            {
+                // 1. Fetch the Invoice
+                var invoice = await Db.Invoices
+                    .FirstOrDefaultAsync(x => x.InvoiceNumber == recovery.InvoiceNumber);
+
+                if (invoice == null)
+                    return false;
+
+                // Check if this payment entry already exists in the database
+                var existingPayment = await Db.InvoicePayments
+                    .FirstOrDefaultAsync(p => p.Id == recovery.Id);
+
+                decimal amountDifference = 0;
+
+                if (existingPayment == null)
+                {
+                    // ==========================================
+                    // CONDITION 1: ADD NEW PAYMENT
+                    // ==========================================
+                    amountDifference = recovery.Amount; // Add the full amount
+
+                    var newPayment = new InvoicePayment
+                    {
+                        Id = recovery.Id == Guid.Empty ? Guid.NewGuid() : recovery.Id,
+                        CompanyId = invoice.CompanyId,
+                        Amount = recovery.Amount,
+                        OnDate = recovery.OnDate,
+                        PaymentMode = recovery.PaymentMode,
+                        CreatedBy = DatabaseService.Instance.CurrentUser.UserName,
+                        Deleted = false,
+                        Synced = false,
+                        InvoiceId = invoice.Id,
+                        ReferenceNumber = recovery.PaymentDetails ?? string.Empty,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow,
+                    };
+
+                    await Db.InvoicePayments.AddAsync(newPayment);
+
+                    // Add Card Details if applicable
+                    if (cardPayment != null && recovery.PaymentMode == PaymentMode.Card) // Assuming PaymentMode enum
+                    {
+                        cardPayment.InvoiceId = invoice.Id;
+                        await Db.CardPayments.AddAsync(cardPayment);
+                    }
+                }
+                else
+                {
+                    // ==========================================
+                    // CONDITION 2 & 3: UPDATE EXISTING PAYMENT
+                    // ==========================================
+
+                    // Calculate the difference to adjust the invoice total accurately
+                    amountDifference = recovery.Amount - existingPayment.Amount;
+
+                    existingPayment.Amount = recovery.Amount;
+                    existingPayment.OnDate = recovery.OnDate;
+                    existingPayment.ReferenceNumber = recovery.PaymentDetails ?? string.Empty;
+                    existingPayment.UpdatedAt = DateTime.UtcNow;
+
+                    // Handle Condition 3: Payment Mode Changed
+                    if (existingPayment.PaymentMode != recovery.PaymentMode)
+                    {
+                        existingPayment.PaymentMode = recovery.PaymentMode;
+
+                        // Find any existing card payment linked to this invoice/payment
+                        var existingCard = await Db.CardPayments
+                            .FirstOrDefaultAsync(c => c.InvoiceId == invoice.Id);
+
+                        if (recovery.PaymentMode == PaymentMode.Card && cardPayment != null)
+                        {
+                            // Switched TO Card
+                            if (existingCard == null)
+                            {
+                                cardPayment.InvoiceId = invoice.Id;
+                                await Db.CardPayments.AddAsync(cardPayment);
+                            }
+                            else
+                            {
+                                // Update existing card record values
+                                Db.Entry(existingCard).CurrentValues.SetValues(cardPayment);
+                            }
+                        }
+                        else if (recovery.PaymentMode != PaymentMode.Card && existingCard != null)
+                        {
+                            // Switched FROM Card to something else (Cash, UPI, etc.) -> Delete the card record
+                            Db.CardPayments.Remove(existingCard);
+                        }
+                    }
+
+                    Db.InvoicePayments.Update(existingPayment);
+                }
+
+                // ==========================================
+                // INVOICE & DUE LOGIC
+                // ==========================================
+
+                // Adjust the Paid Amount dynamically based on the calculated difference
+                invoice.PaidAmount += amountDifference;
+
+                // Assuming BalanceAmount is a property you manage manually (if computed, ignore this line)
+                // invoice.BalanceAmount = invoice.TotalAmount - invoice.PaidAmount; 
+
+                Db.Invoices.Update(invoice);
+
+                // Unify the ClearCustomerDue logic
+                var dueRecord = await Db.CustomerDues
+                    .FirstOrDefaultAsync(x => x.InvoiceNumber == recovery.InvoiceNumber);
+
+                if (dueRecord != null)
+                {
+
+                    //TODO:  Handle  for case invoice is due but due entry is paid, 
+                    //then just update that
+                    // If fully paid, clear the due
+                    //TODO: check with accountservice for Invoice Number payment and due 
+                    if(dueRecord.Amount==recovery.Amount || recovery.Paid)
+                    {
+                        dueRecord.ClearingDate = recovery.OnDate;
+                        dueRecord.Paid = true;
+                        dueRecord.UpdatedAt = DateTime.UtcNow;
+                    } 
+                    else if (invoice.BalanceAmount <= 0)
+                    {
+                        dueRecord.ClearingDate = recovery.OnDate;
+                        dueRecord.Paid = true;
+                        dueRecord.UpdatedAt = DateTime.UtcNow;
+                    }
+                    // Edge case: If an update *reduced* the payment amount, reopening the due balance
+                    else if (dueRecord.Paid && invoice.BalanceAmount > 0)
+                    {
+                        dueRecord.ClearingDate = null;
+                        dueRecord.Paid = false;
+                        dueRecord.UpdatedAt = DateTime.UtcNow;
+                    }
+                    Db.CustomerDues.Update(dueRecord);
+                }
+
+                // ==========================================
+                // COMMIT & SAVE
+                // ==========================================
+
+                var changes = await Db.SaveChangesAsync();
+
+                if (changes > 0)
+                {
+                    await transaction.CommitAsync();
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                // If anything fails (Db error, null ref, etc.), completely roll back the database
+                await transaction.RollbackAsync();
+
+                // Log the exception for debugging
+                System.Diagnostics.Debug.WriteLine($"[DB ERROR] UpdateDueInvoiceAsync failed: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine(ex.StackTrace);
+
+                return false;
+            }
+        }
+
+
+        //public static async Task<bool> UpdateDueInvoice( DueRecovery recovery, CardPayment? cardPayment=null)
+        //{
+        //    //TODO: Condition to remove or add need to handle. 
+
+        //    //Condition 1: Add , all the relevent Amounts, 
+        //    //Condition 2: Update, update all relvent amount and models 
+        //    //Condition 3: Payment mode is changed  then updare, add or remove relevent models, 
+
+        //    //TODO: rewirite the code to handle all the condition and move to service and make it async as well return Task.Run(async delegate=>{});
+
+        //    // Return false if recovery is null or invoice is null
+        //    if (recovery == null) return false;
+
+
+        //    var invoice = Db.Invoices.Where(x => x.InvoiceNumber == recovery.InvoiceNumber).FirstOrDefault();
+
+        //    if (invoice == null) return false;
+
+        //    invoice.PaidAmount += recovery.Amount;
+
+        //    var invpayyment = new InvoicePayment
+        //    {
+        //        Id = Guid.NewGuid(),
+        //        CompanyId = invoice.CompanyId,
+        //        Amount = recovery.Amount,
+        //        OnDate = recovery.OnDate,
+        //        PaymentMode = recovery.PaymentMode,
+        //        CreatedBy = DatabaseService.Instance.CurrentUser.UserName,
+        //        Deleted = false,
+        //        Synced = false,
+        //        InvoiceId = invoice.Id,
+        //        ReferenceNumber = recovery.PaymentDetails ?? "",
+        //        CreatedAt = DateTime.UtcNow,
+        //        UpdatedAt = DateTime.UtcNow, 
+        //    };
+        //    Db.InvoicePayments.Add(invpayyment);
+
+        //    if (cardPayment != null) { 
+
+        //        cardPayment.InvoiceId= invpayyment.InvoiceId;
+        //        Db.CardPayments.Add(cardPayment);
+        //    }
+
+
+        //    var result = (await Db.SaveChangesAsync()) > 0;
+
+        //    if (invoice.BalanceAmount <= 0)
+        //    {
+        //        result = await ClearCustomerDue(recovery.InvoiceNumber, recovery.OnDate);
+
+        //    }
+
+        //    return result;
+        //}
+        //public static async Task<bool> ClearCustomerDue(string InvoiceNumber, DateTime payingDate)
+        //{
+
+        //    //TODO : Clear Customer Due when invoice is fully paid and update the due table with clearing date and paid status
+        //    var due = Db.CustomerDues.Where(x => x.InvoiceNumber == InvoiceNumber).FirstOrDefault();
+        //    if (due != null)
+        //    {
+        //        due.ClearingDate = payingDate;
+        //        due.Paid = true;
+        //        due.UpdatedAt = DateTime.UtcNow;
+        //        Db.CustomerDues.Update(due);
+        //    }
+
+        //    return await Db.SaveChangesAsync() > 0;
+        //}
 
         public static async Task<Guid?> GetPartyId(Guid? ledgerId)
         {

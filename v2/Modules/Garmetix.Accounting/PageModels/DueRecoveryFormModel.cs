@@ -1,4 +1,5 @@
 ﻿using Garmetix.Core.Interfaces;
+using Garmetix.Core.Models.Inventory;
 using Garmetix.CoreServices.Accounting;
 using Syncfusion.Maui.DataForm;
 using System.ComponentModel;
@@ -153,8 +154,27 @@ namespace Garmetix.Accounting.FormModels
 
             if (result != null)
             {
-                // await AccountingServices.ClearCustomerDue(newData.InvoiceNumber, newData.OnDate);
-                await AccountingServices.UpdateDueInvoice(newData.InvoiceNumber, newData);
+                if (Entity.PaymentMode == PaymentMode.Card)
+                {
+                    var cardPayment = new CardPayment
+                    {
+                        Id = newData.Id,
+                        Amount= newData.Amount, AuthCode=Entity.AuthCode.Value,
+                        Card=Entity.Card.Value, CardNumber = Entity.CardNumber.Value,
+                        CardType = Entity.CardType.Value,
+                        BankName = Entity.BankName, CompanyId = newData.CompanyId,
+                        CreatedAt= DateTime.UtcNow,
+                        CreatedBy = newData.CreatedBy,
+                        Deleted = false, OnDate = newData.OnDate, Synced = false,
+                         UpdatedAt= DateTime.UtcNow,
+
+
+                    };
+                    await AccountingServices.UpdateDueInvoiceAsync(  newData, cardPayment);
+
+                }
+                else
+                await AccountingServices.UpdateDueInvoiceAsync(  newData);
             }
             Save(result != null);
         }
