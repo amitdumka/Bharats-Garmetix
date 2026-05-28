@@ -550,7 +550,25 @@ namespace Garmetix.CoreServices.Accounting
             return id;
         }
 
-        public static async Task<PettyCashSheet> GetTodayPettyCashSheetPreCalculatedDaata(DateTime date, bool saveit = false)
+        /// <summary>
+        /// Get Pre Calculate data from the Entry
+        /// </summary>
+        /// <param name="save"></param>
+        /// <returns></returns>
+        public static async Task<PettyCashSheet?> GetTodayPettyCashSheetPreCalculatedData(bool save=false)
+        {
+            return await GetPettyCashSheetPreCalculatedData(DateTime.Today, save);
+        }
+
+
+        /// <summary>
+        /// Get the Pre Calculated data from table for the date and return the petty cash sheet data, this method is used to get the data for the petty cash sheet and also used to save the petty cash sheet data if saveit is true, this method will calculate the cash in hand based on the opening balance, sales, receipts, due receipts, bank deposit, bank withdrawal, expenses, payments, customer due and non cash sale, and return the petty cash sheet data
+        /// </summary>
+        /// <param name="date"></param>
+        /// <param name="saveit"></param>
+        /// <returns></returns>
+
+        public static async Task<PettyCashSheet> GetPettyCashSheetPreCalculatedData(DateTime date, bool saveit = false)
         {
            
             var pettyCashSheet = new PettyCashSheet

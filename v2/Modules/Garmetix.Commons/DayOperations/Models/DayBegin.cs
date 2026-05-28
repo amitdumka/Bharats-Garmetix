@@ -1,9 +1,6 @@
-﻿
+﻿using Garmetix.Core.Models.Base;
 
-using Garmetix.Core.Models.Base;
-using Garmetix.Models.DayOperations;
-
-namespace Garmetix.CoreBase.DayOperations.Models
+namespace Garmetix.Commons.DayOperations.Models
 {
 
     public class DayBeginEntry:CEntity

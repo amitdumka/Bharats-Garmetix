@@ -1,6 +1,6 @@
 ﻿using Garmetix.Models.DayOperations;
 
-namespace Garmetix.CoreBase.DayOperations.DataModels
+namespace Garmetix.Commons.DayOperations.DataModels
 {
    public  class PettyCashSheetDataModel: DataModel<PettyCashSheet>
     {

@@ -3,10 +3,10 @@
     x:Class="Garmetix.CoreBase.DayOperations.Pages.DayEndEntryPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:models="clr-namespace:Garmetix.Models.DayOperations;assembly=Garmetix.Models"
+    xmlns:models="clr-namespace:Garmetix.Models;assembly=Garmetix.Core"
     xmlns:pagemodels="clr-namespace:Garmetix.CoreBase.DayOperations.PageModels"
     xmlns:syncfusion="clr-namespace:Syncfusion.Maui.DataForm;assembly=Syncfusion.Maui.DataForm"
-    xmlns:vmmodels="clr-namespace:Garmetix.CoreBase.DayOperations.Models"
+    xmlns:vmmodels="clr-namespace:Garmetix.Commons.DayOperations.Models"
     x:Name="dayEndEntryPage"
     Title="Day Ends"
     x:DataType="pagemodels:DayOperationPageModel">

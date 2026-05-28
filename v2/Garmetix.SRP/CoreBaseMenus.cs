@@ -6,9 +6,11 @@ using Garmetix.Core.Sessions;
 using Garmetix.CoreBase.DayOperations.Pages;
 using Garmetix.CoreBase.Stores.Pages.Desktop;
 using Garmetix.CoreBase.Stores.Pages.Mobile;
+
 // Use C# using aliases to separate the mobile and desktop pages
 using HrmPages = Garmetix.HRM.Pages.Desktop;
 using MobileHrmPages = Garmetix.HRM.Pages.Mobile;
+
 namespace Garmetix.SRP
 {
     public partial class BillingMenu: BaseFlyoutMenu
@@ -16,7 +18,14 @@ namespace Garmetix.SRP
         public BillingMenu():base("Billing")
         {
             AddPageTab("Sale Invoice", "rain_icon.png", "SaleInvoice", typeof(InvoiceHistoryPage));
-            //AddPageTab("Add Sale Invoice", "rain_icon.png", "AddSaleInvoice", typeof(InvoiceEntryPage));
+            //AddPageTab("Sale's Return Invoice", "rain_icon.png", "SalesReturnInvoice", typeof(InvoiceReturnHistoryPage));
+            //AddPageTab("Invoice Payments", "rain_icon.png", "InvoicePayments", typeof(InvoicePaymentHistoryPage));
+            //AddPageTab("Card Payments", "rain_icon.png", "CardPayments", typeof(CardPaymentHistoryPage));
+            //AddPageTab("Purchase Invoice", "rain_icon.png", "PurchaseInvoice", typeof(PurchaseInvoiceHistoryPage));
+            //AddPageTab("Purchase Return Invoice", "rain_icon.png", "PurchaseReturnInvoice", typeof(PurchaseReturnInvoiceHistoryPage));
+            //AddPageTab("Purchase Invoice Payments", "rain_icon.png", "PurchaseInvoicePayments", typeof(PurchaseInvoicePaymentHistoryPage));
+            //AddPageTab("Purchase Orders", "rain_icon.png", "PurchaseOrders", typeof(PurchaseOrderHistoryPage));
+            
         }
     }
     public partial class CompanyMenu : BaseFlyoutMenu
