@@ -68,9 +68,9 @@ namespace Garmetix.Commons
 
             RouterHelper.AddRoute(typeof(DayBeginEntyPage));
             RouterHelper.AddRoute(typeof(DayEndEntryPage));
-            RouterHelper.AddRoute(typeof(PettyCashSheetEntryPage));
+            RouterHelper.AddRoute(typeof(PettyCashSheetEntryPage)); // Not Implemented
             RouterHelper.AddRoute(typeof(EntryCashDetailPage));
-            RouterHelper.AddRoute(typeof(EntryPettyCashSheetPage));
+            RouterHelper.AddRoute(typeof(EntryPettyCashSheetPage)); // Implemented with Template Module. 
             AccountingModule.EnableAccountingRoutes();
 
             ClientModule.RegisterStoreRoutes();
