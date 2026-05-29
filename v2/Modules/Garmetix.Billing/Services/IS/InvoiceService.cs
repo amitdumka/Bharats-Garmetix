@@ -22,7 +22,106 @@ namespace Garmetix.Billing.Services
         Barcode1D
     }
 
-   
+   public partial class InvoiceService: BaseInvoiceService
+    {
+        // Sale Return Code here 
+        /// <summary>
+        /// Processes a sales return, restores inventory, and generates a return invoice.
+        /// </summary>
+        public async Task<Invoice> ProcessSaleReturnAsync(Guid originalInvoiceId, List<InvoiceItem> returnedItems, PaymentMode refundPaymentMode)
+        {
+            var context = GetContext();
+
+            // 1. Fetch the original invoice to validate
+            var originalInvoice = await context.Invoices
+                .Include(i => i.InvoiceItems)
+                .FirstOrDefaultAsync(i => i.Id == originalInvoiceId);
+
+            if (originalInvoice == null)
+                throw new Exception("Original invoice not found.");
+
+            if (returnedItems == null || !returnedItems.Any())
+                throw new Exception("No items selected for return.");
+
+            // 2. Create the new Return Invoice (Credit Note)
+            var returnInvoice = new Invoice
+            {
+                Id = Guid.NewGuid(),
+                InvoiceNumber = $"RET-{originalInvoice.InvoiceNumber}-{DateTime.Now:HHmmss}",
+                OnDate = DateTime.Now,
+                ReturnInvoice = true,                   // Flagged as a return!
+                OriginalInvoiceId = originalInvoice.Id,
+                PaymentMode = refundPaymentMode,
+                InvoiceItems = new List<InvoiceItem>()
+            };
+
+            decimal totalRefundAmount = 0;
+
+            // 3. Begin Database Transaction safely
+            using var transaction = await context.Database.BeginTransactionAsync();
+
+            try
+            {
+                foreach (var returnItem in returnedItems)
+                {
+                    // Validate against original purchase
+                    var originalItem = originalInvoice.InvoiceItems
+                        .FirstOrDefault(x => x.ProductId == returnItem.ProductId);
+
+                    if (originalItem == null)
+                        throw new Exception($"Product {returnItem.Barcode} was not on the original invoice.");
+
+                    // Optional: Check if already returned by querying past returns
+                    // ... (Logic to prevent double-returns goes here) ...
+
+                    decimal refundAmount = returnItem.BilledQuantity * returnItem.BasePrice;
+                    totalRefundAmount += refundAmount;
+
+                    // Add item to the return invoice
+                    //TODO: handle for Store and Compamy id and proper init of obkect
+                    
+                    returnInvoice.InvoiceItems.Add(returnItem);
+                    
+                    //returnInvoice.InvoiceItems.Add(new InvoiceItem
+                    //{
+                    //    Id = Guid.NewGuid(),
+                    //    InvoiceId = returnInvoice.Id,
+                    //    ProductId = returnItem.ProductId,
+                    //    Barcode = returnItem.ProductName,
+                    //    BilledQuantity = returnItem.ReturnQuantity, // Keep positive, the IsSaleReturn flag dictates the math
+                    //    BasePrice = returnItem.Rate,
+                    //    Amount = refundAmount
+                    //});
+
+                    // 4. Restore Inventory (Add the stock back to the shelf)
+                    var stock = await context.Stocks.FirstOrDefaultAsync(s => s.ProductId == returnItem.ProductId);
+                    if (stock != null)
+                    {
+                        stock.SoldQty += returnItem.BilledQuantity;
+                        context.Stocks.Update(stock);
+                    }
+                }
+
+                returnInvoice.NetAmount = totalRefundAmount;
+                returnInvoice.BillAmount = totalRefundAmount; // Add tax logic here if necessary
+
+                // 5. Save to Database
+                await context.Invoices.AddAsync(returnInvoice);
+                await context.SaveChangesAsync();
+
+                // 6. Commit Transaction
+                await transaction.CommitAsync();
+
+                return returnInvoice;
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                System.Diagnostics.Debug.WriteLine($"Return failed: {ex.Message}");
+                throw; // Rethrow to let the UI handle the error message
+            }
+        }
+    }
 
     //Imlementing Extra and Spl method to handle invoicing
     public partial class InvoiceService : BaseInvoiceService

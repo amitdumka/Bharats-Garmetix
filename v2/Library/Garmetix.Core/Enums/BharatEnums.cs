@@ -133,7 +133,7 @@ namespace Garmetix.Core.Enums
     public enum PaymentMode
     {
         Cash, Card, UPI, Wallets, IMPS, RTGS, NEFT, Cheque, DemandDraft, CreditNote,
-        DebitNote, Coupons, MixPayments, SaleReturn, Others,
+        DebitNote, Coupons, MixPayments, SaleReturn, Others,CreditBalance,
     }
 
     public enum PayMode

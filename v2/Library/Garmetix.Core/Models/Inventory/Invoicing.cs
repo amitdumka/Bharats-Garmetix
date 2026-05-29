@@ -45,6 +45,7 @@ namespace Garmetix.Core.Models.Inventory
         [Display(Name = "Invoice Number")] public required string InvoiceNumber { get; set; }
         [Display(Name = "Date")] public DateTime OnDate { get; set; }
         [Display(Name = "Return Invoice")] public bool ReturnInvoice { get; set; } = false;
+        [Display(Name = "Original Invoice", AutoGenerateField = false)] public Guid? OriginalInvoiceId { get; set; }
         [Display(Name = "MRP")] public decimal MRP { get; set; }
 
         [Display(Name = "Base Price")] public decimal BasePrice { get; set; }
@@ -87,8 +88,31 @@ namespace Garmetix.Core.Models.Inventory
         [Display(Name = "GSTIN")] public string? GSTIN { get; set; }
         [Display(Name = "Amount")] public decimal Amount { get; set; } = 0;
         [Display(Name = "Bill Count")] public int BillCount { get; set; } = 0;
+        // The current total available credit
+        [Display(Name = "Store Credit Balance")] public decimal CreditBalance { get; set; }=0;
+        public decimal LoyaltyPoints { get; set; } = 0;
+        [Display(Name = "Customer Party", AutoGenerateField = false)] public virtual Party? Party { get; set; }
     }
+    // The audit trail for every credit added or spent
 
+    /// <summary>
+    /// Store Customer Advance Payment and Sale Return Amount 
+    /// Can Later be used for Customer Loyalty Program and Credit Limit Management
+    /// </summary>
+    public class StoreCreditLedger
+    {
+        public Guid Id { get; set; }= Guid.NewGuid();
+        public Guid CustomerId { get; set; }
+        public DateTime TransactionDate { get; set; }= DateTime.Now;
+
+        // Positive amount when a return happens. Negative amount when spent.
+        public decimal Amount { get; set; }= 0;
+
+        // Explanation: e.g., "Credit for Return RET-INV-001"
+        public string Description { get; set; }=string.Empty;
+
+        public virtual Customer? Customer { get; set; }
+    }
     public class Vendor : CompanyBase
     {
         [Display(Name = "Name")] public required string Name { get; set; }

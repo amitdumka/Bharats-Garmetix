@@ -233,6 +233,7 @@ namespace Garmetix.Databases
         public DbSet<Salesman> Salesmen { get; set; }
 
         public DbSet<Customer> Customers { get; set; }
+        public DbSet<StoreCreditLedger> StoreCreditLedgers { get; set; }
         public DbSet<Vendor> Vendors { get; set; }
         public DbSet<PurchaseInvoice> PurchaseInvoices { get; set; }
         public DbSet<Invoice> Invoices { get; set; }

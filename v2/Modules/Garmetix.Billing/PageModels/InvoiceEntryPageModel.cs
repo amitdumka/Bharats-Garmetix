@@ -48,12 +48,15 @@ namespace Garmetix.Billing.PageModels
         [ObservableProperty] private decimal paymentAmountInput = 0m;
 
         [ObservableProperty] private bool isNewCustomer = false;  //TODO: Handle this
+        [ObservableProperty] private bool activeCustomer = false;  //TODO: Handle this
 
         // --- GLOBAL DISCOUNT INPUTS ---
         [ObservableProperty] private decimal globalDiscountInput;
         [ObservableProperty] private string globalDiscountTypeInput = "Amount";
 
         [ObservableProperty] private string customerMobile = "";
+        [ObservableProperty] private decimal customerBalance = 0;
+
         // partial void OnSearchTextChanged(string value) => _ = UpdateFilteredProductsAsync(value);
         partial void OnSearchTextChanged(string value)
         {
@@ -212,6 +215,8 @@ namespace Garmetix.Billing.PageModels
                 {
                     CurrentInvoice.CustomerName = customer.Name;
                     CurrentInvoice.CustomerGSTIN = customer.GSTIN;
+                    CustomerBalance = customer.CreditBalance;
+                    ActiveCustomer = true;
                     IsNewCustomer = false;
                     OnPropertyChanged(nameof(CurrentInvoice));
                 }

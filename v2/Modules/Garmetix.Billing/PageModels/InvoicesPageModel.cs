@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 
 namespace Garmetix.Billing.PageModels
 {
+
     public partial class InvoicesPageModel : ObservableObject
     {
         //Database Context

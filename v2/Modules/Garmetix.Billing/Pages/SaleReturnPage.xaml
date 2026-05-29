@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Garmetix.Billing.Pages.SaleReturnPage"
+             xmlns:vm="clr-namespace:Garmetix.Billing.PageModels"
+             Title="Sale Return">
+    <!--<Grid RowDefinitions="Auto, *, Auto" Padding="15">
+
+        <VerticalStackLayout Grid.Row="0" Spacing="10">
+            <Grid ColumnDefinitions="*, Auto" ColumnSpacing="10">
+                <Entry Grid.Column="0" 
+                       Placeholder="Scan or Enter Original Invoice Number (e.g., INV-001)"
+                       Text="{Binding SearchInvoiceNo}" 
+                       ReturnCommand="{Binding SearchInvoiceCommand}"
+                       ClearButtonVisibility="WhileEditing"/>
+
+                <Button Grid.Column="1" 
+                        Text="Search" 
+                        Command="{Binding SearchInvoiceCommand}" 
+                        BackgroundColor="#0F172A" />
+            </Grid>
+
+            <HorizontalStackLayout Spacing="20" IsVisible="{Binding OriginalInvoice, Converter={x:Static ObjectToBoolConverter}}">
+                <Label Text="{Binding OriginalInvoice.InvoiceDate, StringFormat='Date: {0:dd-MMM-yyyy}'}" TextColor="Gray" />
+                <Label Text="{Binding OriginalInvoice.CustomerName, StringFormat='Customer: {0}'}" FontAttributes="Bold" />
+                <Label Text="{Binding OriginalInvoice.GrandTotal, StringFormat='Orig Total: ₹ {0:N2}'}" TextColor="Gray" />
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+
+        <CollectionView Grid.Row="1" ItemsSource="{Binding ReturnItems}" Margin="0,15,0,0">
+            <CollectionView.Header>
+                <Grid ColumnDefinitions="40, *, 80, 100, 100" Padding="10" BackgroundColor="#0F172A">
+                    <Label Grid.Column="1" Text="Product Name" FontAttributes="Bold" TextColor="White"/>
+                    <Label Grid.Column="2" Text="Orig Qty" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center"/>
+                    <Label Grid.Column="3" Text="Return Qty" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center"/>
+                    <Label Grid.Column="4" Text="Refund (₹)" FontAttributes="Bold" TextColor="White" HorizontalOptions="End"/>
+                </Grid>
+            </CollectionView.Header>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid ColumnDefinitions="40, *, 80, 100, 100" Padding="10">
+                        <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" Color="#D4AF37" />
+
+                        <Label Grid.Column="1" Text="{Binding ProductName}" VerticalOptions="Center"/>
+                        <Label Grid.Column="2" Text="{Binding OriginalQty}" VerticalOptions="Center" HorizontalOptions="Center"/>
+
+                        <Entry Grid.Column="3" 
+                               Text="{Binding ReturnQuantity}" 
+                               Keyboard="Numeric" 
+                               HorizontalTextAlignment="Center" 
+                               IsEnabled="{Binding IsSelected}" />
+
+                        <Label Grid.Column="4" Text="{Binding TotalRefund, StringFormat='{0:N2}'}" VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold"/>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Border Grid.Row="2" BackgroundColor="#0F172A" Padding="15" StrokeShape="RoundRectangle 10">
+            <Grid ColumnDefinitions="Auto, *, Auto, Auto" ColumnSpacing="15">
+                <Label Grid.Column="0" Text="Refund Mode:" TextColor="White" VerticalOptions="Center" />
+
+                <Picker Grid.Column="1" 
+                        ItemsSource="{Binding RefundModes}" 
+                        SelectedItem="{Binding SelectedRefundMode}" 
+                        TextColor="White" BackgroundColor="#1E293B"/>
+
+                <VerticalStackLayout Grid.Column="2" VerticalOptions="Center" Margin="0,0,20,0">
+                    <Label Text="Total Refund" TextColor="Gray" FontSize="12" />
+                    <Label Text="{Binding GrandTotalRefund, StringFormat='₹ {0:N2}'}" TextColor="#D4AF37" FontSize="20" FontAttributes="Bold" />
+                </VerticalStackLayout>
+
+                <Button Grid.Column="3" 
+                        Text="Process Return" 
+                        Command="{Binding ProcessReturnCommand}" 
+                        BackgroundColor="#D4AF37" TextColor="Black" FontAttributes="Bold" 
+                        WidthRequest="150" />
+            </Grid>
+        </Border>
+
+    </Grid>-->
+</ContentPage>
