@@ -27,6 +27,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.60" />
+		<PackageReference Include="ZXing.Net.Bindings.SkiaSharp.V2" Version="0.16.17" />
 	</ItemGroup>
 
 	<ItemGroup>

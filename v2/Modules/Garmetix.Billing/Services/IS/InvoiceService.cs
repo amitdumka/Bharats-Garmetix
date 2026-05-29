@@ -7,10 +7,252 @@ using Garmetix.Core.Models.Inventory;
 using Garmetix.Databases.Services;
 using Microsoft.EntityFrameworkCore;
 
+//TODO: Check for use of SKIA over Zxing Direct for barcode generation. SKIA might offer better performance and customization options, while ZXing is more straightforward for standard barcode formats. Consider the trade-offs based on your specific needs and constraints.
+using SkiaSharp;
+using ZXing;
+using ZXing.SkiaSharp;
+
 namespace Garmetix.Billing.Services
 {
-    // Add and update record
+    public enum InvoiceCodeType
+    {
+        QRCode,
+        Barcode1D
+    }
+
+   
+
+    //Imlementing Extra and Spl method to handle invoicing
     public partial class InvoiceService : BaseInvoiceService
+    {
+        /// <summary>
+        /// Generates a visual QR Code or Barcode for an invoice.
+        /// </summary>
+        public static byte[] GenerateInvoiceCode(Invoice invoice, InvoiceCodeType codeType)
+        {
+            if (invoice == null)
+                throw new ArgumentNullException(nameof(invoice), "Invoice cannot be null.");
+
+            string contentToEncode;
+            BarcodeFormat format;
+            var options = new ZXing.Common.EncodingOptions();
+
+            // 1. Configure based on the requested Code Type
+            if (codeType == InvoiceCodeType.QRCode)
+            {
+                if (invoice.Id == Guid.Empty)
+                    throw new ArgumentException("Valid invoice ID is required for a QR Code.");
+
+                contentToEncode = invoice.Id.ToString();
+                format = BarcodeFormat.QR_CODE;
+                options.Width = 250;
+                options.Height = 250;
+                options.Margin = 1;
+            }
+            else // Barcode1D
+            {
+                if (string.IsNullOrWhiteSpace(invoice.InvoiceNumber))
+                    throw new ArgumentException("Invoice Number is required for a Barcode.");
+
+                contentToEncode = invoice.InvoiceNumber;
+                format = BarcodeFormat.CODE_128;
+                options.Width = 400;
+                options.Height = 100;
+                options.Margin = 2;
+                options.PureBarcode = false; // Prints the text below the barcode
+            }
+
+            // 2. Generate the image (Shared Logic)
+            try
+            {
+                var writer = new BarcodeWriter
+                {
+                    Format = format,
+                    Options = options
+                };
+
+                using var bitmap = writer.Write(contentToEncode);
+                using var image = SKImage.FromBitmap(bitmap);
+                using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+
+                return data.ToArray();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"{codeType} Generation Failed: {ex.Message}");
+                return null; // Return null gracefully so the UI doesn't crash
+            }
+        }
+        /// <summary>
+        /// Generates a QR Code containing the unique Invoice ID.
+        /// Ideal for robust, error-corrected scanning.
+        /// </summary>
+        public static byte[] CreateQRCodeForInvoice(Invoice invoice)
+        {
+            if (invoice == null || invoice.Id == Guid.Empty)
+                throw new ArgumentNullException(nameof(invoice), "Valid invoice is required to generate a QR Code.");
+
+            try
+            {
+                var writer = new BarcodeWriter
+                {
+                    Format = BarcodeFormat.QR_CODE,
+                    Options = new ZXing.Common.EncodingOptions
+                    {
+                        Width = 250,
+                        Height = 250,
+                        Margin = 1
+                    }
+                };
+
+                // Encode the unique GUID into the QR code
+                using var bitmap = writer.Write(invoice.Id.ToString());
+                using var image = SKImage.FromBitmap(bitmap);
+                using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+
+                return data.ToArray();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"QR Code Generation Failed: {ex.Message}");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Generates a standard 1D Barcode (Code128) containing the Invoice Number.
+        /// Ideal for basic laser scanners at a retail checkout counter.
+        /// </summary>
+        public static byte[] CreateBarCodeForInvoice(Invoice invoice)
+        {
+            if (invoice == null || string.IsNullOrWhiteSpace(invoice.InvoiceNumber))
+                throw new ArgumentNullException(nameof(invoice), "Invoice Number is required to generate a Barcode.");
+
+            try
+            {
+                var writer = new BarcodeWriter
+                {
+                    // CODE_128 is the most robust 1D barcode format for alphanumeric strings
+                    Format = BarcodeFormat.CODE_128,
+                    Options = new ZXing.Common.EncodingOptions
+                    {
+                        Width = 400,
+                        Height = 100,
+                        Margin = 2,
+                        PureBarcode = false // Set to true if you don't want the text printed below the bars
+                    }
+                };
+
+                // Encode the human-readable Invoice Number (e.g., "INV-2026-001")
+                using var bitmap = writer.Write(invoice.InvoiceNumber);
+                using var image = SKImage.FromBitmap(bitmap);
+                using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+
+                return data.ToArray();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Barcode Generation Failed: {ex.Message}");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Processes a scanned string from a camera or hardware scanner.
+        /// Automatically detects if it is a QR Code (Guid) or Barcode (String) and navigates.
+        /// </summary>
+        public async Task ProcessScannedCodeAsync(string scannedValue)
+        {
+            if (string.IsNullOrWhiteSpace(scannedValue))
+                return;
+
+            try
+            {
+                Guid targetInvoiceId;
+
+                // 1. Is it a QR Code? (Check if the scanned string is a valid Guid)
+                if (Guid.TryParse(scannedValue, out targetInvoiceId))
+                {
+                    // Success: We already have the exact ID.
+                }
+                // 2. Is it a Barcode? (It's a string like "INV-001")
+                else
+                {
+                    // We need to look up the Invoice ID based on the Invoice Number
+                    // NOTE: Replace `GetContext()` with your actual DbContext or Repository call
+                    var context = GetContext();
+                    var invoice = await context.Invoices
+                        .FirstOrDefaultAsync(i => i.InvoiceNumber == scannedValue);
+
+                    if (invoice == null)
+                    {
+                        await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Not Found", $"No invoice found matching: {scannedValue}", "OK");
+                        return;
+                    }
+
+                    targetInvoiceId = invoice.Id;
+                }
+
+                // 3. Navigate securely to the Edit Page
+                // Ensure this is run on the Main UI Thread to prevent COMExceptions
+                MainThread.BeginInvokeOnMainThread(async () =>
+                {
+                    try
+                    {
+                        await Shell.Current.GoToAsync($"EditInvoicePage?InvoiceId={targetInvoiceId}");
+                    }
+                    catch (Exception navEx)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Navigation Failed: {navEx.Message}");
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Scanning Processing Failed: {ex.Message}");
+                await Application.Current.MainPage.DisplayAlert("Scan Error", "Failed to process the scanned code.", "OK");
+            }
+        }
+
+
+
+        public async Task LoadInvoiceAsync(Guid? inv = null, string? invoiceNumber = null)
+        {
+            //Write the logic to load the invoice based on invoice number or invoice id. This can be used for return and exchange process to quickly fetch the invoice details.
+            Invoice invoice;
+
+            if (invoiceNumber != null)
+            {
+
+                invoice = (await GetContext().Invoices.Include(i => i.InvoiceItems).Include(i => i.Payments).Include(i => i.CardPayments).FirstOrDefaultAsync(i => i.InvoiceNumber == invoiceNumber))??new Invoice { InvoiceNumber="NOTFOUND"};
+            }
+            else if (inv != null)
+            {
+
+                invoice = (await GetContext().Invoices.Include(i => i.InvoiceItems).Include(i => i.Payments).Include(i => i.CardPayments).FirstOrDefaultAsync(i => i.Id == inv))?? new Invoice { InvoiceNumber = "NOTFOUND" };
+
+            }
+            else
+            {
+                await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Error", "Invalid invoice identifier.", "OK");
+                return;
+                // Show error message
+            }
+            if(invoice.InvoiceNumber == "NOTFOUND")
+            {
+                await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Not Found", "No invoice found matching the provided identifier.", "OK");
+                return;
+            }
+
+           // await Shell.Current.GoToAsy
+
+            // Navigate to Edit Invoice Page with the loaded invoice details
+            await Shell.Current.GoToAsync($"EditInvoicePage?InvoiceId={invoice.Id}");
+
+        }
+    }
+        // Add and update record
+        public partial class InvoiceService : BaseInvoiceService
     {
 
         /// <summary>
