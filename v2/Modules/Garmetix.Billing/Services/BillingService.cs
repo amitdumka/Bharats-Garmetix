@@ -18,23 +18,110 @@ namespace Garmetix.Billing.Services
 
         public static async Task ShowErrorAsync(string title, string message) => await Application.Current!.Windows[0].Page!.DisplayAlertAsync(title, $"Error: {message}", "OK");
 
-        public Product AddorUpxdateProduct(Product product, bool update = false)
-        { return product; }
+        public async Task<Product?> AddOrUpdateProductAsync(Product product, bool update = false)
+        {
+            
+            if(update)
+            {
+                var existingProduct = GetContext().Products.Where(x => x.Id == product.Id).FirstOrDefault();
+                if (existingProduct != null)
+                {
+                    existingProduct.Name = product.Name;
+                    existingProduct.Barcode = product.Barcode;
+                    existingProduct.Descriptions = product.Descriptions;
+                    existingProduct.MRP = product.MRP;
+                    existingProduct.TaxRate = product.TaxRate;
+                    existingProduct.Unit = product.Unit;
+                    existingProduct.TaxType = product.TaxType;
+                    existingProduct.ProductType = product.ProductType;
+                    existingProduct.ProductCategoryId = product.ProductCategoryId;
+                    existingProduct.ProductSubCategoryId = product.ProductSubCategoryId;
+                    GetContext().Products.Update(existingProduct);
+                    await GetContext().SaveChangesAsync();
+                    return existingProduct;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                GetContext().Products.Add(product);
+                await GetContext().SaveChangesAsync();
+            }
+            return product; 
+        
+        }
 
-        public Stock AddStock(Stock stock)
-        { return stock; }
+ 
+        public async Task<Stock?> AddStockAsync(Stock stock)
+        {
+            GetContext().Stocks.Add(stock);
+            var result = await GetContext().SaveChangesAsync();
+
+            if (result > 0)
+                return stock;
+            else return null;
+        }
 
         public DatabaseContext GetContext()
         { return _localDb; }
 
         public bool RemoveProduct(Product product, bool delete = false)
-        { return product != null; }
+        {
+            if (delete)
+            {
+                GetContext().Products.Remove(product);
+                return GetContext().SaveChanges() > 0;
 
-        public bool RemoveProduct(Guid storeid, string barcode, bool delete = false)
-        { return false; }
+            }
+            else
+            {
+                product.Deleted = true;
+                GetContext().Products.Update(product);
+                return GetContext().SaveChanges() > 0;
+            }
+        }
+
+        public async Task<bool> RemoveProduct(Guid companyId, string barcode, bool delete = false)
+        {
+            if (delete)
+            {
+                GetContext().Products.RemoveRange(GetContext().Products.Where(x => x.CompanyId == companyId && x.Barcode == barcode));
+                return GetContext().SaveChanges() > 0;
+            }
+            else
+            {
+                var products = await GetContext().Products.Where(x => x.CompanyId == companyId && x.Barcode == barcode).FirstOrDefaultAsync();
+                if (products != null)
+                {
+                    products.Deleted = true;
+                    GetContext().Products.Update(products);
+                    return GetContext().SaveChanges() > 0;
+                }
+            }
+
+            return false;
+        }
 
         public bool RemoveStock(Stock stock, bool delete = false)
-        { return false; }
+        {
+            if (delete)
+            {
+                GetContext().Stocks.Remove(stock);
+                return GetContext().SaveChanges() > 0;
+
+            }
+            else
+            {
+                stock.Deleted = true;
+                GetContext().Stocks.Update(stock);
+                return GetContext().SaveChanges() > 0;
+            }
+
+
+        }
 
         public Guid GetTaxIdByType(TaxType type, decimal percentage, bool output = true)
         {
@@ -183,7 +270,7 @@ namespace Garmetix.Billing.Services
             var trans = await GetContext().Database.BeginTransactionAsync();
             foreach (var item in items)
             {
-                var result = await GetContext().Stocks.Where(x => x.StoreId == item.CompanyId && x.Barcode == item.Barcode).FirstOrDefaultAsync();
+                var result = await GetContext().Stocks.Where(x => x.StoreId == DatabaseService.StoreId && x.Barcode == item.Barcode).FirstOrDefaultAsync();
                 if (result != null)
                 {
                     count++;

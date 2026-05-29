@@ -234,6 +234,11 @@ namespace Garmetix.Billing.PageModels
                 IsBusy = false;
             }
         }
+        [RelayCommand]
+        public async Task ShowScanPopup()
+        {
+          await  _invoiceService.OpenScanDialogAsync();
+        }
 
         [RelayCommand]
         public void CloseModal()

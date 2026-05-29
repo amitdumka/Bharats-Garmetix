@@ -4,10 +4,11 @@
                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
                xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.Maui.Controls"
                x:Class="Garmetix.Billing.Pages.Popups.InvoiceScanPopup"
-              BackgroundColor="Transparent">
+               xmlns:system="clr-namespace:Garmetix.Billing.Pages.Popups"
+                x:TypeArguments="system:ScanPopupResult"              >
 
     <Border Padding="20" BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}" 
-            WidthRequest="350" Opacity="15" StrokeThickness="0" StrokeShape="RoundedRectangle">
+            WidthRequest="350"   StrokeThickness="0">
 
         <Grid>
             <!-- STATE 1: SCANNING VIEW -->
@@ -24,8 +25,9 @@
 
                 <!-- USB Scanner Input: Visible on Desktop, or as fallback -->
                 <Entry x:Name="UsbScannerEntry"
-                       Placeholder="Scan or type barcode here..."
+                       Placeholder="Scan or type Invoice Numner here..."
                        Completed="UsbScannerEntry_Completed" 
+                       
                        ClearButtonVisibility="WhileEditing"/>
 
                 <Button Text="Cancel" Clicked="Cancel_Clicked" BackgroundColor="Red" />

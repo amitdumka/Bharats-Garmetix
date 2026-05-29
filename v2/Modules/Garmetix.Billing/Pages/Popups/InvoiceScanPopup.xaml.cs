@@ -1,5 +1,4 @@
 using CommunityToolkit.Maui.Views;
-
 namespace Garmetix.Billing.Pages.Popups;
 
 
@@ -9,7 +8,7 @@ public class ScanPopupResult
     public string ScannedCode { get; set; }     // The Guid or InvoiceNo
 }
 
-public partial class InvoiceScanPopup : Popup
+public partial class InvoiceScanPopup : Popup<ScanPopupResult>
 {
     private string _scannedCode = string.Empty;
 
@@ -62,16 +61,25 @@ public partial class InvoiceScanPopup : Popup
     }
 
     // 4. Button Click Handlers - Close popup and return the decision
-    private void Edit_Clicked(object sender, EventArgs e) => Close(new ScanPopupResult { ActionRequested = "Edit", ScannedCode = _scannedCode });
+//    private void Edit_Clicked(object sender, EventArgs e) => Close(new ScanPopupResult { ActionRequested = "Edit", ScannedCode = _scannedCode });
 
-    private void Close(ScanPopupResult scanPopupResult)
+     
+    private async void Edit_Clicked(object sender, EventArgs e)
     {
-        throw new NotImplementedException();
-        CloseAsync();
+        await CloseAsync(new ScanPopupResult { ActionRequested = "Edit", ScannedCode = _scannedCode });
     }
 
-    private void View_Clicked(object sender, EventArgs e) => Close(new ScanPopupResult { ActionRequested = "View", ScannedCode = _scannedCode });
-    private void Return_Clicked(object sender, EventArgs e) => Close(new ScanPopupResult { ActionRequested = "Return", ScannedCode = _scannedCode });
+    private async void View_Clicked(object sender, EventArgs e)
+    {
+        await CloseAsync(new ScanPopupResult { ActionRequested = "View", ScannedCode = _scannedCode });
+    }
+
+    private async void Return_Clicked(object sender, EventArgs e)
+    {
+        await CloseAsync(new ScanPopupResult { ActionRequested = "Return", ScannedCode = _scannedCode });
+    }
+    //private void View_Clicked(object sender, EventArgs e) => Close(new ScanPopupResult { ActionRequested = "View", ScannedCode = _scannedCode });
+    //private void Return_Clicked(object sender, EventArgs e) => Close(new ScanPopupResult { ActionRequested = "Return", ScannedCode = _scannedCode });
 
     private void Cancel_Clicked(object sender, EventArgs e)
     { 

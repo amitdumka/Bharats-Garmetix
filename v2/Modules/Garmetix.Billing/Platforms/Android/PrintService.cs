@@ -12,7 +12,7 @@ namespace Garmetix.Billing.Platforms.Android
 {
     public class PrintService : IPrintService
     {
-        private static readonly UUID RspSppUuid = UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
+        private static readonly UUID RspSppUuid = UUID.FromString("00001101-0000-1000-8000-00805F9B34FB")??UUID.RandomUUID();
         public Task PrintHtmlAsync(string htmlContent, string documentName = "Invoice")
         {
             var context = Application.Context;

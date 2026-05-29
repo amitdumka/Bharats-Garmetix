@@ -39,16 +39,16 @@ namespace Garmetix.Billing.Services
             return invoice?.Id;
         }
 
-        //
+        // This can be move to view Model and Result can be feed fileter fileds.
         public async Task OpenScanDialogAsync()
         {
             // 1. Show the Popup and wait for the user to scan and click a button
             var popup = new InvoiceScanPopup();
-            var result = await Shell.Current.CurrentPage.ShowPopupAsync(popup) as ScanPopupResult;
+            var result1 = await Shell.Current.CurrentPage.ShowPopupAsync<ScanPopupResult>(popup);// as ScanPopupResult;
 
             // 2. If they clicked cancel, do nothing
-            if (result == null) return;
-
+            if (result1 == null) return;
+            var result = result1.Result as ScanPopupResult;
             // 3. Resolve the actual Database ID from the scanned string 
             // (You can add this helper method to your InvoiceService)
             Guid? invoiceId = await GetInvoiceIdByNumberAsync(result.ScannedCode);
@@ -496,6 +496,9 @@ namespace Garmetix.Billing.Services
             try
             {
                 //Handling few check for FK  integrity and other DB related issues before saving the invoice
+                // Handling store and Store Group 
+                invoice.StoreId= DatabaseService.StoreId;
+               
 
                 //Customer
                 invoice.CustomerId = await GetCustomerIdOrDefaultAsync(invoice.CustomerMobileNumber);
@@ -562,7 +565,7 @@ namespace Garmetix.Billing.Services
                         //update the stock
 
 
-                        if (!await UpdateStockRangeAsync(invoice.InvoiceItems.ToList()))
+                    if (!await UpdateStockRangeAsync(invoice.InvoiceItems.ToList()))
                     {
                         await Notify.DisplaySnackbarAsync("Failded to update the stock. Kindly report admin to check the log");
                         //TODO: Add Log
@@ -649,8 +652,8 @@ namespace Garmetix.Billing.Services
 
                     CreditSale = invoicedto.BalanceAmount > 0 ? true : false,
                     CreatedBy = DatabaseService.Instance.CurrentUser.Name,
-                    CompanyId = DatabaseService.CompanyId
-                    , //TODO: Handle this properly
+                    CompanyId = DatabaseService.CompanyId, 
+                    StoreId = DatabaseService.StoreId,
                     MRP = invoicedto.GrandTotal + invoicedto.GlobalDiscountAmount + invoicedto.TotalDiscount
                 };
 
@@ -716,6 +719,7 @@ namespace Garmetix.Billing.Services
                                 CreatedBy = DatabaseService.Instance.CurrentUser.Name,
                                 Synced = false,
                                 CompanyId = currentInvoice.CompanyId,
+                                StoreId = DatabaseService.StoreId,
 
                                 InvoiceId = item.InvoiceId,
 
@@ -735,9 +739,12 @@ namespace Garmetix.Billing.Services
                         invoicePaymentList.Add(new InvoicePayment
                         {
                             CompanyId = currentInvoice.CompanyId,
+                            StoreId = DatabaseService.StoreId,
+
                             CreatedAt = DateTime.UtcNow,
                             UpdatedAt = DateTime.UtcNow,
                             CreatedBy = DatabaseService.Instance.CurrentUser.Name,
+                            
                             Deleted = false,
                             Synced = false,
 

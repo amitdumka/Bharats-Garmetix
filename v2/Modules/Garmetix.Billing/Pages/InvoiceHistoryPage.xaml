@@ -54,7 +54,7 @@
             </Grid>
 
             <Border Grid.Row="1" Margin="20,0,20,15" Padding="15,10" Style="{StaticResource DashboardSection}">
-                <Grid ColumnDefinitions="2*, 1.5*, 1.5*" ColumnSpacing="15">
+                <Grid ColumnDefinitions="2*, 1.5*, 1.5*,0.5*" ColumnSpacing="15">
                     <core:SfTextInputLayout Hint="🔍 Search Customer or Invoice #" ContainerType="Outlined" Grid.Column="0">
                         <Entry Text="{Binding SearchText, Mode=TwoWay}" ClearButtonVisibility="WhileEditing" />
                     </core:SfTextInputLayout>
@@ -64,6 +64,11 @@
                     <core:SfTextInputLayout Hint="💵 Payment Type" ContainerType="Outlined" Grid.Column="2">
                         <Picker ItemsSource="{Binding PaymentModes}" SelectedItem="{Binding SelectedPaymentMode}" />
                     </core:SfTextInputLayout>
+                    <Button Text="Scan" CornerRadius="15"
+                            Padding="10" Margin="10"
+                            Command="{Binding ShowScanPopupCommand}"
+                            WidthRequest="100" HeightRequest="60"
+                            BackgroundColor="BlueViolet"  Grid.Column="3"/>
                 </Grid>
             </Border>
 
@@ -71,7 +76,7 @@
                 <Grid>
                     <sfgrid:SfDataGrid ItemsSource="{Binding FilteredInvoices}"  
                                        SelectedRow="{Binding SelectedInvoice, Mode=TwoWay}"
-                                       SelectionMode="Single"   ColumnWidthMode="LastColumnFill"
+                                       SelectionMode="Single"   ColumnWidthMode="Auto"
                                        HeaderGridLinesVisibility="Horizontal"
                                        GridLinesVisibility="Horizontal" 
                                        HeaderRowHeight="55" RowHeight="60" 

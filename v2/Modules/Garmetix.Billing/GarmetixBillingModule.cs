@@ -4,6 +4,7 @@ using DocumentFormat.OpenXml.Drawing;
 using Garmetix.Billing.PageModels;
 using Garmetix.Billing.Pages;
 using Garmetix.Billing.Services;
+using ZXing.Net.Maui.Controls;
 
 namespace Garmetix.Billing
 {
@@ -26,7 +27,7 @@ namespace Garmetix.Billing
 #elif WINDOWS
             builder.Services.AddSingleton<IPrintService, Garmetix.Billing.Platforms.Windows.PrintService>();
 #endif
-
+            builder.UseBarcodeReader();
             builder.Services.AddTransient<InvoiceEntryPage>();
             builder.Services.AddTransient<EditInvoicePage>();
             builder.Services.AddTransient<InvoiceEditPageModel>();

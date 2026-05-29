@@ -172,6 +172,7 @@ namespace Garmetix.Core.Models.Inventory
         [Display(Name = "Reference Number")] public string? ReferenceNumber { get; set; }
 
         [Display(Name = "Payment Mode")] public PaymentMode PaymentMode { get; set; }
+        [Display(Name = "Store", AutoGenerateField = false)] public Guid StoreId { get; set; }
     }
 
     public class CardPayment : CompanyBase
@@ -185,6 +186,7 @@ namespace Garmetix.Core.Models.Inventory
         [Display(Name = "Card Type")] public CardType CardType { get; set; } = CardType.Rupay;
         
         [Display(Name = "Bank Name")] public string? BankName { get; set; }
+        [Display(Name = "Store", AutoGenerateField = false)] public Guid StoreId { get; set; }
     }
 
     public class VendorPayment : CompanyBase
