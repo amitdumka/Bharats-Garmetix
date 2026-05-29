@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.Maui.Controls"
+               x:Class="Garmetix.Billing.Pages.Popups.InvoiceScanPopup"
+              BackgroundColor="Transparent">
+
+    <Border Padding="20" BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}" 
+            WidthRequest="350" Opacity="15" StrokeThickness="0" StrokeShape="RoundedRectangle">
+
+        <Grid>
+            <!-- STATE 1: SCANNING VIEW -->
+            <VerticalStackLayout x:Name="ScanLayout" Spacing="15">
+                <Label Text="Scan Invoice" FontSize="18" FontAttributes="Bold" HorizontalOptions="Center" />
+
+                <!-- Camera Scanner: Visible ONLY on Mobile Phones (Android/iOS) -->
+                <zxing:CameraBarcodeReaderView x:Name="CameraScanner"
+                                               IsVisible="{OnIdiom Phone=True, Default=False}"
+                                               HeightRequest="250"
+                                               WidthRequest="250"
+                                               IsDetecting="True"
+                                               BarcodesDetected="CameraScanner_BarcodesDetected" />
+
+                <!-- USB Scanner Input: Visible on Desktop, or as fallback -->
+                <Entry x:Name="UsbScannerEntry"
+                       Placeholder="Scan or type barcode here..."
+                       Completed="UsbScannerEntry_Completed" 
+                       ClearButtonVisibility="WhileEditing"/>
+
+                <Button Text="Cancel" Clicked="Cancel_Clicked" BackgroundColor="Red" />
+            </VerticalStackLayout>
+
+            <!-- STATE 2: ACTION SELECTION VIEW (Hidden initially) -->
+            <VerticalStackLayout x:Name="ActionLayout" Spacing="15" IsVisible="False">
+                <Label Text="Invoice Found!" FontSize="18" FontAttributes="Bold" HorizontalOptions="Center" TextColor="Green" />
+                <Label x:Name="ScannedCodeLabel" HorizontalOptions="Center" TextColor="Gray" />
+
+                <Button Text="✏️ Edit Invoice" Clicked="Edit_Clicked" BackgroundColor="#0F172A" />
+                <Button Text="📄 View Invoice" Clicked="View_Clicked" BackgroundColor="#0F172A" />
+                <Button Text="↩️ Sale Return" Clicked="Return_Clicked" BackgroundColor="#D4AF37" TextColor="Black" />
+
+                <Button Text="Cancel" Clicked="Cancel_Clicked" BackgroundColor="Transparent" TextColor="Red" />
+            </VerticalStackLayout>
+        </Grid>
+
+    </Border>
+</toolkit:Popup>

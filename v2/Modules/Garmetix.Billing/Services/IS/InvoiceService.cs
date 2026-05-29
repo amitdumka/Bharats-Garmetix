@@ -1,6 +1,8 @@
 ﻿using Bharat.ToolKits.Notifications;
+using CommunityToolkit.Maui.Extensions;
 using Garmetix.Billing.Helpers;
 using Garmetix.Billing.Models;
+using Garmetix.Billing.Pages.Popups;
 using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Accounting;
 using Garmetix.Core.Models.Inventory;
@@ -25,6 +27,61 @@ namespace Garmetix.Billing.Services
     //Imlementing Extra and Spl method to handle invoicing
     public partial class InvoiceService : BaseInvoiceService
     {
+
+        public async Task<Guid?> GetInvoiceIdByNumberAsync(string invoiceNumber)
+        {
+            if (string.IsNullOrWhiteSpace(invoiceNumber))
+                return null;
+            var invoice = await GetContext().Invoices
+                .Where(i => i.InvoiceNumber == invoiceNumber)
+                .Select(i => new { i.Id })
+                .FirstOrDefaultAsync();
+            return invoice?.Id;
+        }
+
+        //
+        public async Task OpenScanDialogAsync()
+        {
+            // 1. Show the Popup and wait for the user to scan and click a button
+            var popup = new InvoiceScanPopup();
+            var result = await Shell.Current.CurrentPage.ShowPopupAsync(popup) as ScanPopupResult;
+
+            // 2. If they clicked cancel, do nothing
+            if (result == null) return;
+
+            // 3. Resolve the actual Database ID from the scanned string 
+            // (You can add this helper method to your InvoiceService)
+            Guid? invoiceId = await GetInvoiceIdByNumberAsync(result.ScannedCode);
+
+            if (invoiceId == null)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", "Invoice not found in database.", "OK");
+                return;
+            }
+
+            // 4. Navigate based on the button they clicked in the popup
+            try
+            {
+                switch (result.ActionRequested)
+                {
+                    case "Edit":
+                        await Shell.Current.GoToAsync($"EditInvoicePage?InvoiceId={invoiceId}");
+                        break;
+                    case "View":
+                        await Shell.Current.GoToAsync($"ViewInvoicePage?InvoiceId={invoiceId}");
+                        break;
+                    case "Return":
+                        await Shell.Current.GoToAsync($"SaleReturnPage?InvoiceId={invoiceId}");
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Routing Error: {ex.Message}");
+            }
+        }
+
+        //
         /// <summary>
         /// Generates a visual QR Code or Barcode for an invoice.
         /// </summary>

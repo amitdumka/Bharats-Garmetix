@@ -120,6 +120,45 @@ namespace Garmetix.Billing.Services
                 return null;
             }
         }
+        public async Task<Invoice?> GetInvoiceByNumberAsync(string? InvNumber)
+        {
+            // Fail fast if ID is null or empty
+            if (InvNumber == null || InvNumber == string.Empty)
+                return null;
+
+            try
+            {
+                var context = GetContext(); // Call this once to reduce overhead
+                var invoice = await context.Invoices.FirstOrDefaultAsync(c => c.InvoiceNumber == InvNumber);
+
+                if (invoice != null)
+                {
+                    // FIX: Use InvoiceId for child records and ToListAsync() to populate collections safely
+                    invoice.InvoiceItems = await context.InvoiceItems
+                        .Where(c => c.InvoiceId == invoice.Id)
+                        .ToListAsync();
+
+                    invoice.Payments = await context.InvoicePayments
+                        .Where(c => c.InvoiceId == invoice.Id)
+                        .ToListAsync();
+
+                    if (invoice.PaymentMode == PaymentMode.Card)
+                    {
+                        invoice.CardPayments = await context.CardPayments
+                            .Where(c => c.InvoiceId == invoice.Id)
+                            .ToListAsync();
+                    }
+                }
+
+                return invoice;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (replace Debug with your actual logging mechanism)
+                System.Diagnostics.Debug.WriteLine($"Exception in GetInvoiceByNumberAsync: {ex.Message}");
+                return null;
+            }
+        }
 
         public async Task<InvoiceDTO?> GetInvoiceDTOById(Guid id)
         {
