@@ -49,7 +49,11 @@ namespace Garmetix.Core.Enums
     public enum EntryStatus { Added, Approved, Rejected, Updated, Deleted, DeleteApproved, }  
     public enum ExpenseType { Travel, Transport, Ticket, Food, Lodging, Entertainment, Medical, OtherExpenses, Fuel, Miscellanous, Others } 
     public enum Gender { Male, Female, TransGender } 
-    public enum InvoiceType { Sales, SalesReturn, ManualSale, ManualSaleReturn, } 
+    public enum InvoiceOldType { Sales, SalesReturn, ManualSale, ManualSaleReturn, }
+    public enum InvoiceType { Regular, Return, Service }
+    public enum SaleInvoiceType { B2B, B2C, CashMemo, Others }
+    public enum InvoiceCategory { Retail, Wholesale, ECommerce, B2B, B2C, Export, Import, Service, Others }
+    public enum InvoiceStatus { Pending, Paid, PartiallyPaid, Cancelled, Refunded, PartiallyRefunded, Overdue, Draft }
     public enum LedgerCategory
     {
         Credit,
@@ -191,4 +195,6 @@ namespace Garmetix.Core.Enums
 
     public enum VoucherType { Payment, Receipt, Expense, } 
     public enum WorkingMode { Company,     Store,       Group        }
+
+     
 }

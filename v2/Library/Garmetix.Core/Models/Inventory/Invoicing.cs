@@ -45,7 +45,10 @@ namespace Garmetix.Core.Models.Inventory
         [Display(Name = "Invoice Number")] public required string InvoiceNumber { get; set; }
         [Display(Name = "Date")] public DateTime OnDate { get; set; }
         [Display(Name = "Return Invoice")] public bool ReturnInvoice { get; set; } = false;
+        [Display(Name = "Invoice Type")] public InvoiceType InvoiceType { get; set; } = InvoiceType.Regular;
+        [Display(Name = "Invoice Status")] public InvoiceStatus InvoiceStatus { get; set; } = InvoiceStatus.Pending;
         [Display(Name = "Original Invoice", AutoGenerateField = false)] public Guid? OriginalInvoiceId { get; set; }
+
         [Display(Name = "MRP")] public decimal MRP { get; set; }
 
         [Display(Name = "Base Price")] public decimal BasePrice { get; set; }
@@ -56,10 +59,9 @@ namespace Garmetix.Core.Models.Inventory
         [Display(Name = "Bill Amount")] public decimal BillAmount { get; set; }
 
         [Display(Name = "Quantity")] public decimal Quantity { get; set; }
-       // [Display(Name = "Actual Quantity")] public decimal ActualQuantity { get; set; } = 0;
-       // [Display(Name = "Billed Quantity")] public decimal BilledQuantity { get; set; } = 0;
         [Display(Name = "Item Count")] public int ItemCount { get; set; }
         [Display(Name = "Payment Mode")] public PaymentMode? PaymentMode { get; set; }
+       
         //Handling GST System and Vat System as well
 
         [Display(Name = "CGST Amount")] public decimal? CGSTAmount { get; set; }
@@ -164,7 +166,9 @@ namespace Garmetix.Core.Models.Inventory
 
         [Display(Name = "Credit Sale")] public bool CreditSale { get; set; }
         [Display(Name = "B2B Sale")] public bool B2BSale { get; set; } = false;
-         [Display(Name = "Bill Discount", AutoGenerateField = false)]public decimal BillDiscountAmount { get; set; } = 0m;
+        [Display(Name = "Sale Invoice Type")] public SaleInvoiceType SaleInvoiceType { get; set; } = SaleInvoiceType.B2C;
+
+        [Display(Name = "Bill Discount", AutoGenerateField = false)]public decimal BillDiscountAmount { get; set; } = 0m;
 
         [Display(Name = "Salesman", AutoGenerateField = false)] public virtual Salesman? Saleman { get; set; }
         [Display(Name = "Customer", AutoGenerateField = false)] public virtual Customer? Customer { get; set; }

@@ -1,9 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Extensions;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Garmetix.Billing.Models;
+using Garmetix.Billing.Pages.Popups;
 using Garmetix.Billing.Services;
 using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Inventory;
+using Garmetix.Core.Session;
 using System.Collections.ObjectModel;
 
 namespace Garmetix.Billing.PageModels
@@ -13,6 +16,9 @@ namespace Garmetix.Billing.PageModels
     {
         //Invoice Service
         private readonly InvoiceService _invoiceService;
+
+        private CardPaymentDto _capturedCardDetails;
+
 
         [ObservableProperty] private bool isBusy;
         [ObservableProperty] private bool isSaving;
@@ -71,7 +77,8 @@ namespace Garmetix.Billing.PageModels
             if (!string.IsNullOrEmpty(value))
                 _ = LoadInvoiceDataAsync(Guid.Parse(value));
         }
-
+        // 2. Trigger the popup when "Card" is selected
+         
         //TODO: need to update the logic
         private async Task LoadInvoiceDataAsync(Guid id)
         { //TODO: need to convert to DTO and use service instead of direct DB calls
@@ -501,3 +508,6 @@ namespace Garmetix.Billing.PageModels
         }
     }
 }
+
+
+ 

@@ -1,19 +1,26 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Extensions;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Garmetix.Billing.Models;
+using Garmetix.Billing.Pages.Popups;
 using Garmetix.Billing.Services;
 using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Inventory;
 using Garmetix.Databases;
-using Garmetix.Databases.Services; 
+using Garmetix.Databases.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace Garmetix.Billing.PageModels
 {
-    public partial class InvoiceFormBasePageModel : ObservableObject
+    public partial class InvoiceEntryPageModel : ObservableObject
     {
+        // 1. Temporary holding variable for the DTO
+        private CardPaymentDto _capturedCardDetails;
+
+        [ObservableProperty] private bool _isCardPaymentSet = false;
+
         protected InvoiceService _invoiceService;
         protected DatabaseContext _localDb = DatabaseService.Instance.LocalDB;
         public DatabaseContext GetContext() => _localDb;
@@ -23,11 +30,16 @@ namespace Garmetix.Billing.PageModels
         // --- NEW: Search Text Binding ---
         [ObservableProperty] protected string searchText;
 
+        //---------- Payment Mode and Narration Inputs ----------
+        //[ObservableProperty] protected PaymentMode paymentModeInput = PaymentMode.Cash;
+
+        [ObservableProperty] protected decimal paymentAmountInput = 0m;
+
         [ObservableProperty] protected PaymentMode _selectedPaymentMode = PaymentMode.Cash;
         [ObservableProperty] protected bool _isNarrationVisible = false;
         [ObservableProperty] protected string _paymentNarration = string.Empty;
         [ObservableProperty] protected string _narrationPlaceholder;
-        
+
         // NEW: Expose the enum values as a list for the ComboBox ItemsSource
         public IList<PaymentMode> PaymentModes { get; } = Enum.GetValues(typeof(PaymentMode)).Cast<PaymentMode>().ToList();
 
@@ -44,38 +56,18 @@ namespace Garmetix.Billing.PageModels
 
         [ObservableProperty] protected string customerMobile = "";
         [ObservableProperty] protected decimal customerBalance = 0;
-    }
-
-
-    public partial class InvoiceEntryPageModel : InvoiceFormBasePageModel
-    {
-
-
-
-
-
         // --- HIGH PERFORMANCE CACHING ---
-        private Dictionary<string, Product> _productBarcodeCache = new();
+        protected Dictionary<string, Product> _productBarcodeCache = new();
 
-        private List<Product> _productNameCache = new();
+        protected List<Product> _productNameCache = new();
 
-        public ObservableCollection<Product> FilteredProducts { get; set; } = new();
-
-
-
-        [ObservableProperty] private InvoiceDTO currentInvoice;
+        [ObservableProperty] protected InvoiceDTO currentInvoice;
         public ObservableCollection<EntryItem> InvoiceItems { get; set; } = new();
         public ObservableCollection<PaymentDetail> Payments { get; set; } = new();
+        public ObservableCollection<Product> FilteredProducts { get; set; } = new();
+        [ObservableProperty] protected Product? selectedProduct;
 
-        // The UI only binds to this small filtered list to prevent lagging
-
-        [ObservableProperty] private Product? selectedProduct;
-        [ObservableProperty] private EntryItem? selectedInvoiceItem;
-        //TODO: Check this Use
-        [ObservableProperty] private PaymentMode paymentModeInput = PaymentMode.Cash;
-        
-        [ObservableProperty] private decimal paymentAmountInput = 0m;
-
+        [ObservableProperty] protected EntryItem? selectedInvoiceItem;
 
 
         partial void OnSearchTextChanged(string value)
@@ -85,7 +77,7 @@ namespace Garmetix.Billing.PageModels
 
             _ = UpdateFilteredProductsAsync(value);
         }
-        
+
         // NEW: This automatically fires the moment you click an item in the search list
         partial void OnSelectedProductChanged(Product? value)
         {
@@ -96,78 +88,6 @@ namespace Garmetix.Billing.PageModels
             }
         }
         partial void OnCustomerMobileChanged(string value) => SearchCustomerAsync();
-        partial void OnGlobalDiscountInputChanged(decimal value) => CalculateInvoiceTotals();
-
-
-        partial void OnGlobalDiscountTypeInputChanged(string value) => CalculateInvoiceTotals();
-
-        
-        public InvoiceEntryPageModel(InvoiceService invoiceService)
-        {
-            _invoiceService = invoiceService;
-
-            searchText = ""; selectedProduct = null;
-            selectedInvoiceItem = null;
-
-            CurrentInvoice = new InvoiceDTO();
-        }
-
-        // Called when the user types in the search box
-        
-        // Add this field to your ViewModel to track ongoing searches
-       
-        private async Task UpdateFilteredProductsAsync(string text)
-        {
-            // 1. Cancel any ongoing database queries because the user kept typing
-            _searchCts?.Cancel();
-            _searchCts = new CancellationTokenSource();
-            var token = _searchCts.Token;
-
-            // 2. You MUST clear the UI if the text is invalid
-            if (string.IsNullOrWhiteSpace(text) || text.Length < 5)
-            {
-                MainThread.BeginInvokeOnMainThread(() => FilteredProducts.Clear());
-                return;
-            }
-
-            try
-            {
-                // 3. Debounce: Wait 300ms to see if the user is still typing before hitting the DB
-                await Task.Delay(300, token);
-
-                // Pass the token to ToListAsync so it cancels safely
-                // Inside UpdateFilteredProductsAsync...
-
-                var results = await GetContext().Products
-                    .Where(p => EF.Functions.Like(p.Name, $"%{text}%") || EF.Functions.Like(p.Barcode, $"%{text}%"))
-                    .Take(20)
-                    .ToListAsync(token);
-
-                if (token.IsCancellationRequested) return;
-
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    // 1. Clear the EXISTING collection that the UI is already bound to
-                    FilteredProducts.Clear();
-
-                    // 2. Add the new items one by one
-                    foreach (var p in results)
-                    {
-                        FilteredProducts.Add(p);
-                    }
-                });
-            }
-            catch (TaskCanceledException)
-            {
-                // This is expected and harmless — it means the user kept typing
-            }
-            catch (Exception ex)
-            {
-                // Handle unexpected DB errors
-                System.Diagnostics.Debug.WriteLine(ex.Message);
-            }
-        }
-        
 
         // --- CUSTOMER LOGIC ---
         [RelayCommand]
@@ -223,9 +143,59 @@ namespace Garmetix.Billing.PageModels
             catch (Exception ex) { await InvoiceService.ShowErrorAsync("Save Customer Error", ex); }
             finally { IsBusy = false; }
         }
+        // Add this field to your ViewModel to track ongoing searches
 
-        // --- CART LOGIC ---
+        protected async Task UpdateFilteredProductsAsync(string text)
+        {
+            // 1. Cancel any ongoing database queries because the user kept typing
+            _searchCts?.Cancel();
+            _searchCts = new CancellationTokenSource();
+            var token = _searchCts.Token;
 
+            // 2. You MUST clear the UI if the text is invalid
+            if (string.IsNullOrWhiteSpace(text) || text.Length < 5)
+            {
+                MainThread.BeginInvokeOnMainThread(() => FilteredProducts.Clear());
+                return;
+            }
+
+            try
+            {
+                // 3. Debounce: Wait 300ms to see if the user is still typing before hitting the DB
+                await Task.Delay(300, token);
+
+                // Pass the token to ToListAsync so it cancels safely
+                // Inside UpdateFilteredProductsAsync...
+
+                var results = await GetContext().Products
+                    .Where(p => EF.Functions.Like(p.Name, $"%{text}%") || EF.Functions.Like(p.Barcode, $"%{text}%"))
+                    .Take(20)
+                    .ToListAsync(token);
+
+                if (token.IsCancellationRequested) return;
+
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    // 1. Clear the EXISTING collection that the UI is already bound to
+                    FilteredProducts.Clear();
+
+                    // 2. Add the new items one by one
+                    foreach (var p in results)
+                    {
+                        FilteredProducts.Add(p);
+                    }
+                });
+            }
+            catch (TaskCanceledException)
+            {
+                // This is expected and harmless — it means the user kept typing
+            }
+            catch (Exception ex)
+            {
+                // Handle unexpected DB errors
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+            }
+        }
         [RelayCommand]
         public void AddProductToInvoice()
         {
@@ -273,36 +243,10 @@ namespace Garmetix.Billing.PageModels
             });
 
         }
-
-        private void InvoiceItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName is nameof(EntryItem.BasePrice) or nameof(EntryItem.BilledQuantity) or nameof(EntryItem.DiscountAmount) or nameof(EntryItem.DiscountAmount))
-            {
-                CalculateInvoiceTotals();
-            }
-        }
+        partial void OnGlobalDiscountInputChanged(decimal value) => CalculateInvoiceTotals();
 
 
-        // --- PAYMENT LOGIC ---
-        [RelayCommand]
-        public void AddPayment()
-        {
-            if (PaymentAmountInput <= 0) return;
-            Payments.Add(new PaymentDetail { PaymentMode = PaymentModeInput, Amount = PaymentAmountInput });
-            PaymentAmountInput = 0;
-            CalculateInvoiceTotals();
-        }
-
-        [RelayCommand]
-        public void RemovePayment(PaymentDetail payment)
-        {
-            if (Payments.Contains(payment))
-            {
-                Payments.Remove(payment);
-                CalculateInvoiceTotals();
-            }
-        }
-
+        partial void OnGlobalDiscountTypeInputChanged(string value) => CalculateInvoiceTotals();
 
         public void CalculateInvoiceTotals()
         {
@@ -326,7 +270,140 @@ namespace Garmetix.Billing.PageModels
             catch (Exception ex) { _ = InvoiceService.ShowErrorAsync("Calculation Error", ex); }
         }
 
+        // --- PAYMENT LOGIC ---
+        [RelayCommand]
+        public void AddPayment()
+        {
+            if (PaymentAmountInput <= 0) return;
 
+            if (SelectedPaymentMode == PaymentMode.Card && _capturedCardDetails == null)
+            {
+                _ = InvoiceService.ShowErrorAsync("Payment Error", new Exception("Card details not captured."));
+                return;
+            }
+            else if (SelectedPaymentMode == PaymentMode.Card && _capturedCardDetails != null)
+            {
+                Payments.Add(new PaymentDetail
+                {
+                    PaymentMode = SelectedPaymentMode,
+                    Amount = _capturedCardDetails.Amount,//PaymentAmountInput,
+                    PaymentNote = "Card: " + _capturedCardDetails.BankName + " " + _capturedCardDetails.CardType.ToString(),
+                    AuthCode = _capturedCardDetails.AuthCode,
+                    CardPaymentNumber = _capturedCardDetails.CardNumber,
+                    CardPaymentBank = _capturedCardDetails.BankName,
+                    Card = _capturedCardDetails.Card,
+                    CardType = _capturedCardDetails.CardType
+                });
+                _capturedCardDetails = null; // Clear after use
+            }
+            else if (SelectedPaymentMode == PaymentMode.Cash)
+                Payments.Add(new PaymentDetail { PaymentMode = SelectedPaymentMode, Amount = PaymentAmountInput });
+            else
+
+                Payments.Add(new PaymentDetail { PaymentMode = SelectedPaymentMode, Amount = PaymentAmountInput, PaymentNote = PaymentNarration });
+
+            PaymentAmountInput = 0;
+            CalculateInvoiceTotals();
+            SelectedPaymentMode = PaymentMode.Cash; // Reset to default after adding payment
+        }
+
+        [RelayCommand]
+        public void RemovePayment(PaymentDetail payment)
+        {
+            if (Payments.Contains(payment))
+            {
+                Payments.Remove(payment);
+                CalculateInvoiceTotals();
+            }
+        }
+
+        /// <summary>
+        /// Go back to main or list page
+        /// </summary>
+        /// <returns></returns>
+
+        [RelayCommand]
+        public async Task GoBackAsync()
+        { if (!IsBusy) await Shell.Current.GoToAsync(".."); }
+
+
+
+
+
+
+
+        public InvoiceEntryPageModel(InvoiceService invoiceService)
+        {
+            _invoiceService = invoiceService;
+
+            searchText = ""; selectedProduct = null;
+            selectedInvoiceItem = null;
+
+            CurrentInvoice = new InvoiceDTO();
+        }
+
+
+
+        protected void InvoiceItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName is nameof(EntryItem.BasePrice) or nameof(EntryItem.BilledQuantity) or nameof(EntryItem.DiscountAmount) or nameof(EntryItem.DiscountAmount))
+            {
+                CalculateInvoiceTotals();
+            }
+        }
+
+
+        // 2. Trigger the popup when "Card" is selected
+        partial void OnSelectedPaymentModeChanged(PaymentMode value)
+        {
+            _capturedCardDetails = null;
+
+            if (value == PaymentMode.Card)
+            {
+                IsNarrationVisible = false;
+                MainThread.BeginInvokeOnMainThread(async () =>
+                {
+                    var popup = new CardPaymentPopup();
+                    var result = await Shell.Current.CurrentPage.ShowPopupAsync<CardPaymentDto>(popup);// as CardPaymentDto;
+
+                    if (result.Result != null)
+                    {
+                        _capturedCardDetails = result.Result;
+                        PaymentAmountInput = _capturedCardDetails.Amount;
+                        AddPayment();
+                    }
+                    else
+                        SelectedPaymentMode = PaymentMode.Cash; // Revert if cancelled
+                });
+            }
+            else if (value == PaymentMode.Cash)
+            {
+                IsNarrationVisible = false;
+            }
+            else
+            {
+                // Handle UPI/Cheque Narration
+                IsNarrationVisible = true;
+                // ... set placeholder logic ...
+                // UPI, Cheque, Wallet
+                IsNarrationVisible = true;
+                PaymentNarration = string.Empty;
+
+                // Dynamically change the placeholder based on the mode
+                NarrationPlaceholder = value switch
+                {
+                    PaymentMode.UPI => "Enter UTR / Transaction No.",
+                    PaymentMode.Cheque => "Enter Cheque Number & Bank",
+                    PaymentMode.Wallets => "Enter Wallet Txn ID",
+                    PaymentMode.SaleReturn => "Enter Original Invoice No.",
+                    PaymentMode.CreditNote => "Enter Credit Note Details",
+                    PaymentMode.RTGS or PaymentMode.NEFT or PaymentMode.IMPS => "Enter Transaction(UTR) Reference",
+                    _ => "Enter Reference Details"
+                };
+            }
+        }
+
+         
 
 
         // --- DATABASE SAVE ENGINE and FINAL ACTION COMMANDS ---
@@ -358,14 +435,6 @@ namespace Garmetix.Billing.PageModels
         }
 
         // --- UTILITIES ---
-        /// <summary>
-        /// Go back to main or list page
-        /// </summary>
-        /// <returns></returns>
-
-        [RelayCommand]
-        public async Task GoBackAsync()
-        { if (!IsBusy) await Shell.Current.GoToAsync(".."); }
 
         /// <summary>
         /// Clear the invoice
@@ -382,12 +451,12 @@ namespace Garmetix.Billing.PageModels
         /// <summary>
         /// Reset the form without prompt
         /// </summary>
-        private void ResetFormWithoutPrompt()
+        protected void ResetFormWithoutPrompt()
         {
             foreach (var item in InvoiceItems) item.PropertyChanged -= InvoiceItem_PropertyChanged;
             InvoiceItems.Clear(); Payments.Clear();
             GlobalDiscountInput = 0; GlobalDiscountTypeInput = "Amount";
-            PaymentAmountInput = 0; PaymentModeInput = PaymentMode.Cash;
+            PaymentAmountInput = 0; SelectedPaymentMode = PaymentMode.Cash;
             IsNewCustomer = false; SelectedProduct = null; SelectedInvoiceItem = null;
             CurrentInvoice = new InvoiceDTO();
             OnPropertyChanged(nameof(CurrentInvoice));
