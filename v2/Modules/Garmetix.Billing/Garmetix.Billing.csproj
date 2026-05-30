@@ -67,6 +67,9 @@
 	  <MauiXaml Update="Pages\PaymentRegistryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Pages\Popups\CardPaymentPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\Popups\InvoiceScanPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

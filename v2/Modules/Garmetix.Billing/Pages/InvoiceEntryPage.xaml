@@ -66,9 +66,9 @@
                             <core:SfTextInputLayout Hint="GSTIN (Optional)" ContainerType="None" Grid.Column="2">
                                 <Entry Text="{Binding CurrentInvoice.CustomerGSTIN}" />
                             </core:SfTextInputLayout>
-                           
-                            <Label Text="{Binding CustomerBalance, StringFormat='Balance: {0:C}'}" IsVisible="{Binding ActiveCustomer}"/>   
-                           
+
+                            <Label Text="{Binding CustomerBalance, StringFormat='Balance: {0:C}'}" IsVisible="{Binding ActiveCustomer}"/>
+
                             <Button Text="Save" Command="{Binding SaveCustomerCommand}" IsVisible="{Binding IsNewCustomer}"
                                     Grid.Column="3" BackgroundColor="#28A745" TextColor="White" CornerRadius="6" WidthRequest="100" HeightRequest="45" />
                         </Grid>
@@ -138,14 +138,16 @@
                         <VerticalStackLayout Grid.Column="0" Spacing="10">
                             <Label Text="Payment Details" Style="{StaticResource HeaderLabelStyle}" FontSize="14" />
 
-                            <Grid ColumnDefinitions="*, *, Auto" ColumnSpacing="10">
+                            <Grid ColumnDefinitions="*, *,*, Auto" ColumnSpacing="10">
                                 <inputs:SfComboBox Grid.Column="0"
                                       ItemsSource="{Binding PaymentModes}"
                                       SelectedItem="{Binding PaymentModeInput}"
                                       HeightRequest="40" />
 
                                 <Entry Grid.Column="1" Placeholder="Amount (₹)" Text="{Binding PaymentAmountInput}" Keyboard="Numeric" HeightRequest="40" BackgroundColor="#F8F9FA" />
-                                <Button Grid.Column="2" Text="Add" Command="{Binding AddPaymentCommand}" HeightRequest="40" BackgroundColor="#6C757D" TextColor="White" CornerRadius="4" />
+                                <Entry Grid.Column="2" Text="{Binding PaymentNarration}"                                                       Placeholder="{Binding NarrationPlaceholder}"            IsVisible="{Binding IsNarrationVisible}"           ClearButtonVisibility="WhileEditing" />
+
+                                <Button Grid.Column="3" Text="Add" Command="{Binding AddPaymentCommand}" HeightRequest="40" BackgroundColor="#6C757D" TextColor="White" CornerRadius="4" />
                             </Grid>
 
                             <CollectionView ItemsSource="{Binding Payments}" HeightRequest="90" Margin="0,5,0,0">
