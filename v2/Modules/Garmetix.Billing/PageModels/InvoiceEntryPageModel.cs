@@ -103,13 +103,17 @@ namespace Garmetix.Billing.PageModels
                 {
                     CurrentInvoice.CustomerName = customer.Name;
                     CurrentInvoice.CustomerGSTIN = customer.GSTIN;
+                    
                     CustomerBalance = customer.CreditBalance;
                     ActiveCustomer = true;
                     IsNewCustomer = false;
                     OnPropertyChanged(nameof(CurrentInvoice));
                 }
                 else
-                    IsNewCustomer = true;
+                {
+                    ActiveCustomer = false;
+                    IsNewCustomer = true; 
+                }
             }
             catch (Exception ex) { await InvoiceService.ShowErrorAsync("Customer Search Error", ex); }
             finally { IsBusy = false; }
@@ -217,8 +221,8 @@ namespace Garmetix.Billing.PageModels
 
                     // CHANGED: Use 1m to signify 1 as a decimal
 
-                    BilledQuantity = 1m,
-
+                    BilledQuantity = 1m, Id = SelectedProduct.Id,
+                    InvoiceId=CurrentInvoice.Id,
                     DiscountPercentage = 0
                 };
 

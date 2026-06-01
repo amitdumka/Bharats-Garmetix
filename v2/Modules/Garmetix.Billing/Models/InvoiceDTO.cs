@@ -5,6 +5,25 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Garmetix.Billing.Models
 {
+
+    public partial class StockDTO : ObservableObject
+    {
+        [Key]
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public string ProuctName { get; set; } = string.Empty;
+        [Required]
+        public string Barcode { get; set; } = string.Empty;
+        public decimal MRP { get; set; } = decimal.Zero;
+        public decimal BasePrice { get; set; } = decimal.Zero;
+        public decimal AvailableQuantity { get; set; } = decimal.Zero;
+        public decimal TaxPercentage { get; set; } = decimal.Zero;
+        public GarmentCategory GarmentCategory { get; set; }
+        public Unit Unit { get; set; } = Unit.Pcs;
+
+
+    }
+
+
     public class PaymentDetail
     {
         [Key]

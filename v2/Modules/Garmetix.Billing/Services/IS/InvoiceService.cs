@@ -821,7 +821,7 @@ namespace Garmetix.Billing.Services
                                 CompanyId = currentInvoice.CompanyId,
                                 StoreId = DatabaseService.StoreId,
 
-                                InvoiceId = item.InvoiceId,
+                                InvoiceId = currentInvoice.Id,
 
                                 Id = item.Guid,
                                 OnDate = item.PaymentDate,

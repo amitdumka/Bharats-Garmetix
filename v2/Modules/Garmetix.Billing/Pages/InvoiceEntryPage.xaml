@@ -67,10 +67,10 @@
                                 <Entry Text="{Binding CurrentInvoice.CustomerGSTIN}" />
                             </core:SfTextInputLayout>
 
-                            <Label Text="{Binding CustomerBalance, StringFormat='Balance: {0:C}'}" IsVisible="{Binding ActiveCustomer}"/>
+                            <Label Grid.Column="3" Text="{Binding CustomerBalance, StringFormat='Balance: {0:C}'}" IsVisible="{Binding ActiveCustomer}"/>
 
                             <Button Text="Save" Command="{Binding SaveCustomerCommand}" IsVisible="{Binding IsNewCustomer}"
-                                    Grid.Column="3" BackgroundColor="#28A745" TextColor="White" CornerRadius="6" WidthRequest="100" HeightRequest="45" />
+                                    Grid.Column="4" BackgroundColor="#28A745" TextColor="White" CornerRadius="6" WidthRequest="100" HeightRequest="45" />
                         </Grid>
                     </VerticalStackLayout>
                 </Border>
