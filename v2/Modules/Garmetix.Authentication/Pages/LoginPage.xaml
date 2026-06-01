@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Garmetix.Authentication.Pages.LoginPage"
+             Title="Login">
+
+    <Grid RowDefinitions="340,*">
+        <!-- Background Image -->
+        <Image Grid.RowSpan="2" Source="fashion_bg.jpg" Aspect="AspectFill" Opacity="0.18"/>
+        <!-- Purple Header -->
+        <Border Grid.Row="0" StrokeThickness="0">
+            <Border.Background>
+                <LinearGradientBrush EndPoint="1,1">
+                    <GradientStop Color="#3B0764" Offset="0"/>
+                    <GradientStop Color="#6D28D9" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <Grid Padding="30">
+                <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                    <Image HeightRequest="120" WidthRequest="120" Source="garmetix_logo.png"/>
+                    <Label Text="GARMETIX" FontSize="42" FontAttributes="Bold" TextColor="Gold" HorizontalOptions="Center"/>
+                    <Label Text="Aadwika Fashion" FontSize="18" TextColor="White" HorizontalOptions="Center"/>
+                    <Label Margin="0,12,0,0" Text="Manage. Design. Grow." FontSize="16" TextColor="#E9D5FF" HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+            </Grid>
+        </Border>
+        <!-- Main Card -->
+        <Border Grid.Row="1" Margin="0,-50,0,0" BackgroundColor="White" StrokeThickness="0" StrokeShape="RoundRectangle 45,45,0,0">
+            <ScrollView>
+                <VerticalStackLayout Padding="35,40" Spacing="22">
+                    <Label Text="Welcome Back!" FontSize="34" FontAttributes="Bold" TextColor="#111827"/>
+                    <Label Text="Sign in to continue to Garmetix" FontSize="15" TextColor="#6B7280"/>
+                    <!-- Username -->
+                    <Border BackgroundColor="#F5F5F8" StrokeThickness="0" StrokeShape="RoundRectangle 18">
+                        <Grid Padding="18,0" ColumnDefinitions="40,*">
+                            <Label Text="👤" FontSize="20" VerticalOptions="Center"/>
+                            <Entry Grid.Column="1" Placeholder="Username / Email" BackgroundColor="Transparent"/>
+                        </Grid>
+                    </Border>
+                    <!-- Password -->
+                    <Border BackgroundColor="#F5F5F8" StrokeThickness="0" StrokeShape="RoundRectangle 18">
+                        <Grid Padding="18,0" ColumnDefinitions="40,*,40">
+                            <Label Text="🔒" FontSize="20" VerticalOptions="Center"/>
+                            <Entry x:Name="PasswordEntry" Grid.Column="1" IsPassword="True" Placeholder="Password" BackgroundColor="Transparent"/>
+                            <ImageButton Grid.Column="2" Source="eye.png" BackgroundColor="Transparent" Clicked="TogglePassword"/>
+                        </Grid>
+                    </Border>
+                    <!-- Remember -->
+                    <Grid ColumnDefinitions="Auto,*,Auto">
+                        <HorizontalStackLayout>
+                            <CheckBox/>
+                            <Label VerticalOptions="Center" Text="Remember me"/>
+                        </HorizontalStackLayout>
+                        <Label Grid.Column="2" Text="Forgot Password?" TextColor="#6D28D9" FontAttributes="Bold"/>
+                    </Grid>
+                    <!-- Login Button -->
+                    <Button HeightRequest="65" Text="Login" FontSize="20" FontAttributes="Bold" TextColor="White" CornerRadius="22" Clicked="LoginClicked">
+                        <Button.Background>
+                            <LinearGradientBrush EndPoint="1,0">
+                                <GradientStop Color="#8B5CF6"/>
+                                <GradientStop Color="#5B21B6"/>
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
+                    <!-- Security Card -->
+                    <Border Margin="0,20,0,0" Padding="20" BackgroundColor="#FAFAFA" Stroke="#ECECEC" StrokeShape="RoundRectangle 20">
+                        <HorizontalStackLayout Spacing="15">
+                            <Label FontSize="28" Text="🛡️"/>
+                            <VerticalStackLayout>
+                                <Label Text="Your data is 100% secure" FontAttributes="Bold"/>
+                                <Label Text="We keep your business safe and secure" FontSize="13" TextColor="#6B7280"/>
+                            </VerticalStackLayout>
+                        </HorizontalStackLayout>
+                    </Border>
+                    <Label HorizontalOptions="Center" Text="Version 1.0.0" TextColor="#9CA3AF"/>
+                </VerticalStackLayout>
+            </ScrollView>
+        </Border>
+    </Grid>
+
+
+</ContentPage>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Garmetix.RemoteReceiver.ViewModels"
+             x:Class="Garmetix.RemoteReceiver.Views.RemoteReceiverPage"
+             Title="Remote Print Monitor">
+
+    <Grid RowDefinitions="Auto, Auto, *" Padding="20" BackgroundColor="#0F172A">
+
+        <!-- Status Panel Card -->
+        <Border Grid.Row="0" StrokeShape="RoundRectangle 12" BackgroundColor="#1E293B" Padding="15" Margin="0,0,0,15">
+            <VerticalStackLayout Spacing="8">
+                <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                    <BoxView WidthRequest="12" HeightRequest="12" CornerRadius="6" 
+                             Color="{Binding IsConnected, Converter={StaticResource ConnectionColorConverter}}" />
+                    <Label Text="{Binding StatusMessage}" TextColor="White" FontSize="16" FontAttributes="Bold" />
+                </HorizontalStackLayout>
+
+                <Grid ColumnDefinitions="*, Auto" ColumnSpacing="15" Margin="0,10,0,0">
+                    <Entry Grid.Column="0" Text="{Binding BranchId}" Placeholder="Enter Branch ID" 
+                           TextColor="White" BackgroundColor="#334155" IsEnabled="{Binding IsConnected, Converter={StaticResource InvertedBoolConverter}}" />
+                    <Button Grid.Column="1" Text="{Binding IsConnected, Converter={StaticResource ConnectionTextConverter}}" 
+                            Command="{Binding ToggleConnectionCommand}" BackgroundColor="#D4AF37" TextColor="Black" FontAttributes="Bold"/>
+                </Grid>
+            </VerticalStackLayout>
+        </Border>
+
+        <Label Grid.Row="1" Text="Live Remote Print Queue Logs" TextColor="#94A3B8" FontAttributes="Bold" Margin="0,5" />
+
+        <!-- Execution Queue Activity Feed -->
+        <Border Grid.Row="2" StrokeShape="RoundRectangle 12" BackgroundColor="#1E293B" Padding="10">
+            <ListView ItemsSource="{Binding PrintLog}" SelectionMode="None" BackgroundColor="Transparent">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Label Text="{Binding}" TextColor="#E2E8F0" FontSize="13" Padding="10,5" VerticalOptions="Center"/>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Border>
+
+    </Grid>
+</ContentPage>

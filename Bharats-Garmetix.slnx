@@ -31,7 +31,13 @@
   <Folder Name="/UIs/">
     <Project Path="Dukan/Dukan.csproj" Id="d5cb4b6a-6592-49f0-a275-cb368759be07" />
     <Project Path="Paggar/Paggar.csproj" Id="b19eed27-883b-45b9-8feb-cc5d2d62846a" />
+    <Project Path="UI/Garmetix.RemoteReceiver/Garmetix.RemoteReceiver.csproj" Id="b5504076-6cf8-4ed7-afbb-63b3ba1aef29">
+      <Deploy Solution="Debug|*" />
+    </Project>
     <Project Path="v2/Garmetix.SRP/Garmetix.SRP.csproj" Id="700e02d3-2898-43af-b8c0-15a872add007" />
+  </Folder>
+  <Folder Name="/Web/">
+    <Project Path="Web/Garmteix.Shared/Garmteix.Shared.shproj" Id="b8402eee-d41f-4d39-b23f-f0489a4df582" />
   </Folder>
   <Project Path="Garmetix/Garmetix.csproj">
     <Deploy Solution="Debug|*" />
