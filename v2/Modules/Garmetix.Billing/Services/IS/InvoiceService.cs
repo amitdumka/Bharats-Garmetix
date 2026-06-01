@@ -779,7 +779,7 @@ namespace Garmetix.Billing.Services
                             InvoiceId = currentInvoice.Id,
                             CompanyId = currentInvoice.CompanyId,
 
-                            Id = item.Id,
+                            Id =Guid.NewGuid(),// item.Id,
 
                             Barcode = item.Barcode,
                             BilledQuantity = item.BilledQuantity,

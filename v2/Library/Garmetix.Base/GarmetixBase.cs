@@ -8,9 +8,10 @@ namespace Garmetix.Base
         // List of Static Route name
         public const string RouteMainPage = "MainPage";
         public const string RouteSettingsPage = "SettingsPage";
-        public const string DashboardPage = "DashboardPage";
+        public const string DashboardPage = "Dashboard";
+        public const string HomePage = "Dashboard";
 
-        public const string RouteLoginPage = "LoginPage";
+        public const string LoginPage = "Login";
         public const string ErrorPage = "ErrorPage";
 
         public static MauiAppBuilder UseGarmetixBase(this MauiAppBuilder builder)
@@ -22,5 +23,27 @@ namespace Garmetix.Base
 
             return builder;
         }
+
+        public static async Task FailsafePage() { 
+        
+            await Shell.Current.GoToAsync(HomePage);
+        }
+        
+        public static async Task GotoLoginPage() {
+        
+            await Shell.Current.GoToAsync( LoginPage);
+        }
+        public static async Task GotoHomePage() {
+
+            await Shell.Current.GoToAsync(HomePage);
+
+        }
+        public static async Task GotoDashboardPage() {
+
+            await Shell.Current.GoToAsync(DashboardPage);
+
+        }
+
+
     }
 }

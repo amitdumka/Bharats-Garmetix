@@ -33,7 +33,7 @@ namespace Garmetix.Billing.Services
             }
 
             _allInvoices.Clear();
-            _allInvoices = await GetContext().Invoices.Where(x => x.OnDate.Month == DateTime.Now.Month && x.OnDate.Year == DateTime.Now.Year).OrderByDescending(c => c.OnDate.Date).ToListAsync();
+            _allInvoices = await GetContext().Invoices.Where(x => x.OnDate.Month == DateTime.Now.Month && x.OnDate.Year == DateTime.Now.Year && !x.Deleted).OrderByDescending(c => c.OnDate.Date).ToListAsync();
             return _allInvoices;
         }
 
@@ -45,7 +45,7 @@ namespace Garmetix.Billing.Services
             }
 
             _allPayments.Clear();
-            _allPayments = await GetContext().InvoicePayments.Where(static x => x.OnDate.Month == DateTime.Now.Month && x.OnDate.Year == DateTime.Now.Year).OrderByDescending(c => c.OnDate.Date).ToListAsync();
+            _allPayments = await GetContext().InvoicePayments.Where(static x => x.OnDate.Month == DateTime.Now.Month && x.OnDate.Year == DateTime.Now.Year && !x.Deleted).OrderByDescending(c => c.OnDate.Date).ToListAsync();
             return _allPayments;
         }
 
@@ -57,7 +57,7 @@ namespace Garmetix.Billing.Services
             }
 
             _allCards.Clear();
-            _allCards = await GetContext().CardPayments.Where(static x => x.OnDate.Month == DateTime.Now.Month && x.OnDate.Year == DateTime.Now.Year).OrderByDescending(c => c.OnDate.Date).ToListAsync();
+            _allCards = await GetContext().CardPayments.Where(static x => x.OnDate.Month == DateTime.Now.Month && x.OnDate.Year == DateTime.Now.Year && !x.Deleted).OrderByDescending(c => c.OnDate.Date).ToListAsync();
             return _allCards;
         }
 
@@ -96,17 +96,17 @@ namespace Garmetix.Billing.Services
                 {
                     // FIX: Use InvoiceId for child records and ToListAsync() to populate collections safely
                     invoice.InvoiceItems = await context.InvoiceItems
-                        .Where(c => c.InvoiceId == InvId)
+                        .Where(c => c.InvoiceId == InvId && !c.Deleted)
                         .ToListAsync();
 
                     invoice.Payments = await context.InvoicePayments
-                        .Where(c => c.InvoiceId == InvId)
+                        .Where(c => c.InvoiceId == InvId && !c.Deleted)
                         .ToListAsync();
 
                     if (invoice.PaymentMode == PaymentMode.Card)
                     {
                         invoice.CardPayments = await context.CardPayments
-                            .Where(c => c.InvoiceId == InvId)
+                            .Where(c => c.InvoiceId == InvId && !c.Deleted)
                             .ToListAsync();
                     }
                 }

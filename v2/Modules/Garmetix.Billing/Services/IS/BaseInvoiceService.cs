@@ -32,6 +32,21 @@ namespace Garmetix.Billing.Services
         }
 
         /// <summary>
+        /// Invalidates the invoice cache, forcing the service to refresh its data from the database on the next access.
+        /// </summary>
+        /// <returns></returns>
+        public bool InvalidateCache()
+        {
+            invalidateCache = true;
+            return invalidateCache;
+        }
+        public bool ValidCache()
+        {
+            invalidateCache = false;
+            return invalidateCache;
+        }
+
+        /// <summary>
         /// Generates the next unique invoice number for the current store and month in the format
         /// 'STORECODE-YYYYMM-IN-XXXX'.
         /// </summary>

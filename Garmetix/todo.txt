@@ -1,0 +1,8 @@
+﻿Things to TODO:
+1. Implement Route default value and handle navgivation  , make a method which handle nagivation and set default value for route parameters if not provided.
+2. Implement  Soft and hard delete, and retirve the record from database which is marked as not marked soft deleted.
+3. Implement Purchase and Sale Import  and export 
+4. Implememt  Backup and restore functionality for database, create a method to backup the database and another method to restore it from backup.
+5. Implement  User authentication and authorization, create a login system and restrict access to certain parts of the application based on user roles.
+6. Implement  Logging and error handling, create a logging mechanism to log errors and important events in the application, and implement error handling to gracefully handle exceptions.
+7. Implement  Unit testing and integration testing, create unit tests for individual components and integration tests to ensure that different parts of the application work together correctly.

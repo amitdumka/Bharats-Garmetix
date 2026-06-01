@@ -5,7 +5,6 @@ using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Inventory;
 using Garmetix.Databases;
 using Garmetix.Databases.Services;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 
 namespace Garmetix.Billing.PageModels
@@ -93,7 +92,9 @@ namespace Garmetix.Billing.PageModels
                 _allInvoices = await _invoiceService.GetInvoicesAsync();
                 _allPayments = await _invoiceService.GetPaymentsAsync();
                 _allCards = await _invoiceService.GetCardPaymentsAsync();
-
+                
+                _invoiceService.ValidCache(); // ValidCache. 
+                
                 MainThread.BeginInvokeOnMainThread(() => ApplyFilters());
             }
             catch (Exception ex)
@@ -262,38 +263,43 @@ namespace Garmetix.Billing.PageModels
             try
             {
                 // Enabling Trnascation and Roll back concept
-                using var transaction = await GetContext().Database.BeginTransactionAsync();
+               // using var transaction = await GetContext().Database.BeginTransactionAsync();
                 try
                 {
-                    // 2. Perform bulk deletions directly on the database (EF Core 7+)
-                    // Note: Replace 'InvoiceItems', 'InvoicePayment', and 'Invoices'
-                    // with the actual DbSet property names in your DbContext.
+                    //// 2. Perform bulk deletions directly on the database (EF Core 7+)
+                    //// Note: Replace 'InvoiceItems', 'InvoicePayment', and 'Invoices'
+                    //// with the actual DbSet property names in your DbContext.
 
-                    await GetContext().InvoiceItems
-                        .Where(i => i.InvoiceId == invoice.Id)
-                        .ExecuteDeleteAsync();
+                    //await GetContext().InvoiceItems
+                    //    .Where(i => i.InvoiceId == invoice.Id)
+                    //    .ExecuteDeleteAsync();
 
-                    await GetContext().InvoicePayments
-                        .Where(p => p.InvoiceId == invoice.Id)
-                        .ExecuteDeleteAsync();
+                    //await GetContext().InvoicePayments
+                    //    .Where(p => p.InvoiceId == invoice.Id)
+                    //    .ExecuteDeleteAsync();
 
-                    await GetContext().Invoices
-                        .Where(i => i.Id == invoice.Id)
-                        .ExecuteDeleteAsync();
+                    //await GetContext().Invoices
+                    //    .Where(i => i.Id == invoice.Id)
+                    //    .ExecuteDeleteAsync();
 
-                    // 3. Commit the transaction to save changes permanently
-                    await transaction.CommitAsync();
-
+                    //// 3. Commit the transaction to save changes permanently
+                    //await transaction.CommitAsync();
+                   
+                    var result = await _invoiceService.DeleteInvoicesAsync(invoice);
+                    if(!result)
+                    {
+                        await Application.Current.Windows[0].Page!.DisplayAlertAsync("Delete Failed", "Failed to delete the invoice. Please try again.", "OK");
+                    }
                     // If we reach here, the deletion was successful
                     await Application.Current.Windows[0].Page!.DisplayAlertAsync("Deleted", "Invoice deleted successfully.", "OK");
-
+                    //_invoiceService.InvalidateCache = true;
                     // Reload the table
                     await LoadDataAsync();
                 }
                 catch (Exception)
                 {
                     // 4. Roll back the transaction if any database operation fails
-                    await transaction.RollbackAsync();
+                  //  await transaction.RollbackAsync();
 
                     // Re-throw the exception so the outer catch block can handle the UI error display
                     throw;
@@ -317,7 +323,8 @@ namespace Garmetix.Billing.PageModels
             }
             finally
             {
-                IsBusy = false;
+                IsBusy = false; 
+                await LoadDataAsync();
             }
         }
 

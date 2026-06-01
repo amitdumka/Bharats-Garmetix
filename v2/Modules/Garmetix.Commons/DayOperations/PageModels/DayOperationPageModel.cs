@@ -1,6 +1,7 @@
 ﻿using Bharat.ToolKits.Notifications;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Garmetix.Base;
 using Garmetix.Commons.DayOperations.Models;
 using Garmetix.Core.VM;
 using Garmetix.Databases.Services;
@@ -457,7 +458,8 @@ namespace Garmetix.CoreBase.DayOperations.PageModels
                         //Disble write permission for Day Mode if process for Store Manager and Cashier
                         _ = Notify.ShowSuccess("Day operation  started successfully.", speak: true);
                         DayBeginEntry = new DayBeginEntry();
-                        await Shell.Current.GoToAsync("///main");
+                        //await Shell.Current.GoToAsync("main");
+                        await GarmetixBase.GotoHomePage();
                     }
                     else
                     {
@@ -467,7 +469,8 @@ namespace Garmetix.CoreBase.DayOperations.PageModels
                 catch (Exception ex)
                 {
                     _ = Notify.ShowError(ex, speak: false, snabackbar: true);
-                    await Shell.Current.GoToAsync("//home");
+                    //await Shell.Current.GoToAsync("main");
+                   await GarmetixBase.GotoHomePage();
                 }
             }
              ).Start();

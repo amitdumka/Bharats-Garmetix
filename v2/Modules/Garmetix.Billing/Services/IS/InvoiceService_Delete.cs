@@ -80,6 +80,7 @@ namespace Garmetix.Billing.Services
                 await GetContext().SaveChangesAsync();
                 await transaction.CommitAsync();
 
+                InvalidateCache(); // Invalidate cache after deletion
                 return true;
             }
             catch (Exception ex)
