@@ -29,7 +29,7 @@ namespace Garmetix.Billing.Helpers
         {
             QuestPDF.Settings.License = LicenseType.Community;
         }
-
+         
         public static string GenerateA5Pdf(Invoice? invoice, IEnumerable<InvoiceItem>? items, IEnumerable<InvoicePayment>? payments)
         {
             Initialize();

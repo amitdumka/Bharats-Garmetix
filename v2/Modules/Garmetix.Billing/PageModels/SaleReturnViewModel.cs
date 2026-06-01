@@ -1,9 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Garmetix.Billing.Helpers;
+using Garmetix.Billing.Models;
 using Garmetix.Billing.Services;
 using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Inventory;
 using Microsoft.EntityFrameworkCore;
+using Syncfusion.Pdf.Graphics;
 using System.Collections.ObjectModel;
 namespace Garmetix.Billing.PageModels
 {
@@ -93,6 +96,47 @@ namespace Garmetix.Billing.PageModels
             GrandTotalRefund = ReturnItems
                 .Where(x => x.IsSelected)
                 .Sum(x => x.TotalRefund);
+        }
+
+
+        private async Task GenerateAndPrintCreditNote(Invoice returnInvoice)
+        {
+            // 1. You already processed the return and have the 'returnReceipt' and 'customer' objects
+            // Invoice returnReceipt = await _invoiceService.ProcessSaleReturnAsync(...);
+
+            // 2. Generate the QR Code (Using the method we built earlier!)
+            // We encode the ReturnInvoice ID so it can be scanned easily later
+            byte[] qrBytes = InvoiceService.GenerateQRBarcodeCode(returnInvoice.InvoiceNumber, InvoiceCodeType.QRCode);
+
+            // 3. Map the data to our DTO
+            var creditNoteData = new CreditNoteDto
+            {
+                CustomerName = returnInvoice.CustomerName!,
+                MobileNo = returnInvoice.CustomerMobileNumber,
+                ReturnInvoiceNo = returnInvoice.InvoiceNumber,
+                ReturnInvoiceDate =OriginalInvoice.OnDate, // The date they originally bought it
+                NoteDate = returnInvoice.OnDate,            // The date of the return
+                TotalAmount = returnInvoice.BillAmount,
+                QrCodeImage = qrBytes
+            };
+
+
+            try
+            {
+                // 4. Generate the PDF A4 page
+                string filePath = CreditNotePdfBuilder.GenerateCreditNote(creditNoteData);
+
+                // 5. Trigger the Native Device Print/Share dialog
+                //string fileName = $"CreditNote_{returnInvoice.InvoiceNumber}.pdf";
+               // await PdfPrintService.SaveAndSharePdfAsync(pdfBytes, fileName);
+
+                await Launcher.Default.OpenAsync(new OpenFileRequest { Title = "Print Credit Note", File = new ReadOnlyFile(filePath) });
+
+            }
+            catch (Exception pdfEx)
+            {
+                await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Print Error", $"Return saved, but failed to generate PDF: {pdfEx.Message}", "OK");
+            }
         }
 
         [RelayCommand]

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               x:Class="Garmetix.Billing.Pages.Popups.RedeemCreditPopup"
+               x:TypeArguments="x:Decimal">
+
+    <Border Padding="20" BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+            WidthRequest="350" StrokeThickness="0" StrokeShape="RoundRectangle 15">
+
+        <VerticalStackLayout Spacing="15">
+            <Label Text="💳 Redeem Credit Note" FontSize="18" FontAttributes="Bold" HorizontalOptions="Center" />
+
+            <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto" RowSpacing="10">
+                <Label Grid.Row="0" Grid.Column="0" Text="Note Ref:" TextColor="Gray" />
+                <Label Grid.Row="0" Grid.Column="1" x:Name="NoteRefLabel" FontAttributes="Bold" />
+
+                <Label Grid.Row="1" Grid.Column="0" Text="Available Balance:" TextColor="Gray" />
+                <Label Grid.Row="1" Grid.Column="1" x:Name="AvailableBalanceLabel" TextColor="Green" FontAttributes="Bold" />
+            </Grid>
+
+            <BoxView HeightRequest="1" Color="Gray" Opacity="0.3" Margin="0,5" />
+
+            <Label Text="Amount to Redeem (₹)" FontAttributes="Bold" />
+            <Entry x:Name="RedeemAmountEntry"
+                   Keyboard="Numeric"
+                   ClearButtonVisibility="WhileEditing"
+                   FontSize="18" FontAttributes="Bold" TextColor="#D4AF37" />
+
+            <Grid ColumnDefinitions="*, *" ColumnSpacing="15" Margin="0,15,0,0">
+                <Button Grid.Column="0" Text="Cancel" Clicked="Cancel_Clicked" BackgroundColor="Transparent" TextColor="Red" />
+                <Button Grid.Column="1" Text="Apply" Clicked="Apply_Clicked" BackgroundColor="#D4AF37" TextColor="Black" FontAttributes="Bold" />
+            </Grid>
+        </VerticalStackLayout>
+    </Border>
+</toolkit:Popup>

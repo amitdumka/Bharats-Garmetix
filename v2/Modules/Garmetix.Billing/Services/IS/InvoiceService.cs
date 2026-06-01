@@ -24,6 +24,44 @@ namespace Garmetix.Billing.Services
 
    public partial class InvoiceService: BaseInvoiceService
     {
+
+        //public async Task GenerateAndPrintCreditNote(Invoice returnInvoice)
+        //{
+        //    // 1. You already processed the return and have the 'returnReceipt' and 'customer' objects
+        //    // Invoice returnReceipt = await _invoiceService.ProcessSaleReturnAsync(...);
+
+        //    // 2. Generate the QR Code (Using the method we built earlier!)
+        //    // We encode the ReturnInvoice ID so it can be scanned easily later
+        //    byte[] qrBytes = GenerateInvoiceCode(returnInvoice, InvoiceCodeType.QRCode);
+           
+        //    // 3. Map the data to our DTO
+        //    var creditNoteData = new CreditNoteDto
+        //    {
+        //        CustomerName = ActiveCustomer.Name,
+        //        MobileNo = ActiveCustomer.MobileNo,
+        //        ReturnInvoiceNo = returnInvoice.InvoiceNumber,
+        //        ReturnInvoiceDate = returnInvoice.OnDate, // The date they originally bought it
+        //        NoteDate = returnInvoice.OnDate,            // The date of the return
+        //        TotalAmount = returnInvoice.BillAmount,
+        //        QrCodeImage = qrBytes
+        //    };
+
+
+        //    try
+        //    {
+        //        // 4. Generate the PDF A4 page
+        //        byte[] pdfBytes = CreditNotePdfBuilder.GenerateCreditNote(creditNoteData);
+
+        //        // 5. Trigger the Native Device Print/Share dialog
+        //        string fileName = $"CreditNote_{returnInvoice.InvoiceNumber}.pdf";
+        //        await PdfPrintService.SaveAndSharePdfAsync(pdfBytes, fileName);
+        //    }
+        //    catch (Exception pdfEx)
+        //    {
+        //        await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Print Error", $"Return saved, but failed to generate PDF: {pdfEx.Message}", "OK");
+        //    }
+        //}
+
         // Sale Return Code here 
         /// <summary>
         /// Processes a sales return, restores inventory, and generates a return invoice.
@@ -212,6 +250,55 @@ namespace Garmetix.Billing.Services
                     throw new ArgumentException("Invoice Number is required for a Barcode.");
 
                 contentToEncode = invoice.InvoiceNumber;
+                format = BarcodeFormat.CODE_128;
+                options.Width = 400;
+                options.Height = 100;
+                options.Margin = 2;
+                options.PureBarcode = false; // Prints the text below the barcode
+            }
+
+            // 2. Generate the image (Shared Logic)
+            try
+            {
+                var writer = new BarcodeWriter
+                {
+                    Format = format,
+                    Options = options
+                };
+
+                using var bitmap = writer.Write(contentToEncode);
+                using var image = SKImage.FromBitmap(bitmap);
+                using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+
+                return data.ToArray();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"{codeType} Generation Failed: {ex.Message}");
+                return null; // Return null gracefully so the UI doesn't crash
+            }
+        }
+        public static byte[] GenerateQRBarcodeCode(string contentToEncode, InvoiceCodeType codeType)
+        {
+            if (string.IsNullOrEmpty(contentToEncode))
+                throw new ArgumentNullException(nameof(contentToEncode), "Content to encode cannot be null or empty .");
+
+           // string contentToEncode;
+            BarcodeFormat format;
+            var options = new ZXing.Common.EncodingOptions();
+
+            // 1. Configure based on the requested Code Type
+            if (codeType == InvoiceCodeType.QRCode)
+            {
+                  format = BarcodeFormat.QR_CODE;
+                options.Width = 250;
+                options.Height = 250;
+                options.Margin = 1;
+            }
+            else // Barcode1D
+            {
+               
+                // contentToEncode = invoice.InvoiceNumber;
                 format = BarcodeFormat.CODE_128;
                 options.Width = 400;
                 options.Height = 100;

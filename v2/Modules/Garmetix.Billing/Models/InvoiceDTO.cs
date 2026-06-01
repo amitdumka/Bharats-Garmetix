@@ -5,7 +5,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Garmetix.Billing.Models
 {
+    public class CreditNoteDto
+    {
+        public string CustomerName { get; set; } = string.Empty;
+        public string MobileNo { get; set; } = string.Empty;
+        public string ReturnInvoiceNo { get; set; } = string.Empty;
+        public DateTime ReturnInvoiceDate { get; set; } = DateTime.MinValue;
+        public DateTime NoteDate { get; set; } = DateTime.MinValue;
+        public decimal TotalAmount { get; set; } = decimal.Zero;
 
+        // We will pass the QR code image as a byte array
+        public byte[] QrCodeImage { get; set; } = Array.Empty<byte>();
+    }
     public partial class StockDTO : ObservableObject
     {
         [Key]
