@@ -148,6 +148,7 @@ namespace Garmetix.Billing.Services
             // 2. If they clicked cancel, do nothing
             if (result1 == null) return;
             var result = result1.Result as ScanPopupResult;
+            if(result == null) return;
             // 3. Resolve the actual Database ID from the scanned string 
             // (You can add this helper method to your InvoiceService)
             Guid? invoiceId = await GetInvoiceIdByNumberAsync(result.ScannedCode);
