@@ -1,72 +1,14 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+﻿using CommunityToolkit.Mvvm.Input;
 using Garmetix.Billing.Models;
-using Garmetix.Billing.PageModels.Invoices;
 using Garmetix.Billing.Services;
-using Garmetix.Core.Models.Inventory;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
+using Garmetix.Core.Enums;
 
 namespace Garmetix.Billing.PageModels.Invoices
 {
     public partial class InvoiceEntryPageModel : BaseInvoiceFormModel
     {
-        public ObservableCollection<EntryItem> InvoiceItems { get; set; } = new();
-        [ObservableProperty] protected EntryItem? selectedInvoiceItem;
-
-       
         public InvoiceEntryPageModel(InvoiceService invoiceService) : base(invoiceService)
         {
-        }
-
-        protected override void HandleProductSelected(Product? value)
-        {
-            if (value != null)
-            {
-                AddProductToInvoice(value);
-                SearchText = string.Empty;
-            }
-        }
-        private void AddProductToInvoice(Product product)
-        {
-            try
-            {
-                var newItem = new EntryItem
-                {
-                    Barcode = product.Barcode,
-                    Category = product.ProductType,
-                    BasePrice = product.BasicPrice,
-                    ProductName = product.Name,
-                    ProductId = product.Id,
-                    MRP = product.MRP,
-                    Unit = product.Unit,
-                    BilledQuantity = 1m,
-                    DiscountPercentage = 0
-                };
-
-                newItem.PropertyChanged += InvoiceItem_PropertyChanged;
-                InvoiceItems.Add(newItem);
-                CalculateTotals();
-            }
-            catch (Exception ex) { _ = InvoiceService.ShowErrorAsync("Add Product Error", ex); }
-        }
-
-        [RelayCommand]
-        public void RemoveInvoiceItem(EntryItem item)
-        {
-            if (item == null || !InvoiceItems.Contains(item)) return;
-            item.PropertyChanged -= InvoiceItem_PropertyChanged;
-            InvoiceItems.Remove(item);
-            CalculateTotals();
-        }
-
-        protected void InvoiceItem_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName is nameof(EntryItem.BasePrice) or nameof(EntryItem.BilledQuantity) or nameof(EntryItem.DiscountAmount))
-            {
-                CalculateTotals();
-            }
         }
 
         public override void CalculateTotals()
@@ -99,10 +41,29 @@ namespace Garmetix.Billing.PageModels.Invoices
             catch (Exception ex) { _ = InvoiceService.ShowErrorAsync("Calculation Error", ex); }
         }
 
+        // --- DATABASE SAVE ENGINE and FINAL ACTION COMMANDS ---
+        [RelayCommand]
+        public async Task SaveAndWhatsAppAsync()
+        {
+            if (await _invoiceService.SaveAndPrint(CurrentInvoice, InvoiceItems, Payments, print: false, sendOverMsg: true))
+            {
+                ClearFormAsync();
+            }
+        }
+
         [RelayCommand]
         public async Task SaveAndPrintA5Async()
         {
             if (await _invoiceService.SaveAndPrint(CurrentInvoice, InvoiceItems, Payments, print: true, thermal: false, sendOverMsg: false))
+            {
+                await ClearFormAsync();
+            }
+        }
+
+        [RelayCommand]
+        public async Task SaveAndPrintThermalAsync()
+        {
+            if (await _invoiceService.SaveAndPrint(CurrentInvoice, InvoiceItems, Payments, print: true, thermal: true, sendOverMsg: false))
             {
                 await ClearFormAsync();
             }
@@ -114,11 +75,17 @@ namespace Garmetix.Billing.PageModels.Invoices
             InvoiceItems.Clear();
             Payments.Clear();
             GlobalDiscountInput = 0;
-            PaymentAmountInput = 0;
+            GlobalDiscountTypeInput = "Amount";
+            PaymentModeInput = PaymentMode.Cash;
+
+            PaymentAmountInput = 0; SelectedInvoiceItem = null;
             IsNewCustomer = false;
             SelectedProduct = null;
             CurrentInvoice = new InvoiceDTO();
+            OnPropertyChanged(nameof(CurrentInvoice));
             await Task.CompletedTask;
         }
+
+       
     }
 }

@@ -10,6 +10,7 @@ using Garmetix.Databases;
 using Garmetix.Databases.Services; 
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace Garmetix.Billing.PageModels.Invoices
 {
@@ -29,6 +30,8 @@ namespace Garmetix.Billing.PageModels.Invoices
         // --- CORE DATA ---
         [ObservableProperty] protected InvoiceDTO currentInvoice = new();
         public ObservableCollection<PaymentDetail> Payments { get; set; } = new();
+        public ObservableCollection<EntryItem> InvoiceItems { get; set; } = new();
+        [ObservableProperty] protected EntryItem? selectedInvoiceItem;
 
         // --- PAYMENTS & DISCOUNTS ---
         protected CardPaymentDto _capturedCardDetails; 
@@ -66,10 +69,17 @@ namespace Garmetix.Billing.PageModels.Invoices
         // --- CUSTOMER INFO (Shared across invoice types, but can be overridden if needed) ---
         [ObservableProperty] protected bool isNewCustomer = false;
         [ObservableProperty] protected bool activeCustomer = false;
+        [ObservableProperty] protected string customerMobile = "";
+        [ObservableProperty] protected decimal customerBalance = 0;
 
         protected BaseInvoiceFormModel(InvoiceService invoiceService)
         {
             _invoiceService = invoiceService;
+            searchText = ""; 
+            selectedProduct = null;
+            selectedInvoiceItem = null;
+
+            CurrentInvoice = new InvoiceDTO();
         }
 
         // --- ABSTRACT METHODS (To be implemented by derived classes) ---
@@ -89,14 +99,61 @@ namespace Garmetix.Billing.PageModels.Invoices
         {
             // You can leave this empty, or put shared logic here (like clearing the search box)
 
-            //if (value != null)
-            //{
-            //    AddProductToInvoice();     // Instantly adds to the cart
-            //    SearchText = string.Empty; // Clears the search box for the next item
-            //}
+            if (value != null)
+            {
+                AddProductToInvoice(value);     // Instantly adds to the cart
+                SearchText = string.Empty;      // Clears the search box for the next item
+            }
         }
+        protected void AddProductToInvoice(Product product)
+        {
+            //TODO: [RelayCommand]
+            if (SelectedProduct == null || product == null) return;
+            try
+            {
+                var newItem = new EntryItem
+                {
+                    Barcode = product.Barcode,
+                    Category = product.ProductType,
+                    BasePrice = product.BasicPrice,
+                    ProductName = product.Name,
+                    ProductId = product.Id,
+                    MRP = product.MRP,
+                    Unit = product.Unit,
+                    BilledQuantity = 1m,
+                    DiscountPercentage = 0,
+                    Id = product.Id,
+                    InvoiceId = CurrentInvoice.Id,
+                };
 
+                newItem.PropertyChanged += InvoiceItem_PropertyChanged;
+                InvoiceItems.Add(newItem);
+                CalculateTotals();
+            }
+            catch (Exception ex) { _ = InvoiceService.ShowErrorAsync("Add Product Error", ex); }
+        }
+        [RelayCommand]
+        public void RemoveInvoiceItem(EntryItem item)
+        {
+            if (item == null || !InvoiceItems.Contains(item)) return;
+            item.PropertyChanged -= InvoiceItem_PropertyChanged;
+            if (SelectedInvoiceItem == item) SelectedInvoiceItem = null;
 
+            // InvoiceItems.Remove(item);
+            // CalculateTotals();
+            Application.Current!.Dispatcher.Dispatch(() =>
+            {
+                try { InvoiceItems.Remove(item); CalculateTotals(); }
+                catch (Exception ex) { _ = InvoiceService.ShowErrorAsync("Remove Item Error", ex); }
+            });
+        }
+        protected void InvoiceItem_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName is nameof(EntryItem.BasePrice) or nameof(EntryItem.BilledQuantity) or nameof(EntryItem.DiscountAmount))
+            {
+                CalculateTotals();
+            }
+        }
         // --- SHARED SEARCH LOGIC ---
         partial void OnSearchTextChanged(string value)
         {
@@ -244,6 +301,50 @@ namespace Garmetix.Billing.PageModels.Invoices
         {
             if (!IsBusy) await Shell.Current.GoToAsync("..");
         }
+        // --- UTILITIES ---
+
+        /// <summary>
+        /// Clear the invoice
+        /// </summary>
+        /// <returns></returns>
+        [RelayCommand] //Working
+        public async Task ClearInvoiceAsync()
+        {
+            if (IsBusy) return;
+            if (await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Clear Form", "Clear the entire invoice?", "Yes", "Cancel"))
+                await ClearFormAsync();
+        }
+
+        // --- Shared Logic for Customer Handling ---
+
+        [RelayCommand]
+        public async Task SearchCustomerAsync()
+        {
+            //TODO: Check  Customer Mobile Number  Validation  and Format before searching
+            if (string.IsNullOrWhiteSpace(CurrentInvoice.CustomerMobileNumber) || IsBusy) return;
+            try
+            {
+                IsBusy = true;
+                var customer = await GetContext().Customers.FirstOrDefaultAsync(c => c.MobileNumber == CurrentInvoice.CustomerMobileNumber);
+                if (customer != null)
+                {
+                    CurrentInvoice.CustomerName = customer.Name;
+                    CurrentInvoice.CustomerGSTIN = customer.GSTIN;
+
+                    CustomerBalance = customer.CreditBalance;
+                    ActiveCustomer = true;
+                    IsNewCustomer = false;
+                    OnPropertyChanged(nameof(CurrentInvoice));
+                }
+                else
+                {
+                    ActiveCustomer = false;
+                    IsNewCustomer = true;
+                }
+            }
+            catch (Exception ex) { await InvoiceService.ShowErrorAsync("Customer Search Error", ex); }
+            finally { IsBusy = false; }
+        }
 
 
         //TODO  Handling Invoice Type in the base class might not be ideal if different invoice types have different behaviors.
@@ -251,7 +352,7 @@ namespace Garmetix.Billing.PageModels.Invoices
         // ---   Shared Login For Invoice Type
 
 
-        protected  virtual async   Task HandledInvoiceForTypes(Invoice inv)
+        protected virtual async   Task HandledInvoiceForTypes(Invoice inv)
         {
             // For InvoiceType  Regylar  
             // For InvoiceType  Sale Return 
