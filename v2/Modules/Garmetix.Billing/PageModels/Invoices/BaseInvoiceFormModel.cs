@@ -42,6 +42,9 @@ namespace Garmetix.Billing.PageModels.Invoices
         [ObservableProperty] protected decimal globalDiscountInput;
         [ObservableProperty] protected string globalDiscountTypeInput = "Amount";
 
+        [ObservableProperty] protected bool _isCardPaymentSet = false;
+
+
         public IList<PaymentMode> PaymentModes { get; } = Enum.GetValues(typeof(PaymentMode)).Cast<PaymentMode>().ToList();
 
         // --- UI TOTALS ---
@@ -85,6 +88,12 @@ namespace Garmetix.Billing.PageModels.Invoices
         protected virtual void HandleProductSelected(Product? value)
         {
             // You can leave this empty, or put shared logic here (like clearing the search box)
+
+            //if (value != null)
+            //{
+            //    AddProductToInvoice();     // Instantly adds to the cart
+            //    SearchText = string.Empty; // Clears the search box for the next item
+            //}
         }
 
 

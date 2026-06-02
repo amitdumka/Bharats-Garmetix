@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Garmetix.Billing.Models;
+using Garmetix.Billing.PageModels.Invoices;
 using Garmetix.Billing.Pages.Popups;
 using Garmetix.Billing.Services;
 using Garmetix.Core.Enums;
@@ -14,46 +15,12 @@ using System.ComponentModel;
 
 namespace Garmetix.Billing.PageModels
 {
-    public partial class InvoiceEntryPageModel : ObservableObject
+    [Obsolete("This page model is being refactored, Used Invoices.InvoiceEntryPageModel instead")]
+    public partial class InvoiceEntryPageModel : BaseInvoiceFormModel
     {
-        // 1. Temporary holding variable for the DTO
-        private CardPaymentDto _capturedCardDetails;
-
-        [ObservableProperty] private bool _isCardPaymentSet = false;
-
-        protected InvoiceService _invoiceService;
-        protected DatabaseContext _localDb = DatabaseService.Instance.LocalDB;
-        public DatabaseContext GetContext() => _localDb;
-
-        protected CancellationTokenSource _searchCts;
-
-        // --- NEW: Search Text Binding ---
-        [ObservableProperty] protected string searchText;
-
-        //---------- Payment Mode and Narration Inputs ----------
-        //[ObservableProperty] protected PaymentMode paymentModeInput = PaymentMode.Cash;
-
-        [ObservableProperty] protected decimal paymentAmountInput = 0m;
-
-        [ObservableProperty] protected PaymentMode _selectedPaymentMode = PaymentMode.Cash;
-        [ObservableProperty] protected bool _isNarrationVisible = false;
-        [ObservableProperty] protected string _paymentNarration = string.Empty;
-        [ObservableProperty] protected string _narrationPlaceholder;
-
-        // NEW: Expose the enum values as a list for the ComboBox ItemsSource
-        public IList<PaymentMode> PaymentModes { get; } = Enum.GetValues(typeof(PaymentMode)).Cast<PaymentMode>().ToList();
-
-        // --- STATE MANAGEMENT ---
-        [ObservableProperty][NotifyPropertyChangedFor(nameof(IsNotBusy))] protected bool isBusy;
-
-        public bool IsNotBusy => !IsBusy;
-        [ObservableProperty] protected bool isNewCustomer = false;  //TODO: Handle this
-        [ObservableProperty] protected bool activeCustomer = false;  //TODO: Handle this
-
-        // --- GLOBAL DISCOUNT INPUTS ---
-        [ObservableProperty] protected decimal globalDiscountInput;
-        [ObservableProperty] protected string globalDiscountTypeInput = "Amount";
-
+        
+ 
+        
         [ObservableProperty] protected string customerMobile = "";
         [ObservableProperty] protected decimal customerBalance = 0;
         // --- HIGH PERFORMANCE CACHING ---
@@ -61,32 +28,17 @@ namespace Garmetix.Billing.PageModels
 
         protected List<Product> _productNameCache = new();
 
-        [ObservableProperty] protected InvoiceDTO currentInvoice;
+       // [ObservableProperty] protected InvoiceDTO currentInvoice;
         public ObservableCollection<EntryItem> InvoiceItems { get; set; } = new();
-        public ObservableCollection<PaymentDetail> Payments { get; set; } = new();
-        public ObservableCollection<Product> FilteredProducts { get; set; } = new();
+        //public ObservableCollection<PaymentDetail> Payments { get; set; } = new();
+       // public ObservableCollection<Product> FilteredProducts { get; set; } = new();
         [ObservableProperty] protected Product? selectedProduct;
 
         [ObservableProperty] protected EntryItem? selectedInvoiceItem;
 
 
-        partial void OnSearchTextChanged(string value)
-        {
-            // If a product was just selected, DO NOT run another search
-            if (SelectedProduct != null) return;
-
-            _ = UpdateFilteredProductsAsync(value);
-        }
-
-        // NEW: This automatically fires the moment you click an item in the search list
-        partial void OnSelectedProductChanged(Product? value)
-        {
-            if (value != null)
-            {
-                AddProductToInvoice();     // Instantly adds to the cart
-                SearchText = string.Empty; // Clears the search box for the next item
-            }
-        }
+         
+        
         partial void OnCustomerMobileChanged(string value) => SearchCustomerAsync();
 
         // --- CUSTOMER LOGIC ---
@@ -466,5 +418,14 @@ namespace Garmetix.Billing.PageModels
             OnPropertyChanged(nameof(CurrentInvoice));
         }
 
+        public override void CalculateTotals()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task ClearFormAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
