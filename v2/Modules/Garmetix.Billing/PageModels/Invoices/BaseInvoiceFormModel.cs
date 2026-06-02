@@ -7,7 +7,7 @@ using Garmetix.Billing.Services;
 using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Inventory;
 using Garmetix.Databases;
-using Garmetix.Databases.Services; 
+using Garmetix.Databases.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -16,25 +16,34 @@ namespace Garmetix.Billing.PageModels.Invoices
 {
     public abstract partial class BaseInvoiceFormModel : ObservableObject
     {
+        // --- HIGH PERFORMANCE CACHING --- See if requried
+        // protected Dictionary<string, Product> _productBarcodeCache = new();
+        //protected List<Product> _productNameCache = new();
+
+
+
         protected readonly InvoiceService _invoiceService;
+
         protected DatabaseContext GetContext() => DatabaseService.Instance.LocalDB;
 
         // --- STATE MANAGEMENT ---
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsNotBusy))]
         protected bool isBusy;
+
         public bool IsNotBusy => !IsBusy;
 
         [ObservableProperty] protected bool isSaving;
 
         // --- CORE DATA ---
         [ObservableProperty] protected InvoiceDTO currentInvoice = new();
+
         public ObservableCollection<PaymentDetail> Payments { get; set; } = new();
         public ObservableCollection<EntryItem> InvoiceItems { get; set; } = new();
         [ObservableProperty] protected EntryItem? selectedInvoiceItem;
 
         // --- PAYMENTS & DISCOUNTS ---
-        protected CardPaymentDto _capturedCardDetails; 
+        protected CardPaymentDto _capturedCardDetails;
 
         [ObservableProperty] protected PaymentMode paymentModeInput = PaymentMode.Cash;
         [ObservableProperty] protected string paymentNarration = string.Empty;
@@ -47,11 +56,11 @@ namespace Garmetix.Billing.PageModels.Invoices
 
         [ObservableProperty] protected bool _isCardPaymentSet = false;
 
-
         public IList<PaymentMode> PaymentModes { get; } = Enum.GetValues(typeof(PaymentMode)).Cast<PaymentMode>().ToList();
 
         // --- UI TOTALS ---
         [ObservableProperty] protected decimal subTotal;
+
         [ObservableProperty] protected decimal totalTax;
         [ObservableProperty] protected decimal totalDiscount;
         [ObservableProperty] protected decimal roundOffAmount;
@@ -61,6 +70,7 @@ namespace Garmetix.Billing.PageModels.Invoices
 
         // --- SEARCH ENGINE ---
         [ObservableProperty] protected string searchText = string.Empty;
+
         [ObservableProperty] protected Product? selectedProduct;
         public ObservableCollection<Product> FilteredProducts { get; set; } = new();
         protected CancellationTokenSource? _searchCts;
@@ -68,6 +78,7 @@ namespace Garmetix.Billing.PageModels.Invoices
 
         // --- CUSTOMER INFO (Shared across invoice types, but can be overridden if needed) ---
         [ObservableProperty] protected bool isNewCustomer = false;
+
         [ObservableProperty] protected bool activeCustomer = false;
         [ObservableProperty] protected string customerMobile = "";
         [ObservableProperty] protected decimal customerBalance = 0;
@@ -75,7 +86,7 @@ namespace Garmetix.Billing.PageModels.Invoices
         protected BaseInvoiceFormModel(InvoiceService invoiceService)
         {
             _invoiceService = invoiceService;
-            searchText = ""; 
+            searchText = "";
             selectedProduct = null;
             selectedInvoiceItem = null;
 
@@ -83,12 +94,55 @@ namespace Garmetix.Billing.PageModels.Invoices
         }
 
         // --- ABSTRACT METHODS (To be implemented by derived classes) ---
-        public abstract void CalculateTotals();
-        public abstract Task ClearFormAsync();
+        public virtual void CalculateTotals()
+        {
+            try
+            {
+                SubTotal = InvoiceItems.Sum(i => i.BasePrice * i.BilledQuantity);
+                TotalDiscount = InvoiceItems.Sum(i => i.DiscountAmount);
+                TotalTax = InvoiceItems.Sum(i => i.TaxAmount);
 
+                decimal preDiscountTotal = (SubTotal - TotalDiscount) + TotalTax;
+                decimal globalDiscountCalculated = GlobalDiscountTypeInput == "%" ? preDiscountTotal * (GlobalDiscountInput / 100m) : GlobalDiscountInput;
+
+                decimal rawGrandTotal = preDiscountTotal - globalDiscountCalculated;
+                if (rawGrandTotal < 0) rawGrandTotal = 0;
+
+                GrandTotal = Math.Round(rawGrandTotal, 0, MidpointRounding.AwayFromZero);
+                RoundOffAmount = GrandTotal - rawGrandTotal;
+                PaidAmount = Payments.Sum(p => p.Amount);
+                BalanceAmount = GrandTotal - PaidAmount;
+
+                // Sync with DTO
+                CurrentInvoice.SubTotal = SubTotal;
+                CurrentInvoice.TotalTax = TotalTax;
+                CurrentInvoice.GlobalDiscountAmount = globalDiscountCalculated;
+                CurrentInvoice.RoundOffAmount = RoundOffAmount;
+                CurrentInvoice.GrandTotal = GrandTotal;
+                CurrentInvoice.PaidAmount = PaidAmount;
+            }
+            catch (Exception ex) { _ = InvoiceService.ShowErrorAsync("Calculation Error", ex); }
+        }
+        public virtual async Task ClearFormAsync()
+        {
+            // Implementation can be overridden by derived classes
+            foreach (var item in InvoiceItems) item.PropertyChanged -= InvoiceItem_PropertyChanged;
+            InvoiceItems.Clear();
+            Payments.Clear();
+            GlobalDiscountInput = 0;
+            GlobalDiscountTypeInput = "Amount";
+            PaymentModeInput = PaymentMode.Cash;
+
+            PaymentAmountInput = 0; SelectedInvoiceItem = null;
+            IsNewCustomer = false;
+            SelectedProduct = null;
+            CurrentInvoice = new InvoiceDTO();
+            OnPropertyChanged(nameof(CurrentInvoice));
+            await Task.CompletedTask;
+        }
 
         // 1. The MVVM Toolkit looks for this partial method in the same class the property is declared
-        partial void OnSelectedProductChanged(Product? value)
+        protected partial void OnSelectedProductChanged(Product? value)
         {
             // 2. Route it to a virtual method that derived classes can override
             HandleProductSelected(value);
@@ -105,10 +159,20 @@ namespace Garmetix.Billing.PageModels.Invoices
                 SearchText = string.Empty;      // Clears the search box for the next item
             }
         }
+        [RelayCommand]
+        protected async Task AddProductToInvoiceItem()
+        {
+            if (SelectedProduct != null)
+                AddProductToInvoice(SelectedProduct);
+            else
+            {
+                await Application.Current!.Windows[0].Page!.DisplayAlertAsync("No Product Selected", "Please select a product to add.", "OK");
+            }
+        }
         protected void AddProductToInvoice(Product product)
         {
             //TODO: [RelayCommand]
-            if (SelectedProduct == null || product == null) return;
+            if  ( product == null) return;
             try
             {
                 var newItem = new EntryItem
@@ -132,6 +196,7 @@ namespace Garmetix.Billing.PageModels.Invoices
             }
             catch (Exception ex) { _ = InvoiceService.ShowErrorAsync("Add Product Error", ex); }
         }
+
         [RelayCommand]
         public void RemoveInvoiceItem(EntryItem item)
         {
@@ -147,6 +212,7 @@ namespace Garmetix.Billing.PageModels.Invoices
                 catch (Exception ex) { _ = InvoiceService.ShowErrorAsync("Remove Item Error", ex); }
             });
         }
+
         protected void InvoiceItem_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName is nameof(EntryItem.BasePrice) or nameof(EntryItem.BilledQuantity) or nameof(EntryItem.DiscountAmount))
@@ -154,8 +220,9 @@ namespace Garmetix.Billing.PageModels.Invoices
                 CalculateTotals();
             }
         }
+
         // --- SHARED SEARCH LOGIC ---
-        partial void OnSearchTextChanged(string value)
+        protected partial void OnSearchTextChanged(string value)
         {
             if (SelectedProduct != null) return;
             _ = UpdateFilteredProductsAsync(value);
@@ -243,8 +310,9 @@ namespace Garmetix.Billing.PageModels.Invoices
                 CalculateTotals();
             }
         }
+
         // 2. Trigger the popup when "Card" is selected
-        partial void OnPaymentModeInputChanged(PaymentMode value)
+        protected partial void OnPaymentModeInputChanged(PaymentMode value)
         {
             _capturedCardDetails = null;
 
@@ -293,14 +361,16 @@ namespace Garmetix.Billing.PageModels.Invoices
             }
         }
 
-        partial void OnGlobalDiscountInputChanged(decimal value) => CalculateTotals();
-        partial void OnGlobalDiscountTypeInputChanged(string value) => CalculateTotals();
+        protected partial void OnGlobalDiscountInputChanged(decimal value) => CalculateTotals();
+
+        protected partial void OnGlobalDiscountTypeInputChanged(string value) => CalculateTotals();
 
         [RelayCommand]
         public virtual async Task GoBackAsync()
         {
             if (!IsBusy) await Shell.Current.GoToAsync("..");
         }
+
         // --- UTILITIES ---
 
         /// <summary>
@@ -316,6 +386,7 @@ namespace Garmetix.Billing.PageModels.Invoices
         }
 
         // --- Shared Logic for Customer Handling ---
+        protected partial void OnCustomerMobileChanged(string value) => SearchCustomerAsync();
 
         [RelayCommand]
         public async Task SearchCustomerAsync()
@@ -346,31 +417,53 @@ namespace Garmetix.Billing.PageModels.Invoices
             finally { IsBusy = false; }
         }
 
+        [RelayCommand]
+        public async Task SaveCustomerAsync()
+        {
+            //TODO: move the save logic to service and also add update logic for existing customer, currently it only adds new customer, it does not update existing customer details
+            //TODO: Mobile number is empty check for error and also check for existing customer with same mobile number
+            if (IsBusy || string.IsNullOrWhiteSpace(CurrentInvoice.CustomerMobileNumber) || string.IsNullOrWhiteSpace(CurrentInvoice.CustomerName)) return;
+            try
+            {
+                IsBusy = true;
+                var existing = await GetContext().Customers.FirstOrDefaultAsync(c => c.MobileNumber == CurrentInvoice.CustomerMobileNumber);
+                if (existing == null)
+                {
+                    await GetContext().Customers.AddAsync(new Customer { MobileNumber = CurrentInvoice.CustomerMobileNumber, Name = CurrentInvoice.CustomerName, GSTIN = CurrentInvoice.CustomerGSTIN, CompanyId = DatabaseService.CompanyId });
+                    IsNewCustomer = (await GetContext().SaveChangesAsync()) > 0;
+                    if (IsNewCustomer)
+                    {
+                        await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Customer saved.", "OK");
+                        IsNewCustomer = false;
+                    }
+                    else
+                    {
+                        await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Failed to Customer save.", "OK");
+                    }
+                }
+            }
+            catch (Exception ex) { await InvoiceService.ShowErrorAsync("Save Customer Error", ex); }
+            finally { IsBusy = false; }
+        }
 
         //TODO  Handling Invoice Type in the base class might not be ideal if different invoice types have different behaviors.
 
         // ---   Shared Login For Invoice Type
 
-
-        protected virtual async   Task HandledInvoiceForTypes(Invoice inv)
+        protected virtual async Task HandledInvoiceForTypes(Invoice inv)
         {
-            // For InvoiceType  Regylar  
-            // For InvoiceType  Sale Return 
+            // For InvoiceType  Regylar
+            // For InvoiceType  Sale Return
             // For  InvoiceType  CashMemo
             // For InvoiceType  Service Invoice
 
-            // For SaleInvoiceType 
+            // For SaleInvoiceType
             // For SaleInvoiceType  B2B
             // For SaleInvoiceType  B2c
             // For SaleInvoiceType  Cashmeno
 
-            // Handling Invoice Status , 
-            //Like Paid, Due, Partially Paid, Cancelled etc 
-             
-
-
-
+            // Handling Invoice Status ,
+            //Like Paid, Due, Partially Paid, Cancelled etc
         }
-
     }
 }

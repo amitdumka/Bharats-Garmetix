@@ -1,9 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using Garmetix.Billing.Models;
+using Garmetix.Billing.PageModels.Invoices;
 using Garmetix.Billing.Services;
 using Garmetix.Core.Enums;
 
-namespace Garmetix.Billing.PageModels.Invoices
+namespace Garmetix.Billing.PageModels
 {
     public partial class InvoiceEntryPageModel : BaseInvoiceFormModel
     {
@@ -47,7 +48,7 @@ namespace Garmetix.Billing.PageModels.Invoices
         {
             if (await _invoiceService.SaveAndPrint(CurrentInvoice, InvoiceItems, Payments, print: false, sendOverMsg: true))
             {
-                ClearFormAsync();
+                await ClearFormAsync();
             }
         }
 
