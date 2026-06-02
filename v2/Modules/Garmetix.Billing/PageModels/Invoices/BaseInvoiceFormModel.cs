@@ -16,15 +16,10 @@ namespace Garmetix.Billing.PageModels.Invoices
 {
     public abstract partial class BaseInvoiceFormModel : ObservableObject
     {
-        // --- HIGH PERFORMANCE CACHING --- See if requried
-        // protected Dictionary<string, Product> _productBarcodeCache = new();
-        //protected List<Product> _productNameCache = new();
-
-
-
+       
         protected readonly InvoiceService _invoiceService;
 
-        protected DatabaseContext GetContext() => DatabaseService.Instance.LocalDB;
+        public static DatabaseContext GetContext() => DatabaseService.Instance.LocalDB;
 
         // --- STATE MANAGEMENT ---
         [ObservableProperty]
@@ -38,8 +33,8 @@ namespace Garmetix.Billing.PageModels.Invoices
         // --- CORE DATA ---
         [ObservableProperty] protected InvoiceDTO currentInvoice = new();
 
-        public ObservableCollection<PaymentDetail> Payments { get; set; } = new();
-        public ObservableCollection<EntryItem> InvoiceItems { get; set; } = new();
+        public ObservableCollection<PaymentDetail> Payments { get; set; } = [];
+        public ObservableCollection<EntryItem> InvoiceItems { get; set; } = [];
         [ObservableProperty] protected EntryItem? selectedInvoiceItem;
 
         // --- PAYMENTS & DISCOUNTS ---
@@ -72,9 +67,9 @@ namespace Garmetix.Billing.PageModels.Invoices
         [ObservableProperty] protected string searchText = string.Empty;
 
         [ObservableProperty] protected Product? selectedProduct;
-        public ObservableCollection<Product> FilteredProducts { get; set; } = new();
+        public ObservableCollection<Product> FilteredProducts { get; set; } = [];
         protected CancellationTokenSource? _searchCts;
-        protected List<Product> _productCache = new(); // Used for local caching if needed
+        protected List<Product> _productCache = []; // Used for local caching if needed
 
         // --- CUSTOMER INFO (Shared across invoice types, but can be overridden if needed) ---
         [ObservableProperty] protected bool isNewCustomer = false;
@@ -142,7 +137,7 @@ namespace Garmetix.Billing.PageModels.Invoices
         }
 
         // 1. The MVVM Toolkit looks for this partial method in the same class the property is declared
-        protected partial void OnSelectedProductChanged(Product? value)
+        partial void OnSelectedProductChanged(Product? value)
         {
             // 2. Route it to a virtual method that derived classes can override
             HandleProductSelected(value);
@@ -172,7 +167,7 @@ namespace Garmetix.Billing.PageModels.Invoices
         protected void AddProductToInvoice(Product product)
         {
             //TODO: [RelayCommand]
-            if  ( product == null) return;
+            if (product == null) return;
             try
             {
                 var newItem = new EntryItem
@@ -198,7 +193,7 @@ namespace Garmetix.Billing.PageModels.Invoices
         }
 
         [RelayCommand]
-        public void RemoveInvoiceItem(EntryItem item)
+        public   void RemoveInvoiceItem(EntryItem item)
         {
             if (item == null || !InvoiceItems.Contains(item)) return;
             item.PropertyChanged -= InvoiceItem_PropertyChanged;
@@ -222,7 +217,7 @@ namespace Garmetix.Billing.PageModels.Invoices
         }
 
         // --- SHARED SEARCH LOGIC ---
-        protected partial void OnSearchTextChanged(string value)
+        partial void OnSearchTextChanged(string value)
         {
             if (SelectedProduct != null) return;
             _ = UpdateFilteredProductsAsync(value);
@@ -243,7 +238,7 @@ namespace Garmetix.Billing.PageModels.Invoices
             try
             {
                 await Task.Delay(300, token); // Debounce
-                var results = await GetContext().Products
+                var results = await BaseInvoiceFormModel.GetContext().Products
                     .Where(p => EF.Functions.Like(p.Name, $"%{text}%") || EF.Functions.Like(p.Barcode, $"%{text}%"))
                     .Take(20)
                     .ToListAsync(token);
@@ -264,10 +259,7 @@ namespace Garmetix.Billing.PageModels.Invoices
         [RelayCommand]
         public virtual void AddPayment()
         {
-            //if (PaymentAmountInput <= 0) return;
-            //Payments.Add(new PaymentDetail { PaymentMode = PaymentModeInput, Amount = PaymentAmountInput, PaymentDate = DateTime.Now });
-            //PaymentAmountInput = 0;
-            //CalculateTotals();
+           
             if (PaymentAmountInput <= 0) return;
 
             if (PaymentModeInput == PaymentMode.Card && _capturedCardDetails == null)
@@ -312,7 +304,7 @@ namespace Garmetix.Billing.PageModels.Invoices
         }
 
         // 2. Trigger the popup when "Card" is selected
-        protected partial void OnPaymentModeInputChanged(PaymentMode value)
+        partial void OnPaymentModeInputChanged(PaymentMode value)
         {
             _capturedCardDetails = null;
 
@@ -361,9 +353,9 @@ namespace Garmetix.Billing.PageModels.Invoices
             }
         }
 
-        protected partial void OnGlobalDiscountInputChanged(decimal value) => CalculateTotals();
+        partial void OnGlobalDiscountInputChanged(decimal value) => CalculateTotals();
 
-        protected partial void OnGlobalDiscountTypeInputChanged(string value) => CalculateTotals();
+        partial void OnGlobalDiscountTypeInputChanged(string value) => CalculateTotals();
 
         [RelayCommand]
         public virtual async Task GoBackAsync()
@@ -386,7 +378,7 @@ namespace Garmetix.Billing.PageModels.Invoices
         }
 
         // --- Shared Logic for Customer Handling ---
-        protected partial void OnCustomerMobileChanged(string value) => SearchCustomerAsync();
+        partial void OnCustomerMobileChanged(string value) => SearchCustomerAsync();
 
         [RelayCommand]
         public async Task SearchCustomerAsync()
@@ -396,7 +388,7 @@ namespace Garmetix.Billing.PageModels.Invoices
             try
             {
                 IsBusy = true;
-                var customer = await GetContext().Customers.FirstOrDefaultAsync(c => c.MobileNumber == CurrentInvoice.CustomerMobileNumber);
+                var customer = await BaseInvoiceFormModel.GetContext().Customers.FirstOrDefaultAsync(c => c.MobileNumber == CurrentInvoice.CustomerMobileNumber);
                 if (customer != null)
                 {
                     CurrentInvoice.CustomerName = customer.Name;
@@ -426,11 +418,11 @@ namespace Garmetix.Billing.PageModels.Invoices
             try
             {
                 IsBusy = true;
-                var existing = await GetContext().Customers.FirstOrDefaultAsync(c => c.MobileNumber == CurrentInvoice.CustomerMobileNumber);
+                var existing = await BaseInvoiceFormModel.GetContext().Customers.FirstOrDefaultAsync(c => c.MobileNumber == CurrentInvoice.CustomerMobileNumber);
                 if (existing == null)
                 {
-                    await GetContext().Customers.AddAsync(new Customer { MobileNumber = CurrentInvoice.CustomerMobileNumber, Name = CurrentInvoice.CustomerName, GSTIN = CurrentInvoice.CustomerGSTIN, CompanyId = DatabaseService.CompanyId });
-                    IsNewCustomer = (await GetContext().SaveChangesAsync()) > 0;
+                    await BaseInvoiceFormModel.GetContext().Customers.AddAsync(new Customer { MobileNumber = CurrentInvoice.CustomerMobileNumber, Name = CurrentInvoice.CustomerName, GSTIN = CurrentInvoice.CustomerGSTIN, CompanyId = DatabaseService.CompanyId });
+                    IsNewCustomer = (await BaseInvoiceFormModel.GetContext().SaveChangesAsync()) > 0;
                     if (IsNewCustomer)
                     {
                         await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Customer saved.", "OK");

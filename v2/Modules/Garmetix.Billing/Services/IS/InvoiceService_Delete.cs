@@ -1,14 +1,11 @@
 ﻿using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Inventory;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Garmetix.Billing.Services
 {
     // Delete record
-    public partial class InvoiceService:BaseInvoiceService
+    public partial class InvoiceService : BaseInvoiceService
     {
         /// <summary>
         /// Delete invoice
@@ -40,7 +37,18 @@ namespace Garmetix.Billing.Services
                             GetContext().CardPayments.RemoveRange(cpayments);
                     }
 
-                    // CRITICAL FIX: Delete the actual invoice record
+                    // Delete Customer Due and Recovery if exists
+                    var dues = await GetContext().CustomerDues.Where(c => c.InvoiceNumber == invoice.InvoiceNumber).ToListAsync();
+                    if (dues.Any())
+                    {
+                        GetContext().CustomerDues.RemoveRange(dues);
+                    }
+                    var recorverys = await GetContext().DueRecovery.Where(c => c.InvoiceNumber == invoice.InvoiceNumber).ToListAsync();
+                    if (recorverys.Any())
+                    {
+                        GetContext().DueRecovery.RemoveRange(recorverys);
+                    }
+
                     GetContext().Invoices.Remove(invoice);
                 }
                 else // Soft Delete
@@ -71,7 +79,27 @@ namespace Garmetix.Billing.Services
                         }
                         GetContext().CardPayments.UpdateRange(cpayments);
                     }
-
+                    // Delete Customer Due and Recovery if exists
+                    var dues = await GetContext().CustomerDues.Where(c => c.InvoiceNumber == invoice.InvoiceNumber).ToListAsync();
+                    if (dues.Any())
+                    {
+                        foreach (var due in dues)
+                        {
+                            due.Deleted = true;
+                            due.UpdatedAt = DateTime.UtcNow;
+                        }
+                        GetContext().CustomerDues.UpdateRange(dues);
+                    }
+                    var recorverys = await GetContext().DueRecovery.Where(c => c.InvoiceNumber == invoice.InvoiceNumber).ToListAsync();
+                    if (recorverys.Any())
+                    {
+                        foreach (var rec in recorverys)
+                        {
+                            rec.Deleted = true;
+                            rec.UpdatedAt = DateTime.UtcNow;
+                        }
+                        GetContext().DueRecovery.UpdateRange(recorverys);
+                    }
                     GetContext().InvoiceItems.UpdateRange(invoice.InvoiceItems);
                     GetContext().InvoicePayments.UpdateRange(payments);
                     GetContext().Invoices.Update(invoice);
@@ -83,7 +111,7 @@ namespace Garmetix.Billing.Services
                 InvalidateCache(); // Invalidate cache after deletion
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Log the error (ex) here
                 await transaction.RollbackAsync();
@@ -106,6 +134,5 @@ namespace Garmetix.Billing.Services
 
             return await DeleteInvoicesAsync(invoice, delete);
         }
-
     }
 }

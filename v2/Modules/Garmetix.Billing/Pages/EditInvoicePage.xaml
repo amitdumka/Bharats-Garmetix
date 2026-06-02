@@ -38,7 +38,7 @@
                     <VerticalStackLayout>
                         <Label Text="Invoice Information" Style="{StaticResource HeaderLabelStyle}" />
 
-                        <Grid ColumnDefinitions="*, *, *" RowSpacing="15" ColumnSpacing="15">
+                        <Grid ColumnDefinitions="*, *, *, Auto" RowSpacing="15" ColumnSpacing="15">
                             <core:SfTextInputLayout Hint="Invoice Number" ContainerType="None" Grid.Column="0">
                                 <Entry Text="{Binding CurrentInvoice.InvoiceNumber}" IsReadOnly="True" TextColor="#6C757D" FontAttributes="Bold"/>
                             </core:SfTextInputLayout>
@@ -50,6 +50,8 @@
                             <core:SfTextInputLayout Hint="Invoice Date" ContainerType="None" Grid.Column="2">
                                 <Entry Text="{Binding CurrentInvoice.OnDate, StringFormat='{0:dd-MMM-yyyy}'}" IsReadOnly="True" TextColor="#6C757D"/>
                             </core:SfTextInputLayout>
+                            <Label Grid.Column="3" Text="{Binding CustomerBalance, StringFormat='Balance: {0:C}'}" />
+
                         </Grid>
                     </VerticalStackLayout>
                 </Border>
@@ -75,9 +77,10 @@
                         <datagrid:SfDataGrid BackgroundColor="AliceBlue" AllowSelectionOnSecondaryTap="True"  
                                              AllowEditing="True" SelectionMode="Single" NavigationMode="Cell"
                                              HeaderRowHeight="45" RowHeight="50" AutoGenerateColumnsMode="None" 
-                                             HeightRequest="300" ItemsSource="{Binding EditItems}" ColumnWidthMode="Fill">
+                                             HeightRequest="300" ItemsSource="{Binding InvoiceItems}" ColumnWidthMode="Fill">
                             <datagrid:SfDataGrid.Columns>
-                                <datagrid:DataGridTextColumn MappingName="Barcode" HeaderText="Item Description" Width="200" AllowEditing="False"/>
+                                <datagrid:DataGridTextColumn MappingName="ProductName" HeaderText="Item Description" Width="200" AllowEditing="False"/>
+                                <datagrid:DataGridTextColumn MappingName="Barcode" HeaderText="Barcode" Width="200" AllowEditing="False"/>
                                 <datagrid:DataGridNumericColumn MappingName="BasePrice" HeaderText="Rate (₹)" Format="N2" AllowEditing="False"/>
                                 <datagrid:DataGridNumericColumn MappingName="BilledQuantity" HeaderText="Qty" Format="0.##" AllowEditing="True"/>
                                 <datagrid:DataGridNumericColumn MappingName="DiscountPercentage" HeaderText="Disc %" Format="N2" AllowEditing="True"/>
@@ -106,7 +109,7 @@
                             <Label Text="Payment Splitting" Style="{StaticResource HeaderLabelStyle}" FontSize="14"/>
 
                             <Grid ColumnDefinitions="*, *, Auto" ColumnSpacing="10">
-                                <inputs:SfComboBox Grid.Column="0" SelectedItem="{Binding PaymentModeInput}" HeightRequest="40">
+                                <!--<inputs:SfComboBox Grid.Column="0" SelectedItem="{Binding PaymentModeInput}" HeightRequest="40">
                                     <inputs:SfComboBox.ItemsSource>
                                         <x:Array Type="{x:Type x:String}">
                                             <x:String>Cash</x:String>
@@ -114,8 +117,8 @@
                                             <x:String>Credit Card</x:String>
                                         </x:Array>
                                     </inputs:SfComboBox.ItemsSource>
-                                </inputs:SfComboBox>
-
+                                </inputs:SfComboBox>-->
+                                <inputs:SfComboBox Grid.Column="0" ItemsSource="{Binding PaymentModes}" SelectedItem="{Binding  PaymentModeInput}" HeightRequest="40" />
                                 <Entry Grid.Column="1" Placeholder="Amount (₹)" Text="{Binding PaymentAmountInput}" Keyboard="Numeric" HeightRequest="40" BackgroundColor="#F8F9FA"/>
                                 <Button Grid.Column="2" Text="Add" Command="{Binding AddPaymentCommand}" HeightRequest="40" BackgroundColor="#6C757D" TextColor="White" CornerRadius="4"/>
                             </Grid>

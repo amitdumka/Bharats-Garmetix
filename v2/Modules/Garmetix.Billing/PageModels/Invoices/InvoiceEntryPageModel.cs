@@ -6,12 +6,8 @@ using Garmetix.Core.Enums;
 
 namespace Garmetix.Billing.PageModels
 {
-    public partial class InvoiceEntryPageModel : BaseInvoiceFormModel
+    public partial class InvoiceEntryPageModel(InvoiceService invoiceService) : BaseInvoiceFormModel(invoiceService)
     {
-        public InvoiceEntryPageModel(InvoiceService invoiceService) : base(invoiceService)
-        {
-        }
-
         public override void CalculateTotals()
         {
             try
@@ -46,19 +42,21 @@ namespace Garmetix.Billing.PageModels
         [RelayCommand]
         public async Task SaveAndWhatsAppAsync()
         {
-            if (await _invoiceService.SaveAndPrint(CurrentInvoice, InvoiceItems, Payments, print: false, sendOverMsg: true))
+            if (!await _invoiceService.SaveAndPrint(CurrentInvoice, InvoiceItems, Payments, print: false, sendOverMsg: true))
             {
-                await ClearFormAsync();
+                return;
             }
+            await ClearFormAsync();
         }
 
         [RelayCommand]
         public async Task SaveAndPrintA5Async()
         {
-            if (await _invoiceService.SaveAndPrint(CurrentInvoice, InvoiceItems, Payments, print: true, thermal: false, sendOverMsg: false))
+            if (!await _invoiceService.SaveAndPrint(CurrentInvoice, InvoiceItems, Payments, print: true, thermal: false, sendOverMsg: false))
             {
-                await ClearFormAsync();
+                return;
             }
+            await ClearFormAsync();
         }
 
         [RelayCommand]

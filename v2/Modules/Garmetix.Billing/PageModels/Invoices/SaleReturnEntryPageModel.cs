@@ -23,7 +23,7 @@ namespace Garmetix.Billing.PageModels.Invoices
         {
             if (string.IsNullOrWhiteSpace(SearchInvoiceNo)) return;
 
-            var invoice = await GetContext().Invoices
+            var invoice = await BaseInvoiceFormModel.GetContext().Invoices
                 .Include(i => i.InvoiceItems)
                 .FirstOrDefaultAsync(i => i.InvoiceNumber == SearchInvoiceNo);
 

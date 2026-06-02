@@ -262,28 +262,8 @@ namespace Garmetix.Billing.PageModels
             IsBusy = true;
             try
             {
-                // Enabling Trnascation and Roll back concept
-               // using var transaction = await GetContext().Database.BeginTransactionAsync();
                 try
                 {
-                    //// 2. Perform bulk deletions directly on the database (EF Core 7+)
-                    //// Note: Replace 'InvoiceItems', 'InvoicePayment', and 'Invoices'
-                    //// with the actual DbSet property names in your DbContext.
-
-                    //await GetContext().InvoiceItems
-                    //    .Where(i => i.InvoiceId == invoice.Id)
-                    //    .ExecuteDeleteAsync();
-
-                    //await GetContext().InvoicePayments
-                    //    .Where(p => p.InvoiceId == invoice.Id)
-                    //    .ExecuteDeleteAsync();
-
-                    //await GetContext().Invoices
-                    //    .Where(i => i.Id == invoice.Id)
-                    //    .ExecuteDeleteAsync();
-
-                    //// 3. Commit the transaction to save changes permanently
-                    //await transaction.CommitAsync();
                    
                     var result = await _invoiceService.DeleteInvoicesAsync(invoice);
                     if(!result)

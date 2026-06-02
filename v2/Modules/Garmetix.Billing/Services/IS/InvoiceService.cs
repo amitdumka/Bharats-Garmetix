@@ -193,7 +193,7 @@ namespace Garmetix.Billing.Services
 
             if (invoiceId == null)
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "Invoice not found in database.", "OK");
+                await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Error", "Invoice not found in database.", "OK");
                 return;
             }
 
