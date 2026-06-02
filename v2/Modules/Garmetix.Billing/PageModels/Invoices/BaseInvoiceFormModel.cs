@@ -181,8 +181,8 @@ namespace Garmetix.Billing.PageModels.Invoices
                     Unit = product.Unit,
                     BilledQuantity = 1m,
                     DiscountPercentage = 0,
-                    Id = product.Id,
-                    InvoiceId = CurrentInvoice.Id,
+                    Id = Guid.NewGuid(),
+                    InvoiceId = CurrentInvoice.Id, 
                 };
 
                 newItem.PropertyChanged += InvoiceItem_PropertyChanged;

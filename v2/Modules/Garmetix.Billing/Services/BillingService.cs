@@ -12,7 +12,6 @@ namespace Garmetix.Billing.Services
     /// </summary>
     public partial class BillingService
     {
-        protected DatabaseContext _localDb => DatabaseService.Instance.LocalDB;
 
         public static async Task ShowErrorAsync(string title, Exception ex) => await Application.Current!.Windows[0].Page!.DisplayAlertAsync(title, $"Error: {ex.Message}", "OK");
 
@@ -20,8 +19,8 @@ namespace Garmetix.Billing.Services
 
         public async Task<Product?> AddOrUpdateProductAsync(Product product, bool update = false)
         {
-            
-            if(update)
+
+            if (update)
             {
                 var existingProduct = GetContext().Products.Where(x => x.Id == product.Id).FirstOrDefault();
                 if (existingProduct != null)
@@ -50,11 +49,11 @@ namespace Garmetix.Billing.Services
                 GetContext().Products.Add(product);
                 await GetContext().SaveChangesAsync();
             }
-            return product; 
-        
+            return product;
+
         }
 
- 
+
         public async Task<Stock?> AddStockAsync(Stock stock)
         {
             GetContext().Stocks.Add(stock);
@@ -65,10 +64,9 @@ namespace Garmetix.Billing.Services
             else return null;
         }
 
-        public DatabaseContext GetContext()
-        { return _localDb; }
-
-        public bool RemoveProduct(Product product, bool delete = false)
+        public static DatabaseContext GetContext()=> DatabaseService.Instance.LocalDB;
+        
+        public static bool RemoveProduct(Product product, bool delete = false)
         {
             if (delete)
             {
@@ -84,7 +82,7 @@ namespace Garmetix.Billing.Services
             }
         }
 
-        public async Task<bool> RemoveProduct(Guid companyId, string barcode, bool delete = false)
+        public static async Task<bool> RemoveProduct(Guid companyId, string barcode, bool delete = false)
         {
             if (delete)
             {
@@ -105,7 +103,7 @@ namespace Garmetix.Billing.Services
             return false;
         }
 
-        public bool RemoveStock(Stock stock, bool delete = false)
+        public static bool RemoveStock(Stock stock, bool delete = false)
         {
             if (delete)
             {
@@ -123,7 +121,7 @@ namespace Garmetix.Billing.Services
 
         }
 
-        public Guid GetTaxIdByType(TaxType type, decimal percentage, bool output = true)
+        public static Guid GetTaxIdByType(TaxType type, decimal percentage, bool output = true)
         {
             if (output)
             {
@@ -137,7 +135,7 @@ namespace Garmetix.Billing.Services
             }
         }
 
-        public Tax AddOrUpdateTax(Tax tax, bool update = false)
+        public static Tax AddOrUpdateTax(Tax tax, bool update = false)
         {
             if (update)
             {
@@ -169,7 +167,7 @@ namespace Garmetix.Billing.Services
         /// <param name="customerMobile"></param>
         /// <returns></returns>
 
-        public async Task<Guid> GetCustomerIdOrDefaultAsync(string customerMobile)
+        public static async Task<Guid> GetCustomerIdOrDefaultAsync(string customerMobile)
         {
             var customer = await GetContext().Customers.Where(x => x.MobileNumber == customerMobile).FirstOrDefaultAsync();
             if (customer != null)
@@ -178,7 +176,7 @@ namespace Garmetix.Billing.Services
             }
             else
             {
-                return await GetDefaultCustomerAsync();
+                return await BillingService.GetDefaultCustomerAsync();
             }
         }
 
@@ -186,7 +184,7 @@ namespace Garmetix.Billing.Services
         /// Get Default Customer for walk in customer
         /// </summary>
         /// <returns></returns>
-        public async Task<Guid> GetDefaultCustomerAsync()
+        public static async Task<Guid> GetDefaultCustomerAsync()
         {
             var customer = await GetContext().Customers.Where(x => x.Name == "Walkin Customer").FirstOrDefaultAsync();
             if (customer == null)
@@ -303,7 +301,7 @@ namespace Garmetix.Billing.Services
         /// <param name="qty"></param>
         /// <param name="sold"></param>
         /// <returns></returns>
-        public async Task<bool> UpdateStockAsync(Guid storeid, string barcode, decimal qty, decimal price, bool sold = false)
+        public static async Task<bool> UpdateStockAsync(Guid storeid, string barcode, decimal qty, decimal price, bool sold = false)
         {
             try
             {

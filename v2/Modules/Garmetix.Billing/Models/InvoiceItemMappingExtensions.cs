@@ -16,6 +16,7 @@ namespace Garmetix.Billing.Models
 
             return new EntryItem
             {
+                ProductId = item.ProductId,
                 Id = item.Id,
                 InvoiceId = item.InvoiceId,
                 Category = item.Category,
@@ -54,7 +55,8 @@ namespace Garmetix.Billing.Models
 
                 // MRP is typically BasePrice before tax/discount, or you can map it to a specific DTO field later if added
                 MRP = dto.BasePrice,
-                UpdatedAt = DateTime.UtcNow
+                UpdatedAt = DateTime.UtcNow, ProductId = dto.ProductId,
+                
             };
         }
     }

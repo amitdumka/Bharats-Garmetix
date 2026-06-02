@@ -5,6 +5,7 @@ using Garmetix.Billing.PageModels.Invoices;
 using Garmetix.Billing.Services;
 using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Inventory;
+using Garmetix.Databases.Services;
 using System.Collections.ObjectModel;
 
 namespace Garmetix.Billing.PageModels
@@ -14,8 +15,6 @@ namespace Garmetix.Billing.PageModels
     {
         [ObservableProperty] protected string invoiceId = string.Empty;
         [ObservableProperty] protected Invoice orginalInvoice;
-        //public ObservableCollection<EntryItem> EditItems { get; set; } = new();
-
         public InvoiceEditPageModel(InvoiceService invoiceService) : base(invoiceService)
         {
         }
@@ -40,18 +39,19 @@ namespace Garmetix.Billing.PageModels
                 }
 
                 InvoiceItems.Clear();
+
                 foreach (var item in OrginalInvoice.InvoiceItems)
                 {
                     var dtoItem = item.ToEntryItem() ?? new EntryItem();
                     dtoItem.PropertyChanged += (s, e) => CalculateTotals();
+                    //Aading Product Name 
+                    dtoItem.ProductName= GetContext().Products.Where(p => p.Id == item.ProductId).Select(p => p.Name).FirstOrDefault() ?? "";
                     InvoiceItems.Add(dtoItem);
                 }
 
-                Payments.Clear();
-               
                 // 4. Load Split Payments
-               
-               // var paymentList = new List<PaymentDetail>();
+                Payments.Clear();
+
                 foreach (var item in orginalInvoice.Payments)
                 {
                     if (item.PaymentMode == PaymentMode.Card)
@@ -64,8 +64,6 @@ namespace Garmetix.Billing.PageModels
                         Payments.Add(item.ToPaymentDetail() ?? new PaymentDetail());
                     }
                 }
-                //Payments = new ObservableCollection<PaymentDetail>(paymentList);
-                
 
                 CalculateTotals();
             }
@@ -73,26 +71,26 @@ namespace Garmetix.Billing.PageModels
             finally { IsBusy = false; }
         }
         // Replace 'partial void OnSelectedProductChanged' with this:
-        protected override void HandleProductSelected(Product? value)
-        {
-            if (value != null)
-            {
-                var newItem = new EntryItem
-                {
-                    InvoiceId = CurrentInvoice.Id,
-                    ProductName = value.Name,
-                    Category = value.ProductType,
-                    BasePrice = value.BasicPrice,
-                    BilledQuantity = 1m
-                };
-                newItem.PropertyChanged += (s, e) => CalculateTotals();
-                InvoiceItems.Add(newItem);
+        //protected override void HandleProductSelected(Product? value)
+        //{
+        //    if (value != null)
+        //    {
+        //        var newItem = new EntryItem
+        //        {
+        //            InvoiceId = CurrentInvoice.Id,
+        //            ProductName = value.Name,
+        //            Category = value.ProductType,
+        //            BasePrice = value.BasicPrice,
+        //            BilledQuantity = 1m, Barcode=value.Barcode,
+        //        };
+        //        newItem.PropertyChanged += (s, e) => CalculateTotals();
+        //        InvoiceItems.Add(newItem);
 
-                SearchText = string.Empty;
-                CalculateTotals();
-            }
-        }
-        
+        //        SearchText = string.Empty;
+        //        CalculateTotals();
+        //    }
+        //}
+
         [RelayCommand]
         public void RemoveItem(EntryItem item)
         {//TODO: handle for edititems  vs invoice items, we need to track deleted items to remove from db on save
@@ -106,7 +104,7 @@ namespace Garmetix.Billing.PageModels
             }
         }
 
-        
+
 
         [RelayCommand]
         public async Task SaveChangesAsync()
@@ -116,7 +114,7 @@ namespace Garmetix.Billing.PageModels
             try
             {
                 // Call your update logic here mapping InvoiceItems and Payments to Entities
-                 var result = await UpdateInvoicesAsync(CurrentInvoice, InvoiceItems, Payments);
+                var result = await UpdateInvoicesAsync(CurrentInvoice, InvoiceItems, Payments);
                 if (result)
                 {
                     await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Success", "Invoice updated successfully.", "OK");
@@ -136,7 +134,7 @@ namespace Garmetix.Billing.PageModels
         [RelayCommand]
         public async Task CancelEditAsync()
         {
-           await ClearFormAsync();
+            await ClearFormAsync();
             //TODO: make it more robust by checking if there are unsaved changes before prompting
         }
 
@@ -156,31 +154,45 @@ namespace Garmetix.Billing.PageModels
             {
                 isSaving = true;
 
+                // Payment details is updated
                 var invoicePaymentList = new List<InvoicePayment>();
                 var cardpaymentList = new List<CardPayment>();
+
+                // Invoice details are updated
                 var editedInvoice = new Invoice
                 {
                     Synced = false,
                     Deleted = false,
+                    CompanyId = orginalInvoice.CompanyId,
+                    StoreId = orginalInvoice.StoreId,
+
+                    InvoiceStatus = orginalInvoice.InvoiceStatus, //TODO: need to handle invoice status changes during edit
+                    InvoiceType = orginalInvoice.InvoiceType,
+                    SaleInvoiceType = orginalInvoice.SaleInvoiceType,
+                    PaymentMode = orginalInvoice.PaymentMode, //TODO: need to handle payment mode changes during edit
+
+                    SalemanId = orginalInvoice.SalemanId, //TODO: need to handle salesman changes
+                    CustomerId = orginalInvoice.CustomerId, //TODO: need to handle customer changes
+
                     UpdatedAt = DateTime.UtcNow,
-                    CreatedBy = "AutoAdmin",
+                    CreatedBy = DatabaseService.Instance.CurrentUser.Name,
                     CreatedAt = orginalInvoice.CreatedAt,
 
                     B2BSale = invoicedto.IsB2BSale,
                     InterState = invoicedto.IsInterStateSale,
                     ReturnInvoice = false,
 
-                    Id = invoicedto.Id,
+                    Id = orginalInvoice.Id,
+                    InvoiceNumber = OrginalInvoice.InvoiceNumber,
 
-                    InvoiceNumber = invoicedto.InvoiceNumber,
                     OnDate = invoicedto.OnDate,
 
                     CustomerGSTIN = invoicedto.CustomerGSTIN,
                     CustomerMobileNumber = invoicedto.CustomerMobileNumber,
                     CustomerName = invoicedto.CustomerName,
 
-                    ItemCount = InvoiceItems.Count(),
-                    Quantity = invoicedto.BilledQuantity,
+                    ItemCount = InvoiceItems.Count(), //Count of the Item in invoice
+                    Quantity = invoicedto.BilledQuantity, //Total Qty of the invoice 
 
                     CreditSale = invoicedto.BalanceAmount > 0 ? true : false,
 
@@ -202,12 +214,6 @@ namespace Garmetix.Billing.PageModels
 
                     PaidAmount = invoicedto.PaidAmount,
 
-                    CompanyId = orginalInvoice.CompanyId,
-
-                    SalemanId = orginalInvoice.SalemanId, //TODO: need to handle salesman changes
-                    CustomerId = orginalInvoice.CustomerId, //TODO: need to handle customer changes
-
-                    MRP = InvoiceItems.Sum(i => i.BasePrice * i.BilledQuantity),//TODO: need to handle MRP changes during edit
                 };
 
                 if (editedInvoice.PaidAmount < editedInvoice.BillAmount)
@@ -216,6 +222,7 @@ namespace Garmetix.Billing.PageModels
                     if (!proceed) return false;
                 }
 
+                // Map EntryItems to InvoiceItems and handle additions, updates, and deletions
                 var invoiceItemList = new List<InvoiceItem>();
                 try
                 {
@@ -230,27 +237,24 @@ namespace Garmetix.Billing.PageModels
                             UpdatedAt = editedInvoice.UpdatedAt,
                             CreatedBy = editedInvoice.CreatedBy,
                             InvoiceId = editedInvoice.Id,
-
                             Id = Guid.NewGuid(),// item.Id,
-
                             Barcode = item.Barcode,
                             BilledQuantity = item.BilledQuantity,
-
                             BasePrice = item.BasePrice,
                             DiscountAmount = item.DiscountAmount,
                             Amount = item.TotalAmount,
-
                             Category = item.Category,
+                            TaxAmount = item.TaxAmount,
+                            TaxPercentage = item.GstPercentage,
+                            TaxType = editedInvoice.InterState ? TaxType.IGST : TaxType.GST,
+                            ProductId = item.ProductId,
+                            MRP = item.MRP,
+                            TaxId = BillingService.GetTaxIdByType(editedInvoice.InterState ? TaxType.IGST : TaxType.GST, item.GstPercentage, true)
 
-                            TaxAmount = item.TaxAmount, 
-
-                            //TaxId=item.TaxId,
-                            //TaxPercentage=item.TaxPercentage,
-                            //TaxType=item.TaxType,
-                            //ProductId=item.ProductId,
-                            //MRP=item.MRP,
                         });
                     }
+
+                    editedInvoice.MRP = invoiceItemList.Sum(i => i.MRP);
 
                     // 1. Identify distinct payment modes in the current transaction
                     var distinctModes = paymentDetails.Select(p => p.PaymentMode).Distinct().ToList();
@@ -272,7 +276,7 @@ namespace Garmetix.Billing.PageModels
                                 UpdatedAt = DateTime.UtcNow,
                                 CreatedAt = DateTime.UtcNow,
                                 Deleted = false,
-                                CreatedBy = "AutoAdmin",
+                                CreatedBy = editedInvoice.CreatedBy,
                                 Id = Guid.NewGuid(),// item.Guid,
                                 OnDate = item.PaymentDate,
                                 Synced = false,
@@ -281,21 +285,24 @@ namespace Garmetix.Billing.PageModels
                                 Card = item.Card.Value,
                                 BankName = item.CardPaymentBank,
                                 AuthCode = item.AuthCode.Value,
-                                CompanyId = editedInvoice.CompanyId
+                                CompanyId = editedInvoice.CompanyId,
+                                StoreId = editedInvoice.StoreId,
+
                             });
                         }
 
                         invoicePaymentList.Add(new InvoicePayment
                         {
+                            StoreId = editedInvoice.StoreId,
                             Amount = item.Amount,
                             CompanyId = editedInvoice.CompanyId,
-                            CreatedAt = DateTime.UtcNow,
+                            CreatedAt = editedInvoice.CreatedAt,
                             UpdatedAt = DateTime.UtcNow,
-                            CreatedBy = "AutoAdmin",
+                            CreatedBy = editedInvoice.CreatedBy,
                             Id = Guid.NewGuid(),// item.Guid,
                             Deleted = false,
                             OnDate = item.PaymentDate,
-                            InvoiceId = currentInvoice.Id,
+                            InvoiceId = editedInvoice.Id,
                             PaymentMode = item.PaymentMode,
                             Synced = false,
                             ReferenceNumber = item.PaymentNote

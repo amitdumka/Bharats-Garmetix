@@ -46,7 +46,7 @@ namespace Garmetix.Billing.PageModels
             }
 
             // Fetch the invoice (Ensure you have a method to get by InvoiceNo in your DB context)
-            var context = _invoiceService.GetContext();
+            var context = InvoiceService.GetContext();
             var invoice = await context.Invoices
                 .Include(i => i.InvoiceItems)
                 .FirstOrDefaultAsync(i => i.InvoiceNumber== SearchInvoiceNo);

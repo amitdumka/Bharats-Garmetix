@@ -22,8 +22,17 @@
 // Base of all Enums used in Garmetix. This file is included in all platforms.
 namespace Garmetix.Core.Enums
 {
-    public enum GarmentCategory { Fabric, ReadyMade, Accessories }
-    public enum AccountType { Saving, Current, CashCredit, OverDraft, Others, Loan, CF, }
+    public enum InvoiceCodeType
+    {
+        QRCode,
+        Barcode1D
+    }
+
+    public enum GarmentCategory
+    { Fabric, ReadyMade, Accessories }
+
+    public enum AccountType
+    { Saving, Current, CashCredit, OverDraft, Others, Loan, CF, }
 
     public enum AppMode
     {
@@ -33,27 +42,56 @@ namespace Garmetix.Core.Enums
     }
 
     // All the code in this file is included in all platforms.
-    public enum AppOperation { Company, StoreGroup, Store, All, None } 
-    public enum AttendanceStatus { Present, Absent, HalfDay, Sunday, Holiday, StoreClosed, SundayHoliday, SickLeave, PaidLeave, CasualLeave, OnLeave, Leave, WorkFromHome } 
-    public enum AttUnit { Present, Absent, HalfDay, Sunday, Holiday, StoreClosed, SundayHoliday, SickLeave, PaidLeave, CasualLeave, OnLeave, Leave, WorkFromHome }
+    public enum AppOperation
+    { Company, StoreGroup, Store, All, None }
 
-    public enum Card { DebitCard, CreditCard, AmexCard, GiftCard, Other }
+    public enum AttendanceStatus
+    { Present, Absent, HalfDay, Sunday, Holiday, StoreClosed, SundayHoliday, SickLeave, PaidLeave, CasualLeave, OnLeave, Leave, WorkFromHome }
+
+    public enum AttUnit
+    { Present, Absent, HalfDay, Sunday, Holiday, StoreClosed, SundayHoliday, SickLeave, PaidLeave, CasualLeave, OnLeave, Leave, WorkFromHome }
+
+    public enum Card
+    { DebitCard, CreditCard, AmexCard, GiftCard, Other }
+
     //TODO: this is not complete, need to add more card types and abstract this to a separate class if needed in future
-    //public enum CardType { Debit, Credit, Prepaid, Other }  
-    public enum CardType { Visa, MasterCard, Maestro, AmexCard, Dinners, Rupay, RupayCredit, Others, }  
+    //public enum CardType { Debit, Credit, Prepaid, Other }
+    public enum CardType
+    { Visa, MasterCard, Maestro, AmexCard, Dinners, Rupay, RupayCredit, Others, }
 
-    public enum CompanyType { Proprietorship,   Partnership, PrivateLimited, PublicLimited, LLP,  Others } 
-    public enum DebitCredit { In, Out, } 
-    public enum EmployeeCategory { Salesman, StoreManager, HouseKeeping, Owner, Accounts, TailorMaster, Tailors, TailoringAssistance, Others, }
+    public enum CompanyType
+    { Proprietorship, Partnership, PrivateLimited, PublicLimited, LLP, Others }
 
-    public enum EntryStatus { Added, Approved, Rejected, Updated, Deleted, DeleteApproved, }  
-    public enum ExpenseType { Travel, Transport, Ticket, Food, Lodging, Entertainment, Medical, OtherExpenses, Fuel, Miscellanous, Others } 
-    public enum Gender { Male, Female, TransGender } 
-    public enum InvoiceOldType { Sales, SalesReturn, ManualSale, ManualSaleReturn, }
-    public enum InvoiceType { Regular, Return, Service }
-    public enum SaleInvoiceType { B2B, B2C, CashMemo, Others }
-    public enum InvoiceCategory { Retail, Wholesale, ECommerce, B2B, B2C, Export, Import, Service, Others }
-    public enum InvoiceStatus { Pending, Paid, PartiallyPaid, Cancelled, Refunded, PartiallyRefunded, Overdue, Draft }
+    public enum DebitCredit
+    { In, Out, }
+
+    public enum EmployeeCategory
+    { Salesman, StoreManager, HouseKeeping, Owner, Accounts, TailorMaster, Tailors, TailoringAssistance, Others, }
+
+    public enum EntryStatus
+    { Added, Approved, Rejected, Updated, Deleted, DeleteApproved, }
+
+    public enum ExpenseType
+    { Travel, Transport, Ticket, Food, Lodging, Entertainment, Medical, OtherExpenses, Fuel, Miscellanous, Others }
+
+    public enum Gender
+    { Male, Female, TransGender }
+
+    public enum InvoiceOldType
+    { Sales, SalesReturn, ManualSale, ManualSaleReturn, }
+
+    public enum InvoiceType
+    { Regular, Return, Service }
+
+    public enum SaleInvoiceType
+    { B2B, B2C, CashMemo, Others }
+
+    public enum InvoiceCategory
+    { Retail, Wholesale, ECommerce, B2B, B2C, Export, Import, Service, Others }
+
+    public enum InvoiceStatus
+    { Pending, Paid, PartiallyPaid, Cancelled, Refunded, PartiallyRefunded, Overdue, Draft }
+
     public enum LedgerCategory
     {
         Credit,
@@ -137,7 +175,7 @@ namespace Garmetix.Core.Enums
     public enum PaymentMode
     {
         Cash, Card, UPI, Wallets, IMPS, RTGS, NEFT, Cheque, DemandDraft, CreditNote,
-        DebitNote, Coupons, MixPayments, SaleReturn, Others,CreditBalance,
+        DebitNote, Coupons, MixPayments, SaleReturn, Others, CreditBalance,
     }
 
     public enum PayMode
@@ -157,44 +195,70 @@ namespace Garmetix.Core.Enums
         SaleReturn,
     }
 
-    public enum Permission { R, W, M, D, RW, RWM, RWMD, N, S } 
-    public enum ProductCategory { Fabric, Apparel, Accessories, Tailoring, Trims, PromoItems, Coupons, GiftVouchers, Others, SuitCovers, InnerWear, }
+    public enum Permission
+    { R, W, M, D, RW, RWM, RWMD, N, S }
+
+    public enum ProductCategory
+    { Fabric, Apparel, Accessories, Tailoring, Trims, PromoItems, Coupons, GiftVouchers, Others, SuitCovers, InnerWear, }
 
     /// <summary>
     /// ProductType represents a type of a product
     /// </summary>
-    public enum ProductType { Apparels, Clothing, Electronics, Fabric, Accessories, InnerWear, SuitCovers, FootWear, Readmade, Jewellery, Cosmetics, WinterWear, Others }
+    public enum ProductType
+    { Apparels, Clothing, Electronics, Fabric, Accessories, InnerWear, SuitCovers, FootWear, Readmade, Jewellery, Cosmetics, WinterWear, Others }
 
-    public enum PurchaseInvoiceType { Purchase, PurchaseReturn, }
+    public enum PurchaseInvoiceType
+    { Purchase, PurchaseReturn, }
 
-    public enum RolePermission { Owner, GeneralManager, GroupManager, Accountant, CA, StoreManager, Salesmen, Guest, Other, }  
+    public enum RolePermission
+    { Owner, GeneralManager, GroupManager, Accountant, CA, StoreManager, Salesmen, Guest, Other, }
+
     // Add more enums as needed for the application.
-    public enum SalaryComponent { NetSalary, LastPcs, WOWBill, SundaySalary, Incentive, Others, Advance, PaidLeave, SickLeave, SalaryAdvance, Receipts, }
+    public enum SalaryComponent
+    { NetSalary, LastPcs, WOWBill, SundaySalary, Incentive, Others, Advance, PaidLeave, SickLeave, SalaryAdvance, Receipts, }
 
-    public enum Size { S, M, L, XL, XXL, XXXL, C28, C3, C32, C34, C36, C38, C4, C41, C42, C44, C46, C48, C96, FreeSize, NS, NOTVALID, C39, C92, }
+    public enum Size
+    { S, M, L, XL, XXL, XXXL, C28, C3, C32, C34, C36, C38, C4, C41, C42, C44, C46, C48, C96, FreeSize, NS, NOTVALID, C39, C92, }
 
-    public enum Size2 { S, M, L, XL, XXL, XXXL, T28, T3, T32, T34, T36, T38, T4, T41, T42, T44, T46, T48, FreeSize, NS, NOTVALID, B36, B38, B4, B42, B44, B46, B96, }
+    public enum Size2
+    { S, M, L, XL, XXL, XXXL, T28, T3, T32, T34, T36, T38, T4, T41, T42, T44, T46, T48, FreeSize, NS, NOTVALID, B36, B38, B4, B42, B44, B46, B96, }
 
-    public enum Status { Pending, Ongoing, Running, Approved, Success, Error, Failed, InProgress, Started, Ended, Processing, Waiting, Rejected, Completed, Cancelled, PartiallyApproved, PartiallyRejected, PartiallyCompleted, Unknown }
+    public enum Status
+    { Pending, Ongoing, Running, Approved, Success, Error, Failed, InProgress, Started, Ended, Processing, Waiting, Rejected, Completed, Cancelled, PartiallyApproved, PartiallyRejected, PartiallyCompleted, Unknown }
 
-    public enum StoreCategory { Cloths, Garments, Readymade, Furniture, FuelStation, General, Retail, Wholesale, Distributor, Others }  
-    public enum TaxType { GST, SGST, CGST, IGST, VAT, CST, }
+    public enum StoreCategory
+    { Cloths, Garments, Readymade, Furniture, FuelStation, General, Retail, Wholesale, Distributor, Others }
 
-    public enum TransactionMode { Cash, Cheque, NEFT, RTGS, UPI, NetBanking, IMPS, DD, ATM, Swipe, Other }  
-    public enum TransactionType { Deposit, Withdraw } 
-    public enum TripType { Purchasing, Travel, Sales, Marketing, Service, Others, Project, Training, Conference, Meeting, Research, Development, Personal }
+    public enum TaxType
+    { GST, SGST, CGST, IGST, VAT, CST, }
 
-    public enum Unit { Meters, Nos, Pcs, Packets, Grams, Kgs, Liter, NoUnit, Than, Boxes }
+    public enum TransactionMode
+    { Cash, Cheque, NEFT, RTGS, UPI, NetBanking, IMPS, DD, ATM, Swipe, Other }
 
-    public enum UOM { Meters, Nos, Pcs, Packets, Grams, Kgs, Liter, NoUnit, Than, Boxes } 
-     
-    public enum UserAccess { Admin, SuperAdmin, SuperUser, PowerUser, User, Guest, }
+    public enum TransactionType
+    { Deposit, Withdraw }
 
-    public enum UserType { Admin, Owner, StoreManager, Sales, Accountant, CA, Guest, PowerUser, Employees }
-    public enum VendorType { EBO, MBO, Tailoring, NonSalable, OtherSaleable, Others, TempVendor, InHouse, Distributor, Brands, BrandAuth, }
+    public enum TripType
+    { Purchasing, Travel, Sales, Marketing, Service, Others, Project, Training, Conference, Meeting, Research, Development, Personal }
 
-    public enum VoucherType { Payment, Receipt, Expense, } 
-    public enum WorkingMode { Company,     Store,       Group        }
+    public enum Unit
+    { Meters, Nos, Pcs, Packets, Grams, Kgs, Liter, NoUnit, Than, Boxes }
 
-     
+    public enum UOM
+    { Meters, Nos, Pcs, Packets, Grams, Kgs, Liter, NoUnit, Than, Boxes }
+
+    public enum UserAccess
+    { Admin, SuperAdmin, SuperUser, PowerUser, User, Guest, }
+
+    public enum UserType
+    { Admin, Owner, StoreManager, Sales, Accountant, CA, Guest, PowerUser, Employees }
+
+    public enum VendorType
+    { EBO, MBO, Tailoring, NonSalable, OtherSaleable, Others, TempVendor, InHouse, Distributor, Brands, BrandAuth, }
+
+    public enum VoucherType
+    { Payment, Receipt, Expense, }
+
+    public enum WorkingMode
+    { Company, Store, Group }
 }

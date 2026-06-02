@@ -141,7 +141,7 @@
                             <Grid ColumnDefinitions="*, *,*, Auto" ColumnSpacing="10"  RowDefinitions="*,Auto">
                                 <inputs:SfComboBox Grid.Column="0"
                                       ItemsSource="{Binding PaymentModes}"
-                                      SelectedItem="{Binding  SelectedPaymentMode}"
+                                      SelectedItem="{Binding  PaymentModeInput}"
                                       HeightRequest="40" />
 
                                 <Entry Grid.Column="1" Placeholder="Amount (₹)" Text="{Binding PaymentAmountInput}" Keyboard="Numeric" HeightRequest="40" BackgroundColor="#F8F9FA" />
