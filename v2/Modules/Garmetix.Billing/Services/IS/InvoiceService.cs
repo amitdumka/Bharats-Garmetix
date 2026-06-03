@@ -43,7 +43,7 @@ namespace Garmetix.Billing.Services
             DatabaseService.Instance.InvalidateCache();
             invalidateCache = true;
             //Update the Customer Due
-
+            //await ShowErrorAsync("Post save", " Reached here");
             if (invoice.BalanceAmount > 0)
             {
                 if (!await AddOrUpdateCustomerDue(invoice))

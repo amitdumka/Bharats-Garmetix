@@ -225,7 +225,7 @@ namespace Garmetix.Billing.Services
         /// <returns></returns>
         public bool RemoveStock(Guid StoreId, string Barcode, bool delete = false)
         { return false; }
-        public async Task<bool> UpdateStockRangeAsync(List<InvoiceItem> items, bool sold)
+        public async Task<bool> UpdateStockRangeAsync(List<InvoiceItem> items)
         {
             if (items == null || !items.Any())
                 return true;
@@ -296,7 +296,7 @@ namespace Garmetix.Billing.Services
                 return false;
             }
         }
-        public async Task<bool> UpdateStockRangeAsync(List<InvoiceItem> items)
+        public async Task<bool> UpdateStockRangeAsync_old(List<InvoiceItem> items)
         {
             //TODO: add Try Catch final block in the code
             //TODO: Update the price value of sold amount

@@ -6,7 +6,6 @@ using Garmetix.Billing.Services;
 using Garmetix.Core.Enums;
 using Garmetix.Core.Models.Inventory;
 using Garmetix.Databases.Services;
-using System.Collections.ObjectModel;
 
 namespace Garmetix.Billing.PageModels
 {
@@ -311,8 +310,9 @@ namespace Garmetix.Billing.PageModels
 
                     return await _invoiceService.UpdateInvoicesAsync(editedInvoice, invoiceItemList, invoicePaymentList, cardpaymentList);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    await InvoiceService.ShowErrorAsync("Update Invoice Error", ex);
                     throw;
                 }
                 finally
