@@ -75,6 +75,8 @@ namespace Garmetix.Core.Models.Inventory
         [Display(Name = "Tax", AutoGenerateField = false)] public Guid TaxId { get; set; }
         [Display(Name = "Branded Product")] public bool BrandedProduct { get; set; } = true;
 
+        [Display(Name ="Sold Value")]public decimal SoldValue { get; set; }= 0;
+
         [JsonIgnore]
         [Display(Name = "Tax", AutoGenerateField = false)] public virtual Tax? Tax { get; set; }
         [JsonIgnore]

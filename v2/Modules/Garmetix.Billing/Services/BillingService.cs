@@ -64,8 +64,8 @@ namespace Garmetix.Billing.Services
             else return null;
         }
 
-        public static DatabaseContext GetContext()=> DatabaseService.Instance.LocalDB;
-        
+        public static DatabaseContext GetContext() => DatabaseService.Instance.LocalDB;
+
         public static bool RemoveProduct(Product product, bool delete = false)
         {
             if (delete)
@@ -225,39 +225,121 @@ namespace Garmetix.Billing.Services
         /// <returns></returns>
         public bool RemoveStock(Guid StoreId, string Barcode, bool delete = false)
         { return false; }
+        public async Task<bool> UpdateStockRangeAsync(List<InvoiceItem> items, bool sold)
+        {
+            if (items == null || !items.Any())
+                return true;
 
+            var context = GetContext();
+            using var trans = await context.Database.BeginTransactionAsync();
+
+            try
+            {
+                // 1. CONSOLIDATE: Group duplicate barcodes and sum their quantities & amounts.
+                // This solves the tracking error by ensuring each barcode only appears once.
+                var consolidatedItems = items
+                    .GroupBy(i => i.Barcode)
+                    .Select(g => new
+                    {
+                        Barcode = g.Key,
+                        TotalBilledQty = g.Sum(i => i.BilledQuantity),
+                        // TODO: Update the price value of sold amount. 
+                        // Assuming InvoiceItem has a TotalAmount or Price property:
+                        TotalSoldValue = g.Sum(i => i.Amount)
+                    })
+                    .ToList();
+
+                // 2. EXTRACT: Get a simple list of the unique barcodes
+                var uniqueBarcodes = consolidatedItems.Select(c => c.Barcode).ToList();
+
+                // 3. BATCH FETCH: Get all matching stock records in a SINGLE database trip. 
+                // Solves the N+1 performance issue and uses the centralized DatabaseService.StoreId.
+                var stocksToUpdate = await context.Stocks
+                    .Where(s => s.StoreId == DatabaseService.StoreId && uniqueBarcodes.Contains(s.Barcode))
+                    .ToListAsync();
+
+                // Optional Integrity Check: Did we find stock records for every item on the invoice?
+                if (stocksToUpdate.Count != consolidatedItems.Count)
+                {
+                    // Some barcodes on the invoice don't exist in the Stock table for this store.
+                    // You can log this, throw an exception, or let it proceed depending on your business rules.
+                }
+
+                // 4. APPLY UPDATES
+                foreach (var stock in stocksToUpdate)
+                {
+                    var billedItem = consolidatedItems.First(c => c.Barcode == stock.Barcode);
+
+                    stock.SoldQty += billedItem.TotalBilledQty;
+                    stock.SoldValue += billedItem.TotalSoldValue;
+
+                    // Apply the financial value update
+                    // stock.SoldAmount += billedItem.TotalSoldValue; 
+
+                    // NOTE: You DO NOT need to call context.Stocks.Update(stock) here.
+                    // Because we fetched these records using EF Core (without .AsNoTracking()), 
+                    // EF Core is actively watching them. Changing the property above is enough.
+                }
+
+                // 5. SAVE & COMMIT
+                // Note: Checking if SaveChangesAsync() == items.Count is dangerous and often wrong 
+                // because EF Core batches updates. We just need to ensure it didn't fail.
+                await context.SaveChangesAsync();
+                await trans.CommitAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                await trans.RollbackAsync();
+                await ShowErrorAsync("Stock Update", ex);
+                return false;
+            }
+        }
         public async Task<bool> UpdateStockRangeAsync(List<InvoiceItem> items)
         {
             //TODO: add Try Catch final block in the code
             //TODO: Update the price value of sold amount
             var count = 0;
             var trans = await GetContext().Database.BeginTransactionAsync();
-            foreach (var item in items)
+            try
             {
-                //TODO: handle this store id and company id in better way
-                var result = await GetContext().Stocks.Where(x => x.StoreId == DatabaseService.StoreId && x.Barcode == item.Barcode).FirstOrDefaultAsync();
-                if (result != null)
+                //TODO: Handle Case , if same barcode or prodcut id multiple entry then it should be added once so no tracking and error update
+                foreach (var item in items)
                 {
-                    count++;
-                    result.SoldQty += item.BilledQuantity;
-                    GetContext().Stocks.Update(result);
+                    //TODO: handle this store id and company id in better way
+                    var result = await GetContext().Stocks.Where(x => x.StoreId == DatabaseService.StoreId && x.Barcode == item.Barcode).FirstOrDefaultAsync();
+                    if (result != null)
+                    {
+                        count++;
+                        result.SoldQty += item.BilledQuantity;
+                        GetContext().Stocks.Update(result);
+                    }
                 }
-            }
-            if (count == items.Count)
-            {
-                count = await GetContext().SaveChangesAsync();
                 if (count == items.Count)
                 {
-                    await trans.CommitAsync();
-                    return true;
+                    count = await GetContext().SaveChangesAsync();
+                    if (count == items.Count)
+                    {
+                        await trans.CommitAsync();
+                        return true;
+                    }
+                    else
+                    {
+                        await trans.RollbackAsync();
+                        return false;
+                    }
                 }
-                else
-                {
-                    await trans.RollbackAsync();
-                    return false;
-                }
+                else return false;
             }
-            else return false;
+            catch (Exception ex)
+            {
+                await trans.RollbackAsync();
+                await ShowErrorAsync("Stock Update", ex);
+                return false;
+            }
+
+
         }
 
         public async Task<bool> UpdateStockRangeAsync(List<PurchaseInvoiceItem> items)
