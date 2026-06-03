@@ -2,6 +2,7 @@
   <Folder Name="/Data/">
     <Project Path="v2/Data/Garmetix.Data/Garmetix.Data.csproj" Id="0f4f4577-b209-473a-ab1d-0766a9a71c1d" />
     <Project Path="v2/Data/Garmetix.DataServices/Garmetix.DataServices.csproj" Id="d30b58d2-2e81-4c4e-ab9b-86a4ea65d0ef" />
+    <Project Path="v2/Data/Garmetix.ImportExport/Garmetix.ImportExport.csproj" Id="67adca75-4637-4541-910b-1283046e1224" />
   </Folder>
   <Folder Name="/Library/">
     <Project Path="v2/Library/Bharat.Themes/Bharat.Themes.csproj" Id="67c8b07f-22a6-4574-adee-912fa19d33d9" />
