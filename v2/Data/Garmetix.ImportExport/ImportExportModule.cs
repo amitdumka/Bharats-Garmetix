@@ -15,6 +15,8 @@ namespace Garmetix.ImportExport
             builder.Services.AddTransient<PurchaseImportService>();
             builder.Services.AddTransient<PurchaseImportViewModel>();
             builder.Services.AddTransient<PurchaseImportPage>();
+            builder.Services.AddTransient<CategoryMappingService>();
+          
             
 
             return builder;

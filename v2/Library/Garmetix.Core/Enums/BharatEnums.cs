@@ -28,8 +28,7 @@ namespace Garmetix.Core.Enums
         Barcode1D
     }
 
-    public enum GarmentCategory
-    { Fabric, ReadyMade, Accessories }
+    
 
     public enum AccountType
     { Saving, Current, CashCredit, OverDraft, Others, Loan, CF, }
@@ -177,7 +176,7 @@ namespace Garmetix.Core.Enums
         Cash, Card, UPI, Wallets, IMPS, RTGS, NEFT, Cheque, DemandDraft, CreditNote,
         DebitNote, Coupons, MixPayments, SaleReturn, Others, CreditBalance,
     }
-
+    public enum StockType{Billed, NotBilled, AadharBilled, Converted, Others }
     public enum PayMode
     {
         Cash,
@@ -198,15 +197,61 @@ namespace Garmetix.Core.Enums
     public enum Permission
     { R, W, M, D, RW, RWM, RWMD, N, S }
 
+
+    [Obsolete("Use Product Group")]
+    public enum GarmentCategory
+    { Fabric, ReadyMade, Accessories }
+   
+    [Obsolete("Use product Type")]
     public enum ProductCategory
+
     { Fabric, Apparel, Accessories, Tailoring, Trims, PromoItems, Coupons, GiftVouchers, Others, SuitCovers, InnerWear, }
 
-    /// <summary>
-    /// ProductType represents a type of a product
-    /// </summary>
     public enum ProductType
-    { Apparels, Clothing, Electronics, Fabric, Accessories, InnerWear, SuitCovers, FootWear, Readmade, Jewellery, Cosmetics, WinterWear, Others }
-
+    {
+        Apparels,
+        Clothing,
+        Electronics,
+        Fabric,
+        Accessories, // Fixed spelling from table ("Accessiories", "Accessioris")
+        InnerWear,
+        SuitCovers,
+        FootWear,
+        Readymade,   // Fixed spelling from "Readmade"
+        Jewellery,
+        Cosmetics,
+        WinterWear,
+        Tailoring,
+        Trims,
+        PromoItems,
+        Shoes,       // Added from table
+        Others
+    }
+    // Updated to match logical groupings based on your categories
+    public enum ProductGroup
+    {
+        Shirting,
+        Suiting,
+        Readymade,
+        Sherwani,
+        Suits,
+        Blazers,     // Fixed spelling
+        Kurta,
+        KurtaPajama,
+        Pajama,      // Fixed spelling
+        Pagadi,      // Fixed spelling
+        Dupatta,
+        PagadiDupattaSet, // Fixed spelling
+        Brochs,
+        Kalgi,
+        Jodhpuri,    // Fixed spelling
+        WinterWear,
+        InnerWear,
+        Shoes,
+        Nagra,
+        Accessories,
+        Others
+    }
     public enum PurchaseInvoiceType
     { Purchase, PurchaseReturn, }
 

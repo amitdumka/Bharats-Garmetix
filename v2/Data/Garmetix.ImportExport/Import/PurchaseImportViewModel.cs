@@ -11,6 +11,8 @@ namespace Garmetix.ImportExports.ViewModels
     {
         private readonly PurchaseImportService _importService;
         private readonly DatabaseContext _context;
+        private readonly CategoryMappingService _categoryService;
+
 
         [ObservableProperty] private string _selectedExcelFilePath="c:\\";
         [ObservableProperty] private string _outputDirectoryPath;
@@ -22,9 +24,10 @@ namespace Garmetix.ImportExports.ViewModels
         [ObservableProperty] private bool _importStock = true;
         [ObservableProperty] private bool _importPurchaseInvoices = true;
 
-        public PurchaseImportViewModel(DatabaseContext context)
+        public PurchaseImportViewModel(DatabaseContext context , CategoryMappingService categoryService)
         {
             _context = context;
+            _categoryService = categoryService;
             _importService = new PurchaseImportService();
             OutputDirectoryPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         }
@@ -112,7 +115,7 @@ namespace Garmetix.ImportExports.ViewModels
                             // In a real MAUI app, inject your Database Sync Service via dependency injection
                             // For this example, assuming you have access to the DB Context or an API client:
 
-                            var syncService = new PurchaseDatabaseSyncService(_context);
+                            var syncService = new PurchaseDatabaseSyncService(_context ,_categoryService);
 
                             // Pass the StoreId for the current logged-in session
                             Guid currentStoreId = DatabaseService.StoreId;
