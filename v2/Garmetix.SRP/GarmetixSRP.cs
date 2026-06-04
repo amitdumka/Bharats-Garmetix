@@ -13,6 +13,7 @@ using Garmetix.Settings;
 using Garmetix.Stores;
 using System.Globalization;
 using Garmetix.Billing;
+using Garmetix.ImportExport;
 
 
 namespace Garmetix.SRP
@@ -33,6 +34,7 @@ namespace Garmetix.SRP
         public static MauiAppBuilder UseGarmetixSRP(this MauiAppBuilder builder)
         {
             builder
+                .UseImportExport() // Add the Import and Export Modules
                 .UseCoreModule() // Adds the Core module to the application.
                 .UseOnboarding() // Adds the Onboarding module to the application.
                 .UseAuthentication() // Adds the Authentication module to the application.
@@ -67,6 +69,7 @@ namespace Garmetix.SRP
             GarmetixBillingModule.RegisterBillingRoutes();
             GarmetixCoreBaseModule.EnableCoreModulesRoutes();
             GarmetixBillingModule.RegisterBillingRoutes();
+            ImportExportModule.UseRoute();
 
         }
 

@@ -1,9 +1,15 @@
+using Garmetix.Databases;
+using Garmetix.ImportExports.ViewModels;
+
 namespace Garmetix.ImportExport.Import;
 
 public partial class PurchaseImportPage : ContentPage
 {
-	public PurchaseImportPage()
+	PurchaseImportViewModel viewModel;
+	public PurchaseImportPage(DatabaseContext db)
 	{
 		InitializeComponent();
-	}
+        viewModel = new PurchaseImportViewModel(db);
+        BindingContext = viewModel;
+    }
 }

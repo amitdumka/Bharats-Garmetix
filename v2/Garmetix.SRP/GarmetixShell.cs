@@ -6,6 +6,7 @@ using Garmetix.Base.Shells;
 using Garmetix.Core.Interfaces;
 using Garmetix.Core.Sessions;
 using Garmetix.CoreBase.Dashboard.Pages;
+using Garmetix.ImportExport.Import;
 using Garmetix.SRP;
 using Syncfusion.Maui.Toolkit.Themes;
 
@@ -47,6 +48,13 @@ namespace Garmetix
                 Route = "Dashboard",
                // ContentTemplate = new DataTemplate(typeof(MainPage))
                 ContentTemplate = new DataTemplate(typeof(DashboardPage))
+            });
+            Items.Add(new ShellContent
+            {
+                Title = "Import",
+                Route = "Import",
+               // ContentTemplate = new DataTemplate(typeof(MainPage))
+                ContentTemplate = new DataTemplate(typeof(PurchaseImportPage))
             });
 
             //// 2. Inject your pre-built XAML Flyout Items!

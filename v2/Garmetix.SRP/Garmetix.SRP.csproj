@@ -26,13 +26,14 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.60" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.70" />
 	</ItemGroup>
 
 	<ItemGroup>
 	 
 	  <ProjectReference Include="..\Data\Garmetix.DataServices\Garmetix.DataServices.csproj" />
 	  <ProjectReference Include="..\Data\Garmetix.Data\Garmetix.Data.csproj" />
+	  <ProjectReference Include="..\Data\Garmetix.ImportExport\Garmetix.ImportExport.csproj" />
 	  <ProjectReference Include="..\Library\Bharat.Themes\Bharat.Themes.csproj" />
 	  <ProjectReference Include="..\Library\Bharat.ToolKits.Notifications\Bharat.ToolKits.Notifications.csproj" />
 	  <ProjectReference Include="..\Library\Bharat.Toolkits\Bharat.ToolKits.csproj" />

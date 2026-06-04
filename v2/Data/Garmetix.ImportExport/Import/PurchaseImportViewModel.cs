@@ -1,19 +1,18 @@
-﻿using Android.Telephony.Data;
+﻿using CommunityToolkit.Maui.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Garmetix.Databases;
+using Garmetix.Databases.Services;
 using Garmetix.ImportExports.Services;
-using Microsoft.Maui.Storage;
-using System;
-using System.IO;
-using System.Threading.Tasks;
 
-namespace Garmetix.POS.Desktop.ViewModels
+namespace Garmetix.ImportExports.ViewModels
 {
     public partial class PurchaseImportViewModel : ObservableObject
     {
         private readonly PurchaseImportService _importService;
+        private readonly DatabaseContext _context;
 
-        [ObservableProperty] private string _selectedExcelFilePath;
+        [ObservableProperty] private string _selectedExcelFilePath="c:\\";
         [ObservableProperty] private string _outputDirectoryPath;
         [ObservableProperty] private string _statusMessage = "Ready to import.";
         [ObservableProperty] private bool _isProcessing;
@@ -23,8 +22,9 @@ namespace Garmetix.POS.Desktop.ViewModels
         [ObservableProperty] private bool _importStock = true;
         [ObservableProperty] private bool _importPurchaseInvoices = true;
 
-        public PurchaseImportViewModel()
+        public PurchaseImportViewModel(DatabaseContext context)
         {
+            _context = context;
             _importService = new PurchaseImportService();
             OutputDirectoryPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         }
@@ -112,10 +112,10 @@ namespace Garmetix.POS.Desktop.ViewModels
                             // In a real MAUI app, inject your Database Sync Service via dependency injection
                             // For this example, assuming you have access to the DB Context or an API client:
 
-                            var syncService = new PurchaseDatabaseSyncService(_dbContext);
+                            var syncService = new PurchaseDatabaseSyncService(_context);
 
                             // Pass the StoreId for the current logged-in session
-                            Guid currentStoreId = AppSettings.CurrentStoreId;
+                            Guid currentStoreId = DatabaseService.StoreId;
 
                             await syncService.ProcessImportAsync(
                                 outputFilePath,

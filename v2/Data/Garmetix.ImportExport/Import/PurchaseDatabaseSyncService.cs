@@ -1,14 +1,20 @@
-﻿using Garmetix.ImportExport.Models;
+﻿using Garmetix.Core.Models.Inventory;
+using Garmetix.Databases;
+using Garmetix.ImportExport.Models;
 using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
+using Garmetix.Databases.Services;
+using System.Runtime.CompilerServices;
+using Garmetix.Core.Enums;
 
 namespace Garmetix.ImportExports.Services
 {
     public class PurchaseDatabaseSyncService
     {
         // Replace 'GarmetixDbContext' with your actual EF Core context class name
-        private readonly GarmetixDbContext _context;
+        private readonly DatabaseContext _context;
 
-        public PurchaseDatabaseSyncService(GarmetixDbContext context)
+        public PurchaseDatabaseSyncService(DatabaseContext context)
         {
             _context = context;
         }
@@ -91,7 +97,29 @@ namespace Garmetix.ImportExports.Services
                         TaxRate = item.InputTaxRate,
                         ProductCategoryId = defaultCategoryId,
                         // Add standard defaults based on your models
-                        CompanyId = Guid.Empty // Set to actual CompanyId
+                        CompanyId = DatabaseService.CompanyId, // Set to actual CompanyId
+                        CreatedAt = DateTime.UtcNow,
+                        CreatedBy = DatabaseService.Instance.CurrentUser?.UserName ?? "System",
+                        Deleted = false,
+                        Synced = false,
+                        StoreGroupId = DatabaseService.StoreGroupId,
+                        UpdatedAt = DateTime.UtcNow,
+                        //TODO: Implement proper UOM and ProductType mapping based on your actual data and models
+                        Stocks = new List<Stock> {
+                            new Stock {
+                                Barcode = item.Barcode,
+                                CompanyId = DatabaseService.CompanyId,
+                                CreatedAt = DateTime.UtcNow,
+                                CreatedBy = DatabaseService.Instance.CurrentUser?.UserName ?? "System",
+                                Deleted = false, 
+                                Id = Guid.NewGuid(),StoreGroupId = DatabaseService.StoreGroupId,
+                                StoreId=DatabaseService.StoreId, UpdatedAt = DateTime.UtcNow,
+                                SoldQty=0, PurchaseQty=0, MRP=item.MRP,  TaxRate=item.InputTaxRate, 
+                                HSNCode=item.HSNCode, SoldValue=0, Synced=false, TaxType=TaxType.GST
+                                , 
+
+                        }, }
+
                     });
                 }
                 else
@@ -258,5 +286,14 @@ namespace Garmetix.ImportExports.Services
 
             await _context.SaveChangesAsync();
         }
+
+        //TODO: implements
+        private async Task<Guid> GetProductType() { return Guid.Empty; }
+        private async Task<Unit> GetUOM() { return Unit.Pcs; }
+        private async Task<Guid> GetProductCategory() { return Guid.Empty; }
+        private async Task<Guid> GetSubCategory() { return Guid.Empty; }
+
+
+
     }
 }

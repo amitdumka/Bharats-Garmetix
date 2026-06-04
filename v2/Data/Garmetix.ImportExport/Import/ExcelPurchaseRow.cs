@@ -1,8 +1,4 @@
-﻿using Garmetix.ImportExport.Models;
-using System.Text.Json;
-using Xamarin.KotlinX.Coroutines.Channels;
-
-namespace Garmetix.ImportExport.Models
+﻿namespace Garmetix.ImportExport.Models
 {
     public class ExcelPurchaseRow
     {

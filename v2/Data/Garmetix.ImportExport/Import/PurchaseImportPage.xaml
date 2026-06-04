@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:vm="clr-namespace:Garmetix.POS.Desktop.ViewModels"
-             x:Class="Garmetix.POS.Desktop.Views.PurchaseImportPage"
+             xmlns:vm="clr-namespace:Garmetix.ImportExports.ViewModels"
+             x:Class=" Garmetix.ImportExport.Import.PurchaseImportPage"
              Title="Purchase &amp; Inward Import"
              BackgroundColor="#F1F5F9">
 
-    <ContentPage.BindingContext>
-        <vm:PurchaseImportViewModel />
-    </ContentPage.BindingContext>
+    <!--<ContentPage.BindingContext>
+        <vm:PurchaseImportViewModel x:Name="viewModel" />
+    </ContentPage.BindingContext>-->
 
     <ScrollView>
         <VerticalStackLayout Spacing="20" Padding="40" MaximumWidthRequest="800" HorizontalOptions="Center">
